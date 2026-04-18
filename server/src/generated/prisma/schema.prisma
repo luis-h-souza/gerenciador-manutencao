@@ -1,0 +1,333 @@
+// prisma/schema.prisma
+// Prisma v7: usa o novo generator "prisma-client" (padrão no v7)
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMINISTRADOR
+  DIRETOR
+  GERENTE
+  SUPERVISOR
+  COORDENADOR
+  GESTOR
+  TECNICO
+}
+
+enum PrioridadeTarefa {
+  BAIXA
+  MEDIA
+  ALTA
+  CRITICA
+}
+
+enum StatusTarefa {
+  PENDENTE
+  EM_ANDAMENTO
+  CONCLUIDA
+  CANCELADA
+}
+
+enum SegmentoChamado {
+  ELETRICA
+  EMPILHADEIRA
+  REFRIGERACAO
+  AR_CONDICIONADO
+  SERRALHERIA
+  CIVIL
+  EQUIPAMENTOS
+  GERADOR
+  ELEVADOR
+  PCI
+  ALUGUEL
+  DIVERSOS
+}
+
+enum StatusChamado {
+  CHAMADO_ABERTO
+  AGUARDANDO_APROVACAO
+  AGUARDANDO_OM_ENTREGA
+  FINALIZADO
+  ALUGUEL_OUTROS
+}
+
+enum StatusMovimentacao {
+  PENDENTE
+  ENVIADO
+  RECEBIDO
+  CANCELADO
+}
+
+enum TipoEquipamento {
+  EMPILHADEIRA_ELETRICA
+  EMPILHADEIRA_COMBUSTAO
+  EMPILHADEIRA_PATOLADA
+  MAQUINA_MOER_CARNE
+  SERRA_FITA
+  EMBALADORA_VACUO
+  FATIADORA
+  FATIADORA_GRANDE
+  ELEVADOR
+  ILHASELF
+  ESCADA_ROLANTE
+}
+
+enum TipoCarrinho {
+  MARIA_GORDA
+  SUPERCAR
+  DOIS_ANDARES
+  PRANCHA
+  PRANCHA_PERECIVEIS
+  CARRINHO_ABASTECIMENTO
+  ESCADA
+}
+
+model Usuario {
+  id                    String                 @id @default(uuid())
+  nome                  String
+  email                 String                 @unique
+  senha                 String
+  role                  Role                   @default(TECNICO)
+  ativo                 Boolean                @default(true)
+  regiao                String? // Regional
+  unidade               String? // Loja específica
+  refreshTokens         RefreshToken[]
+  sessoes               Sessao[]
+  tarefasAtribuidas     Tarefa[]               @relation("TarefaAtribuida")
+  tarefasCriadas        Tarefa[]               @relation("TarefaCriada")
+  checklistsEquipamento ChecklistEquipamento[]
+  checklistsCarrinho    ChecklistCarrinho[]
+  criadoEm              DateTime               @default(now())
+  atualizadoEm          DateTime               @updatedAt
+
+  @@map("usuarios")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  usuarioId String
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  revogado  Boolean  @default(false)
+  criadoEm  DateTime @default(now())
+
+  @@map("refresh_tokens")
+}
+
+model Sessao {
+  id        String   @id @default(uuid())
+  sessionId String   @unique
+  usuarioId String
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  ipAddress String?
+  userAgent String?
+  ativo     Boolean  @default(true)
+  expiresAt DateTime
+  criadoEm  DateTime @default(now())
+
+  @@map("sessoes")
+}
+
+model Tarefa {
+  id              String           @id @default(uuid())
+  descricao       String
+  prioridade      PrioridadeTarefa @default(MEDIA)
+  status          StatusTarefa     @default(PENDENTE)
+  areResponsavel  String
+  regiao          String?
+  unidade         String?
+  dataConclusao   DateTime?
+  criadoPorId     String
+  criadoPor       Usuario          @relation("TarefaCriada", fields: [criadoPorId], references: [id])
+  atribuidoParaId String?
+  atribuidoPara   Usuario?         @relation("TarefaAtribuida", fields: [atribuidoParaId], references: [id])
+  notificacoes    Notificacao[]
+  criadoEm        DateTime         @default(now())
+  atualizadoEm    DateTime         @updatedAt
+
+  @@map("tarefas")
+}
+
+model Notificacao {
+  id       String   @id @default(uuid())
+  titulo   String
+  mensagem String
+  lida     Boolean  @default(false)
+  tarefaId String?
+  tarefa   Tarefa?  @relation(fields: [tarefaId], references: [id], onDelete: SetNull)
+  criadoEm DateTime @default(now())
+
+  @@map("notificacoes")
+}
+
+model ControleChamado {
+  id              String          @id @default(uuid())
+  dataAbertura    DateTime
+  numeroChamado   String
+  segmento        SegmentoChamado
+  empresa         String
+  descricao       String
+  regiao          String?
+  unidade         String?
+  numeroOrcamento String?
+  valor           Decimal?        @db.Decimal(12, 2)
+  status          StatusChamado   @default(CHAMADO_ABERTO)
+  mauUso          Boolean         @default(false)
+  criadoEm        DateTime        @default(now())
+  atualizadoEm    DateTime        @updatedAt
+
+  @@map("controle_chamados")
+}
+
+model Fornecedor {
+  id           String   @id @default(uuid())
+  nome         String
+  telefone     String?
+  email        String?
+  segmento     String
+  cnpj         String   @unique
+  ativo        Boolean  @default(true)
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  @@map("fornecedores")
+}
+
+model Peca {
+  id                String             @id @default(uuid())
+  nome              String
+  descricao         String?
+  quantidadeEstoque Int                @default(0)
+  entradas          EntradaPeca[]
+  movimentacoes     MovimentacaoPeca[]
+  saidas            SaidaPeca[]
+  criadoEm          DateTime           @default(now())
+  atualizadoEm      DateTime           @updatedAt
+
+  @@map("pecas")
+}
+
+model EntradaPeca {
+  id               String   @id @default(uuid())
+  pecaId           String
+  peca             Peca     @relation(fields: [pecaId], references: [id])
+  dataEntrada      DateTime
+  quantidade       Int
+  valorUnitario    Decimal  @db.Decimal(10, 2)
+  fornecedor       String
+  numeroNotaFiscal String?
+  total            Decimal  @db.Decimal(12, 2)
+  criadoEm         DateTime @default(now())
+
+  @@map("entradas_pecas")
+}
+
+model MovimentacaoPeca {
+  id               String             @id @default(uuid())
+  pecaId           String
+  peca             Peca               @relation(fields: [pecaId], references: [id])
+  dataMovimentacao DateTime
+  lojaRequisitante String
+  quantidade       Int
+  numeroChamado    String?
+  status           StatusMovimentacao @default(PENDENTE)
+  criadoEm         DateTime           @default(now())
+
+  @@map("movimentacoes_pecas")
+}
+
+model SaidaPeca {
+  id          String   @id @default(uuid())
+  pecaId      String
+  peca        Peca     @relation(fields: [pecaId], references: [id])
+  data        DateTime
+  quantidade  Int      @default(1)
+  destino     String
+  nomeRetirou String
+  empresa     String
+  criadoEm    DateTime @default(now())
+
+  @@map("saidas_pecas")
+}
+
+// ─── Checklists ──────────────────────────────────────────────────────────────
+
+model ChecklistEquipamento {
+  id           String                     @id @default(uuid())
+  semana       Int // número da semana ISO
+  ano          Int
+  regiao       String // Regional (ex: SP8)
+  unidade      String // Loja específica (ex: Loja Centro)
+  criadoPorId  String
+  criadoPor    Usuario                    @relation(fields: [criadoPorId], references: [id])
+  itens        ChecklistEquipamentoItem[]
+  observacoes  String?
+  criadoEm     DateTime                   @default(now())
+  atualizadoEm DateTime                   @updatedAt
+
+  @@unique([semana, ano, unidade], name: "semana_ano_unidade") // Único por loja semana/ano
+  @@map("checklists_equipamento")
+}
+
+model ChecklistEquipamentoItem {
+  id                 String               @id @default(uuid())
+  checklistId        String
+  checklist          ChecklistEquipamento @relation(fields: [checklistId], references: [id], onDelete: Cascade)
+  tipoEquipamento    TipoEquipamento
+  operacional        Boolean              @default(true)
+  quantidade         Int                  @default(1)
+  quantidadeQuebrada Int                  @default(0)
+  numeroSerie        String?
+  numeroChamado      String?
+  descricaoProblema  String?
+  valor              Decimal?             @db.Decimal(12, 2)
+
+  @@map("checklist_equipamento_itens")
+}
+
+model ChecklistCarrinho {
+  id           String                  @id @default(uuid())
+  semana       Int
+  ano          Int
+  regiao       String // Regional (ex: SP8)
+  unidade      String // Loja específica (ex: Loja Centro)
+  criadoPorId  String
+  criadoPor    Usuario                 @relation(fields: [criadoPorId], references: [id])
+  itens        ChecklistCarrinhoItem[]
+  observacoes  String?
+  criadoEm     DateTime                @default(now())
+  atualizadoEm DateTime                @updatedAt
+
+  @@unique([semana, ano, unidade], name: "semana_ano_unidade") // Único por loja semana/ano
+  @@map("checklists_carrinho")
+}
+
+model ChecklistCarrinhoItem {
+  id                String            @id @default(uuid())
+  checklistId       String
+  checklist         ChecklistCarrinho @relation(fields: [checklistId], references: [id], onDelete: Cascade)
+  tipoCarrinho      TipoCarrinho
+  total             Int               @default(0)
+  quebrados         Int               @default(0)
+  numeroChamado     String?
+  descricaoProblema String?
+
+  @@map("checklist_carrinho_itens")
+}
+
+model FrotaCarrinho {
+  id           String       @id @default(uuid())
+  unidade      String // Loja específica (identificador único da frota)
+  tipoCarrinho TipoCarrinho
+  total        Int          @default(0)
+  atualizadoEm DateTime     @updatedAt
+
+  @@unique([unidade, tipoCarrinho])
+  @@map("frota_carrinhos")
+}
