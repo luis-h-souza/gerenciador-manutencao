@@ -48,75 +48,89 @@ Sistema completo para gerenciamento de tarefas, controle financeiro, estoque de 
 
 ## 🚀 Configuração e execução
 
-### Pré-requisitos
+O projeto utiliza variáveis de ambiente para gerenciar conexões e segredos. Siga a ordem abaixo para um setup rápido:
 
+### Pré-requisitos
 - Node.js >= 22.12
 - Docker (recomendado para PostgreSQL + Redis)
 
 ### 1. Subir infraestrutura (Docker)
-
+O arquivo `docker-compose.yml` na raiz sobe os serviços de banco e cache necessários.
 ```bash
-# Na raiz do projeto
 docker compose up -d
 # PostgreSQL em localhost:5433
 # Redis em localhost:6379
 ```
 
-### 2. Backend
-
+### 2. Configuração do Backend
 ```bash
 cd server
-
-# 1. Instalar dependências
 npm install
 
-# 2. Configurar variáveis de ambiente
+# Configurar variáveis de ambiente
 cp .env.example .env
-# Edite .env com suas credenciais
+# Edite o .env com suas chaves (veja a seção 'Variáveis de Ambiente' abaixo)
 
-# 3. Sincronizar schema com o banco
+# Sincronizar banco e gerar cliente Prisma
 npx prisma db push
-
-# 4. Gerar o Prisma Client
 npx prisma generate
-
-# 5. Popular com dados de teste
 npm run prisma:seed
 
-# 6. Iniciar em desenvolvimento
+# Iniciar
 npm run dev
-# Servidor em http://localhost:3000
 ```
 
-### 3. Frontend
-
+### 3. Configuração do Frontend (Vite)
+O frontend já possui um proxy configurado para redirecionar chamadas `/api` para o backend (porta 3001).
 ```bash
 cd client
-
-# 1. Instalar dependências
 npm install
-
-# 2. Iniciar em desenvolvimento
 npm run dev
-# Interface em http://localhost:5173
+# URL padrão: http://localhost:3000
 ```
 
 ---
+
+## 🔑 Variáveis de Ambiente (.env)
+
+No diretório `server/`, crie um arquivo `.env` baseado no `.env.example`. Abaixo o que cada variável faz:
+
+| Variável | Descrição | Valor Padrão (Exemplo) |
+|---|---|---|
+| `DATABASE_URL` | String de conexão com o PostgreSQL | `postgresql://admin:admin123@localhost:5433/sgm_db` |
+| `REDIS_URL` | URL de conexão com o cache Redis | `redis://localhost:6379` |
+| `JWT_SECRET` | Chave secreta para assinar o Access Token | *Use uma string aleatória longa* |
+| `JWT_REFRESH_SECRET`| Chave secreta para assinar the Refresh Token | *Diferente da JWT_SECRET* |
+| `SESSION_SECRET` | Segredo para as sessões do Express | *Obrigatório para segurança* |
+| `CORS_ORIGIN` | URL permitida para acessar a API | `http://localhost:3000` |
+| `PORT` | Porta onde o servidor Express vai rodar | `3001` |
+
+> [!IMPORTANT]
+> Nunca versione o arquivo `.env` real no seu repositório. Use o `.env.example` para compartilhar a estrutura das chaves necessárias sem expor senhas.
+
+---
+
+## 🔐 Hierarquia Regional e Acesso
+
+O sistema utiliza um modelo de isolamento de dados regional. Diferentes perfis possuem diferentes níveis de visibilidade:
+
+| Role | Escopo | Descrição |
+|---|---|---|
+| `DIRETOR / GERENTE` | **Global** | Acesso total a todas as regionais. Navegam via Coordenadores -> Lojas. |
+| `ADMIN / SUPERVISOR`| **Global** | Gestão de infraestrutura e usuários. |
+| `COORDENADOR` | **Regional** | Visualiza apenas os gestores e dados da **sua região** (ex: SP8). |
+| `GESTOR` | **Unidade** | Visualiza apenas sua loja. **Único** perfil que preenche checklists. |
+| `TÉCNICO` | **Atribuição**| Vê apenas as tarefas designadas especificamente para ele. |
 
 ## 👤 Credenciais de teste (após seed)
 
 | E-mail | Senha | Perfil | Região |
 |---|---|---|---|
-| admin@manutencao.com | Senha@123 | Administrador | — (global) |
-| supervisor@manutencao.com | Senha@123 | Supervisor | — (global) |
+| admin@manutencao.com | Senha@123 | Administrador | — |
+| gerente@manutencao.com | Senha@123 | Gerente | — |
 | coordenador@manutencao.com | Senha@123 | Coordenador | SP1 |
-| coordenador2@manutencao.com | Senha@123 | Coordenador | RJ1 |
 | gestor@manutencao.com | Senha@123 | Gestor | SP7 |
-| gestor2@manutencao.com | Senha@123 | Gestor | RJ2 |
 | tecnico@manutencao.com | Senha@123 | Técnico | SP1 |
-| tecnico2@manutencao.com | Senha@123 | Técnico | SP7 |
-| tecnico3@manutencao.com | Senha@123 | Técnico | RJ1 |
-| tecnico4@manutencao.com | Senha@123 | Técnico | RJ2 |
 
 ---
 
