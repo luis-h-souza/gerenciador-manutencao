@@ -96,6 +96,15 @@ app.get('/health', (req, res) => {
   });
 });
 
+// ─── Boas-vindas (Root) ──────────────────────────────────────────────────────
+app.get('/', (req, res) => {
+  res.json({
+    message: 'SGM API Online',
+    version: '1.0.0',
+    documentation: 'https://github.com/luis-h-souza/gerenciador-manutencao'
+  });
+});
+
 // ─── API Routes ───────────────────────────────────────────────────────────────
 const API = '/api/v1';
 app.use(`${API}/auth`, authRoutes);
