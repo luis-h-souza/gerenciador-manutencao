@@ -26,6 +26,9 @@ const checklistRoutes = require('./routes/checklist.routes');
 
 const app = express();
 
+// Necessário para cookies seguros na Vercel
+app.set('trust proxy', 1);
+
 // ─── Segurança: Headers HTTP ────────────────────────────────────────────────
 app.use(helmet({
   contentSecurityPolicy: {
@@ -42,13 +45,26 @@ app.use(helmet({
 // ─── CORS ────────────────────────────────────────────────────────────────────
 app.use(cors({
   origin: (origin, callback) => {
-    const allowed = (process.env.CORS_ORIGIN || '').split(',').map(s => s.trim());
-    if (!origin || allowed.includes(origin)) return callback(null, true);
+    // Se não houver origin (ex: ferramentas de teste) permite
+    if (!origin) return callback(null, true);
+    
+    // Lista de origens permitidas
+    const allowed = (process.env.CORS_ORIGIN || '')
+      .split(',')
+      .map(s => s.trim().replace(/\/$/, '')); // Remove barra final se houver
+    
+    if (allowed.includes(origin.replace(/\/$/, '')) || allowed.includes('*')) {
+      return callback(null, true);
+    }
+    
+    logger.warn(`CORS bloqueado para: ${origin}. Permitidos: ${allowed.join(', ')}`);
     callback(new Error(`CORS: origem ${origin} não permitida`));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
 
 // ─── Compressão ───────────────────────────────────────────────────────────────
@@ -81,7 +97,7 @@ app.use(session({
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' permite cross-domain na Vercel
     maxAge: parseInt(process.env.SESSION_MAX_AGE || '86400000'),
   },
 }));
