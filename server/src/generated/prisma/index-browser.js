@@ -174,6 +174,7 @@ exports.Prisma.NotificacaoScalarFieldEnum = {
   mensagem: 'mensagem',
   lida: 'lida',
   tarefaId: 'tarefaId',
+  usuarioId: 'usuarioId',
   criadoEm: 'criadoEm'
 };
 

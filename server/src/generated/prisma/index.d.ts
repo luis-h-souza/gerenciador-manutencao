@@ -2370,21 +2370,23 @@ export namespace Prisma {
    */
 
   export type UsuarioCountOutputType = {
+    checklistsCarrinho: number
+    checklistsEquipamento: number
+    notificacoes: number
     refreshTokens: number
     sessoes: number
     tarefasAtribuidas: number
     tarefasCriadas: number
-    checklistsEquipamento: number
-    checklistsCarrinho: number
   }
 
   export type UsuarioCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    checklistsCarrinho?: boolean | UsuarioCountOutputTypeCountChecklistsCarrinhoArgs
+    checklistsEquipamento?: boolean | UsuarioCountOutputTypeCountChecklistsEquipamentoArgs
+    notificacoes?: boolean | UsuarioCountOutputTypeCountNotificacoesArgs
     refreshTokens?: boolean | UsuarioCountOutputTypeCountRefreshTokensArgs
     sessoes?: boolean | UsuarioCountOutputTypeCountSessoesArgs
     tarefasAtribuidas?: boolean | UsuarioCountOutputTypeCountTarefasAtribuidasArgs
     tarefasCriadas?: boolean | UsuarioCountOutputTypeCountTarefasCriadasArgs
-    checklistsEquipamento?: boolean | UsuarioCountOutputTypeCountChecklistsEquipamentoArgs
-    checklistsCarrinho?: boolean | UsuarioCountOutputTypeCountChecklistsCarrinhoArgs
   }
 
   // Custom InputTypes
@@ -2396,6 +2398,27 @@ export namespace Prisma {
      * Select specific fields to fetch from the UsuarioCountOutputType
      */
     select?: UsuarioCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * UsuarioCountOutputType without action
+   */
+  export type UsuarioCountOutputTypeCountChecklistsCarrinhoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ChecklistCarrinhoWhereInput
+  }
+
+  /**
+   * UsuarioCountOutputType without action
+   */
+  export type UsuarioCountOutputTypeCountChecklistsEquipamentoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ChecklistEquipamentoWhereInput
+  }
+
+  /**
+   * UsuarioCountOutputType without action
+   */
+  export type UsuarioCountOutputTypeCountNotificacoesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NotificacaoWhereInput
   }
 
   /**
@@ -2424,20 +2447,6 @@ export namespace Prisma {
    */
   export type UsuarioCountOutputTypeCountTarefasCriadasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TarefaWhereInput
-  }
-
-  /**
-   * UsuarioCountOutputType without action
-   */
-  export type UsuarioCountOutputTypeCountChecklistsEquipamentoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ChecklistEquipamentoWhereInput
-  }
-
-  /**
-   * UsuarioCountOutputType without action
-   */
-  export type UsuarioCountOutputTypeCountChecklistsCarrinhoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ChecklistCarrinhoWhereInput
   }
 
 
@@ -2791,12 +2800,13 @@ export namespace Prisma {
     unidade?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
+    checklistsCarrinho?: boolean | Usuario$checklistsCarrinhoArgs<ExtArgs>
+    checklistsEquipamento?: boolean | Usuario$checklistsEquipamentoArgs<ExtArgs>
+    notificacoes?: boolean | Usuario$notificacoesArgs<ExtArgs>
     refreshTokens?: boolean | Usuario$refreshTokensArgs<ExtArgs>
     sessoes?: boolean | Usuario$sessoesArgs<ExtArgs>
     tarefasAtribuidas?: boolean | Usuario$tarefasAtribuidasArgs<ExtArgs>
     tarefasCriadas?: boolean | Usuario$tarefasCriadasArgs<ExtArgs>
-    checklistsEquipamento?: boolean | Usuario$checklistsEquipamentoArgs<ExtArgs>
-    checklistsCarrinho?: boolean | Usuario$checklistsCarrinhoArgs<ExtArgs>
     _count?: boolean | UsuarioCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["usuario"]>
 
@@ -2841,12 +2851,13 @@ export namespace Prisma {
 
   export type UsuarioOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nome" | "email" | "senha" | "role" | "ativo" | "regiao" | "unidade" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["usuario"]>
   export type UsuarioInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    checklistsCarrinho?: boolean | Usuario$checklistsCarrinhoArgs<ExtArgs>
+    checklistsEquipamento?: boolean | Usuario$checklistsEquipamentoArgs<ExtArgs>
+    notificacoes?: boolean | Usuario$notificacoesArgs<ExtArgs>
     refreshTokens?: boolean | Usuario$refreshTokensArgs<ExtArgs>
     sessoes?: boolean | Usuario$sessoesArgs<ExtArgs>
     tarefasAtribuidas?: boolean | Usuario$tarefasAtribuidasArgs<ExtArgs>
     tarefasCriadas?: boolean | Usuario$tarefasCriadasArgs<ExtArgs>
-    checklistsEquipamento?: boolean | Usuario$checklistsEquipamentoArgs<ExtArgs>
-    checklistsCarrinho?: boolean | Usuario$checklistsCarrinhoArgs<ExtArgs>
     _count?: boolean | UsuarioCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UsuarioIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2855,12 +2866,13 @@ export namespace Prisma {
   export type $UsuarioPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Usuario"
     objects: {
+      checklistsCarrinho: Prisma.$ChecklistCarrinhoPayload<ExtArgs>[]
+      checklistsEquipamento: Prisma.$ChecklistEquipamentoPayload<ExtArgs>[]
+      notificacoes: Prisma.$NotificacaoPayload<ExtArgs>[]
       refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
       sessoes: Prisma.$SessaoPayload<ExtArgs>[]
       tarefasAtribuidas: Prisma.$TarefaPayload<ExtArgs>[]
       tarefasCriadas: Prisma.$TarefaPayload<ExtArgs>[]
-      checklistsEquipamento: Prisma.$ChecklistEquipamentoPayload<ExtArgs>[]
-      checklistsCarrinho: Prisma.$ChecklistCarrinhoPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3267,12 +3279,13 @@ export namespace Prisma {
    */
   export interface Prisma__UsuarioClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    checklistsCarrinho<T extends Usuario$checklistsCarrinhoArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$checklistsCarrinhoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChecklistCarrinhoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    checklistsEquipamento<T extends Usuario$checklistsEquipamentoArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$checklistsEquipamentoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChecklistEquipamentoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    notificacoes<T extends Usuario$notificacoesArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$notificacoesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificacaoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     refreshTokens<T extends Usuario$refreshTokensArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessoes<T extends Usuario$sessoesArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$sessoesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessaoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     tarefasAtribuidas<T extends Usuario$tarefasAtribuidasArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$tarefasAtribuidasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TarefaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     tarefasCriadas<T extends Usuario$tarefasCriadasArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$tarefasCriadasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TarefaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    checklistsEquipamento<T extends Usuario$checklistsEquipamentoArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$checklistsEquipamentoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChecklistEquipamentoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    checklistsCarrinho<T extends Usuario$checklistsCarrinhoArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$checklistsCarrinhoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChecklistCarrinhoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3705,6 +3718,78 @@ export namespace Prisma {
   }
 
   /**
+   * Usuario.checklistsCarrinho
+   */
+  export type Usuario$checklistsCarrinhoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChecklistCarrinho
+     */
+    select?: ChecklistCarrinhoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChecklistCarrinho
+     */
+    omit?: ChecklistCarrinhoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChecklistCarrinhoInclude<ExtArgs> | null
+    where?: ChecklistCarrinhoWhereInput
+    orderBy?: ChecklistCarrinhoOrderByWithRelationInput | ChecklistCarrinhoOrderByWithRelationInput[]
+    cursor?: ChecklistCarrinhoWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ChecklistCarrinhoScalarFieldEnum | ChecklistCarrinhoScalarFieldEnum[]
+  }
+
+  /**
+   * Usuario.checklistsEquipamento
+   */
+  export type Usuario$checklistsEquipamentoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChecklistEquipamento
+     */
+    select?: ChecklistEquipamentoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChecklistEquipamento
+     */
+    omit?: ChecklistEquipamentoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChecklistEquipamentoInclude<ExtArgs> | null
+    where?: ChecklistEquipamentoWhereInput
+    orderBy?: ChecklistEquipamentoOrderByWithRelationInput | ChecklistEquipamentoOrderByWithRelationInput[]
+    cursor?: ChecklistEquipamentoWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ChecklistEquipamentoScalarFieldEnum | ChecklistEquipamentoScalarFieldEnum[]
+  }
+
+  /**
+   * Usuario.notificacoes
+   */
+  export type Usuario$notificacoesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notificacao
+     */
+    select?: NotificacaoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notificacao
+     */
+    omit?: NotificacaoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificacaoInclude<ExtArgs> | null
+    where?: NotificacaoWhereInput
+    orderBy?: NotificacaoOrderByWithRelationInput | NotificacaoOrderByWithRelationInput[]
+    cursor?: NotificacaoWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: NotificacaoScalarFieldEnum | NotificacaoScalarFieldEnum[]
+  }
+
+  /**
    * Usuario.refreshTokens
    */
   export type Usuario$refreshTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3798,54 +3883,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TarefaScalarFieldEnum | TarefaScalarFieldEnum[]
-  }
-
-  /**
-   * Usuario.checklistsEquipamento
-   */
-  export type Usuario$checklistsEquipamentoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ChecklistEquipamento
-     */
-    select?: ChecklistEquipamentoSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the ChecklistEquipamento
-     */
-    omit?: ChecklistEquipamentoOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ChecklistEquipamentoInclude<ExtArgs> | null
-    where?: ChecklistEquipamentoWhereInput
-    orderBy?: ChecklistEquipamentoOrderByWithRelationInput | ChecklistEquipamentoOrderByWithRelationInput[]
-    cursor?: ChecklistEquipamentoWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: ChecklistEquipamentoScalarFieldEnum | ChecklistEquipamentoScalarFieldEnum[]
-  }
-
-  /**
-   * Usuario.checklistsCarrinho
-   */
-  export type Usuario$checklistsCarrinhoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ChecklistCarrinho
-     */
-    select?: ChecklistCarrinhoSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the ChecklistCarrinho
-     */
-    omit?: ChecklistCarrinhoOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ChecklistCarrinhoInclude<ExtArgs> | null
-    where?: ChecklistCarrinhoWhereInput
-    orderBy?: ChecklistCarrinhoOrderByWithRelationInput | ChecklistCarrinhoOrderByWithRelationInput[]
-    cursor?: ChecklistCarrinhoWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: ChecklistCarrinhoScalarFieldEnum | ChecklistCarrinhoScalarFieldEnum[]
   }
 
   /**
@@ -6265,9 +6302,9 @@ export namespace Prisma {
     atribuidoParaId?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
-    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
-    atribuidoPara?: boolean | Tarefa$atribuidoParaArgs<ExtArgs>
     notificacoes?: boolean | Tarefa$notificacoesArgs<ExtArgs>
+    atribuidoPara?: boolean | Tarefa$atribuidoParaArgs<ExtArgs>
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
     _count?: boolean | TarefaCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tarefa"]>
 
@@ -6284,8 +6321,8 @@ export namespace Prisma {
     atribuidoParaId?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
-    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
     atribuidoPara?: boolean | Tarefa$atribuidoParaArgs<ExtArgs>
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tarefa"]>
 
   export type TarefaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6301,8 +6338,8 @@ export namespace Prisma {
     atribuidoParaId?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
-    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
     atribuidoPara?: boolean | Tarefa$atribuidoParaArgs<ExtArgs>
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tarefa"]>
 
   export type TarefaSelectScalar = {
@@ -6322,26 +6359,26 @@ export namespace Prisma {
 
   export type TarefaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "descricao" | "prioridade" | "status" | "areResponsavel" | "regiao" | "unidade" | "dataConclusao" | "criadoPorId" | "atribuidoParaId" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["tarefa"]>
   export type TarefaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
-    atribuidoPara?: boolean | Tarefa$atribuidoParaArgs<ExtArgs>
     notificacoes?: boolean | Tarefa$notificacoesArgs<ExtArgs>
+    atribuidoPara?: boolean | Tarefa$atribuidoParaArgs<ExtArgs>
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
     _count?: boolean | TarefaCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TarefaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
     atribuidoPara?: boolean | Tarefa$atribuidoParaArgs<ExtArgs>
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
   }
   export type TarefaIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
     atribuidoPara?: boolean | Tarefa$atribuidoParaArgs<ExtArgs>
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
   }
 
   export type $TarefaPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Tarefa"
     objects: {
-      criadoPor: Prisma.$UsuarioPayload<ExtArgs>
-      atribuidoPara: Prisma.$UsuarioPayload<ExtArgs> | null
       notificacoes: Prisma.$NotificacaoPayload<ExtArgs>[]
+      atribuidoPara: Prisma.$UsuarioPayload<ExtArgs> | null
+      criadoPor: Prisma.$UsuarioPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6750,9 +6787,9 @@ export namespace Prisma {
    */
   export interface Prisma__TarefaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    criadoPor<T extends UsuarioDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UsuarioDefaultArgs<ExtArgs>>): Prisma__UsuarioClient<$Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    atribuidoPara<T extends Tarefa$atribuidoParaArgs<ExtArgs> = {}>(args?: Subset<T, Tarefa$atribuidoParaArgs<ExtArgs>>): Prisma__UsuarioClient<$Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     notificacoes<T extends Tarefa$notificacoesArgs<ExtArgs> = {}>(args?: Subset<T, Tarefa$notificacoesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificacaoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    atribuidoPara<T extends Tarefa$atribuidoParaArgs<ExtArgs> = {}>(args?: Subset<T, Tarefa$atribuidoParaArgs<ExtArgs>>): Prisma__UsuarioClient<$Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    criadoPor<T extends UsuarioDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UsuarioDefaultArgs<ExtArgs>>): Prisma__UsuarioClient<$Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7195,25 +7232,6 @@ export namespace Prisma {
   }
 
   /**
-   * Tarefa.atribuidoPara
-   */
-  export type Tarefa$atribuidoParaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Usuario
-     */
-    select?: UsuarioSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Usuario
-     */
-    omit?: UsuarioOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UsuarioInclude<ExtArgs> | null
-    where?: UsuarioWhereInput
-  }
-
-  /**
    * Tarefa.notificacoes
    */
   export type Tarefa$notificacoesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7235,6 +7253,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: NotificacaoScalarFieldEnum | NotificacaoScalarFieldEnum[]
+  }
+
+  /**
+   * Tarefa.atribuidoPara
+   */
+  export type Tarefa$atribuidoParaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Usuario
+     */
+    select?: UsuarioSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Usuario
+     */
+    omit?: UsuarioOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UsuarioInclude<ExtArgs> | null
+    where?: UsuarioWhereInput
   }
 
   /**
@@ -7272,6 +7309,7 @@ export namespace Prisma {
     mensagem: string | null
     lida: boolean | null
     tarefaId: string | null
+    usuarioId: string | null
     criadoEm: Date | null
   }
 
@@ -7281,6 +7319,7 @@ export namespace Prisma {
     mensagem: string | null
     lida: boolean | null
     tarefaId: string | null
+    usuarioId: string | null
     criadoEm: Date | null
   }
 
@@ -7290,6 +7329,7 @@ export namespace Prisma {
     mensagem: number
     lida: number
     tarefaId: number
+    usuarioId: number
     criadoEm: number
     _all: number
   }
@@ -7301,6 +7341,7 @@ export namespace Prisma {
     mensagem?: true
     lida?: true
     tarefaId?: true
+    usuarioId?: true
     criadoEm?: true
   }
 
@@ -7310,6 +7351,7 @@ export namespace Prisma {
     mensagem?: true
     lida?: true
     tarefaId?: true
+    usuarioId?: true
     criadoEm?: true
   }
 
@@ -7319,6 +7361,7 @@ export namespace Prisma {
     mensagem?: true
     lida?: true
     tarefaId?: true
+    usuarioId?: true
     criadoEm?: true
     _all?: true
   }
@@ -7401,6 +7444,7 @@ export namespace Prisma {
     mensagem: string
     lida: boolean
     tarefaId: string | null
+    usuarioId: string | null
     criadoEm: Date
     _count: NotificacaoCountAggregateOutputType | null
     _min: NotificacaoMinAggregateOutputType | null
@@ -7427,8 +7471,10 @@ export namespace Prisma {
     mensagem?: boolean
     lida?: boolean
     tarefaId?: boolean
+    usuarioId?: boolean
     criadoEm?: boolean
     tarefa?: boolean | Notificacao$tarefaArgs<ExtArgs>
+    usuario?: boolean | Notificacao$usuarioArgs<ExtArgs>
   }, ExtArgs["result"]["notificacao"]>
 
   export type NotificacaoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7437,8 +7483,10 @@ export namespace Prisma {
     mensagem?: boolean
     lida?: boolean
     tarefaId?: boolean
+    usuarioId?: boolean
     criadoEm?: boolean
     tarefa?: boolean | Notificacao$tarefaArgs<ExtArgs>
+    usuario?: boolean | Notificacao$usuarioArgs<ExtArgs>
   }, ExtArgs["result"]["notificacao"]>
 
   export type NotificacaoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7447,8 +7495,10 @@ export namespace Prisma {
     mensagem?: boolean
     lida?: boolean
     tarefaId?: boolean
+    usuarioId?: boolean
     criadoEm?: boolean
     tarefa?: boolean | Notificacao$tarefaArgs<ExtArgs>
+    usuario?: boolean | Notificacao$usuarioArgs<ExtArgs>
   }, ExtArgs["result"]["notificacao"]>
 
   export type NotificacaoSelectScalar = {
@@ -7457,24 +7507,29 @@ export namespace Prisma {
     mensagem?: boolean
     lida?: boolean
     tarefaId?: boolean
+    usuarioId?: boolean
     criadoEm?: boolean
   }
 
-  export type NotificacaoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "titulo" | "mensagem" | "lida" | "tarefaId" | "criadoEm", ExtArgs["result"]["notificacao"]>
+  export type NotificacaoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "titulo" | "mensagem" | "lida" | "tarefaId" | "usuarioId" | "criadoEm", ExtArgs["result"]["notificacao"]>
   export type NotificacaoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tarefa?: boolean | Notificacao$tarefaArgs<ExtArgs>
+    usuario?: boolean | Notificacao$usuarioArgs<ExtArgs>
   }
   export type NotificacaoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tarefa?: boolean | Notificacao$tarefaArgs<ExtArgs>
+    usuario?: boolean | Notificacao$usuarioArgs<ExtArgs>
   }
   export type NotificacaoIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tarefa?: boolean | Notificacao$tarefaArgs<ExtArgs>
+    usuario?: boolean | Notificacao$usuarioArgs<ExtArgs>
   }
 
   export type $NotificacaoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Notificacao"
     objects: {
       tarefa: Prisma.$TarefaPayload<ExtArgs> | null
+      usuario: Prisma.$UsuarioPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7482,6 +7537,7 @@ export namespace Prisma {
       mensagem: string
       lida: boolean
       tarefaId: string | null
+      usuarioId: string | null
       criadoEm: Date
     }, ExtArgs["result"]["notificacao"]>
     composites: {}
@@ -7878,6 +7934,7 @@ export namespace Prisma {
   export interface Prisma__NotificacaoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     tarefa<T extends Notificacao$tarefaArgs<ExtArgs> = {}>(args?: Subset<T, Notificacao$tarefaArgs<ExtArgs>>): Prisma__TarefaClient<$Result.GetResult<Prisma.$TarefaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    usuario<T extends Notificacao$usuarioArgs<ExtArgs> = {}>(args?: Subset<T, Notificacao$usuarioArgs<ExtArgs>>): Prisma__UsuarioClient<$Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7912,6 +7969,7 @@ export namespace Prisma {
     readonly mensagem: FieldRef<"Notificacao", 'String'>
     readonly lida: FieldRef<"Notificacao", 'Boolean'>
     readonly tarefaId: FieldRef<"Notificacao", 'String'>
+    readonly usuarioId: FieldRef<"Notificacao", 'String'>
     readonly criadoEm: FieldRef<"Notificacao", 'DateTime'>
   }
     
@@ -8330,6 +8388,25 @@ export namespace Prisma {
      */
     include?: TarefaInclude<ExtArgs> | null
     where?: TarefaWhereInput
+  }
+
+  /**
+   * Notificacao.usuario
+   */
+  export type Notificacao$usuarioArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Usuario
+     */
+    select?: UsuarioSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Usuario
+     */
+    omit?: UsuarioOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UsuarioInclude<ExtArgs> | null
+    where?: UsuarioWhereInput
   }
 
   /**
@@ -15395,8 +15472,8 @@ export namespace Prisma {
     observacoes?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
-    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
     itens?: boolean | ChecklistEquipamento$itensArgs<ExtArgs>
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
     _count?: boolean | ChecklistEquipamentoCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["checklistEquipamento"]>
 
@@ -15440,8 +15517,8 @@ export namespace Prisma {
 
   export type ChecklistEquipamentoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "semana" | "ano" | "regiao" | "unidade" | "criadoPorId" | "observacoes" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["checklistEquipamento"]>
   export type ChecklistEquipamentoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
     itens?: boolean | ChecklistEquipamento$itensArgs<ExtArgs>
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
     _count?: boolean | ChecklistEquipamentoCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ChecklistEquipamentoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -15454,8 +15531,8 @@ export namespace Prisma {
   export type $ChecklistEquipamentoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "ChecklistEquipamento"
     objects: {
-      criadoPor: Prisma.$UsuarioPayload<ExtArgs>
       itens: Prisma.$ChecklistEquipamentoItemPayload<ExtArgs>[]
+      criadoPor: Prisma.$UsuarioPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -15861,8 +15938,8 @@ export namespace Prisma {
    */
   export interface Prisma__ChecklistEquipamentoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    criadoPor<T extends UsuarioDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UsuarioDefaultArgs<ExtArgs>>): Prisma__UsuarioClient<$Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     itens<T extends ChecklistEquipamento$itensArgs<ExtArgs> = {}>(args?: Subset<T, ChecklistEquipamento$itensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChecklistEquipamentoItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    criadoPor<T extends UsuarioDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UsuarioDefaultArgs<ExtArgs>>): Prisma__UsuarioClient<$Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -17748,8 +17825,8 @@ export namespace Prisma {
     observacoes?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
-    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
     itens?: boolean | ChecklistCarrinho$itensArgs<ExtArgs>
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
     _count?: boolean | ChecklistCarrinhoCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["checklistCarrinho"]>
 
@@ -17793,8 +17870,8 @@ export namespace Prisma {
 
   export type ChecklistCarrinhoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "semana" | "ano" | "regiao" | "unidade" | "criadoPorId" | "observacoes" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["checklistCarrinho"]>
   export type ChecklistCarrinhoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
     itens?: boolean | ChecklistCarrinho$itensArgs<ExtArgs>
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
     _count?: boolean | ChecklistCarrinhoCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ChecklistCarrinhoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -17807,8 +17884,8 @@ export namespace Prisma {
   export type $ChecklistCarrinhoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "ChecklistCarrinho"
     objects: {
-      criadoPor: Prisma.$UsuarioPayload<ExtArgs>
       itens: Prisma.$ChecklistCarrinhoItemPayload<ExtArgs>[]
+      criadoPor: Prisma.$UsuarioPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -18214,8 +18291,8 @@ export namespace Prisma {
    */
   export interface Prisma__ChecklistCarrinhoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    criadoPor<T extends UsuarioDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UsuarioDefaultArgs<ExtArgs>>): Prisma__UsuarioClient<$Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     itens<T extends ChecklistCarrinho$itensArgs<ExtArgs> = {}>(args?: Subset<T, ChecklistCarrinho$itensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChecklistCarrinhoItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    criadoPor<T extends UsuarioDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UsuarioDefaultArgs<ExtArgs>>): Prisma__UsuarioClient<$Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -20938,6 +21015,7 @@ export namespace Prisma {
     mensagem: 'mensagem',
     lida: 'lida',
     tarefaId: 'tarefaId',
+    usuarioId: 'usuarioId',
     criadoEm: 'criadoEm'
   };
 
@@ -21339,12 +21417,13 @@ export namespace Prisma {
     unidade?: StringNullableFilter<"Usuario"> | string | null
     criadoEm?: DateTimeFilter<"Usuario"> | Date | string
     atualizadoEm?: DateTimeFilter<"Usuario"> | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoListRelationFilter
+    checklistsEquipamento?: ChecklistEquipamentoListRelationFilter
+    notificacoes?: NotificacaoListRelationFilter
     refreshTokens?: RefreshTokenListRelationFilter
     sessoes?: SessaoListRelationFilter
     tarefasAtribuidas?: TarefaListRelationFilter
     tarefasCriadas?: TarefaListRelationFilter
-    checklistsEquipamento?: ChecklistEquipamentoListRelationFilter
-    checklistsCarrinho?: ChecklistCarrinhoListRelationFilter
   }
 
   export type UsuarioOrderByWithRelationInput = {
@@ -21358,12 +21437,13 @@ export namespace Prisma {
     unidade?: SortOrderInput | SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
+    checklistsCarrinho?: ChecklistCarrinhoOrderByRelationAggregateInput
+    checklistsEquipamento?: ChecklistEquipamentoOrderByRelationAggregateInput
+    notificacoes?: NotificacaoOrderByRelationAggregateInput
     refreshTokens?: RefreshTokenOrderByRelationAggregateInput
     sessoes?: SessaoOrderByRelationAggregateInput
     tarefasAtribuidas?: TarefaOrderByRelationAggregateInput
     tarefasCriadas?: TarefaOrderByRelationAggregateInput
-    checklistsEquipamento?: ChecklistEquipamentoOrderByRelationAggregateInput
-    checklistsCarrinho?: ChecklistCarrinhoOrderByRelationAggregateInput
   }
 
   export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
@@ -21380,12 +21460,13 @@ export namespace Prisma {
     unidade?: StringNullableFilter<"Usuario"> | string | null
     criadoEm?: DateTimeFilter<"Usuario"> | Date | string
     atualizadoEm?: DateTimeFilter<"Usuario"> | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoListRelationFilter
+    checklistsEquipamento?: ChecklistEquipamentoListRelationFilter
+    notificacoes?: NotificacaoListRelationFilter
     refreshTokens?: RefreshTokenListRelationFilter
     sessoes?: SessaoListRelationFilter
     tarefasAtribuidas?: TarefaListRelationFilter
     tarefasCriadas?: TarefaListRelationFilter
-    checklistsEquipamento?: ChecklistEquipamentoListRelationFilter
-    checklistsCarrinho?: ChecklistCarrinhoListRelationFilter
   }, "id" | "email">
 
   export type UsuarioOrderByWithAggregationInput = {
@@ -21566,9 +21647,9 @@ export namespace Prisma {
     atribuidoParaId?: StringNullableFilter<"Tarefa"> | string | null
     criadoEm?: DateTimeFilter<"Tarefa"> | Date | string
     atualizadoEm?: DateTimeFilter<"Tarefa"> | Date | string
-    criadoPor?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
-    atribuidoPara?: XOR<UsuarioNullableScalarRelationFilter, UsuarioWhereInput> | null
     notificacoes?: NotificacaoListRelationFilter
+    atribuidoPara?: XOR<UsuarioNullableScalarRelationFilter, UsuarioWhereInput> | null
+    criadoPor?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
   }
 
   export type TarefaOrderByWithRelationInput = {
@@ -21584,9 +21665,9 @@ export namespace Prisma {
     atribuidoParaId?: SortOrderInput | SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
-    criadoPor?: UsuarioOrderByWithRelationInput
-    atribuidoPara?: UsuarioOrderByWithRelationInput
     notificacoes?: NotificacaoOrderByRelationAggregateInput
+    atribuidoPara?: UsuarioOrderByWithRelationInput
+    criadoPor?: UsuarioOrderByWithRelationInput
   }
 
   export type TarefaWhereUniqueInput = Prisma.AtLeast<{
@@ -21605,9 +21686,9 @@ export namespace Prisma {
     atribuidoParaId?: StringNullableFilter<"Tarefa"> | string | null
     criadoEm?: DateTimeFilter<"Tarefa"> | Date | string
     atualizadoEm?: DateTimeFilter<"Tarefa"> | Date | string
-    criadoPor?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
-    atribuidoPara?: XOR<UsuarioNullableScalarRelationFilter, UsuarioWhereInput> | null
     notificacoes?: NotificacaoListRelationFilter
+    atribuidoPara?: XOR<UsuarioNullableScalarRelationFilter, UsuarioWhereInput> | null
+    criadoPor?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
   }, "id">
 
   export type TarefaOrderByWithAggregationInput = {
@@ -21655,8 +21736,10 @@ export namespace Prisma {
     mensagem?: StringFilter<"Notificacao"> | string
     lida?: BoolFilter<"Notificacao"> | boolean
     tarefaId?: StringNullableFilter<"Notificacao"> | string | null
+    usuarioId?: StringNullableFilter<"Notificacao"> | string | null
     criadoEm?: DateTimeFilter<"Notificacao"> | Date | string
     tarefa?: XOR<TarefaNullableScalarRelationFilter, TarefaWhereInput> | null
+    usuario?: XOR<UsuarioNullableScalarRelationFilter, UsuarioWhereInput> | null
   }
 
   export type NotificacaoOrderByWithRelationInput = {
@@ -21665,8 +21748,10 @@ export namespace Prisma {
     mensagem?: SortOrder
     lida?: SortOrder
     tarefaId?: SortOrderInput | SortOrder
+    usuarioId?: SortOrderInput | SortOrder
     criadoEm?: SortOrder
     tarefa?: TarefaOrderByWithRelationInput
+    usuario?: UsuarioOrderByWithRelationInput
   }
 
   export type NotificacaoWhereUniqueInput = Prisma.AtLeast<{
@@ -21678,8 +21763,10 @@ export namespace Prisma {
     mensagem?: StringFilter<"Notificacao"> | string
     lida?: BoolFilter<"Notificacao"> | boolean
     tarefaId?: StringNullableFilter<"Notificacao"> | string | null
+    usuarioId?: StringNullableFilter<"Notificacao"> | string | null
     criadoEm?: DateTimeFilter<"Notificacao"> | Date | string
     tarefa?: XOR<TarefaNullableScalarRelationFilter, TarefaWhereInput> | null
+    usuario?: XOR<UsuarioNullableScalarRelationFilter, UsuarioWhereInput> | null
   }, "id">
 
   export type NotificacaoOrderByWithAggregationInput = {
@@ -21688,6 +21775,7 @@ export namespace Prisma {
     mensagem?: SortOrder
     lida?: SortOrder
     tarefaId?: SortOrderInput | SortOrder
+    usuarioId?: SortOrderInput | SortOrder
     criadoEm?: SortOrder
     _count?: NotificacaoCountOrderByAggregateInput
     _max?: NotificacaoMaxOrderByAggregateInput
@@ -21703,6 +21791,7 @@ export namespace Prisma {
     mensagem?: StringWithAggregatesFilter<"Notificacao"> | string
     lida?: BoolWithAggregatesFilter<"Notificacao"> | boolean
     tarefaId?: StringNullableWithAggregatesFilter<"Notificacao"> | string | null
+    usuarioId?: StringNullableWithAggregatesFilter<"Notificacao"> | string | null
     criadoEm?: DateTimeWithAggregatesFilter<"Notificacao"> | Date | string
   }
 
@@ -22179,8 +22268,8 @@ export namespace Prisma {
     observacoes?: StringNullableFilter<"ChecklistEquipamento"> | string | null
     criadoEm?: DateTimeFilter<"ChecklistEquipamento"> | Date | string
     atualizadoEm?: DateTimeFilter<"ChecklistEquipamento"> | Date | string
-    criadoPor?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
     itens?: ChecklistEquipamentoItemListRelationFilter
+    criadoPor?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
   }
 
   export type ChecklistEquipamentoOrderByWithRelationInput = {
@@ -22193,8 +22282,8 @@ export namespace Prisma {
     observacoes?: SortOrderInput | SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
-    criadoPor?: UsuarioOrderByWithRelationInput
     itens?: ChecklistEquipamentoItemOrderByRelationAggregateInput
+    criadoPor?: UsuarioOrderByWithRelationInput
   }
 
   export type ChecklistEquipamentoWhereUniqueInput = Prisma.AtLeast<{
@@ -22211,8 +22300,8 @@ export namespace Prisma {
     observacoes?: StringNullableFilter<"ChecklistEquipamento"> | string | null
     criadoEm?: DateTimeFilter<"ChecklistEquipamento"> | Date | string
     atualizadoEm?: DateTimeFilter<"ChecklistEquipamento"> | Date | string
-    criadoPor?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
     itens?: ChecklistEquipamentoItemListRelationFilter
+    criadoPor?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
   }, "id" | "semana_ano_unidade">
 
   export type ChecklistEquipamentoOrderByWithAggregationInput = {
@@ -22342,8 +22431,8 @@ export namespace Prisma {
     observacoes?: StringNullableFilter<"ChecklistCarrinho"> | string | null
     criadoEm?: DateTimeFilter<"ChecklistCarrinho"> | Date | string
     atualizadoEm?: DateTimeFilter<"ChecklistCarrinho"> | Date | string
-    criadoPor?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
     itens?: ChecklistCarrinhoItemListRelationFilter
+    criadoPor?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
   }
 
   export type ChecklistCarrinhoOrderByWithRelationInput = {
@@ -22356,8 +22445,8 @@ export namespace Prisma {
     observacoes?: SortOrderInput | SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
-    criadoPor?: UsuarioOrderByWithRelationInput
     itens?: ChecklistCarrinhoItemOrderByRelationAggregateInput
+    criadoPor?: UsuarioOrderByWithRelationInput
   }
 
   export type ChecklistCarrinhoWhereUniqueInput = Prisma.AtLeast<{
@@ -22374,8 +22463,8 @@ export namespace Prisma {
     observacoes?: StringNullableFilter<"ChecklistCarrinho"> | string | null
     criadoEm?: DateTimeFilter<"ChecklistCarrinho"> | Date | string
     atualizadoEm?: DateTimeFilter<"ChecklistCarrinho"> | Date | string
-    criadoPor?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
     itens?: ChecklistCarrinhoItemListRelationFilter
+    criadoPor?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
   }, "id" | "semana_ano_unidade">
 
   export type ChecklistCarrinhoOrderByWithAggregationInput = {
@@ -22543,12 +22632,13 @@ export namespace Prisma {
     unidade?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
-    checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
-    checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioUncheckedCreateInput = {
@@ -22562,12 +22652,13 @@ export namespace Prisma {
     unidade?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
-    checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
-    checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioUpdateInput = {
@@ -22581,12 +22672,13 @@ export namespace Prisma {
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
-    checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
-    checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type UsuarioUncheckedUpdateInput = {
@@ -22600,12 +22692,13 @@ export namespace Prisma {
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
-    checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
-    checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type UsuarioCreateManyInput = {
@@ -22796,9 +22889,9 @@ export namespace Prisma {
     dataConclusao?: Date | string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
-    criadoPor: UsuarioCreateNestedOneWithoutTarefasCriadasInput
-    atribuidoPara?: UsuarioCreateNestedOneWithoutTarefasAtribuidasInput
     notificacoes?: NotificacaoCreateNestedManyWithoutTarefaInput
+    atribuidoPara?: UsuarioCreateNestedOneWithoutTarefasAtribuidasInput
+    criadoPor: UsuarioCreateNestedOneWithoutTarefasCriadasInput
   }
 
   export type TarefaUncheckedCreateInput = {
@@ -22828,9 +22921,9 @@ export namespace Prisma {
     dataConclusao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    criadoPor?: UsuarioUpdateOneRequiredWithoutTarefasCriadasNestedInput
-    atribuidoPara?: UsuarioUpdateOneWithoutTarefasAtribuidasNestedInput
     notificacoes?: NotificacaoUpdateManyWithoutTarefaNestedInput
+    atribuidoPara?: UsuarioUpdateOneWithoutTarefasAtribuidasNestedInput
+    criadoPor?: UsuarioUpdateOneRequiredWithoutTarefasCriadasNestedInput
   }
 
   export type TarefaUncheckedUpdateInput = {
@@ -22899,6 +22992,7 @@ export namespace Prisma {
     lida?: boolean
     criadoEm?: Date | string
     tarefa?: TarefaCreateNestedOneWithoutNotificacoesInput
+    usuario?: UsuarioCreateNestedOneWithoutNotificacoesInput
   }
 
   export type NotificacaoUncheckedCreateInput = {
@@ -22907,6 +23001,7 @@ export namespace Prisma {
     mensagem: string
     lida?: boolean
     tarefaId?: string | null
+    usuarioId?: string | null
     criadoEm?: Date | string
   }
 
@@ -22917,6 +23012,7 @@ export namespace Prisma {
     lida?: BoolFieldUpdateOperationsInput | boolean
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     tarefa?: TarefaUpdateOneWithoutNotificacoesNestedInput
+    usuario?: UsuarioUpdateOneWithoutNotificacoesNestedInput
   }
 
   export type NotificacaoUncheckedUpdateInput = {
@@ -22925,6 +23021,7 @@ export namespace Prisma {
     mensagem?: StringFieldUpdateOperationsInput | string
     lida?: BoolFieldUpdateOperationsInput | boolean
     tarefaId?: NullableStringFieldUpdateOperationsInput | string | null
+    usuarioId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -22934,6 +23031,7 @@ export namespace Prisma {
     mensagem: string
     lida?: boolean
     tarefaId?: string | null
+    usuarioId?: string | null
     criadoEm?: Date | string
   }
 
@@ -22951,6 +23049,7 @@ export namespace Prisma {
     mensagem?: StringFieldUpdateOperationsInput | string
     lida?: BoolFieldUpdateOperationsInput | boolean
     tarefaId?: NullableStringFieldUpdateOperationsInput | string | null
+    usuarioId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -23476,8 +23575,8 @@ export namespace Prisma {
     observacoes?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
-    criadoPor: UsuarioCreateNestedOneWithoutChecklistsEquipamentoInput
     itens?: ChecklistEquipamentoItemCreateNestedManyWithoutChecklistInput
+    criadoPor: UsuarioCreateNestedOneWithoutChecklistsEquipamentoInput
   }
 
   export type ChecklistEquipamentoUncheckedCreateInput = {
@@ -23502,8 +23601,8 @@ export namespace Prisma {
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    criadoPor?: UsuarioUpdateOneRequiredWithoutChecklistsEquipamentoNestedInput
     itens?: ChecklistEquipamentoItemUpdateManyWithoutChecklistNestedInput
+    criadoPor?: UsuarioUpdateOneRequiredWithoutChecklistsEquipamentoNestedInput
   }
 
   export type ChecklistEquipamentoUncheckedUpdateInput = {
@@ -23653,8 +23752,8 @@ export namespace Prisma {
     observacoes?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
-    criadoPor: UsuarioCreateNestedOneWithoutChecklistsCarrinhoInput
     itens?: ChecklistCarrinhoItemCreateNestedManyWithoutChecklistInput
+    criadoPor: UsuarioCreateNestedOneWithoutChecklistsCarrinhoInput
   }
 
   export type ChecklistCarrinhoUncheckedCreateInput = {
@@ -23679,8 +23778,8 @@ export namespace Prisma {
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    criadoPor?: UsuarioUpdateOneRequiredWithoutChecklistsCarrinhoNestedInput
     itens?: ChecklistCarrinhoItemUpdateManyWithoutChecklistNestedInput
+    criadoPor?: UsuarioUpdateOneRequiredWithoutChecklistsCarrinhoNestedInput
   }
 
   export type ChecklistCarrinhoUncheckedUpdateInput = {
@@ -23909,6 +24008,24 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type ChecklistCarrinhoListRelationFilter = {
+    every?: ChecklistCarrinhoWhereInput
+    some?: ChecklistCarrinhoWhereInput
+    none?: ChecklistCarrinhoWhereInput
+  }
+
+  export type ChecklistEquipamentoListRelationFilter = {
+    every?: ChecklistEquipamentoWhereInput
+    some?: ChecklistEquipamentoWhereInput
+    none?: ChecklistEquipamentoWhereInput
+  }
+
+  export type NotificacaoListRelationFilter = {
+    every?: NotificacaoWhereInput
+    some?: NotificacaoWhereInput
+    none?: NotificacaoWhereInput
+  }
+
   export type RefreshTokenListRelationFilter = {
     every?: RefreshTokenWhereInput
     some?: RefreshTokenWhereInput
@@ -23927,21 +24044,21 @@ export namespace Prisma {
     none?: TarefaWhereInput
   }
 
-  export type ChecklistEquipamentoListRelationFilter = {
-    every?: ChecklistEquipamentoWhereInput
-    some?: ChecklistEquipamentoWhereInput
-    none?: ChecklistEquipamentoWhereInput
-  }
-
-  export type ChecklistCarrinhoListRelationFilter = {
-    every?: ChecklistCarrinhoWhereInput
-    some?: ChecklistCarrinhoWhereInput
-    none?: ChecklistCarrinhoWhereInput
-  }
-
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
+  }
+
+  export type ChecklistCarrinhoOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ChecklistEquipamentoOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type NotificacaoOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type RefreshTokenOrderByRelationAggregateInput = {
@@ -23953,14 +24070,6 @@ export namespace Prisma {
   }
 
   export type TarefaOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type ChecklistEquipamentoOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type ChecklistCarrinhoOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -24166,16 +24275,6 @@ export namespace Prisma {
     isNot?: UsuarioWhereInput | null
   }
 
-  export type NotificacaoListRelationFilter = {
-    every?: NotificacaoWhereInput
-    some?: NotificacaoWhereInput
-    none?: NotificacaoWhereInput
-  }
-
-  export type NotificacaoOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
   export type TarefaCountOrderByAggregateInput = {
     id?: SortOrder
     descricao?: SortOrder
@@ -24266,6 +24365,7 @@ export namespace Prisma {
     mensagem?: SortOrder
     lida?: SortOrder
     tarefaId?: SortOrder
+    usuarioId?: SortOrder
     criadoEm?: SortOrder
   }
 
@@ -24275,6 +24375,7 @@ export namespace Prisma {
     mensagem?: SortOrder
     lida?: SortOrder
     tarefaId?: SortOrder
+    usuarioId?: SortOrder
     criadoEm?: SortOrder
   }
 
@@ -24284,6 +24385,7 @@ export namespace Prisma {
     mensagem?: SortOrder
     lida?: SortOrder
     tarefaId?: SortOrder
+    usuarioId?: SortOrder
     criadoEm?: SortOrder
   }
 
@@ -25010,6 +25112,27 @@ export namespace Prisma {
     total?: SortOrder
   }
 
+  export type ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput = {
+    create?: XOR<ChecklistCarrinhoCreateWithoutCriadoPorInput, ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput> | ChecklistCarrinhoCreateWithoutCriadoPorInput[] | ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput[]
+    connectOrCreate?: ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput | ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput[]
+    createMany?: ChecklistCarrinhoCreateManyCriadoPorInputEnvelope
+    connect?: ChecklistCarrinhoWhereUniqueInput | ChecklistCarrinhoWhereUniqueInput[]
+  }
+
+  export type ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput = {
+    create?: XOR<ChecklistEquipamentoCreateWithoutCriadoPorInput, ChecklistEquipamentoUncheckedCreateWithoutCriadoPorInput> | ChecklistEquipamentoCreateWithoutCriadoPorInput[] | ChecklistEquipamentoUncheckedCreateWithoutCriadoPorInput[]
+    connectOrCreate?: ChecklistEquipamentoCreateOrConnectWithoutCriadoPorInput | ChecklistEquipamentoCreateOrConnectWithoutCriadoPorInput[]
+    createMany?: ChecklistEquipamentoCreateManyCriadoPorInputEnvelope
+    connect?: ChecklistEquipamentoWhereUniqueInput | ChecklistEquipamentoWhereUniqueInput[]
+  }
+
+  export type NotificacaoCreateNestedManyWithoutUsuarioInput = {
+    create?: XOR<NotificacaoCreateWithoutUsuarioInput, NotificacaoUncheckedCreateWithoutUsuarioInput> | NotificacaoCreateWithoutUsuarioInput[] | NotificacaoUncheckedCreateWithoutUsuarioInput[]
+    connectOrCreate?: NotificacaoCreateOrConnectWithoutUsuarioInput | NotificacaoCreateOrConnectWithoutUsuarioInput[]
+    createMany?: NotificacaoCreateManyUsuarioInputEnvelope
+    connect?: NotificacaoWhereUniqueInput | NotificacaoWhereUniqueInput[]
+  }
+
   export type RefreshTokenCreateNestedManyWithoutUsuarioInput = {
     create?: XOR<RefreshTokenCreateWithoutUsuarioInput, RefreshTokenUncheckedCreateWithoutUsuarioInput> | RefreshTokenCreateWithoutUsuarioInput[] | RefreshTokenUncheckedCreateWithoutUsuarioInput[]
     connectOrCreate?: RefreshTokenCreateOrConnectWithoutUsuarioInput | RefreshTokenCreateOrConnectWithoutUsuarioInput[]
@@ -25038,18 +25161,25 @@ export namespace Prisma {
     connect?: TarefaWhereUniqueInput | TarefaWhereUniqueInput[]
   }
 
-  export type ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput = {
+  export type ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput = {
+    create?: XOR<ChecklistCarrinhoCreateWithoutCriadoPorInput, ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput> | ChecklistCarrinhoCreateWithoutCriadoPorInput[] | ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput[]
+    connectOrCreate?: ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput | ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput[]
+    createMany?: ChecklistCarrinhoCreateManyCriadoPorInputEnvelope
+    connect?: ChecklistCarrinhoWhereUniqueInput | ChecklistCarrinhoWhereUniqueInput[]
+  }
+
+  export type ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput = {
     create?: XOR<ChecklistEquipamentoCreateWithoutCriadoPorInput, ChecklistEquipamentoUncheckedCreateWithoutCriadoPorInput> | ChecklistEquipamentoCreateWithoutCriadoPorInput[] | ChecklistEquipamentoUncheckedCreateWithoutCriadoPorInput[]
     connectOrCreate?: ChecklistEquipamentoCreateOrConnectWithoutCriadoPorInput | ChecklistEquipamentoCreateOrConnectWithoutCriadoPorInput[]
     createMany?: ChecklistEquipamentoCreateManyCriadoPorInputEnvelope
     connect?: ChecklistEquipamentoWhereUniqueInput | ChecklistEquipamentoWhereUniqueInput[]
   }
 
-  export type ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput = {
-    create?: XOR<ChecklistCarrinhoCreateWithoutCriadoPorInput, ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput> | ChecklistCarrinhoCreateWithoutCriadoPorInput[] | ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput[]
-    connectOrCreate?: ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput | ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput[]
-    createMany?: ChecklistCarrinhoCreateManyCriadoPorInputEnvelope
-    connect?: ChecklistCarrinhoWhereUniqueInput | ChecklistCarrinhoWhereUniqueInput[]
+  export type NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput = {
+    create?: XOR<NotificacaoCreateWithoutUsuarioInput, NotificacaoUncheckedCreateWithoutUsuarioInput> | NotificacaoCreateWithoutUsuarioInput[] | NotificacaoUncheckedCreateWithoutUsuarioInput[]
+    connectOrCreate?: NotificacaoCreateOrConnectWithoutUsuarioInput | NotificacaoCreateOrConnectWithoutUsuarioInput[]
+    createMany?: NotificacaoCreateManyUsuarioInputEnvelope
+    connect?: NotificacaoWhereUniqueInput | NotificacaoWhereUniqueInput[]
   }
 
   export type RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput = {
@@ -25080,20 +25210,6 @@ export namespace Prisma {
     connect?: TarefaWhereUniqueInput | TarefaWhereUniqueInput[]
   }
 
-  export type ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput = {
-    create?: XOR<ChecklistEquipamentoCreateWithoutCriadoPorInput, ChecklistEquipamentoUncheckedCreateWithoutCriadoPorInput> | ChecklistEquipamentoCreateWithoutCriadoPorInput[] | ChecklistEquipamentoUncheckedCreateWithoutCriadoPorInput[]
-    connectOrCreate?: ChecklistEquipamentoCreateOrConnectWithoutCriadoPorInput | ChecklistEquipamentoCreateOrConnectWithoutCriadoPorInput[]
-    createMany?: ChecklistEquipamentoCreateManyCriadoPorInputEnvelope
-    connect?: ChecklistEquipamentoWhereUniqueInput | ChecklistEquipamentoWhereUniqueInput[]
-  }
-
-  export type ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput = {
-    create?: XOR<ChecklistCarrinhoCreateWithoutCriadoPorInput, ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput> | ChecklistCarrinhoCreateWithoutCriadoPorInput[] | ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput[]
-    connectOrCreate?: ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput | ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput[]
-    createMany?: ChecklistCarrinhoCreateManyCriadoPorInputEnvelope
-    connect?: ChecklistCarrinhoWhereUniqueInput | ChecklistCarrinhoWhereUniqueInput[]
-  }
-
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -25112,6 +25228,48 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput = {
+    create?: XOR<ChecklistCarrinhoCreateWithoutCriadoPorInput, ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput> | ChecklistCarrinhoCreateWithoutCriadoPorInput[] | ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput[]
+    connectOrCreate?: ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput | ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput[]
+    upsert?: ChecklistCarrinhoUpsertWithWhereUniqueWithoutCriadoPorInput | ChecklistCarrinhoUpsertWithWhereUniqueWithoutCriadoPorInput[]
+    createMany?: ChecklistCarrinhoCreateManyCriadoPorInputEnvelope
+    set?: ChecklistCarrinhoWhereUniqueInput | ChecklistCarrinhoWhereUniqueInput[]
+    disconnect?: ChecklistCarrinhoWhereUniqueInput | ChecklistCarrinhoWhereUniqueInput[]
+    delete?: ChecklistCarrinhoWhereUniqueInput | ChecklistCarrinhoWhereUniqueInput[]
+    connect?: ChecklistCarrinhoWhereUniqueInput | ChecklistCarrinhoWhereUniqueInput[]
+    update?: ChecklistCarrinhoUpdateWithWhereUniqueWithoutCriadoPorInput | ChecklistCarrinhoUpdateWithWhereUniqueWithoutCriadoPorInput[]
+    updateMany?: ChecklistCarrinhoUpdateManyWithWhereWithoutCriadoPorInput | ChecklistCarrinhoUpdateManyWithWhereWithoutCriadoPorInput[]
+    deleteMany?: ChecklistCarrinhoScalarWhereInput | ChecklistCarrinhoScalarWhereInput[]
+  }
+
+  export type ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput = {
+    create?: XOR<ChecklistEquipamentoCreateWithoutCriadoPorInput, ChecklistEquipamentoUncheckedCreateWithoutCriadoPorInput> | ChecklistEquipamentoCreateWithoutCriadoPorInput[] | ChecklistEquipamentoUncheckedCreateWithoutCriadoPorInput[]
+    connectOrCreate?: ChecklistEquipamentoCreateOrConnectWithoutCriadoPorInput | ChecklistEquipamentoCreateOrConnectWithoutCriadoPorInput[]
+    upsert?: ChecklistEquipamentoUpsertWithWhereUniqueWithoutCriadoPorInput | ChecklistEquipamentoUpsertWithWhereUniqueWithoutCriadoPorInput[]
+    createMany?: ChecklistEquipamentoCreateManyCriadoPorInputEnvelope
+    set?: ChecklistEquipamentoWhereUniqueInput | ChecklistEquipamentoWhereUniqueInput[]
+    disconnect?: ChecklistEquipamentoWhereUniqueInput | ChecklistEquipamentoWhereUniqueInput[]
+    delete?: ChecklistEquipamentoWhereUniqueInput | ChecklistEquipamentoWhereUniqueInput[]
+    connect?: ChecklistEquipamentoWhereUniqueInput | ChecklistEquipamentoWhereUniqueInput[]
+    update?: ChecklistEquipamentoUpdateWithWhereUniqueWithoutCriadoPorInput | ChecklistEquipamentoUpdateWithWhereUniqueWithoutCriadoPorInput[]
+    updateMany?: ChecklistEquipamentoUpdateManyWithWhereWithoutCriadoPorInput | ChecklistEquipamentoUpdateManyWithWhereWithoutCriadoPorInput[]
+    deleteMany?: ChecklistEquipamentoScalarWhereInput | ChecklistEquipamentoScalarWhereInput[]
+  }
+
+  export type NotificacaoUpdateManyWithoutUsuarioNestedInput = {
+    create?: XOR<NotificacaoCreateWithoutUsuarioInput, NotificacaoUncheckedCreateWithoutUsuarioInput> | NotificacaoCreateWithoutUsuarioInput[] | NotificacaoUncheckedCreateWithoutUsuarioInput[]
+    connectOrCreate?: NotificacaoCreateOrConnectWithoutUsuarioInput | NotificacaoCreateOrConnectWithoutUsuarioInput[]
+    upsert?: NotificacaoUpsertWithWhereUniqueWithoutUsuarioInput | NotificacaoUpsertWithWhereUniqueWithoutUsuarioInput[]
+    createMany?: NotificacaoCreateManyUsuarioInputEnvelope
+    set?: NotificacaoWhereUniqueInput | NotificacaoWhereUniqueInput[]
+    disconnect?: NotificacaoWhereUniqueInput | NotificacaoWhereUniqueInput[]
+    delete?: NotificacaoWhereUniqueInput | NotificacaoWhereUniqueInput[]
+    connect?: NotificacaoWhereUniqueInput | NotificacaoWhereUniqueInput[]
+    update?: NotificacaoUpdateWithWhereUniqueWithoutUsuarioInput | NotificacaoUpdateWithWhereUniqueWithoutUsuarioInput[]
+    updateMany?: NotificacaoUpdateManyWithWhereWithoutUsuarioInput | NotificacaoUpdateManyWithWhereWithoutUsuarioInput[]
+    deleteMany?: NotificacaoScalarWhereInput | NotificacaoScalarWhereInput[]
   }
 
   export type RefreshTokenUpdateManyWithoutUsuarioNestedInput = {
@@ -25170,7 +25328,21 @@ export namespace Prisma {
     deleteMany?: TarefaScalarWhereInput | TarefaScalarWhereInput[]
   }
 
-  export type ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput = {
+  export type ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput = {
+    create?: XOR<ChecklistCarrinhoCreateWithoutCriadoPorInput, ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput> | ChecklistCarrinhoCreateWithoutCriadoPorInput[] | ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput[]
+    connectOrCreate?: ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput | ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput[]
+    upsert?: ChecklistCarrinhoUpsertWithWhereUniqueWithoutCriadoPorInput | ChecklistCarrinhoUpsertWithWhereUniqueWithoutCriadoPorInput[]
+    createMany?: ChecklistCarrinhoCreateManyCriadoPorInputEnvelope
+    set?: ChecklistCarrinhoWhereUniqueInput | ChecklistCarrinhoWhereUniqueInput[]
+    disconnect?: ChecklistCarrinhoWhereUniqueInput | ChecklistCarrinhoWhereUniqueInput[]
+    delete?: ChecklistCarrinhoWhereUniqueInput | ChecklistCarrinhoWhereUniqueInput[]
+    connect?: ChecklistCarrinhoWhereUniqueInput | ChecklistCarrinhoWhereUniqueInput[]
+    update?: ChecklistCarrinhoUpdateWithWhereUniqueWithoutCriadoPorInput | ChecklistCarrinhoUpdateWithWhereUniqueWithoutCriadoPorInput[]
+    updateMany?: ChecklistCarrinhoUpdateManyWithWhereWithoutCriadoPorInput | ChecklistCarrinhoUpdateManyWithWhereWithoutCriadoPorInput[]
+    deleteMany?: ChecklistCarrinhoScalarWhereInput | ChecklistCarrinhoScalarWhereInput[]
+  }
+
+  export type ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput = {
     create?: XOR<ChecklistEquipamentoCreateWithoutCriadoPorInput, ChecklistEquipamentoUncheckedCreateWithoutCriadoPorInput> | ChecklistEquipamentoCreateWithoutCriadoPorInput[] | ChecklistEquipamentoUncheckedCreateWithoutCriadoPorInput[]
     connectOrCreate?: ChecklistEquipamentoCreateOrConnectWithoutCriadoPorInput | ChecklistEquipamentoCreateOrConnectWithoutCriadoPorInput[]
     upsert?: ChecklistEquipamentoUpsertWithWhereUniqueWithoutCriadoPorInput | ChecklistEquipamentoUpsertWithWhereUniqueWithoutCriadoPorInput[]
@@ -25184,18 +25356,18 @@ export namespace Prisma {
     deleteMany?: ChecklistEquipamentoScalarWhereInput | ChecklistEquipamentoScalarWhereInput[]
   }
 
-  export type ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput = {
-    create?: XOR<ChecklistCarrinhoCreateWithoutCriadoPorInput, ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput> | ChecklistCarrinhoCreateWithoutCriadoPorInput[] | ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput[]
-    connectOrCreate?: ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput | ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput[]
-    upsert?: ChecklistCarrinhoUpsertWithWhereUniqueWithoutCriadoPorInput | ChecklistCarrinhoUpsertWithWhereUniqueWithoutCriadoPorInput[]
-    createMany?: ChecklistCarrinhoCreateManyCriadoPorInputEnvelope
-    set?: ChecklistCarrinhoWhereUniqueInput | ChecklistCarrinhoWhereUniqueInput[]
-    disconnect?: ChecklistCarrinhoWhereUniqueInput | ChecklistCarrinhoWhereUniqueInput[]
-    delete?: ChecklistCarrinhoWhereUniqueInput | ChecklistCarrinhoWhereUniqueInput[]
-    connect?: ChecklistCarrinhoWhereUniqueInput | ChecklistCarrinhoWhereUniqueInput[]
-    update?: ChecklistCarrinhoUpdateWithWhereUniqueWithoutCriadoPorInput | ChecklistCarrinhoUpdateWithWhereUniqueWithoutCriadoPorInput[]
-    updateMany?: ChecklistCarrinhoUpdateManyWithWhereWithoutCriadoPorInput | ChecklistCarrinhoUpdateManyWithWhereWithoutCriadoPorInput[]
-    deleteMany?: ChecklistCarrinhoScalarWhereInput | ChecklistCarrinhoScalarWhereInput[]
+  export type NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput = {
+    create?: XOR<NotificacaoCreateWithoutUsuarioInput, NotificacaoUncheckedCreateWithoutUsuarioInput> | NotificacaoCreateWithoutUsuarioInput[] | NotificacaoUncheckedCreateWithoutUsuarioInput[]
+    connectOrCreate?: NotificacaoCreateOrConnectWithoutUsuarioInput | NotificacaoCreateOrConnectWithoutUsuarioInput[]
+    upsert?: NotificacaoUpsertWithWhereUniqueWithoutUsuarioInput | NotificacaoUpsertWithWhereUniqueWithoutUsuarioInput[]
+    createMany?: NotificacaoCreateManyUsuarioInputEnvelope
+    set?: NotificacaoWhereUniqueInput | NotificacaoWhereUniqueInput[]
+    disconnect?: NotificacaoWhereUniqueInput | NotificacaoWhereUniqueInput[]
+    delete?: NotificacaoWhereUniqueInput | NotificacaoWhereUniqueInput[]
+    connect?: NotificacaoWhereUniqueInput | NotificacaoWhereUniqueInput[]
+    update?: NotificacaoUpdateWithWhereUniqueWithoutUsuarioInput | NotificacaoUpdateWithWhereUniqueWithoutUsuarioInput[]
+    updateMany?: NotificacaoUpdateManyWithWhereWithoutUsuarioInput | NotificacaoUpdateManyWithWhereWithoutUsuarioInput[]
+    deleteMany?: NotificacaoScalarWhereInput | NotificacaoScalarWhereInput[]
   }
 
   export type RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput = {
@@ -25254,34 +25426,6 @@ export namespace Prisma {
     deleteMany?: TarefaScalarWhereInput | TarefaScalarWhereInput[]
   }
 
-  export type ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput = {
-    create?: XOR<ChecklistEquipamentoCreateWithoutCriadoPorInput, ChecklistEquipamentoUncheckedCreateWithoutCriadoPorInput> | ChecklistEquipamentoCreateWithoutCriadoPorInput[] | ChecklistEquipamentoUncheckedCreateWithoutCriadoPorInput[]
-    connectOrCreate?: ChecklistEquipamentoCreateOrConnectWithoutCriadoPorInput | ChecklistEquipamentoCreateOrConnectWithoutCriadoPorInput[]
-    upsert?: ChecklistEquipamentoUpsertWithWhereUniqueWithoutCriadoPorInput | ChecklistEquipamentoUpsertWithWhereUniqueWithoutCriadoPorInput[]
-    createMany?: ChecklistEquipamentoCreateManyCriadoPorInputEnvelope
-    set?: ChecklistEquipamentoWhereUniqueInput | ChecklistEquipamentoWhereUniqueInput[]
-    disconnect?: ChecklistEquipamentoWhereUniqueInput | ChecklistEquipamentoWhereUniqueInput[]
-    delete?: ChecklistEquipamentoWhereUniqueInput | ChecklistEquipamentoWhereUniqueInput[]
-    connect?: ChecklistEquipamentoWhereUniqueInput | ChecklistEquipamentoWhereUniqueInput[]
-    update?: ChecklistEquipamentoUpdateWithWhereUniqueWithoutCriadoPorInput | ChecklistEquipamentoUpdateWithWhereUniqueWithoutCriadoPorInput[]
-    updateMany?: ChecklistEquipamentoUpdateManyWithWhereWithoutCriadoPorInput | ChecklistEquipamentoUpdateManyWithWhereWithoutCriadoPorInput[]
-    deleteMany?: ChecklistEquipamentoScalarWhereInput | ChecklistEquipamentoScalarWhereInput[]
-  }
-
-  export type ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput = {
-    create?: XOR<ChecklistCarrinhoCreateWithoutCriadoPorInput, ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput> | ChecklistCarrinhoCreateWithoutCriadoPorInput[] | ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput[]
-    connectOrCreate?: ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput | ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput[]
-    upsert?: ChecklistCarrinhoUpsertWithWhereUniqueWithoutCriadoPorInput | ChecklistCarrinhoUpsertWithWhereUniqueWithoutCriadoPorInput[]
-    createMany?: ChecklistCarrinhoCreateManyCriadoPorInputEnvelope
-    set?: ChecklistCarrinhoWhereUniqueInput | ChecklistCarrinhoWhereUniqueInput[]
-    disconnect?: ChecklistCarrinhoWhereUniqueInput | ChecklistCarrinhoWhereUniqueInput[]
-    delete?: ChecklistCarrinhoWhereUniqueInput | ChecklistCarrinhoWhereUniqueInput[]
-    connect?: ChecklistCarrinhoWhereUniqueInput | ChecklistCarrinhoWhereUniqueInput[]
-    update?: ChecklistCarrinhoUpdateWithWhereUniqueWithoutCriadoPorInput | ChecklistCarrinhoUpdateWithWhereUniqueWithoutCriadoPorInput[]
-    updateMany?: ChecklistCarrinhoUpdateManyWithWhereWithoutCriadoPorInput | ChecklistCarrinhoUpdateManyWithWhereWithoutCriadoPorInput[]
-    deleteMany?: ChecklistCarrinhoScalarWhereInput | ChecklistCarrinhoScalarWhereInput[]
-  }
-
   export type UsuarioCreateNestedOneWithoutRefreshTokensInput = {
     create?: XOR<UsuarioCreateWithoutRefreshTokensInput, UsuarioUncheckedCreateWithoutRefreshTokensInput>
     connectOrCreate?: UsuarioCreateOrConnectWithoutRefreshTokensInput
@@ -25310,10 +25454,11 @@ export namespace Prisma {
     update?: XOR<XOR<UsuarioUpdateToOneWithWhereWithoutSessoesInput, UsuarioUpdateWithoutSessoesInput>, UsuarioUncheckedUpdateWithoutSessoesInput>
   }
 
-  export type UsuarioCreateNestedOneWithoutTarefasCriadasInput = {
-    create?: XOR<UsuarioCreateWithoutTarefasCriadasInput, UsuarioUncheckedCreateWithoutTarefasCriadasInput>
-    connectOrCreate?: UsuarioCreateOrConnectWithoutTarefasCriadasInput
-    connect?: UsuarioWhereUniqueInput
+  export type NotificacaoCreateNestedManyWithoutTarefaInput = {
+    create?: XOR<NotificacaoCreateWithoutTarefaInput, NotificacaoUncheckedCreateWithoutTarefaInput> | NotificacaoCreateWithoutTarefaInput[] | NotificacaoUncheckedCreateWithoutTarefaInput[]
+    connectOrCreate?: NotificacaoCreateOrConnectWithoutTarefaInput | NotificacaoCreateOrConnectWithoutTarefaInput[]
+    createMany?: NotificacaoCreateManyTarefaInputEnvelope
+    connect?: NotificacaoWhereUniqueInput | NotificacaoWhereUniqueInput[]
   }
 
   export type UsuarioCreateNestedOneWithoutTarefasAtribuidasInput = {
@@ -25322,11 +25467,10 @@ export namespace Prisma {
     connect?: UsuarioWhereUniqueInput
   }
 
-  export type NotificacaoCreateNestedManyWithoutTarefaInput = {
-    create?: XOR<NotificacaoCreateWithoutTarefaInput, NotificacaoUncheckedCreateWithoutTarefaInput> | NotificacaoCreateWithoutTarefaInput[] | NotificacaoUncheckedCreateWithoutTarefaInput[]
-    connectOrCreate?: NotificacaoCreateOrConnectWithoutTarefaInput | NotificacaoCreateOrConnectWithoutTarefaInput[]
-    createMany?: NotificacaoCreateManyTarefaInputEnvelope
-    connect?: NotificacaoWhereUniqueInput | NotificacaoWhereUniqueInput[]
+  export type UsuarioCreateNestedOneWithoutTarefasCriadasInput = {
+    create?: XOR<UsuarioCreateWithoutTarefasCriadasInput, UsuarioUncheckedCreateWithoutTarefasCriadasInput>
+    connectOrCreate?: UsuarioCreateOrConnectWithoutTarefasCriadasInput
+    connect?: UsuarioWhereUniqueInput
   }
 
   export type NotificacaoUncheckedCreateNestedManyWithoutTarefaInput = {
@@ -25348,24 +25492,6 @@ export namespace Prisma {
     set?: Date | string | null
   }
 
-  export type UsuarioUpdateOneRequiredWithoutTarefasCriadasNestedInput = {
-    create?: XOR<UsuarioCreateWithoutTarefasCriadasInput, UsuarioUncheckedCreateWithoutTarefasCriadasInput>
-    connectOrCreate?: UsuarioCreateOrConnectWithoutTarefasCriadasInput
-    upsert?: UsuarioUpsertWithoutTarefasCriadasInput
-    connect?: UsuarioWhereUniqueInput
-    update?: XOR<XOR<UsuarioUpdateToOneWithWhereWithoutTarefasCriadasInput, UsuarioUpdateWithoutTarefasCriadasInput>, UsuarioUncheckedUpdateWithoutTarefasCriadasInput>
-  }
-
-  export type UsuarioUpdateOneWithoutTarefasAtribuidasNestedInput = {
-    create?: XOR<UsuarioCreateWithoutTarefasAtribuidasInput, UsuarioUncheckedCreateWithoutTarefasAtribuidasInput>
-    connectOrCreate?: UsuarioCreateOrConnectWithoutTarefasAtribuidasInput
-    upsert?: UsuarioUpsertWithoutTarefasAtribuidasInput
-    disconnect?: UsuarioWhereInput | boolean
-    delete?: UsuarioWhereInput | boolean
-    connect?: UsuarioWhereUniqueInput
-    update?: XOR<XOR<UsuarioUpdateToOneWithWhereWithoutTarefasAtribuidasInput, UsuarioUpdateWithoutTarefasAtribuidasInput>, UsuarioUncheckedUpdateWithoutTarefasAtribuidasInput>
-  }
-
   export type NotificacaoUpdateManyWithoutTarefaNestedInput = {
     create?: XOR<NotificacaoCreateWithoutTarefaInput, NotificacaoUncheckedCreateWithoutTarefaInput> | NotificacaoCreateWithoutTarefaInput[] | NotificacaoUncheckedCreateWithoutTarefaInput[]
     connectOrCreate?: NotificacaoCreateOrConnectWithoutTarefaInput | NotificacaoCreateOrConnectWithoutTarefaInput[]
@@ -25378,6 +25504,24 @@ export namespace Prisma {
     update?: NotificacaoUpdateWithWhereUniqueWithoutTarefaInput | NotificacaoUpdateWithWhereUniqueWithoutTarefaInput[]
     updateMany?: NotificacaoUpdateManyWithWhereWithoutTarefaInput | NotificacaoUpdateManyWithWhereWithoutTarefaInput[]
     deleteMany?: NotificacaoScalarWhereInput | NotificacaoScalarWhereInput[]
+  }
+
+  export type UsuarioUpdateOneWithoutTarefasAtribuidasNestedInput = {
+    create?: XOR<UsuarioCreateWithoutTarefasAtribuidasInput, UsuarioUncheckedCreateWithoutTarefasAtribuidasInput>
+    connectOrCreate?: UsuarioCreateOrConnectWithoutTarefasAtribuidasInput
+    upsert?: UsuarioUpsertWithoutTarefasAtribuidasInput
+    disconnect?: UsuarioWhereInput | boolean
+    delete?: UsuarioWhereInput | boolean
+    connect?: UsuarioWhereUniqueInput
+    update?: XOR<XOR<UsuarioUpdateToOneWithWhereWithoutTarefasAtribuidasInput, UsuarioUpdateWithoutTarefasAtribuidasInput>, UsuarioUncheckedUpdateWithoutTarefasAtribuidasInput>
+  }
+
+  export type UsuarioUpdateOneRequiredWithoutTarefasCriadasNestedInput = {
+    create?: XOR<UsuarioCreateWithoutTarefasCriadasInput, UsuarioUncheckedCreateWithoutTarefasCriadasInput>
+    connectOrCreate?: UsuarioCreateOrConnectWithoutTarefasCriadasInput
+    upsert?: UsuarioUpsertWithoutTarefasCriadasInput
+    connect?: UsuarioWhereUniqueInput
+    update?: XOR<XOR<UsuarioUpdateToOneWithWhereWithoutTarefasCriadasInput, UsuarioUpdateWithoutTarefasCriadasInput>, UsuarioUncheckedUpdateWithoutTarefasCriadasInput>
   }
 
   export type NotificacaoUncheckedUpdateManyWithoutTarefaNestedInput = {
@@ -25400,6 +25544,12 @@ export namespace Prisma {
     connect?: TarefaWhereUniqueInput
   }
 
+  export type UsuarioCreateNestedOneWithoutNotificacoesInput = {
+    create?: XOR<UsuarioCreateWithoutNotificacoesInput, UsuarioUncheckedCreateWithoutNotificacoesInput>
+    connectOrCreate?: UsuarioCreateOrConnectWithoutNotificacoesInput
+    connect?: UsuarioWhereUniqueInput
+  }
+
   export type TarefaUpdateOneWithoutNotificacoesNestedInput = {
     create?: XOR<TarefaCreateWithoutNotificacoesInput, TarefaUncheckedCreateWithoutNotificacoesInput>
     connectOrCreate?: TarefaCreateOrConnectWithoutNotificacoesInput
@@ -25408,6 +25558,16 @@ export namespace Prisma {
     delete?: TarefaWhereInput | boolean
     connect?: TarefaWhereUniqueInput
     update?: XOR<XOR<TarefaUpdateToOneWithWhereWithoutNotificacoesInput, TarefaUpdateWithoutNotificacoesInput>, TarefaUncheckedUpdateWithoutNotificacoesInput>
+  }
+
+  export type UsuarioUpdateOneWithoutNotificacoesNestedInput = {
+    create?: XOR<UsuarioCreateWithoutNotificacoesInput, UsuarioUncheckedCreateWithoutNotificacoesInput>
+    connectOrCreate?: UsuarioCreateOrConnectWithoutNotificacoesInput
+    upsert?: UsuarioUpsertWithoutNotificacoesInput
+    disconnect?: UsuarioWhereInput | boolean
+    delete?: UsuarioWhereInput | boolean
+    connect?: UsuarioWhereUniqueInput
+    update?: XOR<XOR<UsuarioUpdateToOneWithWhereWithoutNotificacoesInput, UsuarioUpdateWithoutNotificacoesInput>, UsuarioUncheckedUpdateWithoutNotificacoesInput>
   }
 
   export type EnumSegmentoChamadoFieldUpdateOperationsInput = {
@@ -25614,12 +25774,6 @@ export namespace Prisma {
     update?: XOR<XOR<PecaUpdateToOneWithWhereWithoutSaidasInput, PecaUpdateWithoutSaidasInput>, PecaUncheckedUpdateWithoutSaidasInput>
   }
 
-  export type UsuarioCreateNestedOneWithoutChecklistsEquipamentoInput = {
-    create?: XOR<UsuarioCreateWithoutChecklistsEquipamentoInput, UsuarioUncheckedCreateWithoutChecklistsEquipamentoInput>
-    connectOrCreate?: UsuarioCreateOrConnectWithoutChecklistsEquipamentoInput
-    connect?: UsuarioWhereUniqueInput
-  }
-
   export type ChecklistEquipamentoItemCreateNestedManyWithoutChecklistInput = {
     create?: XOR<ChecklistEquipamentoItemCreateWithoutChecklistInput, ChecklistEquipamentoItemUncheckedCreateWithoutChecklistInput> | ChecklistEquipamentoItemCreateWithoutChecklistInput[] | ChecklistEquipamentoItemUncheckedCreateWithoutChecklistInput[]
     connectOrCreate?: ChecklistEquipamentoItemCreateOrConnectWithoutChecklistInput | ChecklistEquipamentoItemCreateOrConnectWithoutChecklistInput[]
@@ -25627,19 +25781,17 @@ export namespace Prisma {
     connect?: ChecklistEquipamentoItemWhereUniqueInput | ChecklistEquipamentoItemWhereUniqueInput[]
   }
 
+  export type UsuarioCreateNestedOneWithoutChecklistsEquipamentoInput = {
+    create?: XOR<UsuarioCreateWithoutChecklistsEquipamentoInput, UsuarioUncheckedCreateWithoutChecklistsEquipamentoInput>
+    connectOrCreate?: UsuarioCreateOrConnectWithoutChecklistsEquipamentoInput
+    connect?: UsuarioWhereUniqueInput
+  }
+
   export type ChecklistEquipamentoItemUncheckedCreateNestedManyWithoutChecklistInput = {
     create?: XOR<ChecklistEquipamentoItemCreateWithoutChecklistInput, ChecklistEquipamentoItemUncheckedCreateWithoutChecklistInput> | ChecklistEquipamentoItemCreateWithoutChecklistInput[] | ChecklistEquipamentoItemUncheckedCreateWithoutChecklistInput[]
     connectOrCreate?: ChecklistEquipamentoItemCreateOrConnectWithoutChecklistInput | ChecklistEquipamentoItemCreateOrConnectWithoutChecklistInput[]
     createMany?: ChecklistEquipamentoItemCreateManyChecklistInputEnvelope
     connect?: ChecklistEquipamentoItemWhereUniqueInput | ChecklistEquipamentoItemWhereUniqueInput[]
-  }
-
-  export type UsuarioUpdateOneRequiredWithoutChecklistsEquipamentoNestedInput = {
-    create?: XOR<UsuarioCreateWithoutChecklistsEquipamentoInput, UsuarioUncheckedCreateWithoutChecklistsEquipamentoInput>
-    connectOrCreate?: UsuarioCreateOrConnectWithoutChecklistsEquipamentoInput
-    upsert?: UsuarioUpsertWithoutChecklistsEquipamentoInput
-    connect?: UsuarioWhereUniqueInput
-    update?: XOR<XOR<UsuarioUpdateToOneWithWhereWithoutChecklistsEquipamentoInput, UsuarioUpdateWithoutChecklistsEquipamentoInput>, UsuarioUncheckedUpdateWithoutChecklistsEquipamentoInput>
   }
 
   export type ChecklistEquipamentoItemUpdateManyWithoutChecklistNestedInput = {
@@ -25654,6 +25806,14 @@ export namespace Prisma {
     update?: ChecklistEquipamentoItemUpdateWithWhereUniqueWithoutChecklistInput | ChecklistEquipamentoItemUpdateWithWhereUniqueWithoutChecklistInput[]
     updateMany?: ChecklistEquipamentoItemUpdateManyWithWhereWithoutChecklistInput | ChecklistEquipamentoItemUpdateManyWithWhereWithoutChecklistInput[]
     deleteMany?: ChecklistEquipamentoItemScalarWhereInput | ChecklistEquipamentoItemScalarWhereInput[]
+  }
+
+  export type UsuarioUpdateOneRequiredWithoutChecklistsEquipamentoNestedInput = {
+    create?: XOR<UsuarioCreateWithoutChecklistsEquipamentoInput, UsuarioUncheckedCreateWithoutChecklistsEquipamentoInput>
+    connectOrCreate?: UsuarioCreateOrConnectWithoutChecklistsEquipamentoInput
+    upsert?: UsuarioUpsertWithoutChecklistsEquipamentoInput
+    connect?: UsuarioWhereUniqueInput
+    update?: XOR<XOR<UsuarioUpdateToOneWithWhereWithoutChecklistsEquipamentoInput, UsuarioUpdateWithoutChecklistsEquipamentoInput>, UsuarioUncheckedUpdateWithoutChecklistsEquipamentoInput>
   }
 
   export type ChecklistEquipamentoItemUncheckedUpdateManyWithoutChecklistNestedInput = {
@@ -25688,12 +25848,6 @@ export namespace Prisma {
     update?: XOR<XOR<ChecklistEquipamentoUpdateToOneWithWhereWithoutItensInput, ChecklistEquipamentoUpdateWithoutItensInput>, ChecklistEquipamentoUncheckedUpdateWithoutItensInput>
   }
 
-  export type UsuarioCreateNestedOneWithoutChecklistsCarrinhoInput = {
-    create?: XOR<UsuarioCreateWithoutChecklistsCarrinhoInput, UsuarioUncheckedCreateWithoutChecklistsCarrinhoInput>
-    connectOrCreate?: UsuarioCreateOrConnectWithoutChecklistsCarrinhoInput
-    connect?: UsuarioWhereUniqueInput
-  }
-
   export type ChecklistCarrinhoItemCreateNestedManyWithoutChecklistInput = {
     create?: XOR<ChecklistCarrinhoItemCreateWithoutChecklistInput, ChecklistCarrinhoItemUncheckedCreateWithoutChecklistInput> | ChecklistCarrinhoItemCreateWithoutChecklistInput[] | ChecklistCarrinhoItemUncheckedCreateWithoutChecklistInput[]
     connectOrCreate?: ChecklistCarrinhoItemCreateOrConnectWithoutChecklistInput | ChecklistCarrinhoItemCreateOrConnectWithoutChecklistInput[]
@@ -25701,19 +25855,17 @@ export namespace Prisma {
     connect?: ChecklistCarrinhoItemWhereUniqueInput | ChecklistCarrinhoItemWhereUniqueInput[]
   }
 
+  export type UsuarioCreateNestedOneWithoutChecklistsCarrinhoInput = {
+    create?: XOR<UsuarioCreateWithoutChecklistsCarrinhoInput, UsuarioUncheckedCreateWithoutChecklistsCarrinhoInput>
+    connectOrCreate?: UsuarioCreateOrConnectWithoutChecklistsCarrinhoInput
+    connect?: UsuarioWhereUniqueInput
+  }
+
   export type ChecklistCarrinhoItemUncheckedCreateNestedManyWithoutChecklistInput = {
     create?: XOR<ChecklistCarrinhoItemCreateWithoutChecklistInput, ChecklistCarrinhoItemUncheckedCreateWithoutChecklistInput> | ChecklistCarrinhoItemCreateWithoutChecklistInput[] | ChecklistCarrinhoItemUncheckedCreateWithoutChecklistInput[]
     connectOrCreate?: ChecklistCarrinhoItemCreateOrConnectWithoutChecklistInput | ChecklistCarrinhoItemCreateOrConnectWithoutChecklistInput[]
     createMany?: ChecklistCarrinhoItemCreateManyChecklistInputEnvelope
     connect?: ChecklistCarrinhoItemWhereUniqueInput | ChecklistCarrinhoItemWhereUniqueInput[]
-  }
-
-  export type UsuarioUpdateOneRequiredWithoutChecklistsCarrinhoNestedInput = {
-    create?: XOR<UsuarioCreateWithoutChecklistsCarrinhoInput, UsuarioUncheckedCreateWithoutChecklistsCarrinhoInput>
-    connectOrCreate?: UsuarioCreateOrConnectWithoutChecklistsCarrinhoInput
-    upsert?: UsuarioUpsertWithoutChecklistsCarrinhoInput
-    connect?: UsuarioWhereUniqueInput
-    update?: XOR<XOR<UsuarioUpdateToOneWithWhereWithoutChecklistsCarrinhoInput, UsuarioUpdateWithoutChecklistsCarrinhoInput>, UsuarioUncheckedUpdateWithoutChecklistsCarrinhoInput>
   }
 
   export type ChecklistCarrinhoItemUpdateManyWithoutChecklistNestedInput = {
@@ -25728,6 +25880,14 @@ export namespace Prisma {
     update?: ChecklistCarrinhoItemUpdateWithWhereUniqueWithoutChecklistInput | ChecklistCarrinhoItemUpdateWithWhereUniqueWithoutChecklistInput[]
     updateMany?: ChecklistCarrinhoItemUpdateManyWithWhereWithoutChecklistInput | ChecklistCarrinhoItemUpdateManyWithWhereWithoutChecklistInput[]
     deleteMany?: ChecklistCarrinhoItemScalarWhereInput | ChecklistCarrinhoItemScalarWhereInput[]
+  }
+
+  export type UsuarioUpdateOneRequiredWithoutChecklistsCarrinhoNestedInput = {
+    create?: XOR<UsuarioCreateWithoutChecklistsCarrinhoInput, UsuarioUncheckedCreateWithoutChecklistsCarrinhoInput>
+    connectOrCreate?: UsuarioCreateOrConnectWithoutChecklistsCarrinhoInput
+    upsert?: UsuarioUpsertWithoutChecklistsCarrinhoInput
+    connect?: UsuarioWhereUniqueInput
+    update?: XOR<XOR<UsuarioUpdateToOneWithWhereWithoutChecklistsCarrinhoInput, UsuarioUpdateWithoutChecklistsCarrinhoInput>, UsuarioUncheckedUpdateWithoutChecklistsCarrinhoInput>
   }
 
   export type ChecklistCarrinhoItemUncheckedUpdateManyWithoutChecklistNestedInput = {
@@ -26126,6 +26286,102 @@ export namespace Prisma {
     _max?: NestedEnumTipoCarrinhoFilter<$PrismaModel>
   }
 
+  export type ChecklistCarrinhoCreateWithoutCriadoPorInput = {
+    id?: string
+    semana: number
+    ano: number
+    regiao: string
+    unidade: string
+    observacoes?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    itens?: ChecklistCarrinhoItemCreateNestedManyWithoutChecklistInput
+  }
+
+  export type ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput = {
+    id?: string
+    semana: number
+    ano: number
+    regiao: string
+    unidade: string
+    observacoes?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    itens?: ChecklistCarrinhoItemUncheckedCreateNestedManyWithoutChecklistInput
+  }
+
+  export type ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput = {
+    where: ChecklistCarrinhoWhereUniqueInput
+    create: XOR<ChecklistCarrinhoCreateWithoutCriadoPorInput, ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput>
+  }
+
+  export type ChecklistCarrinhoCreateManyCriadoPorInputEnvelope = {
+    data: ChecklistCarrinhoCreateManyCriadoPorInput | ChecklistCarrinhoCreateManyCriadoPorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ChecklistEquipamentoCreateWithoutCriadoPorInput = {
+    id?: string
+    semana: number
+    ano: number
+    regiao: string
+    unidade: string
+    observacoes?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    itens?: ChecklistEquipamentoItemCreateNestedManyWithoutChecklistInput
+  }
+
+  export type ChecklistEquipamentoUncheckedCreateWithoutCriadoPorInput = {
+    id?: string
+    semana: number
+    ano: number
+    regiao: string
+    unidade: string
+    observacoes?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    itens?: ChecklistEquipamentoItemUncheckedCreateNestedManyWithoutChecklistInput
+  }
+
+  export type ChecklistEquipamentoCreateOrConnectWithoutCriadoPorInput = {
+    where: ChecklistEquipamentoWhereUniqueInput
+    create: XOR<ChecklistEquipamentoCreateWithoutCriadoPorInput, ChecklistEquipamentoUncheckedCreateWithoutCriadoPorInput>
+  }
+
+  export type ChecklistEquipamentoCreateManyCriadoPorInputEnvelope = {
+    data: ChecklistEquipamentoCreateManyCriadoPorInput | ChecklistEquipamentoCreateManyCriadoPorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type NotificacaoCreateWithoutUsuarioInput = {
+    id?: string
+    titulo: string
+    mensagem: string
+    lida?: boolean
+    criadoEm?: Date | string
+    tarefa?: TarefaCreateNestedOneWithoutNotificacoesInput
+  }
+
+  export type NotificacaoUncheckedCreateWithoutUsuarioInput = {
+    id?: string
+    titulo: string
+    mensagem: string
+    lida?: boolean
+    tarefaId?: string | null
+    criadoEm?: Date | string
+  }
+
+  export type NotificacaoCreateOrConnectWithoutUsuarioInput = {
+    where: NotificacaoWhereUniqueInput
+    create: XOR<NotificacaoCreateWithoutUsuarioInput, NotificacaoUncheckedCreateWithoutUsuarioInput>
+  }
+
+  export type NotificacaoCreateManyUsuarioInputEnvelope = {
+    data: NotificacaoCreateManyUsuarioInput | NotificacaoCreateManyUsuarioInput[]
+    skipDuplicates?: boolean
+  }
+
   export type RefreshTokenCreateWithoutUsuarioInput = {
     id?: string
     token: string
@@ -26193,8 +26449,8 @@ export namespace Prisma {
     dataConclusao?: Date | string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
-    criadoPor: UsuarioCreateNestedOneWithoutTarefasCriadasInput
     notificacoes?: NotificacaoCreateNestedManyWithoutTarefaInput
+    criadoPor: UsuarioCreateNestedOneWithoutTarefasCriadasInput
   }
 
   export type TarefaUncheckedCreateWithoutAtribuidoParaInput = {
@@ -26233,8 +26489,8 @@ export namespace Prisma {
     dataConclusao?: Date | string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
-    atribuidoPara?: UsuarioCreateNestedOneWithoutTarefasAtribuidasInput
     notificacoes?: NotificacaoCreateNestedManyWithoutTarefaInput
+    atribuidoPara?: UsuarioCreateNestedOneWithoutTarefasAtribuidasInput
   }
 
   export type TarefaUncheckedCreateWithoutCriadoPorInput = {
@@ -26262,72 +26518,95 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type ChecklistEquipamentoCreateWithoutCriadoPorInput = {
-    id?: string
-    semana: number
-    ano: number
-    regiao: string
-    unidade: string
-    observacoes?: string | null
-    criadoEm?: Date | string
-    atualizadoEm?: Date | string
-    itens?: ChecklistEquipamentoItemCreateNestedManyWithoutChecklistInput
-  }
-
-  export type ChecklistEquipamentoUncheckedCreateWithoutCriadoPorInput = {
-    id?: string
-    semana: number
-    ano: number
-    regiao: string
-    unidade: string
-    observacoes?: string | null
-    criadoEm?: Date | string
-    atualizadoEm?: Date | string
-    itens?: ChecklistEquipamentoItemUncheckedCreateNestedManyWithoutChecklistInput
-  }
-
-  export type ChecklistEquipamentoCreateOrConnectWithoutCriadoPorInput = {
-    where: ChecklistEquipamentoWhereUniqueInput
-    create: XOR<ChecklistEquipamentoCreateWithoutCriadoPorInput, ChecklistEquipamentoUncheckedCreateWithoutCriadoPorInput>
-  }
-
-  export type ChecklistEquipamentoCreateManyCriadoPorInputEnvelope = {
-    data: ChecklistEquipamentoCreateManyCriadoPorInput | ChecklistEquipamentoCreateManyCriadoPorInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type ChecklistCarrinhoCreateWithoutCriadoPorInput = {
-    id?: string
-    semana: number
-    ano: number
-    regiao: string
-    unidade: string
-    observacoes?: string | null
-    criadoEm?: Date | string
-    atualizadoEm?: Date | string
-    itens?: ChecklistCarrinhoItemCreateNestedManyWithoutChecklistInput
-  }
-
-  export type ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput = {
-    id?: string
-    semana: number
-    ano: number
-    regiao: string
-    unidade: string
-    observacoes?: string | null
-    criadoEm?: Date | string
-    atualizadoEm?: Date | string
-    itens?: ChecklistCarrinhoItemUncheckedCreateNestedManyWithoutChecklistInput
-  }
-
-  export type ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput = {
+  export type ChecklistCarrinhoUpsertWithWhereUniqueWithoutCriadoPorInput = {
     where: ChecklistCarrinhoWhereUniqueInput
+    update: XOR<ChecklistCarrinhoUpdateWithoutCriadoPorInput, ChecklistCarrinhoUncheckedUpdateWithoutCriadoPorInput>
     create: XOR<ChecklistCarrinhoCreateWithoutCriadoPorInput, ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput>
   }
 
-  export type ChecklistCarrinhoCreateManyCriadoPorInputEnvelope = {
-    data: ChecklistCarrinhoCreateManyCriadoPorInput | ChecklistCarrinhoCreateManyCriadoPorInput[]
-    skipDuplicates?: boolean
+  export type ChecklistCarrinhoUpdateWithWhereUniqueWithoutCriadoPorInput = {
+    where: ChecklistCarrinhoWhereUniqueInput
+    data: XOR<ChecklistCarrinhoUpdateWithoutCriadoPorInput, ChecklistCarrinhoUncheckedUpdateWithoutCriadoPorInput>
+  }
+
+  export type ChecklistCarrinhoUpdateManyWithWhereWithoutCriadoPorInput = {
+    where: ChecklistCarrinhoScalarWhereInput
+    data: XOR<ChecklistCarrinhoUpdateManyMutationInput, ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorInput>
+  }
+
+  export type ChecklistCarrinhoScalarWhereInput = {
+    AND?: ChecklistCarrinhoScalarWhereInput | ChecklistCarrinhoScalarWhereInput[]
+    OR?: ChecklistCarrinhoScalarWhereInput[]
+    NOT?: ChecklistCarrinhoScalarWhereInput | ChecklistCarrinhoScalarWhereInput[]
+    id?: StringFilter<"ChecklistCarrinho"> | string
+    semana?: IntFilter<"ChecklistCarrinho"> | number
+    ano?: IntFilter<"ChecklistCarrinho"> | number
+    regiao?: StringFilter<"ChecklistCarrinho"> | string
+    unidade?: StringFilter<"ChecklistCarrinho"> | string
+    criadoPorId?: StringFilter<"ChecklistCarrinho"> | string
+    observacoes?: StringNullableFilter<"ChecklistCarrinho"> | string | null
+    criadoEm?: DateTimeFilter<"ChecklistCarrinho"> | Date | string
+    atualizadoEm?: DateTimeFilter<"ChecklistCarrinho"> | Date | string
+  }
+
+  export type ChecklistEquipamentoUpsertWithWhereUniqueWithoutCriadoPorInput = {
+    where: ChecklistEquipamentoWhereUniqueInput
+    update: XOR<ChecklistEquipamentoUpdateWithoutCriadoPorInput, ChecklistEquipamentoUncheckedUpdateWithoutCriadoPorInput>
+    create: XOR<ChecklistEquipamentoCreateWithoutCriadoPorInput, ChecklistEquipamentoUncheckedCreateWithoutCriadoPorInput>
+  }
+
+  export type ChecklistEquipamentoUpdateWithWhereUniqueWithoutCriadoPorInput = {
+    where: ChecklistEquipamentoWhereUniqueInput
+    data: XOR<ChecklistEquipamentoUpdateWithoutCriadoPorInput, ChecklistEquipamentoUncheckedUpdateWithoutCriadoPorInput>
+  }
+
+  export type ChecklistEquipamentoUpdateManyWithWhereWithoutCriadoPorInput = {
+    where: ChecklistEquipamentoScalarWhereInput
+    data: XOR<ChecklistEquipamentoUpdateManyMutationInput, ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorInput>
+  }
+
+  export type ChecklistEquipamentoScalarWhereInput = {
+    AND?: ChecklistEquipamentoScalarWhereInput | ChecklistEquipamentoScalarWhereInput[]
+    OR?: ChecklistEquipamentoScalarWhereInput[]
+    NOT?: ChecklistEquipamentoScalarWhereInput | ChecklistEquipamentoScalarWhereInput[]
+    id?: StringFilter<"ChecklistEquipamento"> | string
+    semana?: IntFilter<"ChecklistEquipamento"> | number
+    ano?: IntFilter<"ChecklistEquipamento"> | number
+    regiao?: StringFilter<"ChecklistEquipamento"> | string
+    unidade?: StringFilter<"ChecklistEquipamento"> | string
+    criadoPorId?: StringFilter<"ChecklistEquipamento"> | string
+    observacoes?: StringNullableFilter<"ChecklistEquipamento"> | string | null
+    criadoEm?: DateTimeFilter<"ChecklistEquipamento"> | Date | string
+    atualizadoEm?: DateTimeFilter<"ChecklistEquipamento"> | Date | string
+  }
+
+  export type NotificacaoUpsertWithWhereUniqueWithoutUsuarioInput = {
+    where: NotificacaoWhereUniqueInput
+    update: XOR<NotificacaoUpdateWithoutUsuarioInput, NotificacaoUncheckedUpdateWithoutUsuarioInput>
+    create: XOR<NotificacaoCreateWithoutUsuarioInput, NotificacaoUncheckedCreateWithoutUsuarioInput>
+  }
+
+  export type NotificacaoUpdateWithWhereUniqueWithoutUsuarioInput = {
+    where: NotificacaoWhereUniqueInput
+    data: XOR<NotificacaoUpdateWithoutUsuarioInput, NotificacaoUncheckedUpdateWithoutUsuarioInput>
+  }
+
+  export type NotificacaoUpdateManyWithWhereWithoutUsuarioInput = {
+    where: NotificacaoScalarWhereInput
+    data: XOR<NotificacaoUpdateManyMutationInput, NotificacaoUncheckedUpdateManyWithoutUsuarioInput>
+  }
+
+  export type NotificacaoScalarWhereInput = {
+    AND?: NotificacaoScalarWhereInput | NotificacaoScalarWhereInput[]
+    OR?: NotificacaoScalarWhereInput[]
+    NOT?: NotificacaoScalarWhereInput | NotificacaoScalarWhereInput[]
+    id?: StringFilter<"Notificacao"> | string
+    titulo?: StringFilter<"Notificacao"> | string
+    mensagem?: StringFilter<"Notificacao"> | string
+    lida?: BoolFilter<"Notificacao"> | boolean
+    tarefaId?: StringNullableFilter<"Notificacao"> | string | null
+    usuarioId?: StringNullableFilter<"Notificacao"> | string | null
+    criadoEm?: DateTimeFilter<"Notificacao"> | Date | string
   }
 
   export type RefreshTokenUpsertWithWhereUniqueWithoutUsuarioInput = {
@@ -26438,68 +26717,6 @@ export namespace Prisma {
     data: XOR<TarefaUpdateManyMutationInput, TarefaUncheckedUpdateManyWithoutCriadoPorInput>
   }
 
-  export type ChecklistEquipamentoUpsertWithWhereUniqueWithoutCriadoPorInput = {
-    where: ChecklistEquipamentoWhereUniqueInput
-    update: XOR<ChecklistEquipamentoUpdateWithoutCriadoPorInput, ChecklistEquipamentoUncheckedUpdateWithoutCriadoPorInput>
-    create: XOR<ChecklistEquipamentoCreateWithoutCriadoPorInput, ChecklistEquipamentoUncheckedCreateWithoutCriadoPorInput>
-  }
-
-  export type ChecklistEquipamentoUpdateWithWhereUniqueWithoutCriadoPorInput = {
-    where: ChecklistEquipamentoWhereUniqueInput
-    data: XOR<ChecklistEquipamentoUpdateWithoutCriadoPorInput, ChecklistEquipamentoUncheckedUpdateWithoutCriadoPorInput>
-  }
-
-  export type ChecklistEquipamentoUpdateManyWithWhereWithoutCriadoPorInput = {
-    where: ChecklistEquipamentoScalarWhereInput
-    data: XOR<ChecklistEquipamentoUpdateManyMutationInput, ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorInput>
-  }
-
-  export type ChecklistEquipamentoScalarWhereInput = {
-    AND?: ChecklistEquipamentoScalarWhereInput | ChecklistEquipamentoScalarWhereInput[]
-    OR?: ChecklistEquipamentoScalarWhereInput[]
-    NOT?: ChecklistEquipamentoScalarWhereInput | ChecklistEquipamentoScalarWhereInput[]
-    id?: StringFilter<"ChecklistEquipamento"> | string
-    semana?: IntFilter<"ChecklistEquipamento"> | number
-    ano?: IntFilter<"ChecklistEquipamento"> | number
-    regiao?: StringFilter<"ChecklistEquipamento"> | string
-    unidade?: StringFilter<"ChecklistEquipamento"> | string
-    criadoPorId?: StringFilter<"ChecklistEquipamento"> | string
-    observacoes?: StringNullableFilter<"ChecklistEquipamento"> | string | null
-    criadoEm?: DateTimeFilter<"ChecklistEquipamento"> | Date | string
-    atualizadoEm?: DateTimeFilter<"ChecklistEquipamento"> | Date | string
-  }
-
-  export type ChecklistCarrinhoUpsertWithWhereUniqueWithoutCriadoPorInput = {
-    where: ChecklistCarrinhoWhereUniqueInput
-    update: XOR<ChecklistCarrinhoUpdateWithoutCriadoPorInput, ChecklistCarrinhoUncheckedUpdateWithoutCriadoPorInput>
-    create: XOR<ChecklistCarrinhoCreateWithoutCriadoPorInput, ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput>
-  }
-
-  export type ChecklistCarrinhoUpdateWithWhereUniqueWithoutCriadoPorInput = {
-    where: ChecklistCarrinhoWhereUniqueInput
-    data: XOR<ChecklistCarrinhoUpdateWithoutCriadoPorInput, ChecklistCarrinhoUncheckedUpdateWithoutCriadoPorInput>
-  }
-
-  export type ChecklistCarrinhoUpdateManyWithWhereWithoutCriadoPorInput = {
-    where: ChecklistCarrinhoScalarWhereInput
-    data: XOR<ChecklistCarrinhoUpdateManyMutationInput, ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorInput>
-  }
-
-  export type ChecklistCarrinhoScalarWhereInput = {
-    AND?: ChecklistCarrinhoScalarWhereInput | ChecklistCarrinhoScalarWhereInput[]
-    OR?: ChecklistCarrinhoScalarWhereInput[]
-    NOT?: ChecklistCarrinhoScalarWhereInput | ChecklistCarrinhoScalarWhereInput[]
-    id?: StringFilter<"ChecklistCarrinho"> | string
-    semana?: IntFilter<"ChecklistCarrinho"> | number
-    ano?: IntFilter<"ChecklistCarrinho"> | number
-    regiao?: StringFilter<"ChecklistCarrinho"> | string
-    unidade?: StringFilter<"ChecklistCarrinho"> | string
-    criadoPorId?: StringFilter<"ChecklistCarrinho"> | string
-    observacoes?: StringNullableFilter<"ChecklistCarrinho"> | string | null
-    criadoEm?: DateTimeFilter<"ChecklistCarrinho"> | Date | string
-    atualizadoEm?: DateTimeFilter<"ChecklistCarrinho"> | Date | string
-  }
-
   export type UsuarioCreateWithoutRefreshTokensInput = {
     id?: string
     nome: string
@@ -26511,11 +26728,12 @@ export namespace Prisma {
     unidade?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
-    checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
-    checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioUncheckedCreateWithoutRefreshTokensInput = {
@@ -26529,11 +26747,12 @@ export namespace Prisma {
     unidade?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
-    checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
-    checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioCreateOrConnectWithoutRefreshTokensInput = {
@@ -26563,11 +26782,12 @@ export namespace Prisma {
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
-    checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
-    checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type UsuarioUncheckedUpdateWithoutRefreshTokensInput = {
@@ -26581,11 +26801,12 @@ export namespace Prisma {
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
-    checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
-    checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type UsuarioCreateWithoutSessoesInput = {
@@ -26599,11 +26820,12 @@ export namespace Prisma {
     unidade?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
-    checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
-    checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioUncheckedCreateWithoutSessoesInput = {
@@ -26617,11 +26839,12 @@ export namespace Prisma {
     unidade?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
-    checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
-    checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioCreateOrConnectWithoutSessoesInput = {
@@ -26651,11 +26874,12 @@ export namespace Prisma {
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
-    checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
-    checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type UsuarioUncheckedUpdateWithoutSessoesInput = {
@@ -26669,93 +26893,12 @@ export namespace Prisma {
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
-    checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
-    checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
-  }
-
-  export type UsuarioCreateWithoutTarefasCriadasInput = {
-    id?: string
-    nome: string
-    email: string
-    senha: string
-    role?: $Enums.Role
-    ativo?: boolean
-    regiao?: string | null
-    unidade?: string | null
-    criadoEm?: Date | string
-    atualizadoEm?: Date | string
-    refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
-    sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
-    tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
-    checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
-    checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
-  }
-
-  export type UsuarioUncheckedCreateWithoutTarefasCriadasInput = {
-    id?: string
-    nome: string
-    email: string
-    senha: string
-    role?: $Enums.Role
-    ativo?: boolean
-    regiao?: string | null
-    unidade?: string | null
-    criadoEm?: Date | string
-    atualizadoEm?: Date | string
-    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
-    sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
-    tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
-    checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
-    checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
-  }
-
-  export type UsuarioCreateOrConnectWithoutTarefasCriadasInput = {
-    where: UsuarioWhereUniqueInput
-    create: XOR<UsuarioCreateWithoutTarefasCriadasInput, UsuarioUncheckedCreateWithoutTarefasCriadasInput>
-  }
-
-  export type UsuarioCreateWithoutTarefasAtribuidasInput = {
-    id?: string
-    nome: string
-    email: string
-    senha: string
-    role?: $Enums.Role
-    ativo?: boolean
-    regiao?: string | null
-    unidade?: string | null
-    criadoEm?: Date | string
-    atualizadoEm?: Date | string
-    refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
-    sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
-    tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
-    checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
-    checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
-  }
-
-  export type UsuarioUncheckedCreateWithoutTarefasAtribuidasInput = {
-    id?: string
-    nome: string
-    email: string
-    senha: string
-    role?: $Enums.Role
-    ativo?: boolean
-    regiao?: string | null
-    unidade?: string | null
-    criadoEm?: Date | string
-    atualizadoEm?: Date | string
-    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
-    sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
-    tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
-    checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
-    checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
-  }
-
-  export type UsuarioCreateOrConnectWithoutTarefasAtribuidasInput = {
-    where: UsuarioWhereUniqueInput
-    create: XOR<UsuarioCreateWithoutTarefasAtribuidasInput, UsuarioUncheckedCreateWithoutTarefasAtribuidasInput>
   }
 
   export type NotificacaoCreateWithoutTarefaInput = {
@@ -26764,6 +26907,7 @@ export namespace Prisma {
     mensagem: string
     lida?: boolean
     criadoEm?: Date | string
+    usuario?: UsuarioCreateNestedOneWithoutNotificacoesInput
   }
 
   export type NotificacaoUncheckedCreateWithoutTarefaInput = {
@@ -26771,6 +26915,7 @@ export namespace Prisma {
     titulo: string
     mensagem: string
     lida?: boolean
+    usuarioId?: string | null
     criadoEm?: Date | string
   }
 
@@ -26784,51 +26929,106 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type UsuarioUpsertWithoutTarefasCriadasInput = {
-    update: XOR<UsuarioUpdateWithoutTarefasCriadasInput, UsuarioUncheckedUpdateWithoutTarefasCriadasInput>
+  export type UsuarioCreateWithoutTarefasAtribuidasInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    unidade?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
+    sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
+    tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
+  }
+
+  export type UsuarioUncheckedCreateWithoutTarefasAtribuidasInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    unidade?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
+    sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
+    tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
+  }
+
+  export type UsuarioCreateOrConnectWithoutTarefasAtribuidasInput = {
+    where: UsuarioWhereUniqueInput
+    create: XOR<UsuarioCreateWithoutTarefasAtribuidasInput, UsuarioUncheckedCreateWithoutTarefasAtribuidasInput>
+  }
+
+  export type UsuarioCreateWithoutTarefasCriadasInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    unidade?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
+    sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
+    tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
+  }
+
+  export type UsuarioUncheckedCreateWithoutTarefasCriadasInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    unidade?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
+    sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
+    tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
+  }
+
+  export type UsuarioCreateOrConnectWithoutTarefasCriadasInput = {
+    where: UsuarioWhereUniqueInput
     create: XOR<UsuarioCreateWithoutTarefasCriadasInput, UsuarioUncheckedCreateWithoutTarefasCriadasInput>
-    where?: UsuarioWhereInput
   }
 
-  export type UsuarioUpdateToOneWithWhereWithoutTarefasCriadasInput = {
-    where?: UsuarioWhereInput
-    data: XOR<UsuarioUpdateWithoutTarefasCriadasInput, UsuarioUncheckedUpdateWithoutTarefasCriadasInput>
+  export type NotificacaoUpsertWithWhereUniqueWithoutTarefaInput = {
+    where: NotificacaoWhereUniqueInput
+    update: XOR<NotificacaoUpdateWithoutTarefaInput, NotificacaoUncheckedUpdateWithoutTarefaInput>
+    create: XOR<NotificacaoCreateWithoutTarefaInput, NotificacaoUncheckedCreateWithoutTarefaInput>
   }
 
-  export type UsuarioUpdateWithoutTarefasCriadasInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    nome?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    senha?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    ativo?: BoolFieldUpdateOperationsInput | boolean
-    regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
-    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
-    sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
-    tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
-    checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
-    checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
+  export type NotificacaoUpdateWithWhereUniqueWithoutTarefaInput = {
+    where: NotificacaoWhereUniqueInput
+    data: XOR<NotificacaoUpdateWithoutTarefaInput, NotificacaoUncheckedUpdateWithoutTarefaInput>
   }
 
-  export type UsuarioUncheckedUpdateWithoutTarefasCriadasInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    nome?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    senha?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    ativo?: BoolFieldUpdateOperationsInput | boolean
-    regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
-    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
-    sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
-    tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
-    checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
-    checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
+  export type NotificacaoUpdateManyWithWhereWithoutTarefaInput = {
+    where: NotificacaoScalarWhereInput
+    data: XOR<NotificacaoUpdateManyMutationInput, NotificacaoUncheckedUpdateManyWithoutTarefaInput>
   }
 
   export type UsuarioUpsertWithoutTarefasAtribuidasInput = {
@@ -26853,11 +27053,12 @@ export namespace Prisma {
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
     tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
-    checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
-    checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type UsuarioUncheckedUpdateWithoutTarefasAtribuidasInput = {
@@ -26871,39 +27072,61 @@ export namespace Prisma {
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
     tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
-    checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+  }
+
+  export type UsuarioUpsertWithoutTarefasCriadasInput = {
+    update: XOR<UsuarioUpdateWithoutTarefasCriadasInput, UsuarioUncheckedUpdateWithoutTarefasCriadasInput>
+    create: XOR<UsuarioCreateWithoutTarefasCriadasInput, UsuarioUncheckedCreateWithoutTarefasCriadasInput>
+    where?: UsuarioWhereInput
+  }
+
+  export type UsuarioUpdateToOneWithWhereWithoutTarefasCriadasInput = {
+    where?: UsuarioWhereInput
+    data: XOR<UsuarioUpdateWithoutTarefasCriadasInput, UsuarioUncheckedUpdateWithoutTarefasCriadasInput>
+  }
+
+  export type UsuarioUpdateWithoutTarefasCriadasInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
+    refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
+    sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
+    tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
+  }
+
+  export type UsuarioUncheckedUpdateWithoutTarefasCriadasInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
-  }
-
-  export type NotificacaoUpsertWithWhereUniqueWithoutTarefaInput = {
-    where: NotificacaoWhereUniqueInput
-    update: XOR<NotificacaoUpdateWithoutTarefaInput, NotificacaoUncheckedUpdateWithoutTarefaInput>
-    create: XOR<NotificacaoCreateWithoutTarefaInput, NotificacaoUncheckedCreateWithoutTarefaInput>
-  }
-
-  export type NotificacaoUpdateWithWhereUniqueWithoutTarefaInput = {
-    where: NotificacaoWhereUniqueInput
-    data: XOR<NotificacaoUpdateWithoutTarefaInput, NotificacaoUncheckedUpdateWithoutTarefaInput>
-  }
-
-  export type NotificacaoUpdateManyWithWhereWithoutTarefaInput = {
-    where: NotificacaoScalarWhereInput
-    data: XOR<NotificacaoUpdateManyMutationInput, NotificacaoUncheckedUpdateManyWithoutTarefaInput>
-  }
-
-  export type NotificacaoScalarWhereInput = {
-    AND?: NotificacaoScalarWhereInput | NotificacaoScalarWhereInput[]
-    OR?: NotificacaoScalarWhereInput[]
-    NOT?: NotificacaoScalarWhereInput | NotificacaoScalarWhereInput[]
-    id?: StringFilter<"Notificacao"> | string
-    titulo?: StringFilter<"Notificacao"> | string
-    mensagem?: StringFilter<"Notificacao"> | string
-    lida?: BoolFilter<"Notificacao"> | boolean
-    tarefaId?: StringNullableFilter<"Notificacao"> | string | null
-    criadoEm?: DateTimeFilter<"Notificacao"> | Date | string
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
+    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
+    sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
+    tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
   }
 
   export type TarefaCreateWithoutNotificacoesInput = {
@@ -26917,8 +27140,8 @@ export namespace Prisma {
     dataConclusao?: Date | string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
-    criadoPor: UsuarioCreateNestedOneWithoutTarefasCriadasInput
     atribuidoPara?: UsuarioCreateNestedOneWithoutTarefasAtribuidasInput
+    criadoPor: UsuarioCreateNestedOneWithoutTarefasCriadasInput
   }
 
   export type TarefaUncheckedCreateWithoutNotificacoesInput = {
@@ -26939,6 +27162,49 @@ export namespace Prisma {
   export type TarefaCreateOrConnectWithoutNotificacoesInput = {
     where: TarefaWhereUniqueInput
     create: XOR<TarefaCreateWithoutNotificacoesInput, TarefaUncheckedCreateWithoutNotificacoesInput>
+  }
+
+  export type UsuarioCreateWithoutNotificacoesInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    unidade?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
+    sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
+    tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
+    tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
+  }
+
+  export type UsuarioUncheckedCreateWithoutNotificacoesInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    unidade?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
+    sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
+    tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
+    tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
+  }
+
+  export type UsuarioCreateOrConnectWithoutNotificacoesInput = {
+    where: UsuarioWhereUniqueInput
+    create: XOR<UsuarioCreateWithoutNotificacoesInput, UsuarioUncheckedCreateWithoutNotificacoesInput>
   }
 
   export type TarefaUpsertWithoutNotificacoesInput = {
@@ -26963,8 +27229,8 @@ export namespace Prisma {
     dataConclusao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    criadoPor?: UsuarioUpdateOneRequiredWithoutTarefasCriadasNestedInput
     atribuidoPara?: UsuarioUpdateOneWithoutTarefasAtribuidasNestedInput
+    criadoPor?: UsuarioUpdateOneRequiredWithoutTarefasCriadasNestedInput
   }
 
   export type TarefaUncheckedUpdateWithoutNotificacoesInput = {
@@ -26980,6 +27246,55 @@ export namespace Prisma {
     atribuidoParaId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UsuarioUpsertWithoutNotificacoesInput = {
+    update: XOR<UsuarioUpdateWithoutNotificacoesInput, UsuarioUncheckedUpdateWithoutNotificacoesInput>
+    create: XOR<UsuarioCreateWithoutNotificacoesInput, UsuarioUncheckedCreateWithoutNotificacoesInput>
+    where?: UsuarioWhereInput
+  }
+
+  export type UsuarioUpdateToOneWithWhereWithoutNotificacoesInput = {
+    where?: UsuarioWhereInput
+    data: XOR<UsuarioUpdateWithoutNotificacoesInput, UsuarioUncheckedUpdateWithoutNotificacoesInput>
+  }
+
+  export type UsuarioUpdateWithoutNotificacoesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
+    refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
+    sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
+    tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
+    tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
+  }
+
+  export type UsuarioUncheckedUpdateWithoutNotificacoesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
+    sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
+    tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
+    tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type EntradaPecaCreateWithoutPecaInput = {
@@ -27345,47 +27660,6 @@ export namespace Prisma {
     movimentacoes?: MovimentacaoPecaUncheckedUpdateManyWithoutPecaNestedInput
   }
 
-  export type UsuarioCreateWithoutChecklistsEquipamentoInput = {
-    id?: string
-    nome: string
-    email: string
-    senha: string
-    role?: $Enums.Role
-    ativo?: boolean
-    regiao?: string | null
-    unidade?: string | null
-    criadoEm?: Date | string
-    atualizadoEm?: Date | string
-    refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
-    sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
-    tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
-    tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
-    checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
-  }
-
-  export type UsuarioUncheckedCreateWithoutChecklistsEquipamentoInput = {
-    id?: string
-    nome: string
-    email: string
-    senha: string
-    role?: $Enums.Role
-    ativo?: boolean
-    regiao?: string | null
-    unidade?: string | null
-    criadoEm?: Date | string
-    atualizadoEm?: Date | string
-    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
-    sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
-    tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
-    tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
-    checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
-  }
-
-  export type UsuarioCreateOrConnectWithoutChecklistsEquipamentoInput = {
-    where: UsuarioWhereUniqueInput
-    create: XOR<UsuarioCreateWithoutChecklistsEquipamentoInput, UsuarioUncheckedCreateWithoutChecklistsEquipamentoInput>
-  }
-
   export type ChecklistEquipamentoItemCreateWithoutChecklistInput = {
     id?: string
     tipoEquipamento: $Enums.TipoEquipamento
@@ -27420,51 +27694,47 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type UsuarioUpsertWithoutChecklistsEquipamentoInput = {
-    update: XOR<UsuarioUpdateWithoutChecklistsEquipamentoInput, UsuarioUncheckedUpdateWithoutChecklistsEquipamentoInput>
+  export type UsuarioCreateWithoutChecklistsEquipamentoInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    unidade?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
+    sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
+    tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
+    tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
+  }
+
+  export type UsuarioUncheckedCreateWithoutChecklistsEquipamentoInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    unidade?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
+    sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
+    tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
+    tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
+  }
+
+  export type UsuarioCreateOrConnectWithoutChecklistsEquipamentoInput = {
+    where: UsuarioWhereUniqueInput
     create: XOR<UsuarioCreateWithoutChecklistsEquipamentoInput, UsuarioUncheckedCreateWithoutChecklistsEquipamentoInput>
-    where?: UsuarioWhereInput
-  }
-
-  export type UsuarioUpdateToOneWithWhereWithoutChecklistsEquipamentoInput = {
-    where?: UsuarioWhereInput
-    data: XOR<UsuarioUpdateWithoutChecklistsEquipamentoInput, UsuarioUncheckedUpdateWithoutChecklistsEquipamentoInput>
-  }
-
-  export type UsuarioUpdateWithoutChecklistsEquipamentoInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    nome?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    senha?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    ativo?: BoolFieldUpdateOperationsInput | boolean
-    regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
-    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
-    sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
-    tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
-    tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
-    checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
-  }
-
-  export type UsuarioUncheckedUpdateWithoutChecklistsEquipamentoInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    nome?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    senha?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    ativo?: BoolFieldUpdateOperationsInput | boolean
-    regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
-    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
-    sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
-    tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
-    tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
-    checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type ChecklistEquipamentoItemUpsertWithWhereUniqueWithoutChecklistInput = {
@@ -27497,6 +27767,55 @@ export namespace Prisma {
     numeroChamado?: StringNullableFilter<"ChecklistEquipamentoItem"> | string | null
     descricaoProblema?: StringNullableFilter<"ChecklistEquipamentoItem"> | string | null
     valor?: DecimalNullableFilter<"ChecklistEquipamentoItem"> | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type UsuarioUpsertWithoutChecklistsEquipamentoInput = {
+    update: XOR<UsuarioUpdateWithoutChecklistsEquipamentoInput, UsuarioUncheckedUpdateWithoutChecklistsEquipamentoInput>
+    create: XOR<UsuarioCreateWithoutChecklistsEquipamentoInput, UsuarioUncheckedCreateWithoutChecklistsEquipamentoInput>
+    where?: UsuarioWhereInput
+  }
+
+  export type UsuarioUpdateToOneWithWhereWithoutChecklistsEquipamentoInput = {
+    where?: UsuarioWhereInput
+    data: XOR<UsuarioUpdateWithoutChecklistsEquipamentoInput, UsuarioUncheckedUpdateWithoutChecklistsEquipamentoInput>
+  }
+
+  export type UsuarioUpdateWithoutChecklistsEquipamentoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
+    refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
+    sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
+    tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
+    tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
+  }
+
+  export type UsuarioUncheckedUpdateWithoutChecklistsEquipamentoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
+    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
+    sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
+    tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
+    tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type ChecklistEquipamentoCreateWithoutItensInput = {
@@ -27563,47 +27882,6 @@ export namespace Prisma {
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type UsuarioCreateWithoutChecklistsCarrinhoInput = {
-    id?: string
-    nome: string
-    email: string
-    senha: string
-    role?: $Enums.Role
-    ativo?: boolean
-    regiao?: string | null
-    unidade?: string | null
-    criadoEm?: Date | string
-    atualizadoEm?: Date | string
-    refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
-    sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
-    tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
-    tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
-    checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
-  }
-
-  export type UsuarioUncheckedCreateWithoutChecklistsCarrinhoInput = {
-    id?: string
-    nome: string
-    email: string
-    senha: string
-    role?: $Enums.Role
-    ativo?: boolean
-    regiao?: string | null
-    unidade?: string | null
-    criadoEm?: Date | string
-    atualizadoEm?: Date | string
-    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
-    sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
-    tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
-    tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
-    checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
-  }
-
-  export type UsuarioCreateOrConnectWithoutChecklistsCarrinhoInput = {
-    where: UsuarioWhereUniqueInput
-    create: XOR<UsuarioCreateWithoutChecklistsCarrinhoInput, UsuarioUncheckedCreateWithoutChecklistsCarrinhoInput>
-  }
-
   export type ChecklistCarrinhoItemCreateWithoutChecklistInput = {
     id?: string
     tipoCarrinho: $Enums.TipoCarrinho
@@ -27632,51 +27910,47 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type UsuarioUpsertWithoutChecklistsCarrinhoInput = {
-    update: XOR<UsuarioUpdateWithoutChecklistsCarrinhoInput, UsuarioUncheckedUpdateWithoutChecklistsCarrinhoInput>
+  export type UsuarioCreateWithoutChecklistsCarrinhoInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    unidade?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
+    sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
+    tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
+    tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
+  }
+
+  export type UsuarioUncheckedCreateWithoutChecklistsCarrinhoInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    unidade?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
+    sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
+    tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
+    tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
+  }
+
+  export type UsuarioCreateOrConnectWithoutChecklistsCarrinhoInput = {
+    where: UsuarioWhereUniqueInput
     create: XOR<UsuarioCreateWithoutChecklistsCarrinhoInput, UsuarioUncheckedCreateWithoutChecklistsCarrinhoInput>
-    where?: UsuarioWhereInput
-  }
-
-  export type UsuarioUpdateToOneWithWhereWithoutChecklistsCarrinhoInput = {
-    where?: UsuarioWhereInput
-    data: XOR<UsuarioUpdateWithoutChecklistsCarrinhoInput, UsuarioUncheckedUpdateWithoutChecklistsCarrinhoInput>
-  }
-
-  export type UsuarioUpdateWithoutChecklistsCarrinhoInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    nome?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    senha?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    ativo?: BoolFieldUpdateOperationsInput | boolean
-    regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
-    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
-    sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
-    tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
-    tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
-    checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
-  }
-
-  export type UsuarioUncheckedUpdateWithoutChecklistsCarrinhoInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    nome?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    senha?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    ativo?: BoolFieldUpdateOperationsInput | boolean
-    regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
-    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
-    sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
-    tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
-    tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
-    checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type ChecklistCarrinhoItemUpsertWithWhereUniqueWithoutChecklistInput = {
@@ -27706,6 +27980,55 @@ export namespace Prisma {
     quebrados?: IntFilter<"ChecklistCarrinhoItem"> | number
     numeroChamado?: StringNullableFilter<"ChecklistCarrinhoItem"> | string | null
     descricaoProblema?: StringNullableFilter<"ChecklistCarrinhoItem"> | string | null
+  }
+
+  export type UsuarioUpsertWithoutChecklistsCarrinhoInput = {
+    update: XOR<UsuarioUpdateWithoutChecklistsCarrinhoInput, UsuarioUncheckedUpdateWithoutChecklistsCarrinhoInput>
+    create: XOR<UsuarioCreateWithoutChecklistsCarrinhoInput, UsuarioUncheckedCreateWithoutChecklistsCarrinhoInput>
+    where?: UsuarioWhereInput
+  }
+
+  export type UsuarioUpdateToOneWithWhereWithoutChecklistsCarrinhoInput = {
+    where?: UsuarioWhereInput
+    data: XOR<UsuarioUpdateWithoutChecklistsCarrinhoInput, UsuarioUncheckedUpdateWithoutChecklistsCarrinhoInput>
+  }
+
+  export type UsuarioUpdateWithoutChecklistsCarrinhoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
+    refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
+    sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
+    tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
+    tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
+  }
+
+  export type UsuarioUncheckedUpdateWithoutChecklistsCarrinhoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
+    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
+    sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
+    tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
+    tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type ChecklistCarrinhoCreateWithoutItensInput = {
@@ -27772,6 +28095,37 @@ export namespace Prisma {
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ChecklistCarrinhoCreateManyCriadoPorInput = {
+    id?: string
+    semana: number
+    ano: number
+    regiao: string
+    unidade: string
+    observacoes?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+  }
+
+  export type ChecklistEquipamentoCreateManyCriadoPorInput = {
+    id?: string
+    semana: number
+    ano: number
+    regiao: string
+    unidade: string
+    observacoes?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+  }
+
+  export type NotificacaoCreateManyUsuarioInput = {
+    id?: string
+    titulo: string
+    mensagem: string
+    lida?: boolean
+    tarefaId?: string | null
+    criadoEm?: Date | string
+  }
+
   export type RefreshTokenCreateManyUsuarioInput = {
     id?: string
     token: string
@@ -27818,26 +28172,101 @@ export namespace Prisma {
     atualizadoEm?: Date | string
   }
 
-  export type ChecklistEquipamentoCreateManyCriadoPorInput = {
-    id?: string
-    semana: number
-    ano: number
-    regiao: string
-    unidade: string
-    observacoes?: string | null
-    criadoEm?: Date | string
-    atualizadoEm?: Date | string
+  export type ChecklistCarrinhoUpdateWithoutCriadoPorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    semana?: IntFieldUpdateOperationsInput | number
+    ano?: IntFieldUpdateOperationsInput | number
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    itens?: ChecklistCarrinhoItemUpdateManyWithoutChecklistNestedInput
   }
 
-  export type ChecklistCarrinhoCreateManyCriadoPorInput = {
-    id?: string
-    semana: number
-    ano: number
-    regiao: string
-    unidade: string
-    observacoes?: string | null
-    criadoEm?: Date | string
-    atualizadoEm?: Date | string
+  export type ChecklistCarrinhoUncheckedUpdateWithoutCriadoPorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    semana?: IntFieldUpdateOperationsInput | number
+    ano?: IntFieldUpdateOperationsInput | number
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    itens?: ChecklistCarrinhoItemUncheckedUpdateManyWithoutChecklistNestedInput
+  }
+
+  export type ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    semana?: IntFieldUpdateOperationsInput | number
+    ano?: IntFieldUpdateOperationsInput | number
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ChecklistEquipamentoUpdateWithoutCriadoPorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    semana?: IntFieldUpdateOperationsInput | number
+    ano?: IntFieldUpdateOperationsInput | number
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    itens?: ChecklistEquipamentoItemUpdateManyWithoutChecklistNestedInput
+  }
+
+  export type ChecklistEquipamentoUncheckedUpdateWithoutCriadoPorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    semana?: IntFieldUpdateOperationsInput | number
+    ano?: IntFieldUpdateOperationsInput | number
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    itens?: ChecklistEquipamentoItemUncheckedUpdateManyWithoutChecklistNestedInput
+  }
+
+  export type ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    semana?: IntFieldUpdateOperationsInput | number
+    ano?: IntFieldUpdateOperationsInput | number
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificacaoUpdateWithoutUsuarioInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    titulo?: StringFieldUpdateOperationsInput | string
+    mensagem?: StringFieldUpdateOperationsInput | string
+    lida?: BoolFieldUpdateOperationsInput | boolean
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    tarefa?: TarefaUpdateOneWithoutNotificacoesNestedInput
+  }
+
+  export type NotificacaoUncheckedUpdateWithoutUsuarioInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    titulo?: StringFieldUpdateOperationsInput | string
+    mensagem?: StringFieldUpdateOperationsInput | string
+    lida?: BoolFieldUpdateOperationsInput | boolean
+    tarefaId?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificacaoUncheckedUpdateManyWithoutUsuarioInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    titulo?: StringFieldUpdateOperationsInput | string
+    mensagem?: StringFieldUpdateOperationsInput | string
+    lida?: BoolFieldUpdateOperationsInput | boolean
+    tarefaId?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type RefreshTokenUpdateWithoutUsuarioInput = {
@@ -27905,8 +28334,8 @@ export namespace Prisma {
     dataConclusao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    criadoPor?: UsuarioUpdateOneRequiredWithoutTarefasCriadasNestedInput
     notificacoes?: NotificacaoUpdateManyWithoutTarefaNestedInput
+    criadoPor?: UsuarioUpdateOneRequiredWithoutTarefasCriadasNestedInput
   }
 
   export type TarefaUncheckedUpdateWithoutAtribuidoParaInput = {
@@ -27949,8 +28378,8 @@ export namespace Prisma {
     dataConclusao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    atribuidoPara?: UsuarioUpdateOneWithoutTarefasAtribuidasNestedInput
     notificacoes?: NotificacaoUpdateManyWithoutTarefaNestedInput
+    atribuidoPara?: UsuarioUpdateOneWithoutTarefasAtribuidasNestedInput
   }
 
   export type TarefaUncheckedUpdateWithoutCriadoPorInput = {
@@ -27982,81 +28411,12 @@ export namespace Prisma {
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ChecklistEquipamentoUpdateWithoutCriadoPorInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    semana?: IntFieldUpdateOperationsInput | number
-    ano?: IntFieldUpdateOperationsInput | number
-    regiao?: StringFieldUpdateOperationsInput | string
-    unidade?: StringFieldUpdateOperationsInput | string
-    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
-    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    itens?: ChecklistEquipamentoItemUpdateManyWithoutChecklistNestedInput
-  }
-
-  export type ChecklistEquipamentoUncheckedUpdateWithoutCriadoPorInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    semana?: IntFieldUpdateOperationsInput | number
-    ano?: IntFieldUpdateOperationsInput | number
-    regiao?: StringFieldUpdateOperationsInput | string
-    unidade?: StringFieldUpdateOperationsInput | string
-    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
-    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    itens?: ChecklistEquipamentoItemUncheckedUpdateManyWithoutChecklistNestedInput
-  }
-
-  export type ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    semana?: IntFieldUpdateOperationsInput | number
-    ano?: IntFieldUpdateOperationsInput | number
-    regiao?: StringFieldUpdateOperationsInput | string
-    unidade?: StringFieldUpdateOperationsInput | string
-    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
-    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type ChecklistCarrinhoUpdateWithoutCriadoPorInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    semana?: IntFieldUpdateOperationsInput | number
-    ano?: IntFieldUpdateOperationsInput | number
-    regiao?: StringFieldUpdateOperationsInput | string
-    unidade?: StringFieldUpdateOperationsInput | string
-    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
-    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    itens?: ChecklistCarrinhoItemUpdateManyWithoutChecklistNestedInput
-  }
-
-  export type ChecklistCarrinhoUncheckedUpdateWithoutCriadoPorInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    semana?: IntFieldUpdateOperationsInput | number
-    ano?: IntFieldUpdateOperationsInput | number
-    regiao?: StringFieldUpdateOperationsInput | string
-    unidade?: StringFieldUpdateOperationsInput | string
-    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
-    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    itens?: ChecklistCarrinhoItemUncheckedUpdateManyWithoutChecklistNestedInput
-  }
-
-  export type ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    semana?: IntFieldUpdateOperationsInput | number
-    ano?: IntFieldUpdateOperationsInput | number
-    regiao?: StringFieldUpdateOperationsInput | string
-    unidade?: StringFieldUpdateOperationsInput | string
-    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
-    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type NotificacaoCreateManyTarefaInput = {
     id?: string
     titulo: string
     mensagem: string
     lida?: boolean
+    usuarioId?: string | null
     criadoEm?: Date | string
   }
 
@@ -28066,6 +28426,7 @@ export namespace Prisma {
     mensagem?: StringFieldUpdateOperationsInput | string
     lida?: BoolFieldUpdateOperationsInput | boolean
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    usuario?: UsuarioUpdateOneWithoutNotificacoesNestedInput
   }
 
   export type NotificacaoUncheckedUpdateWithoutTarefaInput = {
@@ -28073,6 +28434,7 @@ export namespace Prisma {
     titulo?: StringFieldUpdateOperationsInput | string
     mensagem?: StringFieldUpdateOperationsInput | string
     lida?: BoolFieldUpdateOperationsInput | boolean
+    usuarioId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -28081,6 +28443,7 @@ export namespace Prisma {
     titulo?: StringFieldUpdateOperationsInput | string
     mensagem?: StringFieldUpdateOperationsInput | string
     lida?: BoolFieldUpdateOperationsInput | boolean
+    usuarioId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
