@@ -26,28 +26,39 @@ const checklistRoutes = require('./routes/checklist.routes');
 
 const app = express();
 
-// 1. CORS no TOPO ABSOLUTO (Reflexão Dinâmica)
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  // Na Vercel, para aceitar credentials, não podemos usar '*', precisamos refletir a origem
-  if (origin) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  } else {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-  }
-  
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Request-ID');
-
-  if (req.method === 'OPTIONS') {
-    return res.status(204).end();
-  }
-  next();
-});
-
 // Necessário para cookies seguros na Vercel
 app.set('trust proxy', 1);
+
+// ─── CORS CONFIGURAÇÃO CORRETA ───────────────────────────────────────────────
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://localhost:5174',
+  // ADICIONE SEU DOMÍNIO VERCEL DO FRONTEND AQUI:
+  'https://gerenciadormanutencaoclient.vercel.app',
+  'https://gerenciadormanutencaoclient-git-main-luis-h-souzas-projects.vercel.app',
+];
+
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (isDevelopment) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      logger.warn(`Origem bloqueada: ${origin}`);
+      callback(new Error('Não permitido por CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
+  exposedHeaders: ['X-Request-ID'],
+  maxAge: 86400,
+}));
 
 // ─── Segurança: Headers HTTP ────────────────────────────────────────────────
 app.use(helmet({
