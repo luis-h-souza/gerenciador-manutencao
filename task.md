@@ -1,0 +1,7 @@
+- [ ] Criar contas nos serviços de infraestrutura (Supabase/Neon + Upstash)
+- [ ] Obter as novas URLs de conexão (Database e Redis)
+- [ ] Configurar variavel de ambiente no Frontend (`VITE_API_URL`)
+- [ ] Criar `vercel.json` no Backend
+- [ ] Ajustar `server.js` para exportar o Express (Serverless)
+- [ ] Fazer o deploy dos dois projetos (Client e Server) no Dashboard da Vercel
+- [ ] Rodar `npx prisma db push` para subir o schema para o banco de produção
