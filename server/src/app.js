@@ -45,20 +45,20 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Permite requisições sem origin (mobile apps, postman, etc)
     if (!origin) return callback(null, true);
-    
-    // Em desenvolvimento, permite qualquer origem
+
     if (isDevelopment) return callback(null, true);
-    
-    // Em produção, verifica se está na lista de origens permitidas
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      // Log para debug - você verá no Vercel Logs qual origem está tentando acessar
-      logger.warn(`⚠️  Origem bloqueada por CORS: ${origin}`);
-      callback(new Error('Não permitido por CORS'));
+
+    const isAllowed =
+      origin.includes('localhost') ||
+      origin.includes('gerenciadormanutencaoclient.vercel.app');
+
+    if (isAllowed) {
+      return callback(null, true);
     }
+
+    logger.warn(`⚠️  Origem bloqueada por CORS: ${origin}`);
+    return callback(null, false);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -66,6 +66,25 @@ app.use(cors({
   exposedHeaders: ['X-Request-ID'],
   maxAge: 86400, // Cache preflight por 24 horas
 }));
+
+app.options('*', cors());
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+
+  if (
+    origin &&
+    (
+      origin.includes('localhost') ||
+      origin.includes('vercel.app')
+    )
+  ) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
+
+  next();
+});
 
 // ─── Segurança: Headers HTTP ────────────────────────────────────────────────
 app.use(helmet({
