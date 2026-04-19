@@ -29,36 +29,43 @@ const app = express();
 // ─── CORS (Produção Segura) ──────────────────────────────────────────────────
 const defaultOrigins = [
   'http://localhost:5173',
+  'http://localhost:3000',
+  'http://localhost:5174',
   'https://gerenciadormanutencaoclient.vercel.app',
-  'https://gerenciador-manutencao-drrqw1j5t-luishsouzas-projects.vercel.app',
-  'https://gerenciador-manutencao-git-main-luishsouzas-projects.vercel.app',
+  'https://gerenciadormanutencaoclient-git-main-luishsouzas-projects.vercel.app',
+  'https://gerenciadormanutencaoclient-9zo5njrjv-luishsouzas-projects.vercel.app',
 ];
 
 const allowedOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(',').map(s => s.trim().replace(/\/$/, ''))
   : defaultOrigins;
 
+console.log('🔒 CORS configurado para:', allowedOrigins);
+ 
 app.use(cors({
   origin: (origin, callback) => {
-    // Permite sem origin em desenvolvimento
-    if (!origin && process.env.NODE_ENV !== 'production') return callback(null, true);
-    if (!origin) return callback(null, true); // Mobile/Postman fallback
-
+    // Permite requisições sem origin (Postman, mobile apps)
+    if (!origin) return callback(null, true);
+ 
+    // Verifica se a origem está permitida
     const isAllowed =
       allowedOrigins.includes(origin.replace(/\/$/, '')) ||
       origin.includes('localhost');
-
+ 
     if (isAllowed) {
       callback(null, true);
     } else {
-      logger.warn(`⚠️ Acesso negado por CORS: ${origin}`);
+      logger.warn(`⚠️ CORS bloqueou: ${origin}`);
+      logger.warn(`📋 Permitidas: ${allowedOrigins.join(', ')}`);
       callback(new Error('CORS: Origem não permitida'));
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
-  optionsSuccessStatus: 200
+  exposedHeaders: ['X-Request-ID'],
+  optionsSuccessStatus: 200,
+  maxAge: 86400,
 }));
 
 // Necessário para cookies seguros na Vercel
@@ -120,8 +127,11 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     environment: process.env.NODE_ENV,
+    cors_origins: allowedOrigins.length, // Mostra quantas origens estão configuradas
+    allowed_origins: allowedOrigins, // Mostra quais origens (útil para debug)
   });
 });
+ 
 
 // ─── Boas-vindas (Root) ──────────────────────────────────────────────────────
 app.get('/', (req, res) => {
