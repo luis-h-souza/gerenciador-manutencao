@@ -303,6 +303,7 @@ function CorporativoDashboard({ filtro, setFiltro }) {
 
 function GestorDashboard({ filtro, setFiltro }) {
   const { usuario } = useAuth();
+  const isGestor = usuario?.role === 'GESTOR';
   const { data: resumo, isLoading: l1 } = useQuery({
     queryKey: ['dashboard-resumo', filtro],
     queryFn: () => dashboardService.resumo(filtro).then(r => r.data),
@@ -379,15 +380,17 @@ function GestorDashboard({ filtro, setFiltro }) {
             accent="var(--color-warning)"
           />
         </div>
-        <div style={{ flex: '1 1 240px' }}>
-          <StatCard
-            label="Peças em Alerta"
-            value={resumo?.estoque?.pecasBaixoEstoque?.length ?? 0}
-            sub="Estoque ≤ 5 unidades"
-            icon={Package}
-            accent="var(--color-danger)"
-          />
-        </div>
+        {isGestor && (
+          <div style={{ flex: '1 1 240px' }}>
+            <StatCard
+              label="Peças em Alerta"
+              value={resumo?.estoque?.pecasBaixoEstoque?.length ?? 0}
+              sub="Estoque ≤ 5 unidades"
+              icon={Package}
+              accent="var(--color-danger)"
+            />
+          </div>
+        )}
 
         {/* Seletor de Data (Mês/Ano) - Agora no final do grid (Lado Direito) */}
         <div className="stat-card flex flex-col justify-center" style={{ borderTop: '4px solid var(--color-brand-300)', marginLeft: 'auto', flex: '1 1 280px', maxWidth: '350px' }}>
@@ -542,7 +545,7 @@ function GestorDashboard({ filtro, setFiltro }) {
       </div>
 
       {/* Lista de Peças em alerta */}
-      {resumo?.estoque?.pecasBaixoEstoque?.length > 0 && (
+      {isGestor && resumo?.estoque?.pecasBaixoEstoque?.length > 0 && (
         <div className="card mt-2">
           <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-warning)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <AlertTriangle size={15} /> Peças com estoque crítico

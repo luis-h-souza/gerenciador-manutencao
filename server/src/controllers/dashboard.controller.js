@@ -38,13 +38,12 @@ const resumo = async (req, res, next) => {
       }),
       prisma.controleChamado.count({ where: { ...filter, mauUso: true, dataAbertura: { gte: inicioMes, lt: fimMes } } }),
       prisma.fornecedor.count({ where: { ativo: true } }),
-      prisma.peca.findMany({ 
-        where: { 
-          ...filter,
-          quantidadeEstoque: { lte: 5 } 
-        }, 
-        select: { id: true, nome: true, quantidadeEstoque: true } 
-      }),
+      req.user.role === 'GESTOR'
+        ? prisma.peca.findMany({
+            where: { quantidadeEstoque: { lte: 5 } },
+            select: { id: true, nome: true, quantidadeEstoque: true },
+          })
+        : Promise.resolve([]),
     ]);
 
     const gastoAtual = parseFloat(gastosMes._sum.valor || 0);
