@@ -162,7 +162,7 @@ app.get('/', (req, res) => {
 });
 
 // ─── API Routes ───────────────────────────────────────────────────────────────
-const API = '/api/v1';
+const API = '/v1';
 app.use(`${API}/auth`, authRoutes);
 app.use(`${API}/tarefas`, tarefaRoutes);
 app.use(`${API}/usuarios`, usuarioRoutes);
