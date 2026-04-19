@@ -1526,3 +1526,19 @@
 {"level":"info","message":"Redis: conectado","timestamp":"2026-04-19T01:38:06.459Z"}
 {"level":"info","message":"Redis: pronto","timestamp":"2026-04-19T01:38:06.464Z"}
 {"level":"info","message":"Redis: pronto","timestamp":"2026-04-19T01:38:06.469Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-19T01:56:44.446Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-19T01:56:44.835Z"}
+{"level":"info","message":"Redis: conectado","timestamp":"2026-04-19T01:56:44.851Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-19T01:56:44.419Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-19T01:56:44.840Z"}
+{"level":"info","message":"Redis: conectado","timestamp":"2026-04-19T01:56:44.858Z"}
+{"level":"info","message":"Redis: pronto","timestamp":"2026-04-19T01:56:44.868Z"}
+{"level":"info","message":"Redis: pronto","timestamp":"2026-04-19T01:56:44.872Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-19T01:56:45.811Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-19T01:56:46.198Z"}
+{"level":"info","message":"Redis: conectado","timestamp":"2026-04-19T01:56:46.213Z"}
+{"level":"info","message":"Redis: pronto","timestamp":"2026-04-19T01:56:46.224Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-19T01:56:45.823Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-19T01:56:46.227Z"}
+{"level":"info","message":"Redis: conectado","timestamp":"2026-04-19T01:56:46.241Z"}
+{"level":"info","message":"Redis: pronto","timestamp":"2026-04-19T01:56:46.251Z"}

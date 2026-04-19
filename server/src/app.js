@@ -67,13 +67,21 @@ app.use(cors({
   maxAge: 86400, // Cache preflight por 24 horas
 }));
 
-app.options('*', cors());
+// app.options('/*', cors());
+
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
 
   if (
-    origin &&
+    typeof origin === 'string' &&
     (
       origin.includes('localhost') ||
       origin.includes('vercel.app')
