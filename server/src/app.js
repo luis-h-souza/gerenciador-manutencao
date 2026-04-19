@@ -29,27 +29,34 @@ const app = express();
 // Necessário para cookies seguros na Vercel
 app.set('trust proxy', 1);
 
-// ─── CORS CONFIGURAÇÃO CORRETA ───────────────────────────────────────────────
+// ─── CORS CONFIGURAÇÃO ───────────────────────────────────────────────
 const allowedOrigins = [
+  // Desenvolvimento local
   'http://localhost:5173',
   'http://localhost:3000',
   'http://localhost:5174',
-  // ADICIONE SEU DOMÍNIO VERCEL DO FRONTEND AQUI:
+  // Produção Vercel - todos os domínios do seu frontend
   'https://gerenciadormanutencaoclient.vercel.app',
-  'https://gerenciadormanutencaoclient-git-main-luis-h-souzas-projects.vercel.app',
+  'https://gerenciadormanutencaoclient-git-main-luishsouzas-projects.vercel.app',
+  'https://gerenciadormanutencaoclient-9ox9lajbb-luishsouzas-projects.vercel.app',
 ];
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 app.use(cors({
   origin: function (origin, callback) {
+    // Permite requisições sem origin (mobile apps, postman, etc)
     if (!origin) return callback(null, true);
+    
+    // Em desenvolvimento, permite qualquer origem
     if (isDevelopment) return callback(null, true);
-
+    
+    // Em produção, verifica se está na lista de origens permitidas
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      logger.warn(`Origem bloqueada: ${origin}`);
+      // Log para debug - você verá no Vercel Logs qual origem está tentando acessar
+      logger.warn(`⚠️  Origem bloqueada por CORS: ${origin}`);
       callback(new Error('Não permitido por CORS'));
     }
   },
@@ -57,7 +64,7 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
   exposedHeaders: ['X-Request-ID'],
-  maxAge: 86400,
+  maxAge: 86400, // Cache preflight por 24 horas
 }));
 
 // ─── Segurança: Headers HTTP ────────────────────────────────────────────────
@@ -103,7 +110,7 @@ app.use(session({
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' permite cross-domain na Vercel
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     maxAge: parseInt(process.env.SESSION_MAX_AGE || '86400000'),
   },
 }));
