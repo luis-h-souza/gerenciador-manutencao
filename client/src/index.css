@@ -44,6 +44,36 @@
   --font-display: 'Inter Variable', sans-serif;
 }
 
+/* ─── Tema Claro ──────────────────────────────────────────────────────────── */
+[data-theme="light"] {
+  --color-brand-50:  #f0f9ff;
+  --color-brand-100: #e0f2fe;
+  --color-brand-400: #0ea5e9;
+  --color-brand-500: #0284c7;
+  --color-brand-600: #0369a1;
+  --color-brand-700: #1e40af;
+
+  --color-surface-900: #f3f4f6;
+  --color-surface-800: #ffffff;
+  --color-surface-700: #f9fafb;
+  --color-surface-600: #e5e7eb;
+  --color-surface-500: #d1d5db;
+  --color-surface-400: #9ca3af;
+  --color-surface-300: #6b7280;
+
+  --color-border:       #e5e7eb;
+  --color-border-light: #d1d5db;
+
+  --color-text-primary:   #111827;
+  --color-text-secondary: #4b5563;
+  --color-text-muted:     #9ca3af;
+
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-danger:  #dc2626;
+  --color-info:    #2563eb;
+}
+
 /* ─── Base ────────────────────────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -67,7 +97,7 @@ body {
 
 /* Scrollbar customizada */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--color-surface-800); }
+::-webkit-scrollbar-track { background: var(--color-surface-900); }
 ::-webkit-scrollbar-thumb { background: var(--color-surface-400); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-brand-600); }
 
@@ -273,7 +303,7 @@ body {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.45);
   backdrop-filter: blur(4px);
   z-index: 50;
   display: flex;
