@@ -26,31 +26,41 @@ const checklistRoutes = require('./routes/checklist.routes');
 
 const app = express();
 
-// Necessário para cookies seguros na Vercel
-app.set('trust proxy', 1);
+// 1. LOG DE DEPURACÃO (Para ver no painel da Vercel)
+app.use((req, res, next) => {
+  const origin = req.headers.origin || 'SEM ORIGEM';
+  logger.info(`📡 [${req.method}] ${req.url} - Origin: ${origin}`);
+  next();
+});
 
-// ─── CORS DEFINITIVO (Vercel & Local) ────────────────────────────────────────
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-    
-    const isAllowed = 
-      origin.includes('localhost') || 
-      origin.includes('vercel.app') || 
-      origin === process.env.CORS_ORIGIN;
+// 2. CORS MANUAL (Mais garantido na Vercel)
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  
+  if (origin) {
+    // Se quiser ser 100% permissivo para depuração, use apenas res.setHeader('Access-Control-Allow-Origin', origin);
+    // Mas vamos manter a lógica de verificação
+    const allowed = (process.env.CORS_ORIGIN || '').split(',').map(s => s.trim().replace(/\/$/, ''));
+    const isAllowed = origin.includes('localhost') || origin.includes('vercel.app') || allowed.includes(origin.replace(/\/$/, '')) || allowed.includes('*');
 
     if (isAllowed) {
-      callback(null, true);
-    } else {
-      logger.warn(`⚠️ CORS bloqueado para: ${origin}`);
-      callback(new Error('Origem não permitida por CORS'));
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
     }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
-  optionsSuccessStatus: 200
-}));
+  }
+
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Request-ID');
+
+  // Resposta instantânea para Preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  next();
+});
+
+// Necessário para cookies seguros na Vercel
+app.set('trust proxy', 1);
 
 // ─── Segurança: Headers HTTP ────────────────────────────────────────────────
 app.use(helmet({
