@@ -284,13 +284,13 @@ function CorporativoDashboard({ filtro, setFiltro }) {
         <div style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', background: 'var(--color-brand-500)' }} />
         
         <div className="flex items-start gap-4" style={{ position: 'relative', zIndex: 1 }}>
-          <div className="flex items-center justify-center w-10 h-10 rounded-lg shrink-0" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--color-brand-400)' }}>
+          <div className="flex items-center justify-center w-10 h-10 rounded-lg shrink-0" style={{ background: 'var(--color-surface-600)', color: 'var(--color-brand-400)' }}>
             <BarChart3 size={20} />
           </div>
           <div>
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#fff', marginBottom: '8px' }}>Resumo Executivo</h3>
-            <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.7)', lineHeight: '1.6' }}>
-              Este painel combina a visão de alto nível (Macro) com o detalhamento tático (Regional). 
+            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '8px' }}>Resumo Executivo</h3>
+            <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', lineHeight: '1.6' }}>
+              Este painel combina a visão de alto nível (Macro) com o detalhamento tático (Regional).
               Os indicadores refletem o status em tempo real de todas as unidades conectadas ao sistema de manutenção.
             </p>
           </div>
