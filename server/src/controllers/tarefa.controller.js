@@ -95,6 +95,7 @@ const criar = async (req, res, next) => {
           titulo: 'Nova tarefa atribuída',
           mensagem: `Você recebeu uma nova tarefa: ${descricao.substring(0, 80)}`,
           tarefaId: tarefa.id,
+          usuarioId: atribuidoParaId,
         },
       });
     }
@@ -133,11 +134,13 @@ const atualizar = async (req, res, next) => {
     });
 
     if (status && status !== tarefaExiste.status) {
+      const destinatario = tarefaExiste.atribuidoParaId || tarefaExiste.criadoPorId;
       await prisma.notificacao.create({
         data: {
           titulo: 'Status da tarefa atualizado',
           mensagem: `Tarefa "${tarefa.descricao.substring(0, 60)}" — novo status: ${status}`,
           tarefaId: tarefa.id,
+          usuarioId: destinatario,
         },
       });
     }

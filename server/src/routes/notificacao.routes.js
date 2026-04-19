@@ -8,7 +8,9 @@ router.use(autenticar);
 router.get('/', async (req, res, next) => {
   try {
     const notificacoes = await prisma.notificacao.findMany({
-      orderBy: { criadoEm: 'desc' }, take: 50,
+      where: { usuarioId: req.user.id },
+      orderBy: { criadoEm: 'desc' },
+      take: 50,
     });
     res.json(notificacoes);
   } catch (err) { next(err); }
@@ -16,6 +18,10 @@ router.get('/', async (req, res, next) => {
 
 router.patch('/:id/lida', async (req, res, next) => {
   try {
+    const notif = await prisma.notificacao.findFirst({
+      where: { id: req.params.id, usuarioId: req.user.id },
+    });
+    if (!notif) return res.status(404).json({ error: 'Notificação não encontrada' });
     await prisma.notificacao.update({ where: { id: req.params.id }, data: { lida: true } });
     res.json({ success: true });
   } catch (err) { next(err); }
@@ -23,7 +29,10 @@ router.patch('/:id/lida', async (req, res, next) => {
 
 router.patch('/marcar-todas-lidas', async (req, res, next) => {
   try {
-    await prisma.notificacao.updateMany({ where: { lida: false }, data: { lida: true } });
+    await prisma.notificacao.updateMany({
+      where: { lida: false, usuarioId: req.user.id },
+      data: { lida: true },
+    });
     res.json({ success: true });
   } catch (err) { next(err); }
 });

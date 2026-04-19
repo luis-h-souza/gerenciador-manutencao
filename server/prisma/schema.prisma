@@ -20,6 +20,7 @@ model Usuario {
   atualizadoEm          DateTime               @updatedAt
   checklistsCarrinho    ChecklistCarrinho[]
   checklistsEquipamento ChecklistEquipamento[]
+  notificacoes          Notificacao[]
   refreshTokens         RefreshToken[]
   sessoes               Sessao[]
   tarefasAtribuidas     Tarefa[]               @relation("TarefaAtribuida")
@@ -75,13 +76,15 @@ model Tarefa {
 }
 
 model Notificacao {
-  id       String   @id @default(uuid())
-  titulo   String
-  mensagem String
-  lida     Boolean  @default(false)
-  tarefaId String?
-  criadoEm DateTime @default(now())
-  tarefa   Tarefa?  @relation(fields: [tarefaId], references: [id])
+  id        String   @id @default(uuid())
+  titulo    String
+  mensagem  String
+  lida      Boolean  @default(false)
+  tarefaId  String?
+  usuarioId String?
+  criadoEm  DateTime @default(now())
+  tarefa    Tarefa?  @relation(fields: [tarefaId], references: [id])
+  usuario   Usuario? @relation(fields: [usuarioId], references: [id])
 
   @@map("notificacoes")
 }

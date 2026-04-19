@@ -28,14 +28,25 @@ const buscarPorId = async (req, res, next) => {
 
 const criar = async (req, res, next) => {
   try {
-    const f = await prisma.fornecedor.create({ data: req.body });
+    const { nome, telefone, email, segmento, cnpj } = req.body;
+    const f = await prisma.fornecedor.create({ data: { nome, telefone, email, segmento, cnpj } });
     res.status(201).json(f);
   } catch (err) { next(err); }
 };
 
 const atualizar = async (req, res, next) => {
   try {
-    const f = await prisma.fornecedor.update({ where: { id: req.params.id }, data: req.body });
+    const { nome, telefone, email, segmento, cnpj } = req.body;
+    const f = await prisma.fornecedor.update({
+      where: { id: req.params.id },
+      data: {
+        ...(nome !== undefined && { nome }),
+        ...(telefone !== undefined && { telefone }),
+        ...(email !== undefined && { email }),
+        ...(segmento !== undefined && { segmento }),
+        ...(cnpj !== undefined && { cnpj }),
+      },
+    });
     res.json(f);
   } catch (err) { next(err); }
 };

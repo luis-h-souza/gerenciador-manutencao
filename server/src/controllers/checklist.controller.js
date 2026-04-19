@@ -166,7 +166,7 @@ const listarCarrinhos = async (req, res, next) => {
     if (ano)    where.ano    = parseInt(ano);
     if (criadoPorId) where.criadoPorId = criadoPorId;
     
-    if (['ADMINISTRADOR', 'SUPERVISOR'].includes(req.user.role)) {
+    if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR'].includes(req.user.role)) {
       if (regiao) where.regiao = regiao;
       if (unidade) where.unidade = unidade;
     }

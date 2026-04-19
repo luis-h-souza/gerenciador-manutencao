@@ -11,7 +11,8 @@ const listarPecas = async (req, res, next) => {
 
 const criarPeca = async (req, res, next) => {
   try {
-    const peca = await prisma.peca.create({ data: req.body });
+    const { nome, descricao } = req.body;
+    const peca = await prisma.peca.create({ data: { nome, descricao } });
     res.status(201).json(peca);
   } catch (err) { next(err); }
 };
