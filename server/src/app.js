@@ -34,9 +34,9 @@ const defaultOrigins = [
   'https://gerenciador-manutencao-git-main-luishsouzas-projects.vercel.app',
 ];
 
-const allowedOrigins = (process.env.CORS_ORIGIN || defaultOrigins.join(','))
-  .split(',')
-  .map(s => s.trim().replace(/\/$/, ''));
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map(s => s.trim().replace(/\/$/, ''))
+  : defaultOrigins;
 
 app.use(cors({
   origin: (origin, callback) => {
