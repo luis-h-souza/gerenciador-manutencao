@@ -27,7 +27,14 @@ const checklistRoutes = require('./routes/checklist.routes');
 const app = express();
 
 // ─── CORS (Produção Segura) ──────────────────────────────────────────────────
-const allowedOrigins = (process.env.CORS_ORIGIN || '')
+const defaultOrigins = [
+  'http://localhost:5173',
+  'https://gerenciadormanutencaoclient.vercel.app',
+  'https://gerenciador-manutencao-drrqw1j5t-luishsouzas-projects.vercel.app',
+  'https://gerenciador-manutencao-git-main-luishsouzas-projects.vercel.app',
+];
+
+const allowedOrigins = (process.env.CORS_ORIGIN || defaultOrigins.join(','))
   .split(',')
   .map(s => s.trim().replace(/\/$/, ''));
 
@@ -36,9 +43,9 @@ app.use(cors({
     // Permite sem origin em desenvolvimento
     if (!origin && process.env.NODE_ENV !== 'production') return callback(null, true);
     if (!origin) return callback(null, true); // Mobile/Postman fallback
-    
-    const isAllowed = 
-      allowedOrigins.includes(origin.replace(/\/$/, '')) || 
+
+    const isAllowed =
+      allowedOrigins.includes(origin.replace(/\/$/, '')) ||
       origin.includes('localhost');
 
     if (isAllowed) {
