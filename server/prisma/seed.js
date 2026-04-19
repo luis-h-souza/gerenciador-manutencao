@@ -24,16 +24,16 @@ async function main() {
 
   const usuarios = await Promise.all([
     prisma.usuario.create({ data: { nome: 'Admin Sistema', email: 'admin@manutencao.com', senha: senhaHash, role: 'ADMINISTRADOR' } }),
-    prisma.usuario.create({ data: { nome: 'Marcos Diretor', email: 'diretor@manutencao.com', senha: senhaHash, role: 'DIRETOR' } }),
+    prisma.usuario.create({ data: { nome: 'Marco', email: 'diretor@manutencao.com', senha: senhaHash, role: 'DIRETOR' } }),
     
-    prisma.usuario.create({ data: { nome: 'Rodrigo Gerente', email: 'gerente@manutencao.com', senha: senhaHash, role: 'GERENTE' } }),
-    prisma.usuario.create({ data: { nome: 'Rodnei Gerente', email: 'gerente2@manutencao.com', senha: senhaHash, role: 'GERENTE' } }),
+    prisma.usuario.create({ data: { nome: 'Rodrigo Godoy', email: 'gerente@manutencao.com', senha: senhaHash, role: 'GERENTE' } }),
+    prisma.usuario.create({ data: { nome: 'Rodnei', email: 'gerente2@manutencao.com', senha: senhaHash, role: 'GERENTE' } }),
 
-    prisma.usuario.create({ data: { nome: 'Nathan Coordenador', email: 'nathan@manutencao.com', senha: senhaHash, role: 'COORDENADOR', regiao: 'SP8' } }),
-    prisma.usuario.create({ data: { nome: 'Luciano Coordenador', email: 'luciano@manutencao.com', senha: senhaHash, role: 'COORDENADOR', regiao: 'SP7' } }),
+    prisma.usuario.create({ data: { nome: 'Nathan', email: 'nathan@manutencao.com', senha: senhaHash, role: 'COORDENADOR', regiao: 'SP8' } }),
+    prisma.usuario.create({ data: { nome: 'Luciano', email: 'luciano@manutencao.com', senha: senhaHash, role: 'COORDENADOR', regiao: 'SP7' } }),
 
-    prisma.usuario.create({ data: { nome: 'Marcos Gestor SP8-Loja 39', email: 'loja39@manutencao.com', senha: senhaHash, role: 'GESTOR', regiao: 'SP8', unidade: 'Loja 39' } }),
-    prisma.usuario.create({ data: { nome: 'Luis Gestor SP7-Loja 246', email: 'loja246@manutencao.com', senha: senhaHash, role: 'GESTOR', regiao: 'SP7', unidade: 'Loja 246' } }),
+    prisma.usuario.create({ data: { nome: 'Marcos SP8-Loja 39', email: 'loja39@manutencao.com', senha: senhaHash, role: 'GESTOR', regiao: 'SP8', unidade: 'Loja 39' } }),
+    prisma.usuario.create({ data: { nome: 'Luis SP7-Loja 246', email: 'loja246@manutencao.com', senha: senhaHash, role: 'GESTOR', regiao: 'SP7', unidade: 'Loja 246' } }),
 
     prisma.usuario.create({ data: { nome: 'Maria Técnica SP8-Loja 39', email: 'tecnico2@manutencao.com', senha: senhaHash, role: 'TECNICO', regiao: 'SP8', unidade: 'Loja 39' } }),
     prisma.usuario.create({ data: { nome: 'João Técnico SP7-Loja 246', email: 'tecnico@manutencao.com', senha: senhaHash, role: 'TECNICO', regiao: 'SP7', unidade: 'Loja 246' } }),
