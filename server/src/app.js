@@ -26,38 +26,33 @@ const checklistRoutes = require('./routes/checklist.routes');
 
 const app = express();
 
-// 1. LOG DE DEPURACÃO (Para ver no painel da Vercel)
-app.use((req, res, next) => {
-  const origin = req.headers.origin || 'SEM ORIGEM';
-  logger.info(`📡 [${req.method}] ${req.url} - Origin: ${origin}`);
-  next();
-});
+// ─── CORS (Produção Segura) ──────────────────────────────────────────────────
+const allowedOrigins = (process.env.CORS_ORIGIN || '')
+  .split(',')
+  .map(s => s.trim().replace(/\/$/, ''));
 
-// 2. CORS MANUAL (Mais garantido na Vercel)
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  
-  if (origin) {
-    // Se quiser ser 100% permissivo para depuração, use apenas res.setHeader('Access-Control-Allow-Origin', origin);
-    // Mas vamos manter a lógica de verificação
-    const allowed = (process.env.CORS_ORIGIN || '').split(',').map(s => s.trim().replace(/\/$/, ''));
-    const isAllowed = origin.includes('localhost') || origin.includes('vercel.app') || allowed.includes(origin.replace(/\/$/, '')) || allowed.includes('*');
+app.use(cors({
+  origin: (origin, callback) => {
+    // Permite sem origin em desenvolvimento
+    if (!origin && process.env.NODE_ENV !== 'production') return callback(null, true);
+    if (!origin) return callback(null, true); // Mobile/Postman fallback
+    
+    const isAllowed = 
+      allowedOrigins.includes(origin.replace(/\/$/, '')) || 
+      origin.includes('localhost');
 
     if (isAllowed) {
-      res.setHeader('Access-Control-Allow-Origin', origin);
-      res.setHeader('Access-Control-Allow-Credentials', 'true');
+      callback(null, true);
+    } else {
+      logger.warn(`⚠️ Acesso negado por CORS: ${origin}`);
+      callback(new Error('CORS: Origem não permitida'));
     }
-  }
-
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Request-ID');
-
-  // Resposta instantânea para Preflight
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  next();
-});
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
+  optionsSuccessStatus: 200
+}));
 
 // Necessário para cookies seguros na Vercel
 app.set('trust proxy', 1);
