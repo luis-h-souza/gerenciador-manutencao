@@ -29,70 +29,28 @@ const app = express();
 // Necessário para cookies seguros na Vercel
 app.set('trust proxy', 1);
 
-// ─── CORS CONFIGURAÇÃO ───────────────────────────────────────────────
-const allowedOrigins = [
-  // Desenvolvimento local
-  'http://localhost:5173',
-  'http://localhost:3000',
-  'http://localhost:5174',
-  // Produção Vercel - todos os domínios do seu frontend
-  'https://gerenciadormanutencaoclient.vercel.app',
-  'https://gerenciadormanutencaoclient-git-main-luishsouzas-projects.vercel.app',
-  'https://gerenciadormanutencaoclient-9ox9lajbb-luishsouzas-projects.vercel.app',
-];
-
-const isDevelopment = process.env.NODE_ENV !== 'production';
-
+// ─── CORS DEFINITIVO (Vercel & Local) ────────────────────────────────────────
 app.use(cors({
-  origin: function (origin, callback) {
+  origin: (origin, callback) => {
     if (!origin) return callback(null, true);
-
-    if (isDevelopment) return callback(null, true);
-
-    const isAllowed =
-      origin.includes('localhost') ||
-      origin.includes('gerenciadormanutencaoclient.vercel.app');
+    
+    const isAllowed = 
+      origin.includes('localhost') || 
+      origin.includes('vercel.app') || 
+      origin === process.env.CORS_ORIGIN;
 
     if (isAllowed) {
-      return callback(null, true);
+      callback(null, true);
+    } else {
+      logger.warn(`⚠️ CORS bloqueado para: ${origin}`);
+      callback(new Error('Origem não permitida por CORS'));
     }
-
-    logger.warn(`⚠️  Origem bloqueada por CORS: ${origin}`);
-    return callback(null, false);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
-  exposedHeaders: ['X-Request-ID'],
-  maxAge: 86400, // Cache preflight por 24 horas
+  optionsSuccessStatus: 200
 }));
-
-// app.options('/*', cors());
-
-app.use((req, res, next) => {
-  if (req.method === 'OPTIONS') {
-    res.sendStatus(200);
-  } else {
-    next();
-  }
-});
-
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-
-  if (
-    typeof origin === 'string' &&
-    (
-      origin.includes('localhost') ||
-      origin.includes('vercel.app')
-    )
-  ) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-  }
-
-  next();
-});
 
 // ─── Segurança: Headers HTTP ────────────────────────────────────────────────
 app.use(helmet({
@@ -129,6 +87,7 @@ app.use(morgan('combined', {
 // ─── Sessões (Express Session + Redis) ──────────────────────────────────────
 app.use(session({
   store: sessionStore,
+  proxy: true, // Obrigatório para Vercel
   secret: process.env.SESSION_SECRET || 'fallback-secret-change-me',
   resave: false,
   saveUninitialized: false,
@@ -162,7 +121,7 @@ app.get('/', (req, res) => {
 });
 
 // ─── API Routes ───────────────────────────────────────────────────────────────
-const API = '/v1';
+const API = '/api/v1';
 app.use(`${API}/auth`, authRoutes);
 app.use(`${API}/tarefas`, tarefaRoutes);
 app.use(`${API}/usuarios`, usuarioRoutes);
