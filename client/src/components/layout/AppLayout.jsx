@@ -5,7 +5,7 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 
 export default function AppLayout() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 1024);
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: 'var(--color-surface-900)' }}>
