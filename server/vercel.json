@@ -1,12 +1,4 @@
 {
-  "version": 2,
-  "functions": {
-    "src/server.js": {
-      "runtime": "@vercel/node",
-      "memory": 1024,
-      "maxDuration": 10
-    }
-  },
   "rewrites": [
     { "source": "/(.*)", "destination": "src/server.js" }
   ]
