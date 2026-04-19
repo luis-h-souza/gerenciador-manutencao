@@ -1582,3 +1582,11 @@
 {"level":"info","message":"Redis: conectado","timestamp":"2026-04-19T02:15:07.842Z"}
 {"level":"info","message":"Redis: pronto","timestamp":"2026-04-19T02:15:07.850Z"}
 {"level":"info","message":"Redis: pronto","timestamp":"2026-04-19T02:15:07.855Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-19T02:20:36.262Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-19T02:20:36.607Z"}
+{"level":"info","message":"Redis: conectado","timestamp":"2026-04-19T02:20:36.619Z"}
+{"level":"info","message":"Redis: pronto","timestamp":"2026-04-19T02:20:36.630Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-19T02:20:36.294Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-19T02:20:36.636Z"}
+{"level":"info","message":"Redis: conectado","timestamp":"2026-04-19T02:20:36.650Z"}
+{"level":"info","message":"Redis: pronto","timestamp":"2026-04-19T02:20:36.661Z"}

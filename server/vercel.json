@@ -1,18 +1,13 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "src/server.js",
-      "use": "@vercel/node"
+  "functions": {
+    "src/server.js": {
+      "runtime": "@vercel/node",
+      "memory": 1024,
+      "maxDuration": 10
     }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "src/server.js"
-    }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": "src/server.js" }
+  ]
 }
