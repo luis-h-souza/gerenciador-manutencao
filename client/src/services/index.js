@@ -1,6 +1,11 @@
 // src/services/index.js
 import api from './api';
 
+// ─── Auth ─────────────────────────────────────────────────────────────────
+export const authService = {
+  alterarSenha: (data) => api.put('/auth/alterar-senha', data),
+};
+
 // ─── Tarefas ──────────────────────────────────────────────────────────────
 export const tarefasService = {
   listar:     (params) => api.get('/tarefas', { params }),

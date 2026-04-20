@@ -2,7 +2,7 @@
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, ClipboardList, DollarSign,
-  Package, Building2, Users, Wrench, X, ClipboardCheck
+  Package, Building2, Users, Wrench, X, ClipboardCheck, Settings
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -16,7 +16,7 @@ const NAV = [
   { to: '/usuarios',     icon: Users,           label: 'Usuários',     roles: ['ADMINISTRADOR','DIRETOR','GERENTE','SUPERVISOR','COORDENADOR','GESTOR'] },
 ];
 
-export default function Sidebar({ open, onClose }) {
+export default function Sidebar({ open, onClose, onOpenConfig }) {
   const { usuario } = useAuth();
 
   const itensVisiveis = NAV.filter(item => item.roles.includes(usuario?.role));
@@ -69,11 +69,16 @@ export default function Sidebar({ open, onClose }) {
 
       {/* Perfil do usuário */}
       <div className="px-3 py-3" style={{ borderTop: '1px solid var(--color-border)' }}>
-        <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg" style={{ background: 'var(--color-surface-700)' }}>
+        <button
+          onClick={onOpenConfig}
+          className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg group transition-colors"
+          style={{ background: 'var(--color-surface-700)', border: 'none', cursor: 'pointer', textAlign: 'left' }}
+          title="Configurações"
+        >
           <div className="flex items-center justify-center w-8 h-8 rounded-full shrink-0" style={{ background: 'var(--color-brand-600)', fontSize: '0.75rem', fontWeight: 700, color: '#fff' }}>
             {usuario?.nome?.charAt(0).toUpperCase()}
           </div>
-          <div className="overflow-hidden">
+          <div className="overflow-hidden flex-1">
             <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--color-text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {usuario?.nome}
             </div>
@@ -81,7 +86,8 @@ export default function Sidebar({ open, onClose }) {
               {usuario?.role}
             </div>
           </div>
-        </div>
+          <Settings size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
+        </button>
       </div>
     </aside>
   );

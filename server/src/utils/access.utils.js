@@ -19,7 +19,7 @@ const getAccessFilter = (user) => {
   if (!user) return { regiao: '__LOGOUT__' };
   
   // Nível Corporativo (Visão total do ecossistema)
-  if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR'].includes(user.role)) {
+  if (['ADMINISTRADOR', 'DIRETOR'].includes(user.role)) {
     return {};
   }
 

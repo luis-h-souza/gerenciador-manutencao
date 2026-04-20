@@ -161,4 +161,25 @@ const me = async (req, res) => {
   res.json({ usuario: req.user });
 };
 
-module.exports = { login, refresh, logout, logoutAll, me };
+/**
+ * PUT /api/v1/auth/alterar-senha
+ */
+const alterarSenha = async (req, res, next) => {
+  try {
+    const { senhaAtual, novaSenha } = req.body;
+
+    const usuario = await prisma.usuario.findUnique({ where: { id: req.user.id } });
+    const senhaValida = await bcrypt.compare(senhaAtual, usuario.senha);
+    if (!senhaValida) {
+      return res.status(400).json({ error: 'Senha atual incorreta' });
+    }
+
+    const senhaHash = await bcrypt.hash(novaSenha, 12);
+    await prisma.usuario.update({ where: { id: req.user.id }, data: { senha: senhaHash } });
+
+    logger.info(`Senha alterada: ${req.user.email}`);
+    res.json({ message: 'Senha alterada com sucesso' });
+  } catch (err) { next(err); }
+};
+
+module.exports = { login, refresh, logout, logoutAll, me, alterarSenha };

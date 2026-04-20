@@ -1,11 +1,10 @@
 // src/components/layout/Header.jsx
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Menu, Bell, LogOut, Sun, Moon } from 'lucide-react';
+import { Menu, Bell, LogOut } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { notificacoesService } from '../../services';
-import { useTheme } from '../../hooks/useTheme';
 import toast from 'react-hot-toast';
 
 const PAGE_TITLES = {
@@ -21,7 +20,6 @@ export default function Header({ onMenuClick }) {
   const { logout } = useAuth();
   const { pathname } = useLocation();
   const [showNotif, setShowNotif] = useState(false);
-  const { theme, toggleTheme } = useTheme();
 
   const { data: notifs = [] } = useQuery({
     queryKey: ['notificacoes'],
@@ -56,16 +54,6 @@ export default function Header({ onMenuClick }) {
       </div>
 
       <div className="flex items-center gap-2">
-        {/* Tema */}
-        <button
-          className="btn btn-ghost btn-sm"
-          style={{ padding: '6px' }}
-          onClick={toggleTheme}
-          title={theme === 'dark' ? 'Tema claro' : 'Tema escuro'}
-        >
-          {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-        </button>
-
         {/* Notificações */}
         <div className="relative">
           <button
