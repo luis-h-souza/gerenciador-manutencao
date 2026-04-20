@@ -27,20 +27,16 @@ export default function LoginPage() {
     <div
       className="min-h-screen flex items-center justify-center p-4"
       style={{
-        background: 'var(--color-surface-900)',
-        backgroundImage: `
-          radial-gradient(ellipse 80% 50% at 50% -20%, rgba(14,165,233,0.08) 0%, transparent 60%),
-          radial-gradient(ellipse 60% 40% at 80% 80%, rgba(14,165,233,0.04) 0%, transparent 50%)
-        `,
+        backgroundImage: `url('/fachada.webp')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
       }}
     >
-      {/* Grid pattern overlay */}
+      {/* Overlay escuro para legibilidade */}
       <div
         className="fixed inset-0 pointer-events-none"
-        style={{
-          backgroundImage: `linear-gradient(rgba(14,165,233,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.03) 1px, transparent 1px)`,
-          backgroundSize: '40px 40px',
-        }}
+        style={{ background: 'rgba(0,0,0,0.55)' }}
       />
 
       <div className="w-full max-w-sm relative">
@@ -67,9 +63,11 @@ export default function LoginPage() {
         <div
           className="rounded-2xl p-8"
           style={{
-            background: 'var(--color-surface-800)',
-            border: '1px solid var(--color-border-light)',
-            boxShadow: '0 25px 50px rgba(0,0,0,0.4)',
+            background: 'rgba(15,23,42,0.75)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            boxShadow: '0 25px 50px rgba(0,0,0,0.5)',
           }}
         >
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
