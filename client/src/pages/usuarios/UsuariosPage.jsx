@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { usuariosService } from '../../services';
+import { usuariosService, lojasService } from '../../services';
 import { Plus, X, Loader2, Pencil, UserX, ShieldCheck, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../contexts/AuthContext';
@@ -21,12 +21,30 @@ const ROLE_BADGE = {
 function UsuarioModal({ usuario, onClose }) {
   const qc = useQueryClient();
   const isEdit = !!usuario;
-  const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: usuario || { role: 'TECNICO' } });
+  const [regiaoFiltro, setRegiaoFiltro] = useState(usuario?.loja?.regiao || '');
+
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm({
+    defaultValues: usuario ? { ...usuario, lojaId: usuario.lojaId || '' } : { role: 'TECNICO' },
+  });
+
+  const { data: regioes = [] } = useQuery({
+    queryKey: ['lojas-regioes'],
+    queryFn: () => lojasService.listarRegioes().then(r => r.data),
+  });
+
+  const { data: lojasData } = useQuery({
+    queryKey: ['lojas-por-regiao', regiaoFiltro],
+    queryFn: () => lojasService.listar({ regiao: regiaoFiltro, limit: 200 }).then(r => r.data),
+    enabled: !!regiaoFiltro,
+  });
+  const lojas = lojasData?.data ?? [];
+
   const mutation = useMutation({
     mutationFn: (data) => isEdit ? usuariosService.atualizar(usuario.id, data) : usuariosService.criar(data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['usuarios'] }); toast.success(isEdit ? 'Atualizado!' : 'Usuário criado!'); onClose(); },
     onError: (err) => toast.error(err.response?.data?.message || 'Erro ao salvar'),
   });
+
   return (
     <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="modal-content animate-fade-in">
@@ -53,8 +71,28 @@ function UsuarioModal({ usuario, onClose }) {
               </select>
             </div>
           </div>
-          <div><label className="label">Região</label>
-            <input className="input" placeholder="Ex: SP1, RJ2 (deixe em branco para acesso global)" {...register('regiao')} />
+          <div><label className="label">Região (acesso)</label>
+            <input className="input" placeholder="ex: SP Capital (deixe em branco para acesso global)" {...register('regiao')} />
+          </div>
+          <div className="grid gap-4" style={{ gridTemplateColumns:'1fr 1fr' }}>
+            <div>
+              <label className="label">Região da loja</label>
+              <select
+                className="select"
+                value={regiaoFiltro}
+                onChange={e => { setRegiaoFiltro(e.target.value); setValue('lojaId', ''); }}
+              >
+                <option value="">Selecione a região</option>
+                {regioes.map(r => <option key={r} value={r}>{r}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="label">Loja</label>
+              <select className="select" {...register('lojaId')} disabled={!regiaoFiltro}>
+                <option value="">{regiaoFiltro ? 'Selecione a loja' : '← Primeiro a região'}</option>
+                {lojas.map(l => <option key={l.id} value={l.id}>{l.numero} — {l.nome}</option>)}
+              </select>
+            </div>
           </div>
           <div className="flex justify-end gap-2 pt-2">
             <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
@@ -127,7 +165,10 @@ export default function UsuariosPage() {
                 </td>
                 <td style={{ color:'var(--color-text-secondary)', fontSize:'0.8125rem' }}>{u.email}</td>
                 <td><span className={`badge ${ROLE_BADGE[u.role]}`} style={{ fontSize:'0.7rem' }}>{u.role}</span></td>
-                <td><span style={{ fontSize:'0.75rem', fontWeight:500, color:'var(--color-text-secondary)' }}>{u.regiao || '—'}</span></td>
+                <td>
+                  <div style={{ fontSize:'0.75rem', fontWeight:500, color:'var(--color-text-secondary)' }}>{u.regiao || '—'}</div>
+                  {u.loja && <div style={{ fontSize:'0.7rem', color:'var(--color-text-muted)' }}>{u.loja.numero} — {u.loja.nome}</div>}
+                </td>
                 <td>
                   {u.ativo
                     ? <span className="badge badge-success" style={{ fontSize:'0.7rem' }}>Ativo</span>

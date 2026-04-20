@@ -2,7 +2,7 @@
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, ClipboardList, DollarSign,
-  Package, Building2, Users, Wrench, X, ClipboardCheck, Settings
+  Package, Building2, Users, Wrench, X, ClipboardCheck, Settings, Store
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -14,6 +14,7 @@ const NAV = [
   { to: '/estoque',      icon: Package,         label: 'Estoque',      roles: ['ADMINISTRADOR','SUPERVISOR','COORDENADOR','GESTOR'] },
   { to: '/fornecedores', icon: Building2,       label: 'Fornecedores', roles: ['ADMINISTRADOR','DIRETOR','GERENTE','SUPERVISOR','COORDENADOR','GESTOR'] },
   { to: '/usuarios',     icon: Users,           label: 'Usuários',     roles: ['ADMINISTRADOR','DIRETOR','GERENTE','SUPERVISOR','COORDENADOR','GESTOR'] },
+  { to: '/lojas',        icon: Store,           label: 'Lojas',        roles: ['ADMINISTRADOR','DIRETOR'] },
 ];
 
 export default function Sidebar({ open, onClose, onOpenConfig }) {

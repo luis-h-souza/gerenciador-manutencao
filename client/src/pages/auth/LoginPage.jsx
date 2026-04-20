@@ -54,7 +54,7 @@ export default function LoginPage() {
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '4px' }}>
             Gerenciador de Manutenção
           </h1>
-          <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+          <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>
             Acesse com suas credenciais
           </p>
         </div>
@@ -127,7 +127,7 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <p className="text-center mt-5" style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+        <p className="text-center mt-5" style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
           Sistema interno — acesso restrito
         </p>
       </div>

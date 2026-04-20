@@ -10,7 +10,7 @@ import {
 import toast from 'react-hot-toast';
 
 const SEGMENTOS = ['ELETRICA','EMPILHADEIRA','REFRIGERACAO','SERRALHERIA','CIVIL','EQUIPAMENTOS','GERADOR','ELEVADOR','PCI','ALUGUEL','DIVERSOS'];
-const LIMIT = 16;
+const LIMIT = 15;
 
 /* ── Modal criar/editar ─────────────────────────────────────────────────── */
 function FornecedorModal({ fornecedor, onClose }) {
@@ -214,7 +214,7 @@ export default function FornecedoresPage() {
           <div key={f.id} className="card" style={{ position: 'relative' }}>
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-center gap-2.5">
-                <div className="flex items-center justify-center w-9 h-9 rounded-lg flex-shrink-0" style={{ background: 'var(--color-surface-600)' }}>
+                <div className="flex items-center justify-center w-9 h-9 rounded-lg shrink-0" style={{ background: 'var(--color-surface-600)' }}>
                   <Building2 size={16} style={{ color: 'var(--color-brand-400)' }} />
                 </div>
                 <div>
@@ -222,7 +222,7 @@ export default function FornecedoresPage() {
                   <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '2px' }}>CNPJ: {f.cnpj}</div>
                 </div>
               </div>
-              <div className="flex gap-1 flex-shrink-0">
+              <div className="flex gap-1 shrink-0">
                 <button className="btn btn-ghost btn-sm" onClick={() => setModal(f)} style={{ padding: '4px 6px' }}><Pencil size={13} /></button>
                 <button
                   className="btn btn-ghost btn-sm"

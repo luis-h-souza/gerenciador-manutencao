@@ -15,6 +15,7 @@ import EstoquePage from './pages/estoque/EstoquePage';
 import FornecedoresPage from './pages/fornecedores/FornecedoresPage';
 import UsuariosPage from './pages/usuarios/UsuariosPage';
 import ChecklistPage from './pages/checklists/ChecklistPage';
+import LojasPage from './pages/lojas/LojasPage';
 
 // Rota protegida
 const ProtectedRoute = ({ children, roles }) => {
@@ -94,6 +95,10 @@ function AppRoutes() {
 
         <Route path="checklists" element={
           <ProtectedRoute roles={ROLES.GESTORES}><ChecklistPage /></ProtectedRoute>
+        } />
+
+        <Route path="lojas" element={
+          <ProtectedRoute roles={['ADMINISTRADOR', 'DIRETOR']}><LojasPage /></ProtectedRoute>
         } />
       </Route>
 

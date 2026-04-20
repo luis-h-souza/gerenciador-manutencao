@@ -40,7 +40,8 @@ const autenticar = async (req, res, next) => {
         role: true,
         ativo: true,
         regiao: true,
-        unidade: true, // Adicionado para permitir salvamento de checklists
+        lojaId: true,
+        loja: { select: { id: true, numero: true, nome: true, regiao: true } },
       },
     });
 

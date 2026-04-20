@@ -23,6 +23,7 @@ const estoquePecasRoutes = require('./routes/estoque.routes');
 const notificacaoRoutes = require('./routes/notificacao.routes');
 const dashboardRoutes = require('./routes/dashboard.routes');
 const checklistRoutes = require('./routes/checklist.routes');
+const lojaRoutes      = require('./routes/loja.routes');
 
 const app = express();
 
@@ -153,6 +154,7 @@ app.use(`${API}/estoque`, estoquePecasRoutes);
 app.use(`${API}/notificacoes`, notificacaoRoutes);
 app.use(`${API}/dashboard`, dashboardRoutes);
 app.use(`${API}/checklists`, checklistRoutes);
+app.use(`${API}/lojas`,     lojaRoutes);
 
 // ─── 404 ──────────────────────────────────────────────────────────────────────
 app.use((req, res) => {

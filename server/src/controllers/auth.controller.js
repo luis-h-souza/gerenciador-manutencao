@@ -20,6 +20,7 @@ const login = async (req, res, next) => {
 
     const usuario = await prisma.usuario.findUnique({
       where: { email: email.toLowerCase().trim() },
+      include: { loja: { select: { id: true, numero: true, nome: true, regiao: true } } },
     });
 
     if (!usuario || !await bcrypt.compare(senha, usuario.senha)) {
@@ -71,7 +72,8 @@ const login = async (req, res, next) => {
         email: usuario.email,
         role: usuario.role,
         regiao: usuario.regiao,
-        unidade: usuario.unidade,
+        lojaId: usuario.lojaId,
+        loja: usuario.loja,
       },
     });
   } catch (err) {

@@ -2,11 +2,11 @@
 import { useState } from 'react';
 import { X, Sun, Moon, Eye, EyeOff } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../hooks/useTheme';
-import { authService, usuariosService } from '../../services';
+import { authService, usuariosService, lojasService } from '../../services';
 
 const ROLES = [
   { value: 'ADMINISTRADOR', label: 'Administrador' },
@@ -199,9 +199,23 @@ function SegurancaTab({ onClose }) {
 /* ── Aba Novo Usuário (apenas ADMINISTRADOR) ─────────────────────────────── */
 function NovoUsuarioTab({ onClose }) {
   const queryClient = useQueryClient();
-  const { register, handleSubmit, reset, formState: { errors } } = useForm({
+  const [regiaoFiltro, setRegiaoFiltro] = useState('');
+
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm({
     defaultValues: { role: 'TECNICO' },
   });
+
+  const { data: regioes = [] } = useQuery({
+    queryKey: ['lojas-regioes'],
+    queryFn: () => lojasService.listarRegioes().then(r => r.data),
+  });
+
+  const { data: lojasData } = useQuery({
+    queryKey: ['lojas-por-regiao', regiaoFiltro],
+    queryFn: () => lojasService.listar({ regiao: regiaoFiltro, limit: 200 }).then(r => r.data),
+    enabled: !!regiaoFiltro,
+  });
+  const lojas = lojasData?.data ?? [];
 
   const mutation = useMutation({
     mutationFn: (data) => usuariosService.criar(data),
@@ -209,6 +223,7 @@ function NovoUsuarioTab({ onClose }) {
       toast.success('Usuário criado com sucesso!');
       queryClient.invalidateQueries({ queryKey: ['usuarios'] });
       reset({ role: 'TECNICO' });
+      setRegiaoFiltro('');
       onClose();
     },
     onError: (err) => {
@@ -255,14 +270,30 @@ function NovoUsuarioTab({ onClose }) {
           </select>
         </div>
         <div className="flex-1">
-          <label className="label">Região</label>
+          <label className="label">Região (acesso)</label>
           <input className="input" placeholder="ex: SP Capital" {...register('regiao')} />
         </div>
       </div>
 
-      <div>
-        <label className="label">Unidade / Loja</label>
-        <input className="input" placeholder="ex: Loja 01" {...register('unidade')} />
+      <div className="grid gap-3" style={{ gridTemplateColumns: '1fr 1fr' }}>
+        <div>
+          <label className="label">Região da loja</label>
+          <select
+            className="select"
+            value={regiaoFiltro}
+            onChange={e => { setRegiaoFiltro(e.target.value); setValue('lojaId', ''); }}
+          >
+            <option value="">Selecione a região</option>
+            {regioes.map(r => <option key={r} value={r}>{r}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className="label">Loja</label>
+          <select className="select" {...register('lojaId')} disabled={!regiaoFiltro}>
+            <option value="">{regiaoFiltro ? 'Selecione a loja' : '← Primeiro a região'}</option>
+            {lojas.map(l => <option key={l.id} value={l.id}>{l.numero} — {l.nome}</option>)}
+          </select>
+        </div>
       </div>
 
       <button type="submit" className="btn btn-primary" disabled={mutation.isPending}>
