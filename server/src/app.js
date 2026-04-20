@@ -41,17 +41,17 @@ const allowedOrigins = process.env.CORS_ORIGIN
   : defaultOrigins;
 
 console.log('🔒 CORS configurado para:', allowedOrigins);
- 
+
 app.use(cors({
   origin: (origin, callback) => {
     // Permite requisições sem origin (Postman, mobile apps)
     if (!origin) return callback(null, true);
- 
+
     // Verifica se a origem está permitida
     const isAllowed =
       allowedOrigins.includes(origin.replace(/\/$/, '')) ||
       origin.includes('localhost');
- 
+
     if (isAllowed) {
       callback(null, true);
     } else {
@@ -131,7 +131,7 @@ app.get('/health', (req, res) => {
     allowed_origins: allowedOrigins, // Mostra quais origens (útil para debug)
   });
 });
- 
+
 
 // ─── Boas-vindas (Root) ──────────────────────────────────────────────────────
 app.get('/', (req, res) => {
