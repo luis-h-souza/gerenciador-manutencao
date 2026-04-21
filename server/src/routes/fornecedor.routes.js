@@ -6,7 +6,7 @@ const { autenticar, autorizar, Roles } = require('../middlewares/auth.middleware
 const validate = require('../middlewares/validate');
 
 router.use(autenticar);
-const GESTORES = [Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.SUPERVISOR, Roles.COORDENADOR, Roles.GESTOR];
+const GESTORES = [Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR, Roles.GESTOR];
 
 router.get('/', ctrl.listar);
 router.get('/:id', ctrl.buscarPorId);
@@ -19,6 +19,6 @@ router.post('/', autorizar(...GESTORES), [
 ], validate, ctrl.criar);
 
 router.put('/:id', autorizar(...GESTORES), ctrl.atualizar);
-router.delete('/:id', autorizar(Roles.ADMINISTRADOR, Roles.SUPERVISOR), ctrl.remover);
+router.delete('/:id', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR), ctrl.remover);
 
 module.exports = router;

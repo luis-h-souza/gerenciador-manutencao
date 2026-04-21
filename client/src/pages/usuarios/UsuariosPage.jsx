@@ -7,12 +7,11 @@ import { Plus, X, Loader2, Pencil, UserX, ShieldCheck, EyeOff } from 'lucide-rea
 import toast from 'react-hot-toast';
 import { useAuth } from '../../contexts/AuthContext';
 
-const ROLES = ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR', 'COORDENADOR', 'GESTOR', 'TECNICO'];
+const ROLES = ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR', 'GESTOR', 'TECNICO'];
 const ROLE_BADGE = { 
   ADMINISTRADOR: 'badge-danger', 
   DIRETOR: 'badge-danger',
   GERENTE: 'badge-warning',
-  SUPERVISOR: 'badge-warning', 
   COORDENADOR: 'badge-info', 
   GESTOR: 'badge-brand', 
   TECNICO: 'badge-neutral' 
@@ -112,8 +111,6 @@ export default function UsuariosPage() {
   const { usuario: usuarioLogado } = useAuth();
   const [modal, setModal] = useState(null);
 
-  const isSupervisor = usuarioLogado?.role === 'SUPERVISOR';
-  // Somente Admin pode gerenciar
   const canManage = ['ADMINISTRADOR', 'DIRETOR'].includes(usuarioLogado?.role);
 
   const { data, isLoading } = useQuery({
@@ -132,7 +129,7 @@ export default function UsuariosPage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 style={{ fontSize: '1.125rem', fontWeight: 700 }}>
-            {isSupervisor ? 'Visualização de Coordenadores' : 'Gestão de Usuários'}
+            Gestão de Usuários
           </h2>
           {!canManage && (
             <span style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>

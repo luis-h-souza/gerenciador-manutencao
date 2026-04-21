@@ -6,12 +6,12 @@ const { autenticar, autorizar, Roles } = require('../middlewares/auth.middleware
 const { createRateLimiter } = require('../middlewares/rateLimiter');
 const validate = require('../middlewares/validate');
 
-const GESTORES = [Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.SUPERVISOR, Roles.COORDENADOR, Roles.GESTOR];
+const GESTORES = [Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR, Roles.GESTOR];
 
 router.use(autenticar);
 
 router.get('/', ctrl.listar);
-router.get('/resumo', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.SUPERVISOR, Roles.COORDENADOR), ctrl.resumoMensal);
+router.get('/resumo', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR), ctrl.resumoMensal);
 router.get('/:id', ctrl.buscarPorId);
 
 router.post('/', createRateLimiter, autorizar(...GESTORES), [
@@ -24,6 +24,6 @@ router.post('/', createRateLimiter, autorizar(...GESTORES), [
 ], validate, ctrl.criar);
 
 router.put('/:id', autorizar(...GESTORES), ctrl.atualizar);
-router.delete('/:id', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.SUPERVISOR), ctrl.remover);
+router.delete('/:id', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE), ctrl.remover);
 
 module.exports = router;

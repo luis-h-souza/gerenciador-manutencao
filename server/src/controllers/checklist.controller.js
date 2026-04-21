@@ -22,7 +22,7 @@ const listarEquipamentos = async (req, res, next) => {
     if (criadoPorId) where.criadoPorId = criadoPorId;
     
     // Filtros administrativos (Corporativo)
-    if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR'].includes(req.user.role)) {
+    if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE'].includes(req.user.role)) {
       if (regiao) {
         if (!canAccessRegion(req.user, regiao)) {
           return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
@@ -36,7 +36,7 @@ const listarEquipamentos = async (req, res, next) => {
       where,
       include: {
         itens: { orderBy: { tipoEquipamento: 'asc' } },
-        criadoPor: { select: { id: true, nome: true, regiao: true, unidade: true } },
+        criadoPor: { select: { id: true, nome: true, regiao: true, loja: { select: { nome: true } } } },
       },
       orderBy: [{ ano: 'desc' }, { semana: 'desc' }],
       take: 50,
@@ -52,14 +52,14 @@ const buscarEquipamentoPorSemana = async (req, res, next) => {
     const a = parseInt(ano)    || semanaAtual().ano;
     const where = { semana: s, ano: a, ...getAccessFilter(req.user) };
 
-    if (regiao && ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR', 'COORDENADOR'].includes(req.user.role)) {
+    if (regiao && ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR'].includes(req.user.role)) {
       if (!canAccessRegion(req.user, regiao)) {
         return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
       }
       where.regiao = regiao;
     }
     if (unidade) where.unidade = unidade;
-    if (!unidade && req.user.role === 'GESTOR') where.unidade = req.user.unidade;
+    if (!unidade && req.user.role === 'GESTOR') where.unidade = req.user.loja?.nome;
     if (criadoPorId) where.criadoPorId = criadoPorId;
 
     const checklist = await prisma.checklistEquipamento.findFirst({
@@ -137,7 +137,7 @@ const kpiEquipamentos = async (req, res, next) => {
 
 const buscarFrota = async (req, res, next) => {
   try {
-    const unidade = req.user.role === 'GESTOR' ? req.user.unidade : req.query.unidade;
+    const unidade = req.user.role === 'GESTOR' ? req.user.loja?.nome : req.query.unidade;
     if (!unidade) return res.status(400).json({ error: 'Unidade não especificada' });
 
     if (['COORDENADOR', 'GERENTE', 'TECNICO'].includes(req.user.role)) {
@@ -182,7 +182,7 @@ const listarCarrinhos = async (req, res, next) => {
     if (ano)    where.ano    = parseInt(ano);
     if (criadoPorId) where.criadoPorId = criadoPorId;
     
-    if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR'].includes(req.user.role)) {
+    if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE'].includes(req.user.role)) {
       if (regiao) {
         if (!canAccessRegion(req.user, regiao)) {
           return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
@@ -196,7 +196,7 @@ const listarCarrinhos = async (req, res, next) => {
       where,
       include: {
         itens: { orderBy: { tipoCarrinho: 'asc' } },
-        criadoPor: { select: { id: true, nome: true, regiao: true, unidade: true } },
+        criadoPor: { select: { id: true, nome: true, regiao: true, loja: { select: { nome: true } } } },
       },
       orderBy: [{ ano: 'desc' }, { semana: 'desc' }],
       take: 50,
@@ -212,14 +212,14 @@ const buscarCarrinhoPorSemana = async (req, res, next) => {
     const a = parseInt(ano)    || semanaAtual().ano;
     const where = { semana: s, ano: a, ...getAccessFilter(req.user) };
 
-    if (regiao && ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR', 'COORDENADOR'].includes(req.user.role)) {
+    if (regiao && ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR'].includes(req.user.role)) {
       if (!canAccessRegion(req.user, regiao)) {
         return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
       }
       where.regiao = regiao;
     }
     if (unidade) where.unidade = unidade;
-    if (!unidade && req.user.role === 'GESTOR') where.unidade = req.user.unidade;
+    if (!unidade && req.user.role === 'GESTOR') where.unidade = req.user.loja?.nome;
     if (criadoPorId) where.criadoPorId = criadoPorId;
 
     const checklist = await prisma.checklistCarrinho.findFirst({

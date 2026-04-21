@@ -6,7 +6,7 @@ const { autenticar, autorizar, Roles } = require('../middlewares/auth.middleware
 const validate = require('../middlewares/validate');
 
 router.use(autenticar);
-router.use(autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.SUPERVISOR, Roles.COORDENADOR, Roles.GESTOR));
+router.use(autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR));
 
 router.get('/', ctrl.listar);
 router.get('/:id', ctrl.buscarPorId);

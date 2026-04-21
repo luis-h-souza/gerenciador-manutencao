@@ -7,13 +7,13 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 
 const NAV = [
-  { to: '/dashboard',    icon: LayoutDashboard, label: 'Dashboard',    roles: ['ADMINISTRADOR','DIRETOR','GERENTE','SUPERVISOR','COORDENADOR','GESTOR','TECNICO'] },
-  { to: '/tarefas',      icon: ClipboardList,   label: 'Tarefas',      roles: ['ADMINISTRADOR','COORDENADOR','GESTOR', 'TECNICO'] },
-  { to: '/checklists',   icon: ClipboardCheck,  label: 'Checklists',   roles: ['ADMINISTRADOR','DIRETOR','GERENTE','SUPERVISOR','COORDENADOR','GESTOR'] },
-  { to: '/chamados',     icon: DollarSign,      label: 'Controle Financeiro', roles: ['ADMINISTRADOR','DIRETOR','GERENTE','SUPERVISOR','COORDENADOR','GESTOR'] },
-  { to: '/estoque',      icon: Package,         label: 'Estoque',      roles: ['ADMINISTRADOR','SUPERVISOR','COORDENADOR','GESTOR'] },
-  { to: '/fornecedores', icon: Building2,       label: 'Fornecedores', roles: ['ADMINISTRADOR','DIRETOR','GERENTE','SUPERVISOR','COORDENADOR','GESTOR'] },
-  { to: '/usuarios',     icon: Users,           label: 'Usuários',     roles: ['ADMINISTRADOR','DIRETOR','GERENTE','SUPERVISOR','COORDENADOR','GESTOR'] },
+  { to: '/dashboard',    icon: LayoutDashboard, label: 'Dashboard',    roles: ['ADMINISTRADOR','DIRETOR','GERENTE','COORDENADOR','GESTOR','TECNICO'] },
+  { to: '/tarefas',      icon: ClipboardList,   label: 'Tarefas',      roles: ['ADMINISTRADOR','DIRETOR','GERENTE','COORDENADOR','GESTOR','TECNICO'] },
+  { to: '/checklists',   icon: ClipboardCheck,  label: 'Checklists',   roles: ['ADMINISTRADOR','DIRETOR','GERENTE','COORDENADOR','GESTOR'] },
+  { to: '/chamados',     icon: DollarSign,      label: 'Controle Financeiro', roles: ['ADMINISTRADOR','DIRETOR','GERENTE','COORDENADOR','GESTOR'] },
+  { to: '/estoque',      icon: Package,         label: 'Estoque',      roles: ['ADMINISTRADOR','DIRETOR','GERENTE','COORDENADOR','GESTOR'] },
+  { to: '/fornecedores', icon: Building2,       label: 'Fornecedores', roles: ['ADMINISTRADOR','DIRETOR','GERENTE','COORDENADOR','GESTOR'] },
+  { to: '/usuarios',     icon: Users,           label: 'Usuários',     roles: ['ADMINISTRADOR','DIRETOR'] },
   { to: '/lojas',        icon: Store,           label: 'Lojas',        roles: ['ADMINISTRADOR','DIRETOR'] },
 ];
 

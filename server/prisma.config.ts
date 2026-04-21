@@ -1,5 +1,3 @@
-// prisma.config.ts
-// Arquivo de configuração do Prisma v7 (substitui parte das configs do schema.prisma)
 import { defineConfig } from 'prisma/config';
 import * as dotenv from 'dotenv';
 

@@ -16,7 +16,7 @@ import {
 import { chamadosService, dashboardService } from '../../services';
 import { useAuth } from '../../contexts/AuthContext';
 
-const SEGMENTOS = ['ELETRICA','EMPILHADEIRA','REFRIGERACAO','SERRALHERIA','CIVIL','EQUIPAMENTOS','GERADOR','ELEVADOR','PCI','ALUGUEL','DIVERSOS'];
+const SEGMENTOS = ['ELETRICA','EMPILHADEIRA','REFRIGERACAO','REFRIGERACAO-PÇS','SERRALHERIA', 'AR-CONDICIONADO', 'SERVIÇOS GERAIS' ,'CIVIL','EQUIPAMENTOS','GERADOR','ELEVADOR','PCI','DIVERSOS', 'ALUGUEL'];
 const STATUSES = ['CHAMADO_ABERTO','AGUARDANDO_APROVACAO','AGUARDANDO_OM_ENTREGA','FINALIZADO','ALUGUEL_OUTROS'];
 const STATUS_LABEL = { CHAMADO_ABERTO:'Aberto', AGUARDANDO_APROVACAO:'Ag. Aprovação', AGUARDANDO_OM_ENTREGA:'Ag. OM/Entrega', FINALIZADO:'Finalizado', ALUGUEL_OUTROS:'Aluguel/Outros' };
 const STATUS_BADGE = { CHAMADO_ABERTO:'badge-info', AGUARDANDO_APROVACAO:'badge-warning', AGUARDANDO_OM_ENTREGA:'badge-warning', FINALIZADO:'badge-success', ALUGUEL_OUTROS:'badge-neutral' };
@@ -273,7 +273,7 @@ export default function ChamadosPage() {
     setPeriodo(`${anoParam}-${String(mesParam).padStart(2, '0')}`);
   }, [mesParam, anoParam]);
 
-  const macroRoles = ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR'];
+  const macroRoles = ['ADMINISTRADOR', 'DIRETOR', 'GERENTE'];
   const isMacro = macroRoles.includes(usuario?.role);
 
   const { data, isLoading } = useQuery({

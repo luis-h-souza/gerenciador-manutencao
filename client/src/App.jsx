@@ -42,11 +42,12 @@ const ProtectedRoute = ({ children, roles }) => {
 };
 
 const ROLES = {
-  TODOS: ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR', 'COORDENADOR', 'GESTOR', 'TECNICO'],
-  GESTORES: ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR', 'COORDENADOR', 'GESTOR'],
-  ADMIN_DIRETOR_GERENTE: ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR'],
-  OPERACIONAIS: ['ADMINISTRADOR', 'COORDENADOR', 'GESTOR', 'TECNICO'], 
-  ESTOQUE: ['ADMINISTRADOR', 'SUPERVISOR', 'COORDENADOR', 'GESTOR'],
+  TODOS: ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR', 'GESTOR', 'TECNICO'],
+  GESTORES: ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR', 'GESTOR'],
+  ADMIN_DIRETOR_GERENTE: ['ADMINISTRADOR', 'DIRETOR', 'GERENTE'],
+  OPERACIONAIS: ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR', 'GESTOR', 'TECNICO'],
+  ESTOQUE: ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR', 'GESTOR'],
+  USUARIOS: ['ADMINISTRADOR', 'DIRETOR'],
 };
 
 function AppRoutes() {
@@ -90,7 +91,7 @@ function AppRoutes() {
         } />
 
         <Route path="usuarios" element={
-          <ProtectedRoute roles={ROLES.GESTORES}><UsuariosPage /></ProtectedRoute>
+          <ProtectedRoute roles={ROLES.USUARIOS}><UsuariosPage /></ProtectedRoute>
         } />
 
         <Route path="checklists" element={

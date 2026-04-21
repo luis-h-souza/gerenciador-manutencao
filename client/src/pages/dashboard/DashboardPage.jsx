@@ -1424,7 +1424,7 @@ export default function DashboardPage() {
     regiao: "",
   });
 
-  const macroRoles = ["ADMINISTRADOR", "DIRETOR", "GERENTE", "SUPERVISOR"];
+  const macroRoles = ["ADMINISTRADOR", "DIRETOR", "GERENTE"];
 
   if (usuario?.role === "TECNICO") return <TecnicoDashboard />;
   if (macroRoles.includes(usuario?.role)) {

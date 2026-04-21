@@ -31,14 +31,13 @@ Sistema completo para gerenciamento de tarefas, controle financeiro, estoque de 
 - **Helmet** — headers HTTP de segurança (CSP, HSTS, X-Frame-Options)
 - **CORS** configurado por whitelist via variável de ambiente
 - **Mass assignment prevenido** — controllers de estoque e fornecedor aceitam apenas campos explícitos do body
-- **RBAC** — 7 roles com hierarquia regional:
+- **RBAC** — 6 roles com hierarquia regional:
 
 | Role | Escopo | Permissões |
 |---|---|---|
 | `ADMINISTRADOR` | Global | Acesso total a todas as regiões e funcionalidades |
 | `DIRETOR` | Global | Visão executiva consolidada |
 | `GERENTE` | Global | Visão gerencial consolidada |
-| `SUPERVISOR` | Global | Acesso total sem gestão de usuários |
 | `COORDENADOR` | Regional | Acesso restrito à **sua região** — visualiza checklists e dados |
 | `GESTOR` | Unidade | Acesso restrito à **sua loja** — **único** que preenche checklists |
 | `TECNICO` | Atribuição | Vê apenas tarefas **atribuídas a ele** |
@@ -111,7 +110,7 @@ npm run dev
 | Role | Escopo | Descrição |
 |---|---|---|
 | `DIRETOR / GERENTE` | **Global** | Visão consolidada de todas as regionais |
-| `ADMIN / SUPERVISOR` | **Global** | Gestão de infraestrutura e usuários |
+| `ADMINISTRADOR` | **Global** | Gestão de infraestrutura e usuários |
 | `COORDENADOR` | **Regional** | Visualiza dados da **sua região** |
 | `GESTOR` | **Unidade** | Visualiza sua loja. Único que preenche checklists |
 | `TECNICO` | **Atribuição** | Vê apenas tarefas designadas para ele |
@@ -230,7 +229,7 @@ manutencao/
 |---|---|---|
 | GET | `/api/v1/chamados` | Listar (`?mes=&ano=` + região) |
 | POST | `/api/v1/chamados` | Criar |
-| GET | `/api/v1/chamados/resumo-mensal` | Resumo por mês |
+| GET | `/api/v1/chamados/resumo` | Resumo por mês |
 | PUT/DELETE | `/api/v1/chamados/:id` | Editar / Remover |
 
 ### Estoque
@@ -247,7 +246,7 @@ manutencao/
 | GET | `/api/v1/dashboard/resumo` | KPIs por perfil (peças em alerta apenas para GESTOR) |
 | GET | `/api/v1/dashboard/historico-mensal` | Histórico 6 meses |
 | GET | `/api/v1/dashboard/gastos-por-segmento` | Gastos agrupados por segmento |
-| GET | `/api/v1/dashboard/resumo-regional` | Visão por regional (Corporativo) |
+| GET | `/api/v1/dashboard/regional` | Visão por regional (Corporativo) |
 
 ### Checklists Semanais
 | Método | Endpoint | Acesso | Descrição |
@@ -272,8 +271,8 @@ manutencao/
 ### Usuários & Fornecedores
 | Método | Endpoint | Descrição |
 |---|---|---|
-| GET/POST | `/api/v1/usuarios` | Gestão de usuários (Admin/Supervisor) |
-| PUT | `/api/v1/usuarios/:id` | Editar (suporta `regiao` e `unidade`) |
+| GET/POST | `/api/v1/usuarios` | Gestão de usuários (Admin/Diretor) |
+| PUT | `/api/v1/usuarios/:id` | Editar (suporta `regiao` e `lojaId`) |
 | GET/POST | `/api/v1/fornecedores` | Gestão de fornecedores (global) |
 | PUT | `/api/v1/fornecedores/:id` | Editar fornecedor |
 
@@ -289,7 +288,7 @@ Maria Gorda, Supercar, Dois Andares, Prancha, Prancha Perecíveis, Carrinhos de 
 
 ### Regras de acesso
 - **Quem preenche:** somente `GESTOR`
-- **Quem visualiza:** `COORDENADOR`, `SUPERVISOR`, `ADMINISTRADOR`, `DIRETOR`, `GERENTE`
+- **Quem visualiza:** `COORDENADOR`, `ADMINISTRADOR`, `DIRETOR`, `GERENTE`
 - **Preenchimento:** 1x por semana — o sistema usa _upsert_, o formulário é reeditável na mesma semana
 - **Unicidade:** uma entrada por `(semana, ano, unidade)`
 
@@ -298,7 +297,7 @@ Maria Gorda, Supercar, Dois Andares, Prancha, Prancha Perecíveis, Carrinhos de 
 ## Modelos de dados (Prisma)
 
 ```
-Usuario                  — nome, email, senha, role, ativo, regiao, unidade
+Usuario                  — nome, email, senha, role, ativo, regiao, lojaId
 RefreshToken             — rotação automática, revogação individual
 Sessao                   — controle de sessões + IP tracking
 Tarefa                   — prioridade, status, região, unidade, atribuição

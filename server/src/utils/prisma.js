@@ -1,7 +1,4 @@
-// src/utils/prisma.js
-// Prisma v7: o cliente é gerado em src/generated/prisma
 // Usar singleton para evitar múltiplas conexões em desenvolvimento (hot reload)
-
 const { Pool } = require('pg');
 const { PrismaPg } = require('@prisma/adapter-pg');
 const { PrismaClient } = require('../generated/prisma');

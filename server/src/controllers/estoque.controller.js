@@ -3,7 +3,7 @@ const prisma = require('../utils/prisma');
 const { getUserRegions } = require('../utils/access.utils');
 
 const getUnidadesPermitidas = async (user) => {
-  if (['ADMINISTRADOR', 'DIRETOR', 'SUPERVISOR'].includes(user.role)) return null;
+  if (['ADMINISTRADOR', 'DIRETOR'].includes(user.role)) return null;
   if (user.role === 'GESTOR') return user.loja?.nome ? [user.loja.nome] : [];
 
   const regioes = getUserRegions(user);

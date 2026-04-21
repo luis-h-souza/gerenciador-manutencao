@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const SEGMENTOS = ['ELETRICA','EMPILHADEIRA','REFRIGERACAO','SERRALHERIA','CIVIL','EQUIPAMENTOS','GERADOR','ELEVADOR','PCI','ALUGUEL','DIVERSOS'];
+const SEGMENTOS = ['ELETRICA','EMPILHADEIRA','REFRIGERACAO','REFRIGERACAO-PÇS','SERRALHERIA', 'AR-CONDICIONADO', 'SERVIÇOS GERAIS' ,'CIVIL','EQUIPAMENTOS','GERADOR','ELEVADOR','PCI','DIVERSOS','ALUGUEL'];
 const LIMIT = 15;
 
 /* ── Modal criar/editar ─────────────────────────────────────────────────── */

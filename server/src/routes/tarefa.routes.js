@@ -16,7 +16,7 @@ router.get('/', [
 router.get('/:id', ctrl.buscarPorId);
 
 router.post('/', createRateLimiter,
-  autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.SUPERVISOR, Roles.COORDENADOR, Roles.GESTOR),
+  autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR, Roles.GESTOR),
   [
     body('descricao').notEmpty().isLength({ max: 500 }).withMessage('Descrição obrigatória'),
     body('areResponsavel').notEmpty().withMessage('Área responsável obrigatória'),
@@ -25,14 +25,14 @@ router.post('/', createRateLimiter,
   ], validate, ctrl.criar);
 
 router.put('/:id',
-  autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.SUPERVISOR, Roles.COORDENADOR, Roles.GESTOR),
+  autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR, Roles.GESTOR),
   [
     body('status').optional().isIn(['PENDENTE', 'EM_ANDAMENTO', 'CONCLUIDA', 'CANCELADA']),
     body('prioridade').optional().isIn(['BAIXA', 'MEDIA', 'ALTA', 'CRITICA']),
   ], validate, ctrl.atualizar);
 
 router.delete('/:id',
-  autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.SUPERVISOR, Roles.COORDENADOR),
+  autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR),
   ctrl.remover);
 
 module.exports = router;

@@ -24,7 +24,7 @@ const resumo = async (req, res, next) => {
     const filter = getAccessFilter(req.user);
     const where = { ...filter };
 
-    if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR'].includes(req.user.role)) {
+    if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE'].includes(req.user.role)) {
       if (regiao) {
         if (!canAccessRegion(req.user, regiao)) {
           return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
@@ -73,7 +73,7 @@ const resumo = async (req, res, next) => {
       fornecedores: { total: totalFornecedores },
       estoque: { pecasBaixoEstoque },
       contexto: { 
-        unidade: req.user.unidade,
+        unidade: req.user.loja?.nome || null,
         regiao: req.user.regiao
       }
     });
@@ -96,7 +96,7 @@ const gastosPorSegmento = async (req, res, next) => {
     };
     
     // Filtros manuais (para níveis corporativos)
-    if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR'].includes(req.user.role)) {
+    if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE'].includes(req.user.role)) {
       if (regiao) {
         if (!canAccessRegion(req.user, regiao)) {
           return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
@@ -128,7 +128,7 @@ const historicoMensal = async (req, res, next) => {
     const filter = getAccessFilter(req.user);
     
     const baseWhere = { ...filter };
-    if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR'].includes(req.user.role)) {
+    if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE'].includes(req.user.role)) {
       if (regiao) {
         if (!canAccessRegion(req.user, regiao)) {
           return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
@@ -178,7 +178,7 @@ const resumoRegional = async (req, res, next) => {
     const todasRegioes = regioesRes
       .map(r => r.regiao)
       .filter((regiao) => {
-        if (['ADMINISTRADOR', 'DIRETOR', 'SUPERVISOR'].includes(req.user.role)) return true;
+        if (['ADMINISTRADOR', 'DIRETOR'].includes(req.user.role)) return true;
         return regioesPermitidas.includes(regiao);
       });
 
@@ -293,7 +293,7 @@ const rankingCoordenadores = async (req, res, next) => {
     });
 
     const coordenadoresVisiveis = coordenadores.filter((coordenador) => {
-      if (['ADMINISTRADOR', 'DIRETOR', 'SUPERVISOR'].includes(req.user.role)) return true;
+      if (['ADMINISTRADOR', 'DIRETOR'].includes(req.user.role)) return true;
       return hasRegionOverlap(regioesPermitidas, getUserRegions(coordenador));
     });
 

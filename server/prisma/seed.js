@@ -1,197 +1,324 @@
-// prisma/seed.js
 require('dotenv').config();
-const prisma = require('../src/utils/prisma');
 const bcrypt = require('bcryptjs');
+const prisma = require('../src/utils/prisma');
+const { seedLojas } = require('./seed-loja');
+const { seedFornecedores } = require('./seed-fornecedor');
+const { seedChamados } = require('./seed-chamados');
 
-const LOJAS = [
-  { numero: 246,   nome: 'LIMEIRA II',                          regiao: 'SP 07' },
+const SENHA_PADRAO = 'Senha@123';
+
+const PECAS_DATA = [
+  { nome: 'Filtro de Ar Condicionado 1T', descricao: 'Filtro para split 1 tonelada', quantidadeEstoque: 15 },
+  { nome: 'Correia Transportadora 3m', descricao: 'Correia para empilhadeira', quantidadeEstoque: 4 },
+  { nome: 'Disjuntor 20A Bifasico', descricao: 'Disjuntor para painel elétrico', quantidadeEstoque: 8 },
+  { nome: 'Rolamento SKF 6205', descricao: 'Rolamento industrial', quantidadeEstoque: 2 },
+  { nome: 'Cabo PP 4mm2 100m', descricao: 'Cabo elétrico flexível', quantidadeEstoque: 3 },
+  { nome: 'Gas Fluido Refrigerante R410A', descricao: 'Botija R410A de refrigeração', quantidadeEstoque: 10 },
+  { nome: 'Gas Fluido Refrigerante R22', descricao: 'Botija R22 para ACs antigos', quantidadeEstoque: 5 },
 ];
 
-async function main() {
-  console.log('🌱 Iniciando seed do banco de dados...');
+const TIPOS_CARRINHO = ['MARIA_GORDA', 'SUPERCAR', 'DOIS_ANDARES', 'PRANCHA', 'ESCADA'];
+const TIPOS_EQUIP = ['EMPILHADEIRA_ELETRICA', 'SERRA_FITA', 'EMBALADORA_VACUO', 'ELEVADOR', 'ILHASELF'];
 
-  // Limpa dados existentes (ordem importa por FK)
+async function cleanDatabase() {
   await prisma.notificacao.deleteMany();
-  await prisma.tarefa.deleteMany();
   await prisma.sessao.deleteMany();
   await prisma.refreshToken.deleteMany();
+  await prisma.checklistEquipamentoItem.deleteMany();
+  await prisma.checklistCarrinhoItem.deleteMany();
   await prisma.checklistEquipamento.deleteMany();
   await prisma.checklistCarrinho.deleteMany();
+  await prisma.frotaCarrinho.deleteMany();
   await prisma.saidaPeca.deleteMany();
   await prisma.movimentacaoPeca.deleteMany();
   await prisma.entradaPeca.deleteMany();
-  await prisma.peca.deleteMany();
+  await prisma.tarefa.deleteMany();
   await prisma.controleChamado.deleteMany();
+  await prisma.peca.deleteMany();
   await prisma.fornecedor.deleteMany();
   await prisma.usuario.deleteMany();
   await prisma.loja.deleteMany();
+}
 
-  // ─── Lojas ────────────────────────────────────────────────────────────────
-  for (const loja of LOJAS) {
-    await prisma.loja.upsert({
-      where: { numero: loja.numero },
-      update: { nome: loja.nome, regiao: loja.regiao },
-      create: loja,
+async function createUsuarios() {
+  const senhaHash = await bcrypt.hash(SENHA_PADRAO, 10);
+  const lojas = await prisma.loja.findMany({ orderBy: { numero: 'asc' } });
+  const lojasByNumero = new Map(lojas.map((loja) => [loja.numero, loja]));
+
+  const usuariosSeed = [
+    { nome: 'Admin Sistema', email: 'admin@manutencao.com', role: 'ADMINISTRADOR' },
+    { nome: 'Marcos Diretor', email: 'diretor@manutencao.com', role: 'DIRETOR' },
+    
+    { nome: 'Rodrigo Godoi', email: 'gerente@manutencao.com', role: 'GERENTE', regiao: 'SP 07, SP 08, SP 09, SP 10' },
+    { nome: 'Nathan', email: 'nathan@manutencao.com', role: 'COORDENADOR', regiao: 'SP 08, SP 10' },
+    { nome: 'Adelito', email: 'luciano@manutencao.com', role: 'COORDENADOR', regiao: 'SP 07, SP 09' },
+    { nome: 'Luis Henrique', email: 'loja246@manutencao.com', role: 'GESTOR', lojaNumero: 246 },
+    { nome: 'Joao', email: 'loja39@manutencao.com', role: 'GESTOR', lojaNumero: 39 },
+    { nome: 'Matheus Lourenco', email: 'loja312@manutencao.com', role: 'GESTOR', lojaNumero: 312 },
+    { nome: 'Pedro SP10', email: 'loja130@manutencao.com', role: 'GESTOR', lojaNumero: 130 },
+    { nome: 'Maria', email: 'tecnico39@manutencao.com', role: 'TECNICO', lojaNumero: 39 },
+    { nome: 'Jose', email: 'tecnico246@manutencao.com', role: 'TECNICO', lojaNumero: 246 },
+    { nome: 'Pedro', email: 'tecnico312@manutencao.com', role: 'TECNICO', lojaNumero: 312 },
+    { nome: 'Julia Tecnica', email: 'tecnico130@manutencao.com', role: 'TECNICO', lojaNumero: 130 },
+  ];
+
+  const usuarios = [];
+  for (const item of usuariosSeed) {
+    const loja = item.lojaNumero ? lojasByNumero.get(item.lojaNumero) : null;
+    const usuario = await prisma.usuario.create({
+      data: {
+        nome: item.nome,
+        email: item.email,
+        senha: senhaHash,
+        role: item.role,
+        regiao: loja?.regiao || item.regiao || null,
+        lojaId: loja?.id || null,
+      },
+      include: { loja: true },
     });
+    usuarios.push(usuario);
   }
-  console.log(`✅ ${LOJAS.length} lojas inseridas`);
 
-  const loja39  = await prisma.loja.findUnique({ where: { numero: 39 } });  // CAMPINAS AMOREIRAS - SP 07
-  const loja21  = await prisma.loja.findUnique({ where: { numero: 21 } });  // LIMEIRA - SP 07
+  return usuarios;
+}
 
-  // ─── Usuários ────────────────────────────────────────────────────────────
-  const senhaHash = await bcrypt.hash('Senha@123', 10);
+async function createPecas() {
+  const pecas = [];
+  for (const peca of PECAS_DATA) {
+    pecas.push(await prisma.peca.create({ data: peca }));
+  }
+  return pecas;
+}
 
-  const usuarios = await Promise.all([
-    prisma.usuario.create({ data: { nome: 'Admin Sistema',              email: 'admin@manutencao.com',    senha: senhaHash, role: 'ADMINISTRADOR' } }),
-    
-    prisma.usuario.create({ data: { nome: 'Marco',                      email: 'diretor@manutencao.com',  senha: senhaHash, role: 'DIRETOR' } }),
-    prisma.usuario.create({ data: { nome: 'Rodrigo Godoy',              email: 'gerente@manutencao.com',  senha: senhaHash, role: 'GERENTE' } }),
-
-    prisma.usuario.create({ data: { nome: 'Rodnei',                     email: 'gerente2@manutencao.com', senha: senhaHash, role: 'GERENTE' } }),
-    
-    prisma.usuario.create({ data: { nome: 'Nathan',                     email: 'nathan@manutencao.com',   senha: senhaHash, role: 'COORDENADOR', regiao: 'SP 07' } }),
-    prisma.usuario.create({ data: { nome: 'Luciano',                    email: 'luciano@manutencao.com',  senha: senhaHash, role: 'COORDENADOR', regiao: 'SP 07' } }),
-    
-    prisma.usuario.create({ data: { nome: 'Marcos - Campinas Amoreiras',email: 'loja39@manutencao.com',   senha: senhaHash, role: 'GESTOR', regiao: loja39.regiao, lojaId: loja39.id } }),
-    prisma.usuario.create({ data: { nome: 'Luis - Limeira',             email: 'loja21@manutencao.com',   senha: senhaHash, role: 'GESTOR', regiao: loja21.regiao, lojaId: loja21.id } }),
-    prisma.usuario.create({ data: { nome: 'Maria Técnica',              email: 'tecnico2@manutencao.com', senha: senhaHash, role: 'TECNICO', regiao: loja39.regiao, lojaId: loja39.id } }),
-    prisma.usuario.create({ data: { nome: 'João Técnico',               email: 'tecnico@manutencao.com',  senha: senhaHash, role: 'TECNICO', regiao: loja21.regiao, lojaId: loja21.id } }),
-    prisma.usuario.create({ data: { nome: 'Pedro Técnico',              email: 'tecnico3@manutencao.com', senha: senhaHash, role: 'TECNICO', regiao: loja39.regiao, lojaId: loja39.id } }),
-    prisma.usuario.create({ data: { nome: 'Julia Técnica',              email: 'tecnico4@manutencao.com', senha: senhaHash, role: 'TECNICO', regiao: loja21.regiao, lojaId: loja21.id } }),
-  ]);
-  console.log(`✅ ${usuarios.length} usuários criados`);
-
-  // ─── Fornecedores ─────────────────────────────────────────────────────────
-  const fornecedores = await prisma.fornecedor.createMany({
-    data: [
-      { nome: 'Rios Refrigeração',            telefone: '(11) 99999-0001', email: 'rios@rios.com.br',                  segmento: 'REFRIGERACAO',  cnpj: '12345678000195' },
-      { nome: 'Elétrica Central S/A',          telefone: '(11) 99999-0002', email: 'vendas@eletricacentral.com.br',     segmento: 'ELETRICA',      cnpj: '23456789000186' },
-      { nome: 'Indi Empilhadeiras',            telefone: '(11) 99999-0003', email: 'indi@indi.com.br',                  segmento: 'EMPILHADEIRA',  cnpj: '34567890000177' },
-      { nome: 'Civil Master Construções',      telefone: '(11) 99999-0004', email: 'obras@civilmaster.com.br',          segmento: 'CIVIL',         cnpj: '45678901000168' },
-      { nome: 'Serralheria Ferro & Aço',       telefone: '(11) 99999-0005', email: 'orcamento@ferroeaco.com.br',        segmento: 'SERRALHERIA',   cnpj: '56789012000159' },
-      { nome: 'PERFIL REFRIG IND COM',         telefone: '(11) 99999-0006', email: 'contato@perfilrefrig.com.br',       segmento: 'REFRIGERACAO',  cnpj: '09536473000182' },
-      { nome: 'Ágil Geradores',                telefone: '(11) 99999-0007', email: 'vendas@agilgeradores.com.br',       segmento: 'GERADOR',       cnpj: '11396273000113' },
-      { nome: 'ETS Engenharia e Manutenção',   telefone: '(11) 99999-0008', email: 'suporte@etsengenharia.com.br',      segmento: 'EQUIPAMENTOS',  cnpj: '04697262000108' },
-      { nome: 'BASIC ELEVADORES LTDA',         telefone: '(11) 99999-0009', email: 'atendimento@basicelevadores.com.br',segmento: 'ELEVADOR',      cnpj: '02254737000166' },
-    ],
-  });
-  console.log(`✅ ${fornecedores.count} fornecedores criados`);
-
-  // ─── Peças de estoque ─────────────────────────────────────────────────────
-  const pecas = await Promise.all([
-    prisma.peca.create({ data: { nome: 'Filtro de Ar Condicionado 1T',  descricao: 'Filtro para split 1 tonelada',     quantidadeEstoque: 15 } }),
-    prisma.peca.create({ data: { nome: 'Correia Transportadora 3m',     descricao: 'Correia para empilhadeira',         quantidadeEstoque: 4 } }),
-    prisma.peca.create({ data: { nome: 'Disjuntor 20A Bifásico',        descricao: 'Disjuntor para painel elétrico',    quantidadeEstoque: 8 } }),
-    prisma.peca.create({ data: { nome: 'Rolamento SKF 6205',            descricao: 'Rolamento industrial',              quantidadeEstoque: 2 } }),
-    prisma.peca.create({ data: { nome: 'Cabo PP 4mm² 100m',             descricao: 'Cabo elétrico flexível',            quantidadeEstoque: 3 } }),
-    prisma.peca.create({ data: { nome: 'Gás Fluido Refrigerante R410A', descricao: 'Botija R410A de Refrigeração',      quantidadeEstoque: 10 } }),
-    prisma.peca.create({ data: { nome: 'Gás Fluido Refrigerante R22',   descricao: 'Botija R22 para ACs antigos',       quantidadeEstoque: 5 } }),
-  ]);
-  console.log(`✅ ${pecas.length} peças criadas`);
-
-  const pR410A = pecas.find(p => p.nome.includes('R410A'));
-  const pR22   = pecas.find(p => p.nome.includes('R22'));
+async function createFluxoEstoque(pecas) {
+  const pR410A = pecas.find((peca) => peca.nome.includes('R410A'));
+  const pR22 = pecas.find((peca) => peca.nome.includes('R22'));
 
   await prisma.entradaPeca.createMany({
     data: [
-      { pecaId: pR410A.id, dataEntrada: new Date(Date.now() - 5*86400000), quantidade: 15, valorUnitario: 350.00, fornecedor: 'TechCool Refrigeração LTDA', numeroNotaFiscal: 'NF-888', total: 5250.00 },
-      { pecaId: pR22.id,   dataEntrada: new Date(Date.now() - 10*86400000), quantidade: 8, valorUnitario: 420.00, fornecedor: 'TechCool Refrigeração LTDA', numeroNotaFiscal: 'NF-890', total: 3360.00 },
+      {
+        pecaId: pR410A.id,
+        dataEntrada: new Date(Date.now() - 5 * 86400000),
+        quantidade: 15,
+        valorUnitario: 350,
+        fornecedor: 'COZITEC REFRIGERACAO LTDA',
+        numeroNotaFiscal: 'NF-888',
+        total: 5250,
+      },
+      {
+        pecaId: pR22.id,
+        dataEntrada: new Date(Date.now() - 10 * 86400000),
+        quantidade: 8,
+        valorUnitario: 420,
+        fornecedor: 'AR CICLO COMERCIO SERV E REFRIGERACAO LT',
+        numeroNotaFiscal: 'NF-890',
+        total: 3360,
+      },
     ],
   });
 
   await prisma.movimentacaoPeca.create({
-    data: { pecaId: pR22.id, dataMovimentacao: new Date(Date.now() - 2*86400000), lojaRequisitante: loja21.nome, quantidade: 3, numeroChamado: 'CSA-1025', status: 'RECEBIDO' },
+    data: {
+      pecaId: pR22.id,
+      dataMovimentacao: new Date(Date.now() - 2 * 86400000),
+      lojaRequisitante: 'LIMEIRA II',
+      quantidade: 3,
+      numeroChamado: 'CSA-246-0001',
+      status: 'RECEBIDO',
+    },
   });
 
   await prisma.saidaPeca.create({
-    data: { pecaId: pR410A.id, data: new Date(Date.now() - 86400000), quantidade: 5, destino: 'Manutenção Preventiva Câmara Fria', nomeRetirou: 'João Técnico', empresa: 'Uso Interno' },
+    data: {
+      pecaId: pR410A.id,
+      data: new Date(Date.now() - 1 * 86400000),
+      quantidade: 5,
+      destino: 'Manutencao preventiva camara fria',
+      nomeRetirou: 'Joao Tecnico',
+      empresa: 'Uso Interno',
+    },
   });
+}
 
-  // ─── Tarefas ──────────────────────────────────────────────────────────────
-  const [, , , , coordenador, , gestor39, gestor21, , tecnico1, , tecnico2] = usuarios;
+async function createTarefas(usuarios) {
+  const byEmail = new Map(usuarios.map((usuario) => [usuario.email, usuario]));
+  const gestor246 = byEmail.get('loja246@manutencao.com');
+  const gestor39 = byEmail.get('loja39@manutencao.com');
+  const coordenador = byEmail.get('nathan@manutencao.com');
+  const gerente = byEmail.get('gerente@manutencao.com');
+  const tecnico39 = byEmail.get('tecnico39@manutencao.com');
+  const tecnico246 = byEmail.get('tecnico246@manutencao.com');
+  const tecnico312 = byEmail.get('tecnico312@manutencao.com');
 
-  await prisma.tarefa.createMany({
-    data: [
-      { descricao: 'Manutenção preventiva dos sistemas de refrigeração',   prioridade: 'ALTA',    status: 'EM_ANDAMENTO', areResponsavel: 'Refrigeração', regiao: loja39.regiao, unidade: loja39.nome, criadoPorId: gestor39.id, atribuidoParaId: tecnico1.id, dataConclusao: new Date(Date.now() + 2*86400000) },
-      { descricao: 'Verificar quadro elétrico principal — Almoxarifado',   prioridade: 'CRITICA', status: 'PENDENTE',     areResponsavel: 'Elétrica',     regiao: loja39.regiao, unidade: loja39.nome, criadoPorId: coordenador.id, atribuidoParaId: tecnico1.id },
-      { descricao: 'Troca de bateria da empilhadeira #3',                  prioridade: 'MEDIA',   status: 'PENDENTE',     areResponsavel: 'Empilhadeira', regiao: loja21.regiao, unidade: loja21.nome, criadoPorId: gestor21.id, atribuidoParaId: tecnico2.id },
-      { descricao: 'Pintura e reparo de calha na área de carga',           prioridade: 'BAIXA',   status: 'PENDENTE',     areResponsavel: 'Civil',        regiao: loja21.regiao, unidade: loja21.nome, criadoPorId: gestor21.id },
-      { descricao: 'Inspeção do sistema de PCI — área de estoque',        prioridade: 'ALTA',    status: 'CONCLUIDA',    areResponsavel: 'PCI',          regiao: loja21.regiao, unidade: loja21.nome, criadoPorId: gestor21.id, atribuidoParaId: tecnico2.id },
-    ],
-  });
-  console.log('✅ 5 tarefas criadas');
+  const tarefas = [
+    {
+      descricao: 'Manutencao preventiva dos sistemas de refrigeracao - Bloco A',
+      prioridade: 'ALTA',
+      status: 'EM_ANDAMENTO',
+      areResponsavel: 'Refrigeracao',
+      regiao: gestor39.loja.regiao,
+      unidade: gestor39.loja.nome,
+      criadoPorId: gestor39.id,
+      atribuidoParaId: tecnico39.id,
+      dataConclusao: new Date(Date.now() + 2 * 86400000),
+    },
+    {
+      descricao: 'Verificar quadro eletrico principal - Almoxarifado',
+      prioridade: 'CRITICA',
+      status: 'PENDENTE',
+      areResponsavel: 'Eletrica',
+      regiao: gestor39.loja.regiao,
+      unidade: gestor39.loja.nome,
+      criadoPorId: coordenador.id,
+      atribuidoParaId: tecnico39.id,
+    },
+    {
+      descricao: 'Troca de bateria da empilhadeira #3',
+      prioridade: 'MEDIA',
+      status: 'PENDENTE',
+      areResponsavel: 'Empilhadeira',
+      regiao: gestor246.loja.regiao,
+      unidade: gestor246.loja.nome,
+      criadoPorId: gestor246.id,
+      atribuidoParaId: tecnico246.id,
+    },
+    {
+      descricao: 'Pintura e reparo de calha na area de carga',
+      prioridade: 'BAIXA',
+      status: 'PENDENTE',
+      areResponsavel: 'Civil',
+      regiao: gestor246.loja.regiao,
+      unidade: gestor246.loja.nome,
+      criadoPorId: gestor246.id,
+    },
+    {
+      descricao: 'Inspecao do sistema de PCI - area de estoque',
+      prioridade: 'ALTA',
+      status: 'CONCLUIDA',
+      areResponsavel: 'PCI',
+      regiao: gestor246.loja.regiao,
+      unidade: gestor246.loja.nome,
+      criadoPorId: gerente.id,
+      atribuidoParaId: tecnico246.id,
+    },
+    {
+      descricao: 'Avaliacao termografica em paineis de distribuicao',
+      prioridade: 'CRITICA',
+      status: 'EM_ANDAMENTO',
+      areResponsavel: 'Eletrica',
+      regiao: 'SP 09',
+      unidade: 'CAMPINAS ABOLICAO',
+      criadoPorId: gerente.id,
+      atribuidoParaId: tecnico312.id,
+    },
+  ];
 
-  // ─── Chamados financeiros ─────────────────────────────────────────────────
-  const gestores = [gestor39, gestor21];
-  const lojasPorGestor = { [gestor39.id]: loja39, [gestor21.id]: loja21 };
-  const meses = [0, -1, -2, -3, -4];
-  const segmentos = ['REFRIGERACAO','ELETRICA','EMPILHADEIRA','CIVIL','SERRALHERIA','GERADOR','ELEVADOR'];
-  const empresas  = ['Rios Refrigeração','Elétrica Central','ETS Engenharia','Ágil Geradores','BASIC ELEVADORES'];
-  const chamadosData = [];
+  await prisma.tarefa.createMany({ data: tarefas });
+}
 
-  for (const g of gestores) {
-    const loja = lojasPorGestor[g.id];
-    for (const offset of meses) {
-      const base = new Date();
-      base.setMonth(base.getMonth() + offset);
-      for (let i = 1; i <= 5; i++) {
-        const valor = parseFloat((Math.random() * 2500 + 400).toFixed(2));
-        chamadosData.push({
-          dataAbertura:   new Date(base.getFullYear(), base.getMonth(), Math.floor(Math.random()*25)+1),
-          numeroChamado:  `CSA-${loja.numero}-${Math.abs(offset)}${i}${Math.floor(Math.random()*100)}`,
-          segmento:       segmentos[Math.floor(Math.random()*segmentos.length)],
-          empresa:        empresas[Math.floor(Math.random()*empresas.length)],
-          regiao:         loja.regiao,
-          unidade:        loja.nome,
-          descricao:      `Manutenção preventiva/corretiva - Chamado Mensal ${i}`,
-          numeroOrcamento:`ORC-${Math.floor(Math.random()*9000)+1000}`,
-          valor,
-          status: offset < 0 ? 'FINALIZADO' : (i % 3 === 0 ? 'AGUARDANDO_APROVACAO' : 'CHAMADO_ABERTO'),
-          mauUso: Math.random() > 0.85,
-        });
-      }
-    }
-  }
-
-  await prisma.controleChamado.createMany({ data: chamadosData });
-  console.log(`✅ ${chamadosData.length} chamados criados`);
-
-  // ─── Frota e Checklists ───────────────────────────────────────────────────
-  const tiposCarrinho = ['MARIA_GORDA','SUPERCAR','DOIS_ANDARES','PRANCHA','ESCADA'];
-  const tiposEquip    = ['EMPILHADEIRA_ELETRICA','SERRA_FITA','EMBALADORA_VACUO','ELEVADOR','ILHASELF'];
+async function createFrotaEChecklists(gestores) {
   const ano = new Date().getFullYear();
   const semanaAtual = 15;
 
-  for (const g of gestores) {
-    const loja = lojasPorGestor[g.id];
-    for (const tipo of tiposCarrinho) {
+  for (const gestor of gestores) {
+    const unidade = gestor.loja?.nome;
+    const regiao = gestor.loja?.regiao || gestor.regiao;
+    if (!unidade || !regiao) continue;
+
+    for (const [index, tipo] of TIPOS_CARRINHO.entries()) {
       await prisma.frotaCarrinho.create({
-        data: { unidade: loja.nome, tipoCarrinho: tipo, total: Math.floor(Math.random()*20)+5 },
-      });
-    }
-    for (let s = semanaAtual - 1; s <= semanaAtual; s++) {
-      await prisma.checklistEquipamento.create({
-        data: { semana: s, ano, regiao: loja.regiao, unidade: loja.nome, criadoPorId: g.id,
-          itens: { create: tiposEquip.map(tipo => ({ tipoEquipamento: tipo, operacional: Math.random()>0.2, quantidade: 1, quantidadeQuebrada: 0 })) },
+        data: {
+          unidade,
+          tipoCarrinho: tipo,
+          total: 6 + index,
         },
       });
+    }
+
+    for (let semana = semanaAtual - 1; semana <= semanaAtual; semana += 1) {
+      await prisma.checklistEquipamento.create({
+        data: {
+          semana,
+          ano,
+          regiao,
+          unidade,
+          criadoPorId: gestor.id,
+          itens: {
+            create: TIPOS_EQUIP.map((tipo, index) => ({
+              tipoEquipamento: tipo,
+              operacional: !(semana === semanaAtual && index === 0),
+              quantidade: 1,
+              quantidadeQuebrada: semana === semanaAtual && index === 0 ? 1 : 0,
+            })),
+          },
+        },
+      });
+
       await prisma.checklistCarrinho.create({
-        data: { semana: s, ano, regiao: loja.regiao, unidade: loja.nome, criadoPorId: g.id,
-          itens: { create: tiposCarrinho.map(tipo => ({ tipoCarrinho: tipo, total: 10, quebrados: Math.floor(Math.random()*2) })) },
+        data: {
+          semana,
+          ano,
+          regiao,
+          unidade,
+          criadoPorId: gestor.id,
+          itens: {
+            create: TIPOS_CARRINHO.map((tipo, index) => ({
+              tipoCarrinho: tipo,
+              total: 8 + index,
+              quebrados: semana === semanaAtual && index === 0 ? 1 : 0,
+            })),
+          },
         },
       });
     }
   }
+}
+
+async function main() {
+  console.log('🌱 Iniciando seed do banco de dados...');
+  await cleanDatabase();
+
+  const lojas = await seedLojas();
+  console.log(`✅ ${lojas.length} lojas carregadas do arquivo loja.md`);
+
+  const usuarios = await createUsuarios();
+  console.log(`✅ ${usuarios.length} usuarios criados`);
+
+  const fornecedores = await seedFornecedores();
+  console.log(`✅ ${fornecedores.length} fornecedores criados`);
+
+  const pecas = await createPecas();
+  console.log(`✅ ${pecas.length} pecas criadas`);
+
+  await createFluxoEstoque(pecas);
+  console.log('✅ Fluxo de estoque criado');
+
+  await createTarefas(usuarios);
+  console.log('✅ Tarefas criadas');
+
+  const chamados = await seedChamados();
+  console.log(`✅ ${chamados.length} chamados financeiros criados`);
+
+  const gestores = usuarios.filter((usuario) => usuario.role === 'GESTOR');
+  await createFrotaEChecklists(gestores);
   console.log('✅ Frotas e checklists criados');
 
-  console.log('\n🎉 Seed concluído com sucesso!');
-  console.log('  admin@manutencao.com   | Senha@123');
-  console.log('  gerente@manutencao.com | Senha@123');
-  console.log('  loja39@manutencao.com  | Senha@123  (Gestor - CAMPINAS AMOREIRAS)');
-  console.log('  loja21@manutencao.com  | Senha@123  (Gestor - LIMEIRA)');
+  console.log('\n🎉 Seed concluido com sucesso!');
+  console.log('\n📋 Credenciais de acesso:');
+  console.log(`  admin@manutencao.com   | ${SENHA_PADRAO}  (Administrador)`);
+  console.log(`  diretor@manutencao.com | ${SENHA_PADRAO}  (Diretor)`);
+  console.log(`  gerente@manutencao.com | ${SENHA_PADRAO}  (Gerente)`);
+  console.log(`  nathan@manutencao.com  | ${SENHA_PADRAO}  (Coordenador)`);
+  console.log(`  loja39@manutencao.com  | ${SENHA_PADRAO}  (Gestor Loja 39)`);
+  console.log(`  loja246@manutencao.com | ${SENHA_PADRAO}  (Gestor Loja 246)`);
+  console.log(`  tecnico39@manutencao.com | ${SENHA_PADRAO}  (Tecnico Loja 39)`);
 }
 
 main()
-  .catch(e => { console.error(e); process.exit(1); })
-  .finally(() => prisma.$disconnect());
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

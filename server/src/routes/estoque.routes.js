@@ -4,7 +4,7 @@ const ctrl = require('../controllers/estoque.controller');
 const { autenticar, autorizar, Roles } = require('../middlewares/auth.middleware');
 
 router.use(autenticar);
-const GESTORES = [Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.SUPERVISOR, Roles.COORDENADOR, Roles.GESTOR];
+const GESTORES = [Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR, Roles.GESTOR];
 
 router.get('/pecas', ctrl.listarPecas);
 router.post('/pecas', autorizar(...GESTORES), ctrl.criarPeca);

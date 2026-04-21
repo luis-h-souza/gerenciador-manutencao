@@ -52,7 +52,11 @@ const autenticar = async (req, res, next) => {
       });
     }
 
-    req.user = usuario;
+    req.user = {
+      ...usuario,
+      regiao: usuario.loja?.regiao || usuario.regiao || null,
+      unidade: usuario.loja?.nome || null,
+    };
     next();
   } catch (err) {
     logger.error('Erro no middleware de autenticação:', err);
@@ -91,7 +95,6 @@ const Roles = {
   ADMINISTRADOR: 'ADMINISTRADOR',
   DIRETOR: 'DIRETOR',
   GERENTE: 'GERENTE',
-  SUPERVISOR: 'SUPERVISOR',
   COORDENADOR: 'COORDENADOR',
   GESTOR: 'GESTOR',
   TECNICO: 'TECNICO',

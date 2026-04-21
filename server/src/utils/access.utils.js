@@ -30,14 +30,14 @@ const getUserRegions = (user) => expandRegionScopes(splitRegions(user?.regiao));
 
 const canAccessRegion = (user, regiao) => {
   if (!regiao) return false;
-  if (['ADMINISTRADOR', 'DIRETOR', 'SUPERVISOR'].includes(user?.role)) return true;
+  if (['ADMINISTRADOR', 'DIRETOR'].includes(user?.role)) return true;
   return getUserRegions(user).includes(regiao);
 };
 
 const getAccessFilter = (user) => {
   if (!user) return { regiao: '__LOGOUT__' };
 
-  if (['ADMINISTRADOR', 'DIRETOR', 'SUPERVISOR'].includes(user.role)) return {};
+  if (['ADMINISTRADOR', 'DIRETOR'].includes(user.role)) return {};
 
   if (['GERENTE', 'COORDENADOR', 'TECNICO'].includes(user.role)) {
     return getRegionFilterFromList(getUserRegions(user));

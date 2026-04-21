@@ -204,7 +204,6 @@ function LinhaCarrinho({ carrinho, value, onChange, readOnly }) {
 function TabEquipamentos({ semana, ano, usuario, canEdit }) {
   const qc = useQueryClient();
 
-  // Agora usa usuario.unidade para identificar a loja
   const { data: checklistExistente, isLoading } = useQuery({
     queryKey: ['checklist-equip', semana, ano, usuario.unidade],
     queryFn: () => api.get('/checklists/equipamentos/semana', { params: { semana, ano, unidade: usuario.unidade } }).then(r => r.data),
@@ -550,7 +549,7 @@ function GestorList({ onSelect, regiao, onBack }) {
               <div style={{ flex: 1 }}>
                 <h3 style={{ fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '4px' }}>{g.nome}</h3>
                 <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <Building2 size={12} /> {g.unidade || 'Loja Não Informada'}
+                  <Building2 size={12} /> {g.loja?.nome || 'Loja Não Informada'}
                 </p>
               </div>
               <ChevronDown size={18} className="rotate-270" style={{ color: 'var(--color-text-muted)' }} />
