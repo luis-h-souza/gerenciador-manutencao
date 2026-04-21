@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -61,7 +62,9 @@ const TooltipCustom = ({ active, payload, label }) => {
   );
 };
 
-function CorporativoDashboard({ filtro, setFiltro }) {
+function CorporativoDashboard({ filtro }) {
+  const navigate = useNavigate();
+  const [showExecutiveSummary, setShowExecutiveSummary] = useState(true);
   const { data: regionalData = [], isLoading: l1 } = useQuery({
     queryKey: ['dashboard-regional'],
     queryFn: () => dashboardService.regional().then(r => r.data),
@@ -99,6 +102,7 @@ function CorporativoDashboard({ filtro, setFiltro }) {
   }
 
   const variacaoMacro = parseFloat(macroResumo?.financeiro?.variacaoPercent || 0);
+  const regionalOrdenado = [...regionalData].sort((a, b) => (b.gastosMes || 0) - (a.gastosMes || 0));
 
   return (
     <div className="flex flex-col gap-8 animate-fade-in">
@@ -115,7 +119,7 @@ function CorporativoDashboard({ filtro, setFiltro }) {
         <div className="flex flex-wrap gap-4 items-stretch">
           <div style={{ flex: '1 1 300px', maxWidth: '400px' }}>
             <StatCard
-              label="Gastos Globais (Mês)"
+              label="Gastos Globais"
               value={fmt(macroResumo?.financeiro?.gastosMes)}
               sub={`${Math.abs(variacaoMacro)}% vs mês anterior`}
               icon={DollarSign}
@@ -132,43 +136,6 @@ function CorporativoDashboard({ filtro, setFiltro }) {
               accent="var(--color-warning)"
             />
           </div>
-
-          {/* Seletor Temporal no Lado Direito (Margin Auto push) */}
-          <div className="stat-card flex flex-col justify-center" style={{ borderTop: '4px solid var(--color-brand-400)', marginLeft: 'auto', flex: '1 1 320px', maxWidth: '450px' }}>
-            <p style={{ fontSize: '0.625rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '0.05em' }}>
-              Competência Global
-            </p>
-            <div className="flex items-center gap-2">
-              <select 
-                className="select flex-1" 
-                style={{ height: '36px', fontSize: '0.8125rem' }}
-                value={filtro.mes} 
-                onChange={e => setFiltro(p => ({ ...p, mes: parseInt(e.target.value) }))}
-              >
-                {[
-                  { v: 1, l: 'Janeiro' }, { v: 2, l: 'Fevereiro' }, { v: 3, l: 'Março' },
-                  { v: 4, l: 'Abril' }, { v: 5, l: 'Maio' }, { v: 6, l: 'Junho' },
-                  { v: 7, l: 'Julho' }, { v: 8, l: 'Agosto' }, { v: 9, l: 'Setembro' },
-                  { v: 10, l: 'Outubro' }, { v: 11, l: 'Novembro' }, { v: 12, l: 'Dezembro' }
-                ].map(m => <option key={m.v} value={m.v}>{m.l}</option>)}
-              </select>
-              <select 
-                className="select" 
-                style={{ width: '90px', height: '36px', fontSize: '0.8125rem' }}
-                value={filtro.ano} 
-                onChange={e => setFiltro(p => ({ ...p, ano: parseInt(e.target.value) }))}
-              >
-                {[2023, 2024, 2025, 2026].map(a => <option key={a} value={a}>{a}</option>)}
-              </select>
-              <button 
-                className="btn btn-ghost btn-sm"
-                style={{ height: '36px' }}
-                onClick={() => setFiltro({ mes: new Date().getMonth() + 1, ano: new Date().getFullYear() })}
-              >
-                Hoje
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* Gráficos Macros */}
@@ -184,7 +151,7 @@ function CorporativoDashboard({ filtro, setFiltro }) {
                 onClick={(state) => {
                   if (state && state.activePayload) {
                     const d = state.activePayload[0].payload;
-                    setFiltro({ mes: d.mesNum, ano: d.anoNum });
+                    navigate(`/chamados?mes=${d.mesNum}&ano=${d.anoNum}`);
                   }
                 }}
                 style={{ cursor: 'pointer' }}
@@ -233,7 +200,7 @@ function CorporativoDashboard({ filtro, setFiltro }) {
         </div>
 
         <div className="grid gap-5" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))' }}>
-          {regionalData.map((reg) => (
+          {regionalOrdenado.map((reg) => (
             <div key={reg.regiao} className="card hover-scale" style={{ padding: '20px', cursor: 'default' }}>
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -274,35 +241,48 @@ function CorporativoDashboard({ filtro, setFiltro }) {
 
 
       {/* ─── SEÇÃO 3: RESUMO EXECUTIVO ────────────────────────────────────────── */}
-      <div className="card" style={{ 
-        background: 'linear-gradient(135deg, var(--color-surface-800) 0%, var(--color-surface-900) 100%)', 
-        border: '1px solid var(--color-surface-600)',
-        boxShadow: '0 10px 30px -10px rgba(0,0,0,0.5)',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', background: 'var(--color-brand-500)' }} />
-        
-        <div className="flex items-start gap-4" style={{ position: 'relative', zIndex: 1 }}>
-          <div className="flex items-center justify-center w-10 h-10 rounded-lg shrink-0" style={{ background: 'var(--color-surface-600)', color: 'var(--color-brand-400)' }}>
-            <BarChart3 size={20} />
-          </div>
-          <div>
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '8px' }}>Resumo Executivo</h3>
-            <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', lineHeight: '1.6' }}>
-              Este painel combina a visão de alto nível (Macro) com o detalhamento tático (Regional).
-              Os indicadores refletem o status em tempo real de todas as unidades conectadas ao sistema de manutenção.
-            </p>
+      {showExecutiveSummary && (
+        <div className="card" style={{ 
+          background: 'linear-gradient(135deg, var(--color-surface-800) 0%, var(--color-surface-900) 100%)', 
+          border: '1px solid var(--color-surface-600)',
+          boxShadow: '0 10px 30px -10px rgba(0,0,0,0.5)',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', background: 'var(--color-brand-500)' }} />
+          
+          <div className="flex items-start justify-between gap-4" style={{ position: 'relative', zIndex: 1 }}>
+            <div className="flex items-start gap-4">
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg shrink-0" style={{ background: 'var(--color-surface-600)', color: 'var(--color-brand-400)' }}>
+                <BarChart3 size={20} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '8px' }}>Resumo Executivo</h3>
+                <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', lineHeight: '1.6' }}>
+                  Este painel combina a visão de alto nível (Macro) com o detalhamento tático (Regional).
+                  Os indicadores refletem o status em tempo real de todas as unidades conectadas ao sistema de manutenção.
+                </p>
+              </div>
+            </div>
+            <button
+              className="btn btn-ghost btn-sm"
+              style={{ padding: '4px 8px', fontSize: '1rem', lineHeight: 1 }}
+              onClick={() => setShowExecutiveSummary(false)}
+              aria-label="Fechar resumo executivo"
+            >
+              x
+            </button>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
 
 
-function GestorDashboard({ filtro, setFiltro }) {
+function GestorDashboard({ filtro }) {
   const { usuario } = useAuth();
+  const navigate = useNavigate();
   const isGestor = usuario?.role === 'GESTOR';
   const { data: resumo, isLoading: l1 } = useQuery({
     queryKey: ['dashboard-resumo', filtro],
@@ -363,7 +343,7 @@ function GestorDashboard({ filtro, setFiltro }) {
         </div>
         <div style={{ flex: '1 1 240px' }}>
           <StatCard
-            label="Gastos do Mês"
+            label="Gastos Gerais"
             value={fmt(resumo?.financeiro?.gastosMes)}
             sub={`${Math.abs(variacao)}% em relação ao mês anterior`}
             icon={DollarSign}
@@ -391,44 +371,6 @@ function GestorDashboard({ filtro, setFiltro }) {
             />
           </div>
         )}
-
-        {/* Seletor de Data (Mês/Ano) - Agora no final do grid (Lado Direito) */}
-        <div className="stat-card flex flex-col justify-center" style={{ borderTop: '4px solid var(--color-brand-300)', marginLeft: 'auto', flex: '1 1 280px', maxWidth: '350px' }}>
-          <p style={{ fontSize: '0.625rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '0.05em' }}>
-            Filtrar Competência
-          </p>
-          <div className="flex items-center gap-1.5">
-            <select 
-              className="select flex-1" 
-              style={{ padding: '0 8px', fontSize: '0.8125rem', height: '34px' }}
-              value={filtro.mes} 
-              onChange={e => setFiltro(p => ({ ...p, mes: parseInt(e.target.value) }))}
-            >
-              {[
-                { v: 1, l: 'Jan' }, { v: 2, l: 'Fev' }, { v: 3, l: 'Mar' },
-                { v: 4, l: 'Abr' }, { v: 5, l: 'Mai' }, { v: 6, l: 'Jun' },
-                { v: 7, l: 'Jul' }, { v: 8, l: 'Ago' }, { v: 9, l: 'Set' },
-                { v: 10, l: 'Out' }, { v: 11, l: 'Nov' }, { v: 12, l: 'Dez' }
-              ].map(m => <option key={m.v} value={m.v}>{m.l}</option>)}
-            </select>
-            <select 
-              className="select" 
-              style={{ width: '70px', padding: '0 8px', fontSize: '0.8125rem', height: '34px' }}
-              value={filtro.ano} 
-              onChange={e => setFiltro(p => ({ ...p, ano: parseInt(e.target.value) }))}
-            >
-              {[2023, 2024, 2025, 2026].map(a => <option key={a} value={a}>{a}</option>)}
-            </select>
-            <button 
-              className="btn btn-ghost btn-sm"
-              style={{ height: '34px', minHeight: '34px' }}
-              onClick={() => setFiltro({ mes: new Date().getMonth() + 1, ano: new Date().getFullYear() })}
-              title="Voltar para hoje"
-            >
-              Hoje
-            </button>
-          </div>
-        </div>
       </div>
 
       {/* Gráficos */}
@@ -445,7 +387,7 @@ function GestorDashboard({ filtro, setFiltro }) {
               onClick={(state) => {
                 if (state && state.activePayload) {
                   const d = state.activePayload[0].payload;
-                  setFiltro({ mes: d.mesNum, ano: d.anoNum });
+                  navigate(`/chamados?mes=${d.mesNum}&ano=${d.anoNum}`);
                 }
               }}
               style={{ cursor: 'pointer' }}
@@ -622,7 +564,7 @@ function TecnicoDashboard() {
 
 export default function DashboardPage() {
   const { usuario } = useAuth();
-  const [filtro, setFiltro] = useState({
+  const [filtro] = useState({
     mes: new Date().getMonth() + 1,
     ano: new Date().getFullYear()
   });
@@ -631,8 +573,8 @@ export default function DashboardPage() {
   
   if (usuario?.role === 'TECNICO') return <TecnicoDashboard />;
   if (macroRoles.includes(usuario?.role)) {
-    return <CorporativoDashboard filtro={filtro} setFiltro={setFiltro} />;
+    return <CorporativoDashboard filtro={filtro} />;
   }
   
-  return <GestorDashboard filtro={filtro} setFiltro={setFiltro} />;
+  return <GestorDashboard filtro={filtro} />;
 }

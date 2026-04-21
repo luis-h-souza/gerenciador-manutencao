@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
@@ -221,11 +221,13 @@ function CorporativoRegioes({ onSelect }) {
     </div>
   );
 
+  const regioesOrdenadas = [...regionalData].sort((a, b) => (b.gastosMes || 0) - (a.gastosMes || 0));
+
   return (
     <div className="flex flex-col gap-6 animate-fade-in">
       <h2 style={{ fontSize: '1.25rem', fontWeight: 700 }}>Controle por Regional</h2>
       <div className="grid gap-5" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
-        {regionalData.map(reg => (
+        {regioesOrdenadas.map(reg => (
           <div key={reg.regiao} className="card hover-scale" style={{ padding: '20px', cursor: 'pointer' }} onClick={() => onSelect(reg.regiao)}>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
@@ -251,14 +253,25 @@ export default function ChamadosPage() {
   const { usuario } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const regiaoSelecionada = searchParams.get('regiao');
+  const mesParam = searchParams.get('mes');
+  const anoParam = searchParams.get('ano');
   
   const qc = useQueryClient();
   const [modal, setModal] = useState(null);
   const [busca, setBusca] = useState('');
   const [filtros, setFiltros] = useState({ status: '', segmento: '' });
-  const [periodo, setPeriodo] = useState(format(new Date(), 'yyyy-MM'));
+  const [periodo, setPeriodo] = useState(() => {
+    const mesInicial = mesParam ? String(mesParam).padStart(2, '0') : format(new Date(), 'MM');
+    const anoInicial = anoParam || format(new Date(), 'yyyy');
+    return `${anoInicial}-${mesInicial}`;
+  });
 
   const [ano, mes] = periodo.split('-');
+
+  useEffect(() => {
+    if (!mesParam || !anoParam) return;
+    setPeriodo(`${anoParam}-${String(mesParam).padStart(2, '0')}`);
+  }, [mesParam, anoParam]);
 
   const macroRoles = ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR'];
   const isMacro = macroRoles.includes(usuario?.role);
@@ -270,11 +283,11 @@ export default function ChamadosPage() {
   });
 
   if (isMacro && !regiaoSelecionada) {
-    return <CorporativoRegioes onSelect={(r) => setSearchParams({ regiao: r })} />;
+    return <CorporativoRegioes onSelect={(r) => setSearchParams({ regiao: r, mes, ano })} />;
   }
 
   if (isMacro && regiaoSelecionada) {
-    return <CorporativoRegiaoDetalhe regiao={regiaoSelecionada} onBack={() => setSearchParams({})} />;
+    return <CorporativoRegiaoDetalhe regiao={regiaoSelecionada} onBack={() => setSearchParams({ mes, ano })} />;
   }
 
   const remover = useMutation({
