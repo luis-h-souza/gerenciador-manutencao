@@ -3,10 +3,11 @@ const prisma = require('../utils/prisma');
 
 const listar = async (req, res, next) => {
   try {
-    const { nome, regiao, page = 1, limit = 20 } = req.query;
+    const { nome, numero, regiao, page = 1, limit = 20 } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const where = { ativo: true };
     if (nome)   where.nome   = { contains: nome,   mode: 'insensitive' };
+    if (numero) where.numero = parseInt(numero);
     if (regiao) where.regiao = regiao;
 
     const [lojas, total] = await Promise.all([

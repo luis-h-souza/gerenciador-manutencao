@@ -111,7 +111,7 @@ export default function LojasPage() {
   const qc = useQueryClient();
   const [modal, setModal] = useState(null);
   const [page, setPage] = useState(1);
-  const [filtros, setFiltros] = useState({ nome: '', regiao: '' });
+  const [filtros, setFiltros] = useState({ nome: '', numero: '', regiao: '' });
 
   const atualizar = (campo, valor) => { setFiltros(f => ({ ...f, [campo]: valor })); setPage(1); };
 
@@ -146,7 +146,18 @@ export default function LojasPage() {
         <div className="flex items-center gap-2 flex-wrap">
           <div className="relative">
             <Search size={15} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} />
-            <input className="input" style={{ paddingLeft: '32px', width: '200px' }} placeholder="Nome da loja..." value={filtros.nome} onChange={e => atualizar('nome', e.target.value)} />
+            <input
+              className="input"
+              style={{ paddingLeft: '32px', width: '200px' }}
+              placeholder="Nome ou numero..."
+              value={filtros.numero || filtros.nome}
+              onChange={(e) => {
+                const valor = e.target.value;
+                const somenteNumeros = /^\d+$/.test(valor.trim());
+                atualizar('numero', somenteNumeros ? valor : '');
+                atualizar('nome', somenteNumeros ? '' : valor);
+              }}
+            />
           </div>
           <select className="select" style={{ width: 'auto' }} value={filtros.regiao} onChange={e => atualizar('regiao', e.target.value)}>
             <option value="">Todas as regiões</option>
