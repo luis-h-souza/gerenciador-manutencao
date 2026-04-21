@@ -11,7 +11,7 @@ router.use(autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR));
 router.get('/', ctrl.listar);
 router.get('/:id', ctrl.buscarPorId);
 
-router.post('/', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR), [
+router.post('/', autorizar(Roles.ADMINISTRADOR), [
   body('nome').notEmpty().withMessage('Nome obrigatório'),
   body('email').isEmail().withMessage('E-mail inválido'),
   body('senha').isLength({ min: 8 }).withMessage('Senha min 8 caracteres'),

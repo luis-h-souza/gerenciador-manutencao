@@ -110,12 +110,14 @@ export default function UsuariosPage() {
   const qc = useQueryClient();
   const { usuario: usuarioLogado } = useAuth();
   const [modal, setModal] = useState(null);
+  const [filtros, setFiltros] = useState({ role: '' });
 
   const canManage = ['ADMINISTRADOR', 'DIRETOR'].includes(usuarioLogado?.role);
+  const canCreate = usuarioLogado?.role === 'ADMINISTRADOR';
 
   const { data, isLoading } = useQuery({
-    queryKey: ['usuarios'],
-    queryFn: () => usuariosService.listar({ limit: 100 }).then(r => r.data),
+    queryKey: ['usuarios', filtros],
+    queryFn: () => usuariosService.listar({ ...filtros, limit: 100 }).then(r => r.data),
   });
 
   const desativar = useMutation({
@@ -137,9 +139,23 @@ export default function UsuariosPage() {
             </span>
           )}
         </div>
-        {canManage && (
+        {canCreate && (
           <button className="btn btn-primary" onClick={() => setModal('novo')}><Plus size={16} /> Novo Usuário</button>
         )}
+      </div>
+
+      <div className="flex items-center gap-3 flex-wrap">
+        <select
+          className="select"
+          style={{ width: 'auto', minWidth: '220px' }}
+          value={filtros.role}
+          onChange={(e) => setFiltros((prev) => ({ ...prev, role: e.target.value }))}
+        >
+          <option value="">Todos os perfis</option>
+          <option value="GERENTE">Gerente</option>
+          <option value="COORDENADOR">Coordenador</option>
+          <option value="GESTOR">Gestor</option>
+        </select>
       </div>
 
       <div className="table-container">
@@ -196,7 +212,9 @@ export default function UsuariosPage() {
         </table>
       </div>
 
-      {modal && canManage && <UsuarioModal usuario={modal === 'novo' ? null : modal} onClose={() => setModal(null)} />}
+      {modal && ((modal === 'novo' && canCreate) || (modal !== 'novo' && canManage)) && (
+        <UsuarioModal usuario={modal === 'novo' ? null : modal} onClose={() => setModal(null)} />
+      )}
     </div>
   );
 }
