@@ -23,7 +23,12 @@ const listarEquipamentos = async (req, res, next) => {
     
     // Filtros administrativos (Corporativo)
     if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR'].includes(req.user.role)) {
-      if (regiao) where.regiao = regiao;
+      if (regiao) {
+        if (!canAccessRegion(req.user, regiao)) {
+          return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
+        }
+        where.regiao = regiao;
+      }
       if (unidade) where.unidade = unidade;
     }
 
@@ -178,7 +183,12 @@ const listarCarrinhos = async (req, res, next) => {
     if (criadoPorId) where.criadoPorId = criadoPorId;
     
     if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR'].includes(req.user.role)) {
-      if (regiao) where.regiao = regiao;
+      if (regiao) {
+        if (!canAccessRegion(req.user, regiao)) {
+          return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
+        }
+        where.regiao = regiao;
+      }
       if (unidade) where.unidade = unidade;
     }
 

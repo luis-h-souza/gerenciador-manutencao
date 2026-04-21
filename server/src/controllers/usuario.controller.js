@@ -24,7 +24,7 @@ const listar = async (req, res, next) => {
       });
     }
 
-    if (req.user.role === 'COORDENADOR') {
+    if (['GERENTE', 'COORDENADOR'].includes(req.user.role)) {
       const regioes = getUserRegions(req.user);
       if (!regioes.length) {
         and.push({ regiao: '__SEM_REGIAO__' });
@@ -76,7 +76,7 @@ const buscarPorId = async (req, res, next) => {
     if (!usuario) return res.status(404).json({ error: 'Usuário não encontrado' });
 
     if (
-      req.user.role === 'COORDENADOR' &&
+      ['GERENTE', 'COORDENADOR'].includes(req.user.role) &&
       !canAccessRegion(req.user, usuario.regiao || usuario.loja?.regiao)
     ) {
       return res.status(403).json({ error: 'Acesso negado: usuário de outra região' });
