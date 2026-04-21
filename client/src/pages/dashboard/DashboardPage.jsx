@@ -62,7 +62,7 @@ const TooltipCustom = ({ active, payload, label }) => {
   );
 };
 
-function CorporativoDashboard({ filtro }) {
+function CorporativoDashboard({ filtro, setFiltro }) {
   const navigate = useNavigate();
   const [showExecutiveSummary, setShowExecutiveSummary] = useState(true);
   const { data: regionalData = [], isLoading: l1 } = useQuery({
@@ -76,8 +76,8 @@ function CorporativoDashboard({ filtro }) {
   });
 
   const { data: historicoMacro = [], isLoading: l3 } = useQuery({
-    queryKey: ['dashboard-historico-macro'],
-    queryFn: () => dashboardService.historicoMensal().then(r => r.data),
+    queryKey: ['dashboard-historico-macro', filtro],
+    queryFn: () => dashboardService.historicoMensal(filtro).then(r => r.data),
   });
 
   const { data: porSegmentoMacro = [], isLoading: l4 } = useQuery({
@@ -103,6 +103,7 @@ function CorporativoDashboard({ filtro }) {
 
   const variacaoMacro = parseFloat(macroResumo?.financeiro?.variacaoPercent || 0);
   const regionalOrdenado = [...regionalData].sort((a, b) => (b.gastosMes || 0) - (a.gastosMes || 0));
+  const opcoesRegionais = regionalOrdenado.map((item) => item.regiao);
 
   return (
     <div className="flex flex-col gap-8 animate-fade-in">
@@ -114,6 +115,40 @@ function CorporativoDashboard({ filtro }) {
             Visão Macro Global
           </h2>
           <span className="badge badge-brand">Consolidado Empresa</span>
+        </div>
+
+        <div className="card" style={{ padding: '16px 18px' }}>
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Resumo Financeiro
+              </p>
+              <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
+                Filtre a regional para detalhar gastos, histórico e composição financeira.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <select
+                className="select"
+                style={{ minWidth: '220px' }}
+                value={filtro.regiao}
+                onChange={(e) => setFiltro((prev) => ({ ...prev, regiao: e.target.value }))}
+              >
+                <option value="">Todas as regionais</option>
+                {opcoesRegionais.map((regiao) => (
+                  <option key={regiao} value={regiao}>{regiao}</option>
+                ))}
+              </select>
+              {filtro.regiao && (
+                <button
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => setFiltro((prev) => ({ ...prev, regiao: '' }))}
+                >
+                  Limpar
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="flex flex-wrap gap-4 items-stretch">
@@ -289,8 +324,8 @@ function GestorDashboard({ filtro }) {
     queryFn: () => dashboardService.resumo(filtro).then(r => r.data),
   });
   const { data: historico = [], isLoading: l2 } = useQuery({
-    queryKey: ['dashboard-historico'],
-    queryFn: () => dashboardService.historicoMensal().then(r => r.data),
+    queryKey: ['dashboard-historico', filtro],
+    queryFn: () => dashboardService.historicoMensal(filtro).then(r => r.data),
   });
   const { data: porSegmento = [], isLoading: l3 } = useQuery({
     queryKey: ['dashboard-segmento', filtro],
@@ -564,16 +599,17 @@ function TecnicoDashboard() {
 
 export default function DashboardPage() {
   const { usuario } = useAuth();
-  const [filtro] = useState({
+  const [filtro, setFiltro] = useState({
     mes: new Date().getMonth() + 1,
-    ano: new Date().getFullYear()
+    ano: new Date().getFullYear(),
+    regiao: '',
   });
   
   const macroRoles = ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR'];
   
   if (usuario?.role === 'TECNICO') return <TecnicoDashboard />;
   if (macroRoles.includes(usuario?.role)) {
-    return <CorporativoDashboard filtro={filtro} />;
+    return <CorporativoDashboard filtro={filtro} setFiltro={setFiltro} />;
   }
   
   return <GestorDashboard filtro={filtro} />;

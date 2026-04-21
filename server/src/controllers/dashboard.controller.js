@@ -3,7 +3,7 @@ const { getAccessFilter, getUserRegions, canAccessRegion } = require('../utils/a
 
 const resumo = async (req, res, next) => {
   try {
-    const { mes, ano } = req.query;
+    const { mes, ano, regiao, unidade } = req.query;
     const agora = new Date();
     
     // Se não fornecido, usa o mês atual
@@ -16,6 +16,17 @@ const resumo = async (req, res, next) => {
     const fimMesPassado = new Date(anoNum, mesIdx, 0);
 
     const filter = getAccessFilter(req.user);
+    const where = { ...filter };
+
+    if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR'].includes(req.user.role)) {
+      if (regiao) {
+        if (!canAccessRegion(req.user, regiao)) {
+          return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
+        }
+        where.regiao = regiao;
+      }
+      if (unidade) where.unidade = unidade;
+    }
 
     const [
       totalTarefas, tarefasPendentes, tarefasEmAndamento, tarefasConcluidas,
@@ -23,20 +34,20 @@ const resumo = async (req, res, next) => {
       chamadosMauUso, totalFornecedores,
       pecasBaixoEstoque,
     ] = await Promise.all([
-      prisma.tarefa.count({ where: filter }),
-      prisma.tarefa.count({ where: { ...filter, status: 'PENDENTE' } }),
-      prisma.tarefa.count({ where: { ...filter, status: 'EM_ANDAMENTO' } }),
-      prisma.tarefa.count({ where: { ...filter, status: 'CONCLUIDA' } }),
-      prisma.controleChamado.count({ where: { ...filter, dataAbertura: { gte: inicioMes, lt: fimMes } } }),
+      prisma.tarefa.count({ where }),
+      prisma.tarefa.count({ where: { ...where, status: 'PENDENTE' } }),
+      prisma.tarefa.count({ where: { ...where, status: 'EM_ANDAMENTO' } }),
+      prisma.tarefa.count({ where: { ...where, status: 'CONCLUIDA' } }),
+      prisma.controleChamado.count({ where: { ...where, dataAbertura: { gte: inicioMes, lt: fimMes } } }),
       prisma.controleChamado.aggregate({
-        where: { ...filter, dataAbertura: { gte: inicioMes, lt: fimMes } },
+        where: { ...where, dataAbertura: { gte: inicioMes, lt: fimMes } },
         _sum: { valor: true },
       }),
       prisma.controleChamado.aggregate({
-        where: { ...filter, dataAbertura: { gte: inicioMesPassado, lte: fimMesPassado } },
+        where: { ...where, dataAbertura: { gte: inicioMesPassado, lte: fimMesPassado } },
         _sum: { valor: true },
       }),
-      prisma.controleChamado.count({ where: { ...filter, mauUso: true, dataAbertura: { gte: inicioMes, lt: fimMes } } }),
+      prisma.controleChamado.count({ where: { ...where, mauUso: true, dataAbertura: { gte: inicioMes, lt: fimMes } } }),
       prisma.fornecedor.count({ where: { ativo: true } }),
       req.user.role === 'GESTOR'
         ? prisma.peca.findMany({
@@ -80,7 +91,12 @@ const gastosPorSegmento = async (req, res, next) => {
     
     // Filtros manuais (para níveis corporativos)
     if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR'].includes(req.user.role)) {
-      if (regiao) where.regiao = regiao;
+      if (regiao) {
+        if (!canAccessRegion(req.user, regiao)) {
+          return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
+        }
+        where.regiao = regiao;
+      }
       if (unidade) where.unidade = unidade;
     }
 
@@ -106,8 +122,13 @@ const historicoMensal = async (req, res, next) => {
     const filter = getAccessFilter(req.user);
     
     const baseWhere = { ...filter };
-    if (['ADMINISTRADOR', 'SUPERVISOR'].includes(req.user.role)) {
-      if (regiao) baseWhere.regiao = regiao;
+    if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR'].includes(req.user.role)) {
+      if (regiao) {
+        if (!canAccessRegion(req.user, regiao)) {
+          return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
+        }
+        baseWhere.regiao = regiao;
+      }
       if (unidade) baseWhere.unidade = unidade;
     }
 

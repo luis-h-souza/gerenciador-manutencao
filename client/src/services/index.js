@@ -76,7 +76,7 @@ export const notificacoesService = {
 export const dashboardService = {
   resumo:          (params) => api.get('/dashboard/resumo', { params }),
   gastosPorSegmento: (params) => api.get('/dashboard/gastos-por-segmento', { params }),
-  historicoMensal: ()       => api.get('/dashboard/historico-mensal'),
+  historicoMensal: (params) => api.get('/dashboard/historico-mensal', { params }),
   regional:        ()       => api.get('/dashboard/regional'),
   detalheRegional: (regiao) => api.get(`/dashboard/regional/${regiao}`),
 };
