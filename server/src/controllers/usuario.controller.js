@@ -1,6 +1,7 @@
 // src/controllers/usuario.controller.js
 const prisma = require('../utils/prisma');
 const bcrypt = require('bcryptjs');
+const { splitRegions, getUserRegions, canAccessRegion } = require('../utils/access.utils');
 
 
 const listar = async (req, res, next) => {
@@ -8,16 +9,41 @@ const listar = async (req, res, next) => {
     const { role, ativo, regiao, page = 1, limit = 20 } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const where = {};
+    const and = [];
+    const regioesSolicitadas = splitRegions(regiao);
     if (role)             where.role  = role;
     if (ativo !== undefined) where.ativo = ativo === 'true';
-    if (regiao)           where.regiao = regiao;
+    if (regioesSolicitadas.length === 1) {
+      and.push({ OR: [{ regiao: regioesSolicitadas[0] }, { loja: { is: { regiao: regioesSolicitadas[0] } } }] });
+    } else if (regioesSolicitadas.length > 1) {
+      and.push({
+        OR: [
+          { regiao: { in: regioesSolicitadas } },
+          { loja: { is: { regiao: { in: regioesSolicitadas } } } },
+        ],
+      });
+    }
 
     if (req.user.role === 'COORDENADOR') {
-      where.regiao = req.user.regiao || '__SEM_REGIAO__';
+      const regioes = getUserRegions(req.user);
+      if (!regioes.length) {
+        and.push({ regiao: '__SEM_REGIAO__' });
+      } else if (regioesSolicitadas.length && regioesSolicitadas.some((item) => !regioes.includes(item))) {
+        and.push({ regiao: '__SEM_REGIAO__' });
+      } else {
+        const regionFilter = regioes.length === 1 ? regioes[0] : { in: regioes };
+        and.push({
+          OR: [
+            { regiao: regionFilter },
+            { loja: { is: { regiao: regionFilter } } },
+          ],
+        });
+      }
     }
     if (req.user.role === 'GESTOR') {
       where.lojaId = req.user.lojaId || '__SEM_LOJA__';
     }
+    if (and.length) where.AND = and;
 
     const [usuarios, total] = await Promise.all([
       prisma.usuario.findMany({
@@ -49,7 +75,10 @@ const buscarPorId = async (req, res, next) => {
     });
     if (!usuario) return res.status(404).json({ error: 'Usuário não encontrado' });
 
-    if (req.user.role === 'COORDENADOR' && usuario.regiao !== req.user.regiao) {
+    if (
+      req.user.role === 'COORDENADOR' &&
+      !canAccessRegion(req.user, usuario.regiao || usuario.loja?.regiao)
+    ) {
       return res.status(403).json({ error: 'Acesso negado: usuário de outra região' });
     }
     if (req.user.role === 'GESTOR' && usuario.lojaId !== req.user.lojaId) {

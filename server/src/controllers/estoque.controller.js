@@ -1,5 +1,21 @@
 // src/controllers/estoque.controller.js
 const prisma = require('../utils/prisma');
+const { getUserRegions } = require('../utils/access.utils');
+
+const getUnidadesPermitidas = async (user) => {
+  if (['ADMINISTRADOR', 'DIRETOR', 'SUPERVISOR'].includes(user.role)) return null;
+  if (user.role === 'GESTOR') return user.loja?.nome ? [user.loja.nome] : [];
+
+  const regioes = getUserRegions(user);
+  if (!regioes.length) return [];
+
+  const lojas = await prisma.loja.findMany({
+    where: { ativo: true, regiao: regioes.length === 1 ? regioes[0] : { in: regioes } },
+    select: { nome: true },
+  });
+
+  return lojas.map((loja) => loja.nome);
+};
 
 // ─── Peças ────────────────────────────────────────────────────────────────────
 const listarPecas = async (req, res, next) => {
@@ -65,7 +81,11 @@ const registrarEntrada = async (req, res, next) => {
 // ─── Movimentações ───────────────────────────────────────────────────────────
 const listarMovimentacoes = async (req, res, next) => {
   try {
+    const unidadesPermitidas = await getUnidadesPermitidas(req.user);
+    const where = unidadesPermitidas ? { lojaRequisitante: { in: unidadesPermitidas } } : {};
+
     const movimentacoes = await prisma.movimentacaoPeca.findMany({
+      where,
       include: { peca: { select: { id: true, nome: true } } },
       orderBy: { dataMovimentacao: 'desc' },
       take: 100,
@@ -77,6 +97,11 @@ const listarMovimentacoes = async (req, res, next) => {
 const registrarMovimentacao = async (req, res, next) => {
   try {
     const { pecaId, quantidade, lojaRequisitante, numeroChamado, dataMovimentacao } = req.body;
+    const unidadesPermitidas = await getUnidadesPermitidas(req.user);
+
+    if (unidadesPermitidas && !unidadesPermitidas.includes(lojaRequisitante)) {
+      return res.status(403).json({ error: 'Acesso negado: loja fora da sua abrangência' });
+    }
 
     const peca = await prisma.peca.findUnique({ where: { id: pecaId } });
     if (!peca) return res.status(404).json({ error: 'Peça não encontrada' });

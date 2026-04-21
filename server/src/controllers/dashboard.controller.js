@@ -1,5 +1,5 @@
 const prisma = require('../utils/prisma');
-const { getAccessFilter } = require('../utils/access.utils');
+const { getAccessFilter, getUserRegions, canAccessRegion } = require('../utils/access.utils');
 
 const resumo = async (req, res, next) => {
   try {
@@ -139,10 +139,21 @@ const resumoRegional = async (req, res, next) => {
   try {
     const agora = new Date();
     const inicioMes = new Date(agora.getFullYear(), agora.getMonth(), 1);
+    const regioesPermitidas = getUserRegions(req.user);
 
     // Obter todas as regiões únicas
-    const regioesRes = await prisma.usuario.findMany({ select: { regiao: true }, distinct: ['regiao'], where: { regiao: { not: null } } });
-    const todasRegioes = regioesRes.map(r => r.regiao);
+    const regioesRes = await prisma.loja.findMany({
+      select: { regiao: true },
+      distinct: ['regiao'],
+      where: { ativo: true },
+      orderBy: { regiao: 'asc' },
+    });
+    const todasRegioes = regioesRes
+      .map(r => r.regiao)
+      .filter((regiao) => {
+        if (['ADMINISTRADOR', 'DIRETOR', 'SUPERVISOR'].includes(req.user.role)) return true;
+        return regioesPermitidas.includes(regiao);
+      });
 
     const resumo = await Promise.all(todasRegioes.map(async (regiao) => {
       const [gastos, chamados, tarefas] = await Promise.all([
@@ -173,6 +184,10 @@ const resumoRegional = async (req, res, next) => {
 const detalheRegional = async (req, res, next) => {
   try {
     const { regiao } = req.params;
+    if (!canAccessRegion(req.user, regiao)) {
+      return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
+    }
+
     const agora = new Date();
     const inicioMes = new Date(agora.getFullYear(), agora.getMonth(), 1);
 

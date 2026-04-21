@@ -1,14 +1,26 @@
 // src/controllers/loja.controller.js
 const prisma = require('../utils/prisma');
+const { getUserRegions, canAccessRegion } = require('../utils/access.utils');
 
 const listar = async (req, res, next) => {
   try {
     const { nome, numero, regiao, page = 1, limit = 20 } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const where = { ativo: true };
+    const regioesPermitidas = getUserRegions(req.user);
+
     if (nome)   where.nome   = { contains: nome,   mode: 'insensitive' };
     if (numero) where.numero = parseInt(numero);
     if (regiao) where.regiao = regiao;
+    if (req.user.role === 'COORDENADOR') {
+      if (!regioesPermitidas.length) {
+        where.regiao = '__SEM_REGIAO__';
+      } else if (regiao && !regioesPermitidas.includes(regiao)) {
+        where.regiao = '__SEM_REGIAO__';
+      } else if (!regiao) {
+        where.regiao = regioesPermitidas.length === 1 ? regioesPermitidas[0] : { in: regioesPermitidas };
+      }
+    }
 
     const [lojas, total] = await Promise.all([
       prisma.loja.findMany({ where, orderBy: [{ regiao: 'asc' }, { numero: 'asc' }], skip, take: parseInt(limit) }),
@@ -20,8 +32,15 @@ const listar = async (req, res, next) => {
 
 const listarRegioes = async (req, res, next) => {
   try {
+    const where = { ativo: true };
+    const regioesPermitidas = getUserRegions(req.user);
+
+    if (req.user.role === 'COORDENADOR') {
+      where.regiao = regioesPermitidas.length === 1 ? regioesPermitidas[0] : { in: regioesPermitidas };
+    }
+
     const result = await prisma.loja.findMany({
-      where: { ativo: true },
+      where,
       select: { regiao: true },
       distinct: ['regiao'],
       orderBy: { regiao: 'asc' },
@@ -34,6 +53,9 @@ const buscarPorId = async (req, res, next) => {
   try {
     const loja = await prisma.loja.findUnique({ where: { id: req.params.id } });
     if (!loja) return res.status(404).json({ error: 'Loja não encontrada' });
+    if (req.user.role === 'COORDENADOR' && !canAccessRegion(req.user, loja.regiao)) {
+      return res.status(403).json({ error: 'Acesso negado: loja de outra região' });
+    }
     res.json(loja);
   } catch (err) { next(err); }
 };

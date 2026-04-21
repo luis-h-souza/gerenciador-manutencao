@@ -1,7 +1,7 @@
 // src/controllers/checklist.controller.js
 const prisma = require('../utils/prisma');
 const { getWeek, getYear } = require('date-fns');
-const { getAccessFilter } = require('../utils/access.utils');
+const { getAccessFilter, canAccessRegion } = require('../utils/access.utils');
 
 // ─── Utilitário: semana atual ────────────────────────────────────────────────
 const semanaAtual = () => {
@@ -45,12 +45,16 @@ const buscarEquipamentoPorSemana = async (req, res, next) => {
     const { semana, ano, regiao, unidade, criadoPorId } = req.query;
     const s = parseInt(semana) || semanaAtual().semana;
     const a = parseInt(ano)    || semanaAtual().ano;
-    
-    // Determinar região/unidade alvo
-    const r = (['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR'].includes(req.user.role) ? regiao : req.user.regiao) || req.user.regiao;
-    const u = (['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR'].includes(req.user.role) ? unidade : req.user.unidade) || req.user.unidade;
+    const where = { semana: s, ano: a, ...getAccessFilter(req.user) };
 
-    const where = { semana: s, ano: a, unidade: u };
+    if (regiao && ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR', 'COORDENADOR'].includes(req.user.role)) {
+      if (!canAccessRegion(req.user, regiao)) {
+        return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
+      }
+      where.regiao = regiao;
+    }
+    if (unidade) where.unidade = unidade;
+    if (!unidade && req.user.role === 'GESTOR') where.unidade = req.user.unidade;
     if (criadoPorId) where.criadoPorId = criadoPorId;
 
     const checklist = await prisma.checklistEquipamento.findFirst({
@@ -131,6 +135,13 @@ const buscarFrota = async (req, res, next) => {
     const unidade = req.user.role === 'GESTOR' ? req.user.unidade : req.query.unidade;
     if (!unidade) return res.status(400).json({ error: 'Unidade não especificada' });
 
+    if (['COORDENADOR', 'GERENTE', 'TECNICO'].includes(req.user.role)) {
+      const loja = await prisma.loja.findFirst({ where: { nome: unidade, ativo: true } });
+      if (!loja || !canAccessRegion(req.user, loja.regiao)) {
+        return res.status(403).json({ error: 'Acesso negado: unidade fora da sua abrangência' });
+      }
+    }
+
     const frota = await prisma.frotaCarrinho.findMany({
       where: { unidade }
     });
@@ -189,9 +200,16 @@ const buscarCarrinhoPorSemana = async (req, res, next) => {
     const { semana, ano, regiao, unidade, criadoPorId } = req.query;
     const s = parseInt(semana) || semanaAtual().semana;
     const a = parseInt(ano)    || semanaAtual().ano;
-    const u = (['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR'].includes(req.user.role) ? unidade : req.user.unidade) || req.user.unidade;
+    const where = { semana: s, ano: a, ...getAccessFilter(req.user) };
 
-    const where = { semana: s, ano: a, unidade: u };
+    if (regiao && ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'SUPERVISOR', 'COORDENADOR'].includes(req.user.role)) {
+      if (!canAccessRegion(req.user, regiao)) {
+        return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
+      }
+      where.regiao = regiao;
+    }
+    if (unidade) where.unidade = unidade;
+    if (!unidade && req.user.role === 'GESTOR') where.unidade = req.user.unidade;
     if (criadoPorId) where.criadoPorId = criadoPorId;
 
     const checklist = await prisma.checklistCarrinho.findFirst({

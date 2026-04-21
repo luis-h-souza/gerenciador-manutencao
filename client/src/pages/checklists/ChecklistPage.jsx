@@ -517,7 +517,7 @@ function GestorList({ onSelect, regiao, onBack }) {
   const { usuario: usuarioLogado } = useAuth();
   const { data: gestoresRes, isLoading } = useQuery({
     queryKey: ['usuario-gestores-regional', regiao],
-    queryFn: () => usuariosService.listar({ role: 'GESTOR', regiao }).then(r => r.data),
+    queryFn: () => usuariosService.listar({ role: 'GESTOR', ...(regiao ? { regiao } : {}) }).then(r => r.data),
   });
 
   if (isLoading) return <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))' }}>{[...Array(3)].map((_, i) => <div key={i} className="skeleton" style={{ height: '100px', borderRadius: '12px' }} />)}</div>;
@@ -728,7 +728,7 @@ export default function ChecklistPage() {
   const [viewState, setViewState] = useState({ 
     mode: ['ADMINISTRADOR', 'DIRETOR', 'GERENTE'].includes(usuario?.role) ? 'COORDENADOR_LIST' : (usuario?.role === 'COORDENADOR' ? 'GESTOR_LIST' : 'MONTHS'), 
     gestor: usuario?.role === 'GESTOR' ? usuario : null, 
-    regiaoSelecionada: usuario?.role === 'COORDENADOR' ? usuario.regiao : null,
+    regiaoSelecionada: null,
     mes: agora.getMonth() + 1, 
     ano: agora.getFullYear(),
     week: null 
