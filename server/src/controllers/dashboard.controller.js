@@ -1,5 +1,11 @@
 const prisma = require('../utils/prisma');
 const { getAccessFilter, getUserRegions, canAccessRegion } = require('../utils/access.utils');
+const { getWeek, startOfMonth, endOfMonth } = require('date-fns');
+
+const hasRegionOverlap = (sourceRegions, targetRegions) => {
+  if (!sourceRegions?.length || !targetRegions?.length) return false;
+  return targetRegions.some((region) => sourceRegions.includes(region));
+};
 
 const resumo = async (req, res, next) => {
   try {
@@ -268,10 +274,154 @@ const detalheRegional = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+const rankingCoordenadores = async (req, res, next) => {
+  try {
+    const agora = new Date();
+    const mesNum = req.query.mes ? parseInt(req.query.mes) : agora.getMonth() + 1;
+    const anoNum = req.query.ano ? parseInt(req.query.ano) : agora.getFullYear();
+    const inicioMes = startOfMonth(new Date(anoNum, mesNum - 1));
+    const fimMes = endOfMonth(new Date(anoNum, mesNum - 1));
+    const semanaInicio = getWeek(inicioMes, { weekStartsOn: 1 });
+    const semanaFim = getWeek(fimMes, { weekStartsOn: 1 });
+    const totalSemanasNoMes = Math.max(1, semanaFim - semanaInicio + 1);
+    const regioesPermitidas = getUserRegions(req.user);
+
+    const coordenadores = await prisma.usuario.findMany({
+      where: { role: 'COORDENADOR', ativo: true },
+      select: { id: true, nome: true, email: true, regiao: true },
+      orderBy: { nome: 'asc' },
+    });
+
+    const coordenadoresVisiveis = coordenadores.filter((coordenador) => {
+      if (['ADMINISTRADOR', 'DIRETOR', 'SUPERVISOR'].includes(req.user.role)) return true;
+      return hasRegionOverlap(regioesPermitidas, getUserRegions(coordenador));
+    });
+
+    const rankingBase = await Promise.all(
+      coordenadoresVisiveis.map(async (coordenador) => {
+        const regioesCoordenador = getUserRegions(coordenador);
+        const regionFilter =
+          regioesCoordenador.length === 1 ? regioesCoordenador[0] : { in: regioesCoordenador };
+        const whereRegiao = regioesCoordenador.length
+          ? { regiao: regionFilter }
+          : { regiao: '__SEM_REGIAO__' };
+
+        const [
+          gastosMes,
+          chamadosMes,
+          mauUsoMes,
+          tarefasAtivas,
+          checklistsEquip,
+          checklistsCarrinho,
+        ] = await Promise.all([
+          prisma.controleChamado.aggregate({
+            where: { ...whereRegiao, dataAbertura: { gte: inicioMes, lte: fimMes } },
+            _sum: { valor: true },
+          }),
+          prisma.controleChamado.count({
+            where: { ...whereRegiao, dataAbertura: { gte: inicioMes, lte: fimMes } },
+          }),
+          prisma.controleChamado.count({
+            where: { ...whereRegiao, mauUso: true, dataAbertura: { gte: inicioMes, lte: fimMes } },
+          }),
+          prisma.tarefa.count({
+            where: { ...whereRegiao, status: { in: ['PENDENTE', 'EM_ANDAMENTO'] } },
+          }),
+          prisma.checklistEquipamento.findMany({
+            where: {
+              ...whereRegiao,
+              ano: anoNum,
+              semana: { gte: semanaInicio, lte: semanaFim },
+            },
+            select: { semana: true, itens: { where: { operacional: false }, select: { quantidadeQuebrada: true } } },
+          }),
+          prisma.checklistCarrinho.findMany({
+            where: {
+              ...whereRegiao,
+              ano: anoNum,
+              semana: { gte: semanaInicio, lte: semanaFim },
+            },
+            select: { semana: true, itens: { select: { quebrados: true } } },
+          }),
+        ]);
+
+        const equipamentosParados = checklistsEquip.reduce(
+          (sum, checklist) => sum + checklist.itens.reduce((itemSum, item) => itemSum + (item.quantidadeQuebrada || 0), 0),
+          0
+        );
+        const carrinhosQuebrados = checklistsCarrinho.reduce(
+          (sum, checklist) => sum + checklist.itens.reduce((itemSum, item) => itemSum + (item.quebrados || 0), 0),
+          0
+        );
+        const semanasCobertas = new Set([
+          ...checklistsEquip.map((item) => item.semana),
+          ...checklistsCarrinho.map((item) => item.semana),
+        ]).size;
+        const gastoTotal = parseFloat(gastosMes._sum.valor || 0);
+        const custoPorChamado = chamadosMes > 0 ? gastoTotal / chamadosMes : gastoTotal;
+        const disponibilidadeBruta = Math.max(
+          0,
+          100 - (equipamentosParados * 3 + carrinhosQuebrados * 1.5 + tarefasAtivas * 2 + mauUsoMes * 8)
+        );
+        const coberturaChecklist = (semanasCobertas / totalSemanasNoMes) * 100;
+
+        return {
+          id: coordenador.id,
+          nome: coordenador.nome,
+          email: coordenador.email,
+          regiao: coordenador.regiao,
+          regioes: regioesCoordenador,
+          gastosMes: gastoTotal,
+          chamadosMes,
+          mauUsoMes,
+          tarefasAtivas,
+          equipamentosParados,
+          carrinhosQuebrados,
+          semanasCobertas,
+          totalSemanasNoMes,
+          custoPorChamado,
+          disponibilidadeBruta,
+          coberturaChecklist,
+        };
+      })
+    );
+
+    const custos = rankingBase.map((item) => item.custoPorChamado);
+    const minCusto = Math.min(...custos, 0);
+    const maxCusto = Math.max(...custos, 0);
+
+    const ranking = rankingBase
+      .map((item) => {
+        const custoScore =
+          maxCusto === minCusto ? 100 : 100 - ((item.custoPorChamado - minCusto) / (maxCusto - minCusto)) * 100;
+        const score =
+          item.disponibilidadeBruta * 0.5 +
+          custoScore * 0.35 +
+          item.coberturaChecklist * 0.15;
+
+        return {
+          ...item,
+          custoScore: Number(custoScore.toFixed(1)),
+          score: Number(score.toFixed(1)),
+        };
+      })
+      .sort((a, b) => b.score - a.score)
+      .map((item, index) => ({ ...item, posicao: index + 1 }));
+
+    res.json({
+      periodo: { mes: mesNum, ano: anoNum },
+      criterio:
+        'Ranking proxy por disponibilidade, eficiencia de custo por chamado e cobertura de checklist.',
+      data: ranking,
+    });
+  } catch (err) { next(err); }
+};
+
 module.exports = {
   resumo,
   gastosPorSegmento,
   historicoMensal,
   resumoRegional,
-  detalheRegional
+  detalheRegional,
+  rankingCoordenadores,
 };

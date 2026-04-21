@@ -79,6 +79,7 @@ export const dashboardService = {
   historicoMensal: (params) => api.get('/dashboard/historico-mensal', { params }),
   regional:        ()       => api.get('/dashboard/regional'),
   detalheRegional: (regiao) => api.get(`/dashboard/regional/${regiao}`),
+  rankingCoordenadores: (params) => api.get('/dashboard/ranking-coordenadores', { params }),
 };
 
 // ─── Checklists ───────────────────────────────────────────────────────────

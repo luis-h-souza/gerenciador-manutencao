@@ -13,5 +13,6 @@ router.get('/historico-mensal', ctrl.historicoMensal);
 // Visão consolidada para Supervisor/Admin
 router.get('/regional', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.SUPERVISOR), ctrl.resumoRegional);
 router.get('/regional/:regiao', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.SUPERVISOR), ctrl.detalheRegional);
+router.get('/ranking-coordenadores', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.SUPERVISOR), ctrl.rankingCoordenadores);
 
 module.exports = router;

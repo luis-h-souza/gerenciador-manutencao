@@ -10,7 +10,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import {
   ClipboardList, DollarSign, AlertTriangle, Package,
   TrendingUp, TrendingDown, Minus, ClipboardCheck, ShoppingCart,
-  MapPin, ChevronRight, BarChart3, Users
+  MapPin, ChevronRight, BarChart3, Users, Trophy
 } from 'lucide-react';
 
 const CORES_SEGMENTO = [
@@ -85,7 +85,12 @@ function CorporativoDashboard({ filtro, setFiltro }) {
     queryFn: () => dashboardService.gastosPorSegmento(filtro).then(r => r.data),
   });
 
-  const isLoading = l1 || l2 || l3 || l4;
+  const { data: rankingCoordenadores, isLoading: l5 } = useQuery({
+    queryKey: ['dashboard-ranking-coordenadores', filtro],
+    queryFn: () => dashboardService.rankingCoordenadores(filtro).then(r => r.data),
+  });
+
+  const isLoading = l1 || l2 || l3 || l4 || l5;
 
   if (isLoading) {
     return (
@@ -104,6 +109,7 @@ function CorporativoDashboard({ filtro, setFiltro }) {
   const variacaoMacro = parseFloat(macroResumo?.financeiro?.variacaoPercent || 0);
   const regionalOrdenado = [...regionalData].sort((a, b) => (b.gastosMes || 0) - (a.gastosMes || 0));
   const opcoesRegionais = regionalOrdenado.map((item) => item.regiao);
+  const ranking = rankingCoordenadores?.data || [];
 
   return (
     <div className="flex flex-col gap-8 animate-fade-in">
@@ -272,6 +278,88 @@ function CorporativoDashboard({ filtro, setFiltro }) {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="flex flex-col gap-5">
+        <div className="flex items-center gap-2">
+          <Trophy size={20} style={{ color: 'var(--color-brand-500)' }} />
+          <div>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>
+              Ranking de Coordenadores
+            </h2>
+            <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)' }}>
+              Indicador proxy por disponibilidade, eficiência de custo e cobertura de checklist.
+            </p>
+          </div>
+        </div>
+
+        {ranking.length === 0 ? (
+          <div className="card" style={{ padding: '24px', color: 'var(--color-text-muted)', textAlign: 'center' }}>
+            Nenhum coordenador encontrado para o escopo atual.
+          </div>
+        ) : (
+          <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
+            {ranking.map((item) => (
+              <div key={item.id} className="card" style={{ padding: '18px' }}>
+                <div className="flex items-start justify-between gap-3 mb-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="badge badge-brand" style={{ fontSize: '0.7rem', minWidth: '30px', justifyContent: 'center' }}>
+                        #{item.posicao}
+                      </span>
+                      <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>
+                        {item.nome}
+                      </h3>
+                    </div>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '6px' }}>
+                      {item.regiao || item.regioes?.join(' / ') || 'Sem regional'}
+                    </p>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>Score</p>
+                    <p style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--color-brand-500)' }}>{item.score}</p>
+                  </div>
+                </div>
+
+                <div className="grid gap-3" style={{ gridTemplateColumns: '1fr 1fr' }}>
+                  <div style={{ padding: '10px 12px', borderRadius: '10px', background: 'var(--color-surface-700)' }}>
+                    <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>Disponibilidade</p>
+                    <p style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-success)' }}>
+                      {item.disponibilidadeBruta.toFixed(1)}
+                    </p>
+                  </div>
+                  <div style={{ padding: '10px 12px', borderRadius: '10px', background: 'var(--color-surface-700)' }}>
+                    <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>Custo / chamado</p>
+                    <p style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>
+                      {fmt(item.custoPorChamado)}
+                    </p>
+                  </div>
+                  <div style={{ padding: '10px 12px', borderRadius: '10px', background: 'var(--color-surface-700)' }}>
+                    <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>Ativos indisponíveis</p>
+                    <p style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-warning)' }}>
+                      {item.equipamentosParados + item.carrinhosQuebrados}
+                    </p>
+                  </div>
+                  <div style={{ padding: '10px 12px', borderRadius: '10px', background: 'var(--color-surface-700)' }}>
+                    <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>Checklist</p>
+                    <p style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>
+                      {item.semanasCobertas}/{item.totalSemanasNoMes} sem.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between mt-4 pt-3" style={{ borderTop: '1px solid var(--color-border)' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+                    Chamados: {item.chamadosMes} • Mau uso: {item.mauUsoMes}
+                  </span>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-success)' }}>
+                    {fmt(item.gastosMes)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
 
