@@ -7,6 +7,21 @@ datasource db {
   provider = "postgresql"
 }
 
+model Loja {
+  id           String    @id @default(uuid())
+  numero       Int       @unique
+  nome         String
+  regiao       String
+  telefone     String?
+  endereco     String?
+  ativo        Boolean   @default(true)
+  criadoEm     DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+  usuarios     Usuario[]
+
+  @@map("lojas")
+}
+
 model Usuario {
   id                    String                 @id @default(uuid())
   nome                  String
@@ -15,9 +30,10 @@ model Usuario {
   role                  Role                   @default(TECNICO)
   ativo                 Boolean                @default(true)
   regiao                String?
-  unidade               String?
+  lojaId                String?
   criadoEm              DateTime               @default(now())
   atualizadoEm          DateTime               @updatedAt
+  loja                  Loja?                  @relation(fields: [lojaId], references: [id])
   checklistsCarrinho    ChecklistCarrinho[]
   checklistsEquipamento ChecklistEquipamento[]
   notificacoes          Notificacao[]

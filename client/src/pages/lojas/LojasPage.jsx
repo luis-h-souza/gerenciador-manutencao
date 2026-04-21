@@ -23,7 +23,7 @@ function LojaModal({ loja, onClose }) {
       toast.success(isEdit ? 'Atualizado!' : 'Loja criada!');
       onClose();
     },
-    onError: (err) => toast.error(err.response?.data?.error || 'Erro ao salvar'),
+    onError: (err) => toast.error(err.response?.data?.message || err.response?.data?.error || 'Erro ao salvar'),
   });
 
   return (

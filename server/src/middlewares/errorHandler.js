@@ -15,10 +15,16 @@ const errorHandler = (err, req, res, next) => {
 
   // Erros do Prisma
   if (err.code === 'P2002') {
+    const target = Array.isArray(err.meta?.target) ? err.meta.target : [];
+    const isLojaNumeroDuplicado =
+      req.originalUrl?.includes('/lojas') && target.includes('numero');
+
     return res.status(409).json({
       error: 'Conflito',
-      message: 'Registro duplicado. Verifique os dados fornecidos.',
-      field: err.meta?.target,
+      message: isLojaNumeroDuplicado
+        ? 'Ja existe uma loja cadastrada com esse numero.'
+        : 'Registro duplicado. Verifique os dados fornecidos.',
+      field: target,
     });
   }
   if (err.code === 'P2025') {

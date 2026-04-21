@@ -14,6 +14,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
 
 
 /**
+ * Model Loja
+ * 
+ */
+export type Loja = $Result.DefaultSelection<Prisma.$LojaPayload>
+/**
  * Model Usuario
  * 
  */
@@ -242,8 +247,8 @@ export const TipoCarrinho: typeof $Enums.TipoCarrinho
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Usuarios
- * const usuarios = await prisma.usuario.findMany()
+ * // Fetch zero or more Lojas
+ * const lojas = await prisma.loja.findMany()
  * ```
  *
  *
@@ -265,8 +270,8 @@ export class PrismaClient<
    * const prisma = new PrismaClient({
    *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
    * })
-   * // Fetch zero or more Usuarios
-   * const usuarios = await prisma.usuario.findMany()
+   * // Fetch zero or more Lojas
+   * const lojas = await prisma.loja.findMany()
    * ```
    *
    *
@@ -355,6 +360,16 @@ export class PrismaClient<
   }>>
 
       /**
+   * `prisma.loja`: Exposes CRUD operations for the **Loja** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Lojas
+    * const lojas = await prisma.loja.findMany()
+    * ```
+    */
+  get loja(): Prisma.LojaDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.usuario`: Exposes CRUD operations for the **Usuario** model.
     * Example usage:
     * ```ts
@@ -947,6 +962,7 @@ export namespace Prisma {
 
 
   export const ModelName: {
+    Loja: 'Loja',
     Usuario: 'Usuario',
     RefreshToken: 'RefreshToken',
     Sessao: 'Sessao',
@@ -978,10 +994,84 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "usuario" | "refreshToken" | "sessao" | "tarefa" | "notificacao" | "controleChamado" | "fornecedor" | "peca" | "entradaPeca" | "movimentacaoPeca" | "saidaPeca" | "checklistEquipamento" | "checklistEquipamentoItem" | "checklistCarrinho" | "checklistCarrinhoItem" | "frotaCarrinho"
+      modelProps: "loja" | "usuario" | "refreshToken" | "sessao" | "tarefa" | "notificacao" | "controleChamado" | "fornecedor" | "peca" | "entradaPeca" | "movimentacaoPeca" | "saidaPeca" | "checklistEquipamento" | "checklistEquipamentoItem" | "checklistCarrinho" | "checklistCarrinhoItem" | "frotaCarrinho"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
+      Loja: {
+        payload: Prisma.$LojaPayload<ExtArgs>
+        fields: Prisma.LojaFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.LojaFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LojaPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.LojaFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LojaPayload>
+          }
+          findFirst: {
+            args: Prisma.LojaFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LojaPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.LojaFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LojaPayload>
+          }
+          findMany: {
+            args: Prisma.LojaFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LojaPayload>[]
+          }
+          create: {
+            args: Prisma.LojaCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LojaPayload>
+          }
+          createMany: {
+            args: Prisma.LojaCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.LojaCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LojaPayload>[]
+          }
+          delete: {
+            args: Prisma.LojaDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LojaPayload>
+          }
+          update: {
+            args: Prisma.LojaUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LojaPayload>
+          }
+          deleteMany: {
+            args: Prisma.LojaDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.LojaUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.LojaUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LojaPayload>[]
+          }
+          upsert: {
+            args: Prisma.LojaUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LojaPayload>
+          }
+          aggregate: {
+            args: Prisma.LojaAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateLoja>
+          }
+          groupBy: {
+            args: Prisma.LojaGroupByArgs<ExtArgs>
+            result: $Utils.Optional<LojaGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.LojaCountArgs<ExtArgs>
+            result: $Utils.Optional<LojaCountAggregateOutputType> | number
+          }
+        }
+      }
       Usuario: {
         payload: Prisma.$UsuarioPayload<ExtArgs>
         fields: Prisma.UsuarioFieldRefs
@@ -2274,6 +2364,7 @@ export namespace Prisma {
     comments?: runtime.SqlCommenterPlugin[]
   }
   export type GlobalOmitConfig = {
+    loja?: LojaOmit
     usuario?: UsuarioOmit
     refreshToken?: RefreshTokenOmit
     sessao?: SessaoOmit
@@ -2363,6 +2454,37 @@ export namespace Prisma {
   /**
    * Count Types
    */
+
+
+  /**
+   * Count Type LojaCountOutputType
+   */
+
+  export type LojaCountOutputType = {
+    usuarios: number
+  }
+
+  export type LojaCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    usuarios?: boolean | LojaCountOutputTypeCountUsuariosArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * LojaCountOutputType without action
+   */
+  export type LojaCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LojaCountOutputType
+     */
+    select?: LojaCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * LojaCountOutputType without action
+   */
+  export type LojaCountOutputTypeCountUsuariosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UsuarioWhereInput
+  }
 
 
   /**
@@ -2597,6 +2719,1167 @@ export namespace Prisma {
    */
 
   /**
+   * Model Loja
+   */
+
+  export type AggregateLoja = {
+    _count: LojaCountAggregateOutputType | null
+    _avg: LojaAvgAggregateOutputType | null
+    _sum: LojaSumAggregateOutputType | null
+    _min: LojaMinAggregateOutputType | null
+    _max: LojaMaxAggregateOutputType | null
+  }
+
+  export type LojaAvgAggregateOutputType = {
+    numero: number | null
+  }
+
+  export type LojaSumAggregateOutputType = {
+    numero: number | null
+  }
+
+  export type LojaMinAggregateOutputType = {
+    id: string | null
+    numero: number | null
+    nome: string | null
+    regiao: string | null
+    telefone: string | null
+    endereco: string | null
+    ativo: boolean | null
+    criadoEm: Date | null
+    atualizadoEm: Date | null
+  }
+
+  export type LojaMaxAggregateOutputType = {
+    id: string | null
+    numero: number | null
+    nome: string | null
+    regiao: string | null
+    telefone: string | null
+    endereco: string | null
+    ativo: boolean | null
+    criadoEm: Date | null
+    atualizadoEm: Date | null
+  }
+
+  export type LojaCountAggregateOutputType = {
+    id: number
+    numero: number
+    nome: number
+    regiao: number
+    telefone: number
+    endereco: number
+    ativo: number
+    criadoEm: number
+    atualizadoEm: number
+    _all: number
+  }
+
+
+  export type LojaAvgAggregateInputType = {
+    numero?: true
+  }
+
+  export type LojaSumAggregateInputType = {
+    numero?: true
+  }
+
+  export type LojaMinAggregateInputType = {
+    id?: true
+    numero?: true
+    nome?: true
+    regiao?: true
+    telefone?: true
+    endereco?: true
+    ativo?: true
+    criadoEm?: true
+    atualizadoEm?: true
+  }
+
+  export type LojaMaxAggregateInputType = {
+    id?: true
+    numero?: true
+    nome?: true
+    regiao?: true
+    telefone?: true
+    endereco?: true
+    ativo?: true
+    criadoEm?: true
+    atualizadoEm?: true
+  }
+
+  export type LojaCountAggregateInputType = {
+    id?: true
+    numero?: true
+    nome?: true
+    regiao?: true
+    telefone?: true
+    endereco?: true
+    ativo?: true
+    criadoEm?: true
+    atualizadoEm?: true
+    _all?: true
+  }
+
+  export type LojaAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Loja to aggregate.
+     */
+    where?: LojaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Lojas to fetch.
+     */
+    orderBy?: LojaOrderByWithRelationInput | LojaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: LojaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Lojas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Lojas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Lojas
+    **/
+    _count?: true | LojaCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: LojaAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: LojaSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: LojaMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: LojaMaxAggregateInputType
+  }
+
+  export type GetLojaAggregateType<T extends LojaAggregateArgs> = {
+        [P in keyof T & keyof AggregateLoja]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateLoja[P]>
+      : GetScalarType<T[P], AggregateLoja[P]>
+  }
+
+
+
+
+  export type LojaGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LojaWhereInput
+    orderBy?: LojaOrderByWithAggregationInput | LojaOrderByWithAggregationInput[]
+    by: LojaScalarFieldEnum[] | LojaScalarFieldEnum
+    having?: LojaScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: LojaCountAggregateInputType | true
+    _avg?: LojaAvgAggregateInputType
+    _sum?: LojaSumAggregateInputType
+    _min?: LojaMinAggregateInputType
+    _max?: LojaMaxAggregateInputType
+  }
+
+  export type LojaGroupByOutputType = {
+    id: string
+    numero: number
+    nome: string
+    regiao: string
+    telefone: string | null
+    endereco: string | null
+    ativo: boolean
+    criadoEm: Date
+    atualizadoEm: Date
+    _count: LojaCountAggregateOutputType | null
+    _avg: LojaAvgAggregateOutputType | null
+    _sum: LojaSumAggregateOutputType | null
+    _min: LojaMinAggregateOutputType | null
+    _max: LojaMaxAggregateOutputType | null
+  }
+
+  type GetLojaGroupByPayload<T extends LojaGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<LojaGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof LojaGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], LojaGroupByOutputType[P]>
+            : GetScalarType<T[P], LojaGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type LojaSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    numero?: boolean
+    nome?: boolean
+    regiao?: boolean
+    telefone?: boolean
+    endereco?: boolean
+    ativo?: boolean
+    criadoEm?: boolean
+    atualizadoEm?: boolean
+    usuarios?: boolean | Loja$usuariosArgs<ExtArgs>
+    _count?: boolean | LojaCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["loja"]>
+
+  export type LojaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    numero?: boolean
+    nome?: boolean
+    regiao?: boolean
+    telefone?: boolean
+    endereco?: boolean
+    ativo?: boolean
+    criadoEm?: boolean
+    atualizadoEm?: boolean
+  }, ExtArgs["result"]["loja"]>
+
+  export type LojaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    numero?: boolean
+    nome?: boolean
+    regiao?: boolean
+    telefone?: boolean
+    endereco?: boolean
+    ativo?: boolean
+    criadoEm?: boolean
+    atualizadoEm?: boolean
+  }, ExtArgs["result"]["loja"]>
+
+  export type LojaSelectScalar = {
+    id?: boolean
+    numero?: boolean
+    nome?: boolean
+    regiao?: boolean
+    telefone?: boolean
+    endereco?: boolean
+    ativo?: boolean
+    criadoEm?: boolean
+    atualizadoEm?: boolean
+  }
+
+  export type LojaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "numero" | "nome" | "regiao" | "telefone" | "endereco" | "ativo" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["loja"]>
+  export type LojaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    usuarios?: boolean | Loja$usuariosArgs<ExtArgs>
+    _count?: boolean | LojaCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type LojaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type LojaIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $LojaPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Loja"
+    objects: {
+      usuarios: Prisma.$UsuarioPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      numero: number
+      nome: string
+      regiao: string
+      telefone: string | null
+      endereco: string | null
+      ativo: boolean
+      criadoEm: Date
+      atualizadoEm: Date
+    }, ExtArgs["result"]["loja"]>
+    composites: {}
+  }
+
+  type LojaGetPayload<S extends boolean | null | undefined | LojaDefaultArgs> = $Result.GetResult<Prisma.$LojaPayload, S>
+
+  type LojaCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<LojaFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: LojaCountAggregateInputType | true
+    }
+
+  export interface LojaDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Loja'], meta: { name: 'Loja' } }
+    /**
+     * Find zero or one Loja that matches the filter.
+     * @param {LojaFindUniqueArgs} args - Arguments to find a Loja
+     * @example
+     * // Get one Loja
+     * const loja = await prisma.loja.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends LojaFindUniqueArgs>(args: SelectSubset<T, LojaFindUniqueArgs<ExtArgs>>): Prisma__LojaClient<$Result.GetResult<Prisma.$LojaPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Loja that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {LojaFindUniqueOrThrowArgs} args - Arguments to find a Loja
+     * @example
+     * // Get one Loja
+     * const loja = await prisma.loja.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends LojaFindUniqueOrThrowArgs>(args: SelectSubset<T, LojaFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LojaClient<$Result.GetResult<Prisma.$LojaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Loja that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LojaFindFirstArgs} args - Arguments to find a Loja
+     * @example
+     * // Get one Loja
+     * const loja = await prisma.loja.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends LojaFindFirstArgs>(args?: SelectSubset<T, LojaFindFirstArgs<ExtArgs>>): Prisma__LojaClient<$Result.GetResult<Prisma.$LojaPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Loja that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LojaFindFirstOrThrowArgs} args - Arguments to find a Loja
+     * @example
+     * // Get one Loja
+     * const loja = await prisma.loja.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends LojaFindFirstOrThrowArgs>(args?: SelectSubset<T, LojaFindFirstOrThrowArgs<ExtArgs>>): Prisma__LojaClient<$Result.GetResult<Prisma.$LojaPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Lojas that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LojaFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Lojas
+     * const lojas = await prisma.loja.findMany()
+     * 
+     * // Get first 10 Lojas
+     * const lojas = await prisma.loja.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const lojaWithIdOnly = await prisma.loja.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends LojaFindManyArgs>(args?: SelectSubset<T, LojaFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LojaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Loja.
+     * @param {LojaCreateArgs} args - Arguments to create a Loja.
+     * @example
+     * // Create one Loja
+     * const Loja = await prisma.loja.create({
+     *   data: {
+     *     // ... data to create a Loja
+     *   }
+     * })
+     * 
+     */
+    create<T extends LojaCreateArgs>(args: SelectSubset<T, LojaCreateArgs<ExtArgs>>): Prisma__LojaClient<$Result.GetResult<Prisma.$LojaPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Lojas.
+     * @param {LojaCreateManyArgs} args - Arguments to create many Lojas.
+     * @example
+     * // Create many Lojas
+     * const loja = await prisma.loja.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends LojaCreateManyArgs>(args?: SelectSubset<T, LojaCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Lojas and returns the data saved in the database.
+     * @param {LojaCreateManyAndReturnArgs} args - Arguments to create many Lojas.
+     * @example
+     * // Create many Lojas
+     * const loja = await prisma.loja.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Lojas and only return the `id`
+     * const lojaWithIdOnly = await prisma.loja.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends LojaCreateManyAndReturnArgs>(args?: SelectSubset<T, LojaCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LojaPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Loja.
+     * @param {LojaDeleteArgs} args - Arguments to delete one Loja.
+     * @example
+     * // Delete one Loja
+     * const Loja = await prisma.loja.delete({
+     *   where: {
+     *     // ... filter to delete one Loja
+     *   }
+     * })
+     * 
+     */
+    delete<T extends LojaDeleteArgs>(args: SelectSubset<T, LojaDeleteArgs<ExtArgs>>): Prisma__LojaClient<$Result.GetResult<Prisma.$LojaPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Loja.
+     * @param {LojaUpdateArgs} args - Arguments to update one Loja.
+     * @example
+     * // Update one Loja
+     * const loja = await prisma.loja.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends LojaUpdateArgs>(args: SelectSubset<T, LojaUpdateArgs<ExtArgs>>): Prisma__LojaClient<$Result.GetResult<Prisma.$LojaPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Lojas.
+     * @param {LojaDeleteManyArgs} args - Arguments to filter Lojas to delete.
+     * @example
+     * // Delete a few Lojas
+     * const { count } = await prisma.loja.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends LojaDeleteManyArgs>(args?: SelectSubset<T, LojaDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Lojas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LojaUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Lojas
+     * const loja = await prisma.loja.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends LojaUpdateManyArgs>(args: SelectSubset<T, LojaUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Lojas and returns the data updated in the database.
+     * @param {LojaUpdateManyAndReturnArgs} args - Arguments to update many Lojas.
+     * @example
+     * // Update many Lojas
+     * const loja = await prisma.loja.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Lojas and only return the `id`
+     * const lojaWithIdOnly = await prisma.loja.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends LojaUpdateManyAndReturnArgs>(args: SelectSubset<T, LojaUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LojaPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Loja.
+     * @param {LojaUpsertArgs} args - Arguments to update or create a Loja.
+     * @example
+     * // Update or create a Loja
+     * const loja = await prisma.loja.upsert({
+     *   create: {
+     *     // ... data to create a Loja
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Loja we want to update
+     *   }
+     * })
+     */
+    upsert<T extends LojaUpsertArgs>(args: SelectSubset<T, LojaUpsertArgs<ExtArgs>>): Prisma__LojaClient<$Result.GetResult<Prisma.$LojaPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Lojas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LojaCountArgs} args - Arguments to filter Lojas to count.
+     * @example
+     * // Count the number of Lojas
+     * const count = await prisma.loja.count({
+     *   where: {
+     *     // ... the filter for the Lojas we want to count
+     *   }
+     * })
+    **/
+    count<T extends LojaCountArgs>(
+      args?: Subset<T, LojaCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], LojaCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Loja.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LojaAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends LojaAggregateArgs>(args: Subset<T, LojaAggregateArgs>): Prisma.PrismaPromise<GetLojaAggregateType<T>>
+
+    /**
+     * Group by Loja.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LojaGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends LojaGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: LojaGroupByArgs['orderBy'] }
+        : { orderBy?: LojaGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, LojaGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLojaGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Loja model
+   */
+  readonly fields: LojaFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Loja.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__LojaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    usuarios<T extends Loja$usuariosArgs<ExtArgs> = {}>(args?: Subset<T, Loja$usuariosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Loja model
+   */
+  interface LojaFieldRefs {
+    readonly id: FieldRef<"Loja", 'String'>
+    readonly numero: FieldRef<"Loja", 'Int'>
+    readonly nome: FieldRef<"Loja", 'String'>
+    readonly regiao: FieldRef<"Loja", 'String'>
+    readonly telefone: FieldRef<"Loja", 'String'>
+    readonly endereco: FieldRef<"Loja", 'String'>
+    readonly ativo: FieldRef<"Loja", 'Boolean'>
+    readonly criadoEm: FieldRef<"Loja", 'DateTime'>
+    readonly atualizadoEm: FieldRef<"Loja", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Loja findUnique
+   */
+  export type LojaFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Loja
+     */
+    select?: LojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Loja
+     */
+    omit?: LojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LojaInclude<ExtArgs> | null
+    /**
+     * Filter, which Loja to fetch.
+     */
+    where: LojaWhereUniqueInput
+  }
+
+  /**
+   * Loja findUniqueOrThrow
+   */
+  export type LojaFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Loja
+     */
+    select?: LojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Loja
+     */
+    omit?: LojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LojaInclude<ExtArgs> | null
+    /**
+     * Filter, which Loja to fetch.
+     */
+    where: LojaWhereUniqueInput
+  }
+
+  /**
+   * Loja findFirst
+   */
+  export type LojaFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Loja
+     */
+    select?: LojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Loja
+     */
+    omit?: LojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LojaInclude<ExtArgs> | null
+    /**
+     * Filter, which Loja to fetch.
+     */
+    where?: LojaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Lojas to fetch.
+     */
+    orderBy?: LojaOrderByWithRelationInput | LojaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Lojas.
+     */
+    cursor?: LojaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Lojas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Lojas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Lojas.
+     */
+    distinct?: LojaScalarFieldEnum | LojaScalarFieldEnum[]
+  }
+
+  /**
+   * Loja findFirstOrThrow
+   */
+  export type LojaFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Loja
+     */
+    select?: LojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Loja
+     */
+    omit?: LojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LojaInclude<ExtArgs> | null
+    /**
+     * Filter, which Loja to fetch.
+     */
+    where?: LojaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Lojas to fetch.
+     */
+    orderBy?: LojaOrderByWithRelationInput | LojaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Lojas.
+     */
+    cursor?: LojaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Lojas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Lojas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Lojas.
+     */
+    distinct?: LojaScalarFieldEnum | LojaScalarFieldEnum[]
+  }
+
+  /**
+   * Loja findMany
+   */
+  export type LojaFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Loja
+     */
+    select?: LojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Loja
+     */
+    omit?: LojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LojaInclude<ExtArgs> | null
+    /**
+     * Filter, which Lojas to fetch.
+     */
+    where?: LojaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Lojas to fetch.
+     */
+    orderBy?: LojaOrderByWithRelationInput | LojaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Lojas.
+     */
+    cursor?: LojaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Lojas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Lojas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Lojas.
+     */
+    distinct?: LojaScalarFieldEnum | LojaScalarFieldEnum[]
+  }
+
+  /**
+   * Loja create
+   */
+  export type LojaCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Loja
+     */
+    select?: LojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Loja
+     */
+    omit?: LojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LojaInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Loja.
+     */
+    data: XOR<LojaCreateInput, LojaUncheckedCreateInput>
+  }
+
+  /**
+   * Loja createMany
+   */
+  export type LojaCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Lojas.
+     */
+    data: LojaCreateManyInput | LojaCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Loja createManyAndReturn
+   */
+  export type LojaCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Loja
+     */
+    select?: LojaSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Loja
+     */
+    omit?: LojaOmit<ExtArgs> | null
+    /**
+     * The data used to create many Lojas.
+     */
+    data: LojaCreateManyInput | LojaCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Loja update
+   */
+  export type LojaUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Loja
+     */
+    select?: LojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Loja
+     */
+    omit?: LojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LojaInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Loja.
+     */
+    data: XOR<LojaUpdateInput, LojaUncheckedUpdateInput>
+    /**
+     * Choose, which Loja to update.
+     */
+    where: LojaWhereUniqueInput
+  }
+
+  /**
+   * Loja updateMany
+   */
+  export type LojaUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Lojas.
+     */
+    data: XOR<LojaUpdateManyMutationInput, LojaUncheckedUpdateManyInput>
+    /**
+     * Filter which Lojas to update
+     */
+    where?: LojaWhereInput
+    /**
+     * Limit how many Lojas to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Loja updateManyAndReturn
+   */
+  export type LojaUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Loja
+     */
+    select?: LojaSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Loja
+     */
+    omit?: LojaOmit<ExtArgs> | null
+    /**
+     * The data used to update Lojas.
+     */
+    data: XOR<LojaUpdateManyMutationInput, LojaUncheckedUpdateManyInput>
+    /**
+     * Filter which Lojas to update
+     */
+    where?: LojaWhereInput
+    /**
+     * Limit how many Lojas to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Loja upsert
+   */
+  export type LojaUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Loja
+     */
+    select?: LojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Loja
+     */
+    omit?: LojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LojaInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Loja to update in case it exists.
+     */
+    where: LojaWhereUniqueInput
+    /**
+     * In case the Loja found by the `where` argument doesn't exist, create a new Loja with this data.
+     */
+    create: XOR<LojaCreateInput, LojaUncheckedCreateInput>
+    /**
+     * In case the Loja was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<LojaUpdateInput, LojaUncheckedUpdateInput>
+  }
+
+  /**
+   * Loja delete
+   */
+  export type LojaDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Loja
+     */
+    select?: LojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Loja
+     */
+    omit?: LojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LojaInclude<ExtArgs> | null
+    /**
+     * Filter which Loja to delete.
+     */
+    where: LojaWhereUniqueInput
+  }
+
+  /**
+   * Loja deleteMany
+   */
+  export type LojaDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Lojas to delete
+     */
+    where?: LojaWhereInput
+    /**
+     * Limit how many Lojas to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Loja.usuarios
+   */
+  export type Loja$usuariosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Usuario
+     */
+    select?: UsuarioSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Usuario
+     */
+    omit?: UsuarioOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UsuarioInclude<ExtArgs> | null
+    where?: UsuarioWhereInput
+    orderBy?: UsuarioOrderByWithRelationInput | UsuarioOrderByWithRelationInput[]
+    cursor?: UsuarioWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UsuarioScalarFieldEnum | UsuarioScalarFieldEnum[]
+  }
+
+  /**
+   * Loja without action
+   */
+  export type LojaDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Loja
+     */
+    select?: LojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Loja
+     */
+    omit?: LojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LojaInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model Usuario
    */
 
@@ -2614,7 +3897,7 @@ export namespace Prisma {
     role: $Enums.Role | null
     ativo: boolean | null
     regiao: string | null
-    unidade: string | null
+    lojaId: string | null
     criadoEm: Date | null
     atualizadoEm: Date | null
   }
@@ -2627,7 +3910,7 @@ export namespace Prisma {
     role: $Enums.Role | null
     ativo: boolean | null
     regiao: string | null
-    unidade: string | null
+    lojaId: string | null
     criadoEm: Date | null
     atualizadoEm: Date | null
   }
@@ -2640,7 +3923,7 @@ export namespace Prisma {
     role: number
     ativo: number
     regiao: number
-    unidade: number
+    lojaId: number
     criadoEm: number
     atualizadoEm: number
     _all: number
@@ -2655,7 +3938,7 @@ export namespace Prisma {
     role?: true
     ativo?: true
     regiao?: true
-    unidade?: true
+    lojaId?: true
     criadoEm?: true
     atualizadoEm?: true
   }
@@ -2668,7 +3951,7 @@ export namespace Prisma {
     role?: true
     ativo?: true
     regiao?: true
-    unidade?: true
+    lojaId?: true
     criadoEm?: true
     atualizadoEm?: true
   }
@@ -2681,7 +3964,7 @@ export namespace Prisma {
     role?: true
     ativo?: true
     regiao?: true
-    unidade?: true
+    lojaId?: true
     criadoEm?: true
     atualizadoEm?: true
     _all?: true
@@ -2767,7 +4050,7 @@ export namespace Prisma {
     role: $Enums.Role
     ativo: boolean
     regiao: string | null
-    unidade: string | null
+    lojaId: string | null
     criadoEm: Date
     atualizadoEm: Date
     _count: UsuarioCountAggregateOutputType | null
@@ -2797,9 +4080,10 @@ export namespace Prisma {
     role?: boolean
     ativo?: boolean
     regiao?: boolean
-    unidade?: boolean
+    lojaId?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
+    loja?: boolean | Usuario$lojaArgs<ExtArgs>
     checklistsCarrinho?: boolean | Usuario$checklistsCarrinhoArgs<ExtArgs>
     checklistsEquipamento?: boolean | Usuario$checklistsEquipamentoArgs<ExtArgs>
     notificacoes?: boolean | Usuario$notificacoesArgs<ExtArgs>
@@ -2818,9 +4102,10 @@ export namespace Prisma {
     role?: boolean
     ativo?: boolean
     regiao?: boolean
-    unidade?: boolean
+    lojaId?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
+    loja?: boolean | Usuario$lojaArgs<ExtArgs>
   }, ExtArgs["result"]["usuario"]>
 
   export type UsuarioSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -2831,9 +4116,10 @@ export namespace Prisma {
     role?: boolean
     ativo?: boolean
     regiao?: boolean
-    unidade?: boolean
+    lojaId?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
+    loja?: boolean | Usuario$lojaArgs<ExtArgs>
   }, ExtArgs["result"]["usuario"]>
 
   export type UsuarioSelectScalar = {
@@ -2844,13 +4130,14 @@ export namespace Prisma {
     role?: boolean
     ativo?: boolean
     regiao?: boolean
-    unidade?: boolean
+    lojaId?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
   }
 
-  export type UsuarioOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nome" | "email" | "senha" | "role" | "ativo" | "regiao" | "unidade" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["usuario"]>
+  export type UsuarioOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nome" | "email" | "senha" | "role" | "ativo" | "regiao" | "lojaId" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["usuario"]>
   export type UsuarioInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    loja?: boolean | Usuario$lojaArgs<ExtArgs>
     checklistsCarrinho?: boolean | Usuario$checklistsCarrinhoArgs<ExtArgs>
     checklistsEquipamento?: boolean | Usuario$checklistsEquipamentoArgs<ExtArgs>
     notificacoes?: boolean | Usuario$notificacoesArgs<ExtArgs>
@@ -2860,12 +4147,17 @@ export namespace Prisma {
     tarefasCriadas?: boolean | Usuario$tarefasCriadasArgs<ExtArgs>
     _count?: boolean | UsuarioCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type UsuarioIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type UsuarioIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type UsuarioIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    loja?: boolean | Usuario$lojaArgs<ExtArgs>
+  }
+  export type UsuarioIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    loja?: boolean | Usuario$lojaArgs<ExtArgs>
+  }
 
   export type $UsuarioPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Usuario"
     objects: {
+      loja: Prisma.$LojaPayload<ExtArgs> | null
       checklistsCarrinho: Prisma.$ChecklistCarrinhoPayload<ExtArgs>[]
       checklistsEquipamento: Prisma.$ChecklistEquipamentoPayload<ExtArgs>[]
       notificacoes: Prisma.$NotificacaoPayload<ExtArgs>[]
@@ -2882,7 +4174,7 @@ export namespace Prisma {
       role: $Enums.Role
       ativo: boolean
       regiao: string | null
-      unidade: string | null
+      lojaId: string | null
       criadoEm: Date
       atualizadoEm: Date
     }, ExtArgs["result"]["usuario"]>
@@ -3279,6 +4571,7 @@ export namespace Prisma {
    */
   export interface Prisma__UsuarioClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    loja<T extends Usuario$lojaArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$lojaArgs<ExtArgs>>): Prisma__LojaClient<$Result.GetResult<Prisma.$LojaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     checklistsCarrinho<T extends Usuario$checklistsCarrinhoArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$checklistsCarrinhoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChecklistCarrinhoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     checklistsEquipamento<T extends Usuario$checklistsEquipamentoArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$checklistsEquipamentoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChecklistEquipamentoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     notificacoes<T extends Usuario$notificacoesArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$notificacoesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificacaoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3322,7 +4615,7 @@ export namespace Prisma {
     readonly role: FieldRef<"Usuario", 'Role'>
     readonly ativo: FieldRef<"Usuario", 'Boolean'>
     readonly regiao: FieldRef<"Usuario", 'String'>
-    readonly unidade: FieldRef<"Usuario", 'String'>
+    readonly lojaId: FieldRef<"Usuario", 'String'>
     readonly criadoEm: FieldRef<"Usuario", 'DateTime'>
     readonly atualizadoEm: FieldRef<"Usuario", 'DateTime'>
   }
@@ -3579,6 +4872,10 @@ export namespace Prisma {
      */
     data: UsuarioCreateManyInput | UsuarioCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UsuarioIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -3649,6 +4946,10 @@ export namespace Prisma {
      * Limit how many Usuarios to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UsuarioIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -3715,6 +5016,25 @@ export namespace Prisma {
      * Limit how many Usuarios to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Usuario.loja
+   */
+  export type Usuario$lojaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Loja
+     */
+    select?: LojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Loja
+     */
+    omit?: LojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LojaInclude<ExtArgs> | null
+    where?: LojaWhereInput
   }
 
   /**
@@ -20949,6 +22269,21 @@ export namespace Prisma {
   export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+  export const LojaScalarFieldEnum: {
+    id: 'id',
+    numero: 'numero',
+    nome: 'nome',
+    regiao: 'regiao',
+    telefone: 'telefone',
+    endereco: 'endereco',
+    ativo: 'ativo',
+    criadoEm: 'criadoEm',
+    atualizadoEm: 'atualizadoEm'
+  };
+
+  export type LojaScalarFieldEnum = (typeof LojaScalarFieldEnum)[keyof typeof LojaScalarFieldEnum]
+
+
   export const UsuarioScalarFieldEnum: {
     id: 'id',
     nome: 'nome',
@@ -20957,7 +22292,7 @@ export namespace Prisma {
     role: 'role',
     ativo: 'ativo',
     regiao: 'regiao',
-    unidade: 'unidade',
+    lojaId: 'lojaId',
     criadoEm: 'criadoEm',
     atualizadoEm: 'atualizadoEm'
   };
@@ -21226,16 +22561,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Role'
+   * Reference to a field of type 'Int'
    */
-  export type EnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role'>
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
     
 
 
   /**
-   * Reference to a field of type 'Role[]'
+   * Reference to a field of type 'Int[]'
    */
-  export type ListEnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role[]'>
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -21257,6 +22592,20 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Role'
+   */
+  export type EnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role'>
+    
+
+
+  /**
+   * Reference to a field of type 'Role[]'
+   */
+  export type ListEnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role[]'>
     
 
 
@@ -21331,20 +22680,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Int'
-   */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-  /**
-   * Reference to a field of type 'Int[]'
-   */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-  /**
    * Reference to a field of type 'StatusMovimentacao'
    */
   export type EnumStatusMovimentacaoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StatusMovimentacao'>
@@ -21403,6 +22738,83 @@ export namespace Prisma {
    */
 
 
+  export type LojaWhereInput = {
+    AND?: LojaWhereInput | LojaWhereInput[]
+    OR?: LojaWhereInput[]
+    NOT?: LojaWhereInput | LojaWhereInput[]
+    id?: StringFilter<"Loja"> | string
+    numero?: IntFilter<"Loja"> | number
+    nome?: StringFilter<"Loja"> | string
+    regiao?: StringFilter<"Loja"> | string
+    telefone?: StringNullableFilter<"Loja"> | string | null
+    endereco?: StringNullableFilter<"Loja"> | string | null
+    ativo?: BoolFilter<"Loja"> | boolean
+    criadoEm?: DateTimeFilter<"Loja"> | Date | string
+    atualizadoEm?: DateTimeFilter<"Loja"> | Date | string
+    usuarios?: UsuarioListRelationFilter
+  }
+
+  export type LojaOrderByWithRelationInput = {
+    id?: SortOrder
+    numero?: SortOrder
+    nome?: SortOrder
+    regiao?: SortOrder
+    telefone?: SortOrderInput | SortOrder
+    endereco?: SortOrderInput | SortOrder
+    ativo?: SortOrder
+    criadoEm?: SortOrder
+    atualizadoEm?: SortOrder
+    usuarios?: UsuarioOrderByRelationAggregateInput
+  }
+
+  export type LojaWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    numero?: number
+    AND?: LojaWhereInput | LojaWhereInput[]
+    OR?: LojaWhereInput[]
+    NOT?: LojaWhereInput | LojaWhereInput[]
+    nome?: StringFilter<"Loja"> | string
+    regiao?: StringFilter<"Loja"> | string
+    telefone?: StringNullableFilter<"Loja"> | string | null
+    endereco?: StringNullableFilter<"Loja"> | string | null
+    ativo?: BoolFilter<"Loja"> | boolean
+    criadoEm?: DateTimeFilter<"Loja"> | Date | string
+    atualizadoEm?: DateTimeFilter<"Loja"> | Date | string
+    usuarios?: UsuarioListRelationFilter
+  }, "id" | "numero">
+
+  export type LojaOrderByWithAggregationInput = {
+    id?: SortOrder
+    numero?: SortOrder
+    nome?: SortOrder
+    regiao?: SortOrder
+    telefone?: SortOrderInput | SortOrder
+    endereco?: SortOrderInput | SortOrder
+    ativo?: SortOrder
+    criadoEm?: SortOrder
+    atualizadoEm?: SortOrder
+    _count?: LojaCountOrderByAggregateInput
+    _avg?: LojaAvgOrderByAggregateInput
+    _max?: LojaMaxOrderByAggregateInput
+    _min?: LojaMinOrderByAggregateInput
+    _sum?: LojaSumOrderByAggregateInput
+  }
+
+  export type LojaScalarWhereWithAggregatesInput = {
+    AND?: LojaScalarWhereWithAggregatesInput | LojaScalarWhereWithAggregatesInput[]
+    OR?: LojaScalarWhereWithAggregatesInput[]
+    NOT?: LojaScalarWhereWithAggregatesInput | LojaScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Loja"> | string
+    numero?: IntWithAggregatesFilter<"Loja"> | number
+    nome?: StringWithAggregatesFilter<"Loja"> | string
+    regiao?: StringWithAggregatesFilter<"Loja"> | string
+    telefone?: StringNullableWithAggregatesFilter<"Loja"> | string | null
+    endereco?: StringNullableWithAggregatesFilter<"Loja"> | string | null
+    ativo?: BoolWithAggregatesFilter<"Loja"> | boolean
+    criadoEm?: DateTimeWithAggregatesFilter<"Loja"> | Date | string
+    atualizadoEm?: DateTimeWithAggregatesFilter<"Loja"> | Date | string
+  }
+
   export type UsuarioWhereInput = {
     AND?: UsuarioWhereInput | UsuarioWhereInput[]
     OR?: UsuarioWhereInput[]
@@ -21414,9 +22826,10 @@ export namespace Prisma {
     role?: EnumRoleFilter<"Usuario"> | $Enums.Role
     ativo?: BoolFilter<"Usuario"> | boolean
     regiao?: StringNullableFilter<"Usuario"> | string | null
-    unidade?: StringNullableFilter<"Usuario"> | string | null
+    lojaId?: StringNullableFilter<"Usuario"> | string | null
     criadoEm?: DateTimeFilter<"Usuario"> | Date | string
     atualizadoEm?: DateTimeFilter<"Usuario"> | Date | string
+    loja?: XOR<LojaNullableScalarRelationFilter, LojaWhereInput> | null
     checklistsCarrinho?: ChecklistCarrinhoListRelationFilter
     checklistsEquipamento?: ChecklistEquipamentoListRelationFilter
     notificacoes?: NotificacaoListRelationFilter
@@ -21434,9 +22847,10 @@ export namespace Prisma {
     role?: SortOrder
     ativo?: SortOrder
     regiao?: SortOrderInput | SortOrder
-    unidade?: SortOrderInput | SortOrder
+    lojaId?: SortOrderInput | SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
+    loja?: LojaOrderByWithRelationInput
     checklistsCarrinho?: ChecklistCarrinhoOrderByRelationAggregateInput
     checklistsEquipamento?: ChecklistEquipamentoOrderByRelationAggregateInput
     notificacoes?: NotificacaoOrderByRelationAggregateInput
@@ -21457,9 +22871,10 @@ export namespace Prisma {
     role?: EnumRoleFilter<"Usuario"> | $Enums.Role
     ativo?: BoolFilter<"Usuario"> | boolean
     regiao?: StringNullableFilter<"Usuario"> | string | null
-    unidade?: StringNullableFilter<"Usuario"> | string | null
+    lojaId?: StringNullableFilter<"Usuario"> | string | null
     criadoEm?: DateTimeFilter<"Usuario"> | Date | string
     atualizadoEm?: DateTimeFilter<"Usuario"> | Date | string
+    loja?: XOR<LojaNullableScalarRelationFilter, LojaWhereInput> | null
     checklistsCarrinho?: ChecklistCarrinhoListRelationFilter
     checklistsEquipamento?: ChecklistEquipamentoListRelationFilter
     notificacoes?: NotificacaoListRelationFilter
@@ -21477,7 +22892,7 @@ export namespace Prisma {
     role?: SortOrder
     ativo?: SortOrder
     regiao?: SortOrderInput | SortOrder
-    unidade?: SortOrderInput | SortOrder
+    lojaId?: SortOrderInput | SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
     _count?: UsuarioCountOrderByAggregateInput
@@ -21496,7 +22911,7 @@ export namespace Prisma {
     role?: EnumRoleWithAggregatesFilter<"Usuario"> | $Enums.Role
     ativo?: BoolWithAggregatesFilter<"Usuario"> | boolean
     regiao?: StringNullableWithAggregatesFilter<"Usuario"> | string | null
-    unidade?: StringNullableWithAggregatesFilter<"Usuario"> | string | null
+    lojaId?: StringNullableWithAggregatesFilter<"Usuario"> | string | null
     criadoEm?: DateTimeWithAggregatesFilter<"Usuario"> | Date | string
     atualizadoEm?: DateTimeWithAggregatesFilter<"Usuario"> | Date | string
   }
@@ -22621,6 +24036,94 @@ export namespace Prisma {
     atualizadoEm?: DateTimeWithAggregatesFilter<"FrotaCarrinho"> | Date | string
   }
 
+  export type LojaCreateInput = {
+    id?: string
+    numero: number
+    nome: string
+    regiao: string
+    telefone?: string | null
+    endereco?: string | null
+    ativo?: boolean
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    usuarios?: UsuarioCreateNestedManyWithoutLojaInput
+  }
+
+  export type LojaUncheckedCreateInput = {
+    id?: string
+    numero: number
+    nome: string
+    regiao: string
+    telefone?: string | null
+    endereco?: string | null
+    ativo?: boolean
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    usuarios?: UsuarioUncheckedCreateNestedManyWithoutLojaInput
+  }
+
+  export type LojaUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    numero?: IntFieldUpdateOperationsInput | number
+    nome?: StringFieldUpdateOperationsInput | string
+    regiao?: StringFieldUpdateOperationsInput | string
+    telefone?: NullableStringFieldUpdateOperationsInput | string | null
+    endereco?: NullableStringFieldUpdateOperationsInput | string | null
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    usuarios?: UsuarioUpdateManyWithoutLojaNestedInput
+  }
+
+  export type LojaUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    numero?: IntFieldUpdateOperationsInput | number
+    nome?: StringFieldUpdateOperationsInput | string
+    regiao?: StringFieldUpdateOperationsInput | string
+    telefone?: NullableStringFieldUpdateOperationsInput | string | null
+    endereco?: NullableStringFieldUpdateOperationsInput | string | null
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    usuarios?: UsuarioUncheckedUpdateManyWithoutLojaNestedInput
+  }
+
+  export type LojaCreateManyInput = {
+    id?: string
+    numero: number
+    nome: string
+    regiao: string
+    telefone?: string | null
+    endereco?: string | null
+    ativo?: boolean
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+  }
+
+  export type LojaUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    numero?: IntFieldUpdateOperationsInput | number
+    nome?: StringFieldUpdateOperationsInput | string
+    regiao?: StringFieldUpdateOperationsInput | string
+    telefone?: NullableStringFieldUpdateOperationsInput | string | null
+    endereco?: NullableStringFieldUpdateOperationsInput | string | null
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LojaUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    numero?: IntFieldUpdateOperationsInput | number
+    nome?: StringFieldUpdateOperationsInput | string
+    regiao?: StringFieldUpdateOperationsInput | string
+    telefone?: NullableStringFieldUpdateOperationsInput | string | null
+    endereco?: NullableStringFieldUpdateOperationsInput | string | null
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type UsuarioCreateInput = {
     id?: string
     nome: string
@@ -22629,9 +24132,9 @@ export namespace Prisma {
     role?: $Enums.Role
     ativo?: boolean
     regiao?: string | null
-    unidade?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    loja?: LojaCreateNestedOneWithoutUsuariosInput
     checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
     checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -22649,7 +24152,7 @@ export namespace Prisma {
     role?: $Enums.Role
     ativo?: boolean
     regiao?: string | null
-    unidade?: string | null
+    lojaId?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
@@ -22669,9 +24172,9 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     ativo?: BoolFieldUpdateOperationsInput | boolean
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    loja?: LojaUpdateOneWithoutUsuariosNestedInput
     checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -22689,7 +24192,7 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     ativo?: BoolFieldUpdateOperationsInput | boolean
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    lojaId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
@@ -22709,7 +24212,7 @@ export namespace Prisma {
     role?: $Enums.Role
     ativo?: boolean
     regiao?: string | null
-    unidade?: string | null
+    lojaId?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
   }
@@ -22722,7 +24225,6 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     ativo?: BoolFieldUpdateOperationsInput | boolean
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22735,7 +24237,7 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     ativo?: BoolFieldUpdateOperationsInput | boolean
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    lojaId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -23970,16 +25472,15 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type EnumRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
-  }
-
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type StringNullableFilter<$PrismaModel = never> = {
@@ -23997,6 +25498,11 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -24006,6 +25512,151 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type UsuarioListRelationFilter = {
+    every?: UsuarioWhereInput
+    some?: UsuarioWhereInput
+    none?: UsuarioWhereInput
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
+  export type UsuarioOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type LojaCountOrderByAggregateInput = {
+    id?: SortOrder
+    numero?: SortOrder
+    nome?: SortOrder
+    regiao?: SortOrder
+    telefone?: SortOrder
+    endereco?: SortOrder
+    ativo?: SortOrder
+    criadoEm?: SortOrder
+    atualizadoEm?: SortOrder
+  }
+
+  export type LojaAvgOrderByAggregateInput = {
+    numero?: SortOrder
+  }
+
+  export type LojaMaxOrderByAggregateInput = {
+    id?: SortOrder
+    numero?: SortOrder
+    nome?: SortOrder
+    regiao?: SortOrder
+    telefone?: SortOrder
+    endereco?: SortOrder
+    ativo?: SortOrder
+    criadoEm?: SortOrder
+    atualizadoEm?: SortOrder
+  }
+
+  export type LojaMinOrderByAggregateInput = {
+    id?: SortOrder
+    numero?: SortOrder
+    nome?: SortOrder
+    regiao?: SortOrder
+    telefone?: SortOrder
+    endereco?: SortOrder
+    ativo?: SortOrder
+    criadoEm?: SortOrder
+    atualizadoEm?: SortOrder
+  }
+
+  export type LojaSumOrderByAggregateInput = {
+    numero?: SortOrder
+  }
+
+  export type StringWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedStringFilter<$PrismaModel>
+    _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type EnumRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
+  }
+
+  export type LojaNullableScalarRelationFilter = {
+    is?: LojaWhereInput | null
+    isNot?: LojaWhereInput | null
   }
 
   export type ChecklistCarrinhoListRelationFilter = {
@@ -24044,11 +25695,6 @@ export namespace Prisma {
     none?: TarefaWhereInput
   }
 
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
-  }
-
   export type ChecklistCarrinhoOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -24081,7 +25727,7 @@ export namespace Prisma {
     role?: SortOrder
     ativo?: SortOrder
     regiao?: SortOrder
-    unidade?: SortOrder
+    lojaId?: SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
   }
@@ -24094,7 +25740,7 @@ export namespace Prisma {
     role?: SortOrder
     ativo?: SortOrder
     regiao?: SortOrder
-    unidade?: SortOrder
+    lojaId?: SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
   }
@@ -24107,27 +25753,9 @@ export namespace Prisma {
     role?: SortOrder
     ativo?: SortOrder
     regiao?: SortOrder
-    unidade?: SortOrder
+    lojaId?: SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
-  }
-
-  export type StringWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[] | ListStringFieldRefInput<$PrismaModel>
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedStringFilter<$PrismaModel>
-    _max?: NestedStringFilter<$PrismaModel>
   }
 
   export type EnumRoleWithAggregatesFilter<$PrismaModel = never> = {
@@ -24138,46 +25766,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumRoleFilter<$PrismaModel>
     _max?: NestedEnumRoleFilter<$PrismaModel>
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
-  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
   export type UsuarioScalarRelationFilter = {
@@ -24545,17 +26133,6 @@ export namespace Prisma {
     atualizadoEm?: SortOrder
   }
 
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type EntradaPecaListRelationFilter = {
     every?: EntradaPecaWhereInput
     some?: EntradaPecaWhereInput
@@ -24619,22 +26196,6 @@ export namespace Prisma {
 
   export type PecaSumOrderByAggregateInput = {
     quantidadeEstoque?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type DecimalFilter<$PrismaModel = never> = {
@@ -25112,6 +26673,78 @@ export namespace Prisma {
     total?: SortOrder
   }
 
+  export type UsuarioCreateNestedManyWithoutLojaInput = {
+    create?: XOR<UsuarioCreateWithoutLojaInput, UsuarioUncheckedCreateWithoutLojaInput> | UsuarioCreateWithoutLojaInput[] | UsuarioUncheckedCreateWithoutLojaInput[]
+    connectOrCreate?: UsuarioCreateOrConnectWithoutLojaInput | UsuarioCreateOrConnectWithoutLojaInput[]
+    createMany?: UsuarioCreateManyLojaInputEnvelope
+    connect?: UsuarioWhereUniqueInput | UsuarioWhereUniqueInput[]
+  }
+
+  export type UsuarioUncheckedCreateNestedManyWithoutLojaInput = {
+    create?: XOR<UsuarioCreateWithoutLojaInput, UsuarioUncheckedCreateWithoutLojaInput> | UsuarioCreateWithoutLojaInput[] | UsuarioUncheckedCreateWithoutLojaInput[]
+    connectOrCreate?: UsuarioCreateOrConnectWithoutLojaInput | UsuarioCreateOrConnectWithoutLojaInput[]
+    createMany?: UsuarioCreateManyLojaInputEnvelope
+    connect?: UsuarioWhereUniqueInput | UsuarioWhereUniqueInput[]
+  }
+
+  export type StringFieldUpdateOperationsInput = {
+    set?: string
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
+  }
+
+  export type UsuarioUpdateManyWithoutLojaNestedInput = {
+    create?: XOR<UsuarioCreateWithoutLojaInput, UsuarioUncheckedCreateWithoutLojaInput> | UsuarioCreateWithoutLojaInput[] | UsuarioUncheckedCreateWithoutLojaInput[]
+    connectOrCreate?: UsuarioCreateOrConnectWithoutLojaInput | UsuarioCreateOrConnectWithoutLojaInput[]
+    upsert?: UsuarioUpsertWithWhereUniqueWithoutLojaInput | UsuarioUpsertWithWhereUniqueWithoutLojaInput[]
+    createMany?: UsuarioCreateManyLojaInputEnvelope
+    set?: UsuarioWhereUniqueInput | UsuarioWhereUniqueInput[]
+    disconnect?: UsuarioWhereUniqueInput | UsuarioWhereUniqueInput[]
+    delete?: UsuarioWhereUniqueInput | UsuarioWhereUniqueInput[]
+    connect?: UsuarioWhereUniqueInput | UsuarioWhereUniqueInput[]
+    update?: UsuarioUpdateWithWhereUniqueWithoutLojaInput | UsuarioUpdateWithWhereUniqueWithoutLojaInput[]
+    updateMany?: UsuarioUpdateManyWithWhereWithoutLojaInput | UsuarioUpdateManyWithWhereWithoutLojaInput[]
+    deleteMany?: UsuarioScalarWhereInput | UsuarioScalarWhereInput[]
+  }
+
+  export type UsuarioUncheckedUpdateManyWithoutLojaNestedInput = {
+    create?: XOR<UsuarioCreateWithoutLojaInput, UsuarioUncheckedCreateWithoutLojaInput> | UsuarioCreateWithoutLojaInput[] | UsuarioUncheckedCreateWithoutLojaInput[]
+    connectOrCreate?: UsuarioCreateOrConnectWithoutLojaInput | UsuarioCreateOrConnectWithoutLojaInput[]
+    upsert?: UsuarioUpsertWithWhereUniqueWithoutLojaInput | UsuarioUpsertWithWhereUniqueWithoutLojaInput[]
+    createMany?: UsuarioCreateManyLojaInputEnvelope
+    set?: UsuarioWhereUniqueInput | UsuarioWhereUniqueInput[]
+    disconnect?: UsuarioWhereUniqueInput | UsuarioWhereUniqueInput[]
+    delete?: UsuarioWhereUniqueInput | UsuarioWhereUniqueInput[]
+    connect?: UsuarioWhereUniqueInput | UsuarioWhereUniqueInput[]
+    update?: UsuarioUpdateWithWhereUniqueWithoutLojaInput | UsuarioUpdateWithWhereUniqueWithoutLojaInput[]
+    updateMany?: UsuarioUpdateManyWithWhereWithoutLojaInput | UsuarioUpdateManyWithWhereWithoutLojaInput[]
+    deleteMany?: UsuarioScalarWhereInput | UsuarioScalarWhereInput[]
+  }
+
+  export type LojaCreateNestedOneWithoutUsuariosInput = {
+    create?: XOR<LojaCreateWithoutUsuariosInput, LojaUncheckedCreateWithoutUsuariosInput>
+    connectOrCreate?: LojaCreateOrConnectWithoutUsuariosInput
+    connect?: LojaWhereUniqueInput
+  }
+
   export type ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput = {
     create?: XOR<ChecklistCarrinhoCreateWithoutCriadoPorInput, ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput> | ChecklistCarrinhoCreateWithoutCriadoPorInput[] | ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput[]
     connectOrCreate?: ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput | ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput[]
@@ -25210,24 +26843,18 @@ export namespace Prisma {
     connect?: TarefaWhereUniqueInput | TarefaWhereUniqueInput[]
   }
 
-  export type StringFieldUpdateOperationsInput = {
-    set?: string
-  }
-
   export type EnumRoleFieldUpdateOperationsInput = {
     set?: $Enums.Role
   }
 
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
-  }
-
-  export type DateTimeFieldUpdateOperationsInput = {
-    set?: Date | string
+  export type LojaUpdateOneWithoutUsuariosNestedInput = {
+    create?: XOR<LojaCreateWithoutUsuariosInput, LojaUncheckedCreateWithoutUsuariosInput>
+    connectOrCreate?: LojaCreateOrConnectWithoutUsuariosInput
+    upsert?: LojaUpsertWithoutUsuariosInput
+    disconnect?: LojaWhereInput | boolean
+    delete?: LojaWhereInput | boolean
+    connect?: LojaWhereUniqueInput
+    update?: XOR<XOR<LojaUpdateToOneWithWhereWithoutUsuariosInput, LojaUpdateWithoutUsuariosInput>, LojaUncheckedUpdateWithoutUsuariosInput>
   }
 
   export type ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput = {
@@ -25628,14 +27255,6 @@ export namespace Prisma {
     connect?: SaidaPecaWhereUniqueInput | SaidaPecaWhereUniqueInput[]
   }
 
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
   export type EntradaPecaUpdateManyWithoutPecaNestedInput = {
     create?: XOR<EntradaPecaCreateWithoutPecaInput, EntradaPecaUncheckedCreateWithoutPecaInput> | EntradaPecaCreateWithoutPecaInput[] | EntradaPecaUncheckedCreateWithoutPecaInput[]
     connectOrCreate?: EntradaPecaCreateOrConnectWithoutPecaInput | EntradaPecaCreateOrConnectWithoutPecaInput[]
@@ -25936,16 +27555,15 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type NestedEnumRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
-  }
-
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+  export type NestedIntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type NestedStringNullableFilter<$PrismaModel = never> = {
@@ -25960,6 +27578,11 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
@@ -25990,7 +27613,7 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type NestedIntFilter<$PrismaModel = never> = {
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
     notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -25998,25 +27621,23 @@ export namespace Prisma {
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
   }
 
-  export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumRoleFilter<$PrismaModel>
-    _max?: NestedEnumRoleFilter<$PrismaModel>
-  }
-
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -26047,6 +27668,14 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -26059,6 +27688,23 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
+  }
+
+  export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRoleFilter<$PrismaModel>
+    _max?: NestedEnumRoleFilter<$PrismaModel>
   }
 
   export type NestedEnumPrioridadeTarefaFilter<$PrismaModel = never> = {
@@ -26181,33 +27827,6 @@ export namespace Prisma {
     _max?: NestedEnumStatusChamadoFilter<$PrismaModel>
   }
 
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
   export type NestedDecimalFilter<$PrismaModel = never> = {
     equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
@@ -26284,6 +27903,115 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumTipoCarrinhoFilter<$PrismaModel>
     _max?: NestedEnumTipoCarrinhoFilter<$PrismaModel>
+  }
+
+  export type UsuarioCreateWithoutLojaInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
+    sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
+    tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
+    tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
+  }
+
+  export type UsuarioUncheckedCreateWithoutLojaInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
+    sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
+    tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
+    tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
+  }
+
+  export type UsuarioCreateOrConnectWithoutLojaInput = {
+    where: UsuarioWhereUniqueInput
+    create: XOR<UsuarioCreateWithoutLojaInput, UsuarioUncheckedCreateWithoutLojaInput>
+  }
+
+  export type UsuarioCreateManyLojaInputEnvelope = {
+    data: UsuarioCreateManyLojaInput | UsuarioCreateManyLojaInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UsuarioUpsertWithWhereUniqueWithoutLojaInput = {
+    where: UsuarioWhereUniqueInput
+    update: XOR<UsuarioUpdateWithoutLojaInput, UsuarioUncheckedUpdateWithoutLojaInput>
+    create: XOR<UsuarioCreateWithoutLojaInput, UsuarioUncheckedCreateWithoutLojaInput>
+  }
+
+  export type UsuarioUpdateWithWhereUniqueWithoutLojaInput = {
+    where: UsuarioWhereUniqueInput
+    data: XOR<UsuarioUpdateWithoutLojaInput, UsuarioUncheckedUpdateWithoutLojaInput>
+  }
+
+  export type UsuarioUpdateManyWithWhereWithoutLojaInput = {
+    where: UsuarioScalarWhereInput
+    data: XOR<UsuarioUpdateManyMutationInput, UsuarioUncheckedUpdateManyWithoutLojaInput>
+  }
+
+  export type UsuarioScalarWhereInput = {
+    AND?: UsuarioScalarWhereInput | UsuarioScalarWhereInput[]
+    OR?: UsuarioScalarWhereInput[]
+    NOT?: UsuarioScalarWhereInput | UsuarioScalarWhereInput[]
+    id?: StringFilter<"Usuario"> | string
+    nome?: StringFilter<"Usuario"> | string
+    email?: StringFilter<"Usuario"> | string
+    senha?: StringFilter<"Usuario"> | string
+    role?: EnumRoleFilter<"Usuario"> | $Enums.Role
+    ativo?: BoolFilter<"Usuario"> | boolean
+    regiao?: StringNullableFilter<"Usuario"> | string | null
+    lojaId?: StringNullableFilter<"Usuario"> | string | null
+    criadoEm?: DateTimeFilter<"Usuario"> | Date | string
+    atualizadoEm?: DateTimeFilter<"Usuario"> | Date | string
+  }
+
+  export type LojaCreateWithoutUsuariosInput = {
+    id?: string
+    numero: number
+    nome: string
+    regiao: string
+    telefone?: string | null
+    endereco?: string | null
+    ativo?: boolean
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+  }
+
+  export type LojaUncheckedCreateWithoutUsuariosInput = {
+    id?: string
+    numero: number
+    nome: string
+    regiao: string
+    telefone?: string | null
+    endereco?: string | null
+    ativo?: boolean
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+  }
+
+  export type LojaCreateOrConnectWithoutUsuariosInput = {
+    where: LojaWhereUniqueInput
+    create: XOR<LojaCreateWithoutUsuariosInput, LojaUncheckedCreateWithoutUsuariosInput>
   }
 
   export type ChecklistCarrinhoCreateWithoutCriadoPorInput = {
@@ -26518,6 +28246,41 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type LojaUpsertWithoutUsuariosInput = {
+    update: XOR<LojaUpdateWithoutUsuariosInput, LojaUncheckedUpdateWithoutUsuariosInput>
+    create: XOR<LojaCreateWithoutUsuariosInput, LojaUncheckedCreateWithoutUsuariosInput>
+    where?: LojaWhereInput
+  }
+
+  export type LojaUpdateToOneWithWhereWithoutUsuariosInput = {
+    where?: LojaWhereInput
+    data: XOR<LojaUpdateWithoutUsuariosInput, LojaUncheckedUpdateWithoutUsuariosInput>
+  }
+
+  export type LojaUpdateWithoutUsuariosInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    numero?: IntFieldUpdateOperationsInput | number
+    nome?: StringFieldUpdateOperationsInput | string
+    regiao?: StringFieldUpdateOperationsInput | string
+    telefone?: NullableStringFieldUpdateOperationsInput | string | null
+    endereco?: NullableStringFieldUpdateOperationsInput | string | null
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LojaUncheckedUpdateWithoutUsuariosInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    numero?: IntFieldUpdateOperationsInput | number
+    nome?: StringFieldUpdateOperationsInput | string
+    regiao?: StringFieldUpdateOperationsInput | string
+    telefone?: NullableStringFieldUpdateOperationsInput | string | null
+    endereco?: NullableStringFieldUpdateOperationsInput | string | null
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ChecklistCarrinhoUpsertWithWhereUniqueWithoutCriadoPorInput = {
     where: ChecklistCarrinhoWhereUniqueInput
     update: XOR<ChecklistCarrinhoUpdateWithoutCriadoPorInput, ChecklistCarrinhoUncheckedUpdateWithoutCriadoPorInput>
@@ -26725,9 +28488,9 @@ export namespace Prisma {
     role?: $Enums.Role
     ativo?: boolean
     regiao?: string | null
-    unidade?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    loja?: LojaCreateNestedOneWithoutUsuariosInput
     checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
     checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -26744,7 +28507,7 @@ export namespace Prisma {
     role?: $Enums.Role
     ativo?: boolean
     regiao?: string | null
-    unidade?: string | null
+    lojaId?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
@@ -26779,9 +28542,9 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     ativo?: BoolFieldUpdateOperationsInput | boolean
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    loja?: LojaUpdateOneWithoutUsuariosNestedInput
     checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -26798,7 +28561,7 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     ativo?: BoolFieldUpdateOperationsInput | boolean
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    lojaId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
@@ -26817,9 +28580,9 @@ export namespace Prisma {
     role?: $Enums.Role
     ativo?: boolean
     regiao?: string | null
-    unidade?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    loja?: LojaCreateNestedOneWithoutUsuariosInput
     checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
     checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -26836,7 +28599,7 @@ export namespace Prisma {
     role?: $Enums.Role
     ativo?: boolean
     regiao?: string | null
-    unidade?: string | null
+    lojaId?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
@@ -26871,9 +28634,9 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     ativo?: BoolFieldUpdateOperationsInput | boolean
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    loja?: LojaUpdateOneWithoutUsuariosNestedInput
     checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -26890,7 +28653,7 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     ativo?: BoolFieldUpdateOperationsInput | boolean
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    lojaId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
@@ -26937,9 +28700,9 @@ export namespace Prisma {
     role?: $Enums.Role
     ativo?: boolean
     regiao?: string | null
-    unidade?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    loja?: LojaCreateNestedOneWithoutUsuariosInput
     checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
     checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -26956,7 +28719,7 @@ export namespace Prisma {
     role?: $Enums.Role
     ativo?: boolean
     regiao?: string | null
-    unidade?: string | null
+    lojaId?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
@@ -26980,9 +28743,9 @@ export namespace Prisma {
     role?: $Enums.Role
     ativo?: boolean
     regiao?: string | null
-    unidade?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    loja?: LojaCreateNestedOneWithoutUsuariosInput
     checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
     checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -26999,7 +28762,7 @@ export namespace Prisma {
     role?: $Enums.Role
     ativo?: boolean
     regiao?: string | null
-    unidade?: string | null
+    lojaId?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
@@ -27050,9 +28813,9 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     ativo?: BoolFieldUpdateOperationsInput | boolean
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    loja?: LojaUpdateOneWithoutUsuariosNestedInput
     checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -27069,7 +28832,7 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     ativo?: BoolFieldUpdateOperationsInput | boolean
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    lojaId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
@@ -27099,9 +28862,9 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     ativo?: BoolFieldUpdateOperationsInput | boolean
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    loja?: LojaUpdateOneWithoutUsuariosNestedInput
     checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -27118,7 +28881,7 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     ativo?: BoolFieldUpdateOperationsInput | boolean
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    lojaId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
@@ -27172,9 +28935,9 @@ export namespace Prisma {
     role?: $Enums.Role
     ativo?: boolean
     regiao?: string | null
-    unidade?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    loja?: LojaCreateNestedOneWithoutUsuariosInput
     checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
     checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
@@ -27191,7 +28954,7 @@ export namespace Prisma {
     role?: $Enums.Role
     ativo?: boolean
     regiao?: string | null
-    unidade?: string | null
+    lojaId?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
@@ -27267,9 +29030,9 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     ativo?: BoolFieldUpdateOperationsInput | boolean
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    loja?: LojaUpdateOneWithoutUsuariosNestedInput
     checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
@@ -27286,7 +29049,7 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     ativo?: BoolFieldUpdateOperationsInput | boolean
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    lojaId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
@@ -27702,9 +29465,9 @@ export namespace Prisma {
     role?: $Enums.Role
     ativo?: boolean
     regiao?: string | null
-    unidade?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    loja?: LojaCreateNestedOneWithoutUsuariosInput
     checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
@@ -27721,7 +29484,7 @@ export namespace Prisma {
     role?: $Enums.Role
     ativo?: boolean
     regiao?: string | null
-    unidade?: string | null
+    lojaId?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
@@ -27788,9 +29551,9 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     ativo?: BoolFieldUpdateOperationsInput | boolean
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    loja?: LojaUpdateOneWithoutUsuariosNestedInput
     checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
@@ -27807,7 +29570,7 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     ativo?: BoolFieldUpdateOperationsInput | boolean
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    lojaId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
@@ -27918,9 +29681,9 @@ export namespace Prisma {
     role?: $Enums.Role
     ativo?: boolean
     regiao?: string | null
-    unidade?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    loja?: LojaCreateNestedOneWithoutUsuariosInput
     checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
@@ -27937,7 +29700,7 @@ export namespace Prisma {
     role?: $Enums.Role
     ativo?: boolean
     regiao?: string | null
-    unidade?: string | null
+    lojaId?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
     checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
@@ -28001,9 +29764,9 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     ativo?: BoolFieldUpdateOperationsInput | boolean
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    loja?: LojaUpdateOneWithoutUsuariosNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
@@ -28020,7 +29783,7 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     ativo?: BoolFieldUpdateOperationsInput | boolean
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
-    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    lojaId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
@@ -28091,6 +29854,68 @@ export namespace Prisma {
     unidade?: StringFieldUpdateOperationsInput | string
     criadoPorId?: StringFieldUpdateOperationsInput | string
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UsuarioCreateManyLojaInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+  }
+
+  export type UsuarioUpdateWithoutLojaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
+    refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
+    sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
+    tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
+    tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
+  }
+
+  export type UsuarioUncheckedUpdateWithoutLojaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
+    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
+    sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
+    tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
+    tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
+  }
+
+  export type UsuarioUncheckedUpdateManyWithoutLojaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }

@@ -120,6 +120,18 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.LojaScalarFieldEnum = {
+  id: 'id',
+  numero: 'numero',
+  nome: 'nome',
+  regiao: 'regiao',
+  telefone: 'telefone',
+  endereco: 'endereco',
+  ativo: 'ativo',
+  criadoEm: 'criadoEm',
+  atualizadoEm: 'atualizadoEm'
+};
+
 exports.Prisma.UsuarioScalarFieldEnum = {
   id: 'id',
   nome: 'nome',
@@ -128,7 +140,7 @@ exports.Prisma.UsuarioScalarFieldEnum = {
   role: 'role',
   ativo: 'ativo',
   regiao: 'regiao',
-  unidade: 'unidade',
+  lojaId: 'lojaId',
   criadoEm: 'criadoEm',
   atualizadoEm: 'atualizadoEm'
 };
@@ -398,6 +410,7 @@ exports.TipoCarrinho = exports.$Enums.TipoCarrinho = {
 };
 
 exports.Prisma.ModelName = {
+  Loja: 'Loja',
   Usuario: 'Usuario',
   RefreshToken: 'RefreshToken',
   Sessao: 'Sessao',
