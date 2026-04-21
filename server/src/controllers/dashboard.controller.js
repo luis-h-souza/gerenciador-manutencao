@@ -68,6 +68,7 @@ const resumo = async (req, res, next) => {
     const variacaoGastos = gastoAnterior > 0 ? ((gastoAtual - gastoAnterior) / gastoAnterior) * 100 : 0;
 
     res.json({
+      periodo: { mes: mesIdx + 1, ano: anoNum },
       tarefas: { total: totalTarefas, pendentes: tarefasPendentes, emAndamento: tarefasEmAndamento, concluidas: tarefasConcluidas },
       financeiro: { chamadosMes: totalChamadosMes, gastosMes: gastoAtual, gastosMesPassado: gastoAnterior, variacaoPercent: variacaoGastos.toFixed(1), mauUso: chamadosMauUso },
       fornecedores: { total: totalFornecedores },
@@ -165,7 +166,10 @@ const historicoMensal = async (req, res, next) => {
 const resumoRegional = async (req, res, next) => {
   try {
     const agora = new Date();
-    const inicioMes = new Date(agora.getFullYear(), agora.getMonth(), 1);
+    const mesNum = req.query.mes ? parseInt(req.query.mes) : agora.getMonth() + 1;
+    const anoNum = req.query.ano ? parseInt(req.query.ano) : agora.getFullYear();
+    const inicioMes = new Date(anoNum, mesNum - 1, 1);
+    const fimMes = new Date(anoNum, mesNum, 1);
     const regioesPermitidas = getUserRegions(req.user);
 
     // Obter todas as regiões únicas
@@ -183,16 +187,19 @@ const resumoRegional = async (req, res, next) => {
       });
 
     const resumo = await Promise.all(todasRegioes.map(async (regiao) => {
-      const [gastos, chamados, tarefas] = await Promise.all([
+      const [gastos, chamados, tarefas, totalLojas] = await Promise.all([
         prisma.controleChamado.aggregate({
-          where: { regiao, dataAbertura: { gte: inicioMes } },
+          where: { regiao, dataAbertura: { gte: inicioMes, lt: fimMes } },
           _sum: { valor: true }
         }),
         prisma.controleChamado.count({
-          where: { regiao, dataAbertura: { gte: inicioMes } }
+          where: { regiao, dataAbertura: { gte: inicioMes, lt: fimMes } }
         }),
         prisma.tarefa.count({
           where: { regiao, status: { in: ['PENDENTE', 'EM_ANDAMENTO'] } }
+        }),
+        prisma.loja.count({
+          where: { regiao, ativo: true }
         })
       ]);
 
@@ -200,11 +207,15 @@ const resumoRegional = async (req, res, next) => {
         regiao,
         gastosMes: parseFloat(gastos._sum.valor || 0),
         chamadosMes: chamados,
-        tarefasAtivas: tarefas
+        tarefasAtivas: tarefas,
+        totalLojas,
       };
     }));
 
-    res.json(resumo);
+    res.json({
+      periodo: { mes: mesNum, ano: anoNum },
+      data: resumo,
+    });
   } catch (err) { next(err); }
 };
 
@@ -216,17 +227,21 @@ const detalheRegional = async (req, res, next) => {
     }
 
     const agora = new Date();
-    const inicioMes = new Date(agora.getFullYear(), agora.getMonth(), 1);
+    const mesNum = req.query.mes ? parseInt(req.query.mes) : agora.getMonth() + 1;
+    const anoNum = req.query.ano ? parseInt(req.query.ano) : agora.getFullYear();
+    const inicioMes = new Date(anoNum, mesNum - 1, 1);
+    const fimMes = new Date(anoNum, mesNum, 1);
 
     const [
       gastosPorSegmento,
       topEmpresasGastos,
       totalMauUso,
-      resumoFinanceiro
+      resumoFinanceiro,
+      lojasRegional
     ] = await Promise.all([
       prisma.controleChamado.groupBy({
         by: ['segmento'],
-        where: { regiao, dataAbertura: { gte: inicioMes } },
+        where: { regiao, dataAbertura: { gte: inicioMes, lt: fimMes } },
         _sum: { valor: true },
         _count: true,
         orderBy: { _sum: { valor: 'desc' } },
@@ -234,25 +249,78 @@ const detalheRegional = async (req, res, next) => {
       }),
       prisma.controleChamado.groupBy({
         by: ['empresa'],
-        where: { regiao, dataAbertura: { gte: inicioMes } },
+        where: { regiao, dataAbertura: { gte: inicioMes, lt: fimMes } },
         _sum: { valor: true },
         orderBy: { _sum: { valor: 'desc' } },
         take: 10
       }),
       prisma.controleChamado.aggregate({
-        where: { regiao, mauUso: true, dataAbertura: { gte: inicioMes } },
+        where: { regiao, mauUso: true, dataAbertura: { gte: inicioMes, lt: fimMes } },
         _count: true,
         _sum: { valor: true }
       }),
       prisma.controleChamado.aggregate({
-        where: { regiao, dataAbertura: { gte: inicioMes } },
+        where: { regiao, dataAbertura: { gte: inicioMes, lt: fimMes } },
         _sum: { valor: true },
         _count: true
+      }),
+      prisma.loja.findMany({
+        where: { regiao, ativo: true },
+        select: {
+          id: true,
+          numero: true,
+          nome: true,
+          regiao: true,
+        },
+        orderBy: [{ numero: 'asc' }],
       })
     ]);
 
+    const lojas = await Promise.all(
+      lojasRegional.map(async (loja) => {
+        const [financeiro, mauUso, gestoresAtivos] = await Promise.all([
+          prisma.controleChamado.aggregate({
+            where: {
+              regiao,
+              unidade: loja.nome,
+              dataAbertura: { gte: inicioMes, lt: fimMes },
+            },
+            _sum: { valor: true },
+            _count: true,
+          }),
+          prisma.controleChamado.count({
+            where: {
+              regiao,
+              unidade: loja.nome,
+              mauUso: true,
+              dataAbertura: { gte: inicioMes, lt: fimMes },
+            },
+          }),
+          prisma.usuario.count({
+            where: {
+              lojaId: loja.id,
+              role: 'GESTOR',
+              ativo: true,
+            },
+          }),
+        ]);
+
+        return {
+          id: loja.id,
+          numero: loja.numero,
+          nome: loja.nome,
+          regiao: loja.regiao,
+          gestoresAtivos,
+          totalGasto: parseFloat(financeiro._sum.valor || 0),
+          totalChamados: financeiro._count,
+          mauUso,
+        };
+      })
+    );
+
     res.json({
       regiao,
+      periodo: { mes: mesNum, ano: anoNum },
       financeiro: {
         totalGasto: parseFloat(resumoFinanceiro._sum.valor || 0),
         totalChamados: resumoFinanceiro._count,
@@ -269,7 +337,8 @@ const detalheRegional = async (req, res, next) => {
       empresas: topEmpresasGastos.map(e => ({
         empresa: e.empresa,
         valor: parseFloat(e._sum.valor || 0)
-      }))
+      })),
+      lojas: lojas.sort((a, b) => b.totalGasto - a.totalGasto),
     });
   } catch (err) { next(err); }
 };

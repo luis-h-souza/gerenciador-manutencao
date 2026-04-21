@@ -12,7 +12,8 @@
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:seed": "node prisma/seed.js"
+    "prisma:seed": "node prisma/seed.js",
+    "prisma:seed:chamados:lojas-ativas": "node prisma/seed-chamados-lojas-ativas.js"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.0.0",

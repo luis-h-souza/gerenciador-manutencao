@@ -18,6 +18,8 @@ const SEGMENTO_TO_FORNECEDOR = {
 
 const SEGMENTOS = Object.keys(SEGMENTO_TO_FORNECEDOR);
 
+const LOJAS_COM_GESTORES_ATIVOS = [144, 2, 156, 60, 16, 9, 68, 130, 326];
+
 function pick(list, index) {
   return list[index % list.length];
 }
@@ -66,10 +68,14 @@ function createChamadosData(gestores, fornecedoresByNome) {
   return chamadosData;
 }
 
-async function seedChamados({ reset = false } = {}) {
+async function seedChamados({ reset = false, lojaNumeros } = {}) {
   if (reset) {
     await prisma.controleChamado.deleteMany();
   }
+
+  const lojaNumerosFiltrados = Array.isArray(lojaNumeros)
+    ? [...new Set(lojaNumeros.map((item) => Number(item)).filter(Number.isInteger))]
+    : null;
 
   const [gestores, fornecedores] = await Promise.all([
     prisma.usuario.findMany({
@@ -84,13 +90,23 @@ async function seedChamados({ reset = false } = {}) {
   ]);
 
   const fornecedoresByNome = new Map(fornecedores.map((item) => [item.nome, item]));
-  const chamadosData = createChamadosData(gestores, fornecedoresByNome);
+  const gestoresFiltrados = lojaNumerosFiltrados
+    ? gestores.filter((gestor) => lojaNumerosFiltrados.includes(gestor.loja?.numero))
+    : gestores;
+  const chamadosData = createChamadosData(gestoresFiltrados, fornecedoresByNome);
 
   if (chamadosData.length) {
     await prisma.controleChamado.createMany({ data: chamadosData });
   }
 
   return chamadosData;
+}
+
+async function seedChamadosLojasAtivas(options = {}) {
+  return seedChamados({
+    ...options,
+    lojaNumeros: LOJAS_COM_GESTORES_ATIVOS,
+  });
 }
 
 async function main() {
@@ -110,6 +126,8 @@ if (require.main === module) {
 }
 
 module.exports = {
+  LOJAS_COM_GESTORES_ATIVOS,
   createChamadosData,
   seedChamados,
+  seedChamadosLojasAtivas,
 };
