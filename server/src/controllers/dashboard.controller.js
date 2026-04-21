@@ -196,7 +196,7 @@ const resumoRegional = async (req, res, next) => {
           where: { regiao, dataAbertura: { gte: inicioMes, lt: fimMes } }
         }),
         prisma.tarefa.count({
-          where: { regiao, status: { in: ['PENDENTE', 'EM_ANDAMENTO'] } }
+          where: { regiao, status: { in: ['PENDENTE', 'EM_ANDAMENTO'] }, criadoEm: { gte: inicioMes, lt: fimMes } }
         }),
         prisma.loja.count({
           where: { regiao, ativo: true }
