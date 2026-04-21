@@ -40,7 +40,43 @@ const buscarPorId = async (req, res, next) => {
 const criar = async (req, res, next) => {
   try {
     const { numero, nome, regiao, telefone, endereco } = req.body;
-    const loja = await prisma.loja.create({ data: { numero: parseInt(numero), nome, regiao, telefone, endereco } });
+    const numeroLoja = parseInt(numero);
+    const lojaExistente = await prisma.loja.findUnique({
+      where: { numero: numeroLoja },
+    });
+
+    if (lojaExistente?.ativo) {
+      return res.status(409).json({
+        error: 'Conflito',
+        message: 'Ja existe uma loja ativa cadastrada com esse numero.',
+        field: ['numero'],
+      });
+    }
+
+    if (lojaExistente && !lojaExistente.ativo) {
+      if (req.user?.role !== 'ADMINISTRADOR') {
+        return res.status(403).json({
+          error: 'Acesso negado',
+          message: 'Somente administrador pode reativar uma loja inativa com esse numero.',
+        });
+      }
+
+      const lojaReativada = await prisma.loja.update({
+        where: { id: lojaExistente.id },
+        data: {
+          numero: numeroLoja,
+          nome,
+          regiao,
+          telefone,
+          endereco,
+          ativo: true,
+        },
+      });
+
+      return res.status(200).json(lojaReativada);
+    }
+
+    const loja = await prisma.loja.create({ data: { numero: numeroLoja, nome, regiao, telefone, endereco } });
     res.status(201).json(loja);
   } catch (err) { next(err); }
 };
