@@ -182,7 +182,7 @@ const listarCarrinhos = async (req, res, next) => {
     if (ano)    where.ano    = parseInt(ano);
     if (criadoPorId) where.criadoPorId = criadoPorId;
     
-    if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE'].includes(req.user.role)) {
+    if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE',].includes(req.user.role)) {
       if (regiao) {
         if (!canAccessRegion(req.user, regiao)) {
           return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
@@ -381,9 +381,246 @@ const kpiMensal = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+// ─── Consolidado Regional (Visão em Camadas) ────────────────────────────────
+const consolidadoRegional = async (req, res, next) => {
+  try {
+    const agora = new Date();
+    const qMes = req.query.mes ? parseInt(req.query.mes) : agora.getMonth() + 1;
+    const qAno = req.query.ano ? parseInt(req.query.ano) : agora.getFullYear();
+    const { regiao } = req.query;
+
+    const { getWeek, startOfMonth, endOfMonth } = require('date-fns');
+    const inicioMes = startOfMonth(new Date(qAno, qMes - 1));
+    const fimMes    = endOfMonth(new Date(qAno, qMes - 1));
+    const semanaInicio = getWeek(inicioMes, { weekStartsOn: 1 });
+    const semanaFim    = getWeek(fimMes,    { weekStartsOn: 1 });
+
+    const baseFilter = getAccessFilter(req.user);
+    if (regiao && ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR'].includes(req.user.role)) {
+      if (!canAccessRegion(req.user, regiao)) {
+        return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
+      }
+      baseFilter.regiao = regiao;
+    }
+
+    const whereEquip = {
+      ano: qAno,
+      semana: { gte: semanaInicio, lte: semanaFim },
+      ...baseFilter,
+    };
+
+    const [checklistsEquip, checklistsCarrinho, lojas] = await Promise.all([
+      prisma.checklistEquipamento.findMany({
+        where: whereEquip,
+        include: { itens: true },
+      }),
+      prisma.checklistCarrinho.findMany({
+        where: whereEquip,
+        include: { itens: true },
+      }),
+      prisma.loja.findMany({
+        where: { ...baseFilter, ativo: true },
+      }),
+    ]);
+
+    // Agrupar por unidade
+    const lojasPorUnidade = new Map();
+    lojas.forEach(loja => {
+      lojasPorUnidade.set(loja.nome, {
+        unidade: loja.nome,
+        nome: loja.nome,
+        consolidado: {},
+      });
+    });
+
+    // Processar equipamentos
+    checklistsEquip.forEach(c => {
+      const loja = lojasPorUnidade.get(c.unidade);
+      if (!loja) return;
+
+      if (!loja.consolidado[`semana${c.semana}`]) {
+        loja.consolidado[`semana${c.semana}`] = {
+          equipamentos: [],
+          carrinhos: [],
+        };
+      }
+
+      const equipMap = new Map();
+      c.itens.forEach(item => {
+        if (!equipMap.has(item.tipoEquipamento)) {
+          equipMap.set(item.tipoEquipamento, {
+            tipo: item.tipoEquipamento,
+            tipoLabel: getTipoEquipamentoLabel(item.tipoEquipamento),
+            defeito: 0,
+            total: 0,
+          });
+        }
+        const equip = equipMap.get(item.tipoEquipamento);
+        equip.total += item.quantidade || 1;
+        equip.defeito += item.quantidadeQuebrada || 0;
+      });
+
+      loja.consolidado[`semana${c.semana}`].equipamentos = Array.from(equipMap.values()).map(e => ({
+        ...e,
+        percentual: e.total > 0 ? ((e.defeito / e.total) * 100).toFixed(1) : 0,
+      }));
+    });
+
+    // Processar carrinhos
+    checklistsCarrinho.forEach(c => {
+      const loja = lojasPorUnidade.get(c.unidade);
+      if (!loja) return;
+
+      if (!loja.consolidado[`semana${c.semana}`]) {
+        loja.consolidado[`semana${c.semana}`] = {
+          equipamentos: [],
+          carrinhos: [],
+        };
+      }
+
+      const carriMap = new Map();
+      c.itens.forEach(item => {
+        if (!carriMap.has(item.tipoCarrinho)) {
+          carriMap.set(item.tipoCarrinho, {
+            tipo: item.tipoCarrinho,
+            tipoLabel: getTipoCarrinhoLabel(item.tipoCarrinho),
+            quebrados: 0,
+            total: 0,
+          });
+        }
+        const carri = carriMap.get(item.tipoCarrinho);
+        carri.total += item.total || 0;
+        carri.quebrados += item.quebrados || 0;
+      });
+
+      loja.consolidado[`semana${c.semana}`].carrinhos = Array.from(carriMap.values()).map(c => ({
+        ...c,
+        percentual: c.total > 0 ? ((c.quebrados / c.total) * 100).toFixed(1) : 0,
+      }));
+    });
+
+    res.json({
+      mes: qMes,
+      ano: qAno,
+      regiao: baseFilter.regiao || 'Todas',
+      lojas: Array.from(lojasPorUnidade.values()),
+    });
+  } catch (err) { next(err); }
+};
+
+// ─── Consolidado Loja (Detalhes) ────────────────────────────────────────────
+const consolidadoLoja = async (req, res, next) => {
+  try {
+    const agora = new Date();
+    const qMes = req.query.mes ? parseInt(req.query.mes) : agora.getMonth() + 1;
+    const qAno = req.query.ano ? parseInt(req.query.ano) : agora.getFullYear();
+    const { unidade, semana } = req.query;
+
+    if (!unidade) return res.status(400).json({ error: 'Unidade não especificada' });
+
+    const { getWeek, startOfMonth, endOfMonth } = require('date-fns');
+    const inicioMes = startOfMonth(new Date(qAno, qMes - 1));
+    const fimMes    = endOfMonth(new Date(qAno, qMes - 1));
+    const semanaInicio = getWeek(inicioMes, { weekStartsOn: 1 });
+    const semanaFim    = getWeek(fimMes,    { weekStartsOn: 1 });
+
+    const where = {
+      ano: qAno,
+      semana: semana ? { equals: parseInt(semana) } : { gte: semanaInicio, lte: semanaFim },
+      unidade,
+      ...getAccessFilter(req.user),
+    };
+
+    const [checklistsEquip, checklistsCarrinho, loja] = await Promise.all([
+      prisma.checklistEquipamento.findMany({
+        where,
+        include: { itens: true },
+        orderBy: { semana: 'asc' },
+      }),
+      prisma.checklistCarrinho.findMany({
+        where,
+        include: { itens: true },
+        orderBy: { semana: 'asc' },
+      }),
+      prisma.loja.findFirst({ where: { nome: unidade } }),
+    ]);
+
+    // Agrupar por semana
+    const semanasMap = new Map();
+
+    checklistsEquip.forEach(c => {
+      if (!semanasMap.has(c.semana)) {
+        semanasMap.set(c.semana, {
+          numero: c.semana,
+          label: `Semana ${c.semana}`,
+          equipamentos: [],
+          carrinhos: [],
+          observacoes: c.observacoes,
+        });
+      }
+
+      semanasMap.get(c.semana).equipamentos = c.itens;
+    });
+
+    checklistsCarrinho.forEach(c => {
+      if (!semanasMap.has(c.semana)) {
+        semanasMap.set(c.semana, {
+          numero: c.semana,
+          label: `Semana ${c.semana}`,
+          equipamentos: [],
+          carrinhos: [],
+          observacoes: c.observacoes,
+        });
+      }
+
+      semanasMap.get(c.semana).carrinhos = c.itens;
+      semanasMap.get(c.semana).observacoes = c.observacoes;
+    });
+
+    res.json({
+      mes: qMes,
+      ano: qAno,
+      unidade,
+      nomeLoja: loja?.nome || unidade,
+      semanas: Array.from(semanasMap.values()),
+    });
+  } catch (err) { next(err); }
+};
+
+// ─── Labels para Tipos ──────────────────────────────────────────────────────
+const getTipoEquipamentoLabel = (tipo) => {
+  const labels = {
+    'GELADEIRA_ELETRICA': 'Geladeira Elétrica',
+    'GELADEIRA_CONVENCIONAL': 'Geladeira Convencional',
+    'FREEZER_HORIZONTAL': 'Freezer Horizontal',
+    'FREEZER_VERTICAL': 'Freezer Vertical',
+    'BALCAO_FRIO': 'Balcão Frio',
+    'TEMPERATURA_AMBIENTE': 'Temperatura Ambiente',
+    'ACESSORIO_AMOSTRA': 'Acessório Amostra',
+    'ACESSORIO_BALCAO': 'Acessório Balcão',
+    'ACESSORIO_GELO': 'Acessório Gelo',
+    'ACESSORIO_RODAS': 'Acessório Rodas',
+    'GERADOR_FRIO': 'Gerador Frio',
+  };
+  return labels[tipo] || tipo;
+};
+
+const getTipoCarrinhoLabel = (tipo) => {
+  const labels = {
+    'MARIA_GORDA': 'Maria Gorda',
+    'MARIA_PEQUENA': 'Maria Pequena',
+    'CARRINHO_3_ANDARES': 'Carrinho 3 Andares',
+    'CARRINHO_2_ANDARES': 'Carrinho 2 Andares',
+    'CARRINHO_FECHADO': 'Carrinho Fechado',
+    'CARRINHO_ABERTO': 'Carrinho Aberto',
+    'ETIQUETADORA': 'Etiquetadora',
+  };
+  return labels[tipo] || tipo;
+};
+
 module.exports = {
   listarEquipamentos, buscarEquipamentoPorSemana, salvarEquipamento, kpiEquipamentos,
   listarCarrinhos,    buscarCarrinhoPorSemana,    salvarCarrinho,    kpiCarrinhos,
   buscarFrota, salvarFrota,
-  kpiMensal,
+  kpiMensal, consolidadoRegional, consolidadoLoja,
 };

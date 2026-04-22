@@ -1,21 +1,22 @@
 // src/App.jsx
 // React Router v7: API compatível com v6 (sem breaking changes para modo SPA)
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth, AuthProvider } from './contexts/AuthContext';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useAuth, AuthProvider } from "./contexts/AuthContext";
 
 // Layout
-import AppLayout from './components/layout/AppLayout';
+import AppLayout from "./components/layout/AppLayout";
 
 // Páginas
-import LoginPage from './pages/auth/LoginPage';
-import DashboardPage from './pages/dashboard/DashboardPage';
-import TarefasPage from './pages/tarefas/TarefasPage';
-import ChamadosPage from './pages/chamados/ChamadosPage';
-import EstoquePage from './pages/estoque/EstoquePage';
-import FornecedoresPage from './pages/fornecedores/FornecedoresPage';
-import UsuariosPage from './pages/usuarios/UsuariosPage';
-import ChecklistPage from './pages/checklists/ChecklistPage';
-import LojasPage from './pages/lojas/LojasPage';
+import LoginPage from "./pages/auth/LoginPage";
+import DashboardPage from "./pages/dashboard/DashboardPage";
+import TarefasPage from "./pages/tarefas/TarefasPage";
+import ChamadosPage from "./pages/chamados/ChamadosPage";
+import EstoquePage from "./pages/estoque/EstoquePage";
+import FornecedoresPage from "./pages/fornecedores/FornecedoresPage";
+import UsuariosPage from "./pages/usuarios/UsuariosPage";
+import ChecklistPage from "./pages/checklists/ChecklistPage";
+import ChecklistConsolidadoPage from "./pages/checklists/ChecklistConsolidadoPage";
+import LojasPage from "./pages/lojas/LojasPage";
 
 // Rota protegida
 const ProtectedRoute = ({ children, roles }) => {
@@ -23,10 +24,26 @@ const ProtectedRoute = ({ children, roles }) => {
 
   if (carregando) {
     return (
-      <div className="flex items-center justify-center min-h-screen" style={{ background: 'var(--color-surface-900)' }}>
+      <div
+        className="flex items-center justify-center min-h-screen"
+        style={{ background: "var(--color-surface-900)" }}
+      >
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'var(--color-brand-500)', borderTopColor: 'transparent' }} />
-          <span style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem' }}>Carregando...</span>
+          <div
+            className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin"
+            style={{
+              borderColor: "var(--color-brand-500)",
+              borderTopColor: "transparent",
+            }}
+          />
+          <span
+            style={{
+              color: "var(--color-text-secondary)",
+              fontSize: "0.875rem",
+            }}
+          >
+            Carregando...
+          </span>
         </div>
       </div>
     );
@@ -42,12 +59,26 @@ const ProtectedRoute = ({ children, roles }) => {
 };
 
 const ROLES = {
-  TODOS: ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR', 'GESTOR', 'TECNICO'],
-  GESTORES: ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR', 'GESTOR'],
-  ADMIN_DIRETOR_GERENTE: ['ADMINISTRADOR', 'DIRETOR', 'GERENTE'],
-  OPERACIONAIS: ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR', 'GESTOR', 'TECNICO'],
-  ESTOQUE: ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR', 'GESTOR'],
-  USUARIOS: ['ADMINISTRADOR', 'DIRETOR'],
+  TODOS: [
+    "ADMINISTRADOR",
+    "DIRETOR",
+    "GERENTE",
+    "COORDENADOR",
+    "GESTOR",
+    "TECNICO",
+  ],
+  GESTORES: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR"],
+  ADMIN_DIRETOR_GERENTE: ["ADMINISTRADOR", "DIRETOR", "GERENTE"],
+  OPERACIONAIS: [
+    "ADMINISTRADOR",
+    "DIRETOR",
+    "GERENTE",
+    "COORDENADOR",
+    "GESTOR",
+    "TECNICO",
+  ],
+  ESTOQUE: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR"],
+  USUARIOS: ["ADMINISTRADOR", "DIRETOR"],
 };
 
 function AppRoutes() {
@@ -70,37 +101,86 @@ function AppRoutes() {
       >
         <Route index element={<Navigate to="/dashboard" replace />} />
 
-        <Route path="dashboard" element={
-          <ProtectedRoute roles={ROLES.TODOS}><DashboardPage /></ProtectedRoute>
-        } />
+        <Route
+          path="dashboard"
+          element={
+            <ProtectedRoute roles={ROLES.TODOS}>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="tarefas" element={
-          <ProtectedRoute roles={ROLES.OPERACIONAIS}><TarefasPage /></ProtectedRoute>
-        } />
+        <Route
+          path="tarefas"
+          element={
+            <ProtectedRoute roles={ROLES.OPERACIONAIS}>
+              <TarefasPage />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="chamados" element={
-          <ProtectedRoute roles={ROLES.GESTORES}><ChamadosPage /></ProtectedRoute>
-        } />
+        <Route
+          path="chamados"
+          element={
+            <ProtectedRoute roles={ROLES.GESTORES}>
+              <ChamadosPage />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="estoque" element={
-          <ProtectedRoute roles={ROLES.ESTOQUE}><EstoquePage /></ProtectedRoute>
-        } />
+        <Route
+          path="estoque"
+          element={
+            <ProtectedRoute roles={ROLES.ESTOQUE}>
+              <EstoquePage />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="fornecedores" element={
-          <ProtectedRoute roles={ROLES.GESTORES}><FornecedoresPage /></ProtectedRoute>
-        } />
+        <Route
+          path="fornecedores"
+          element={
+            <ProtectedRoute roles={ROLES.GESTORES}>
+              <FornecedoresPage />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="usuarios" element={
-          <ProtectedRoute roles={ROLES.USUARIOS}><UsuariosPage /></ProtectedRoute>
-        } />
+        <Route
+          path="usuarios"
+          element={
+            <ProtectedRoute roles={ROLES.USUARIOS}>
+              <UsuariosPage />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="checklists" element={
-          <ProtectedRoute roles={ROLES.GESTORES}><ChecklistPage /></ProtectedRoute>
-        } />
+        <Route
+          path="checklists"
+          element={
+            <ProtectedRoute roles={ROLES.GESTORES}>
+              <ChecklistPage />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="lojas" element={
-          <ProtectedRoute roles={['ADMINISTRADOR', 'DIRETOR']}><LojasPage /></ProtectedRoute>
-        } />
+        <Route
+          path="checklists-consolidado"
+          element={
+            <ProtectedRoute roles={ROLES.GESTORES}>
+              <ChecklistConsolidadoPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="lojas"
+          element={
+            <ProtectedRoute roles={["ADMINISTRADOR", "DIRETOR"]}>
+              <LojasPage />
+            </ProtectedRoute>
+          }
+        />
       </Route>
 
       <Route path="*" element={<Navigate to="/dashboard" replace />} />

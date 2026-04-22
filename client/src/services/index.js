@@ -98,4 +98,7 @@ export const checklistService = {
   salvarFrota:              (data)   => api.post('/checklists/carrinhos/frota', data),
   // Dashboard
   kpiMensal:                (params) => api.get('/checklists/kpi-mensal', { params }),
+  // Consolidado (Visão em Camadas)
+  consolidadoRegional:      (params) => api.get('/checklists/consolidado/regional', { params }),
+  consolidadoLoja:          (params) => api.get('/checklists/consolidado/loja', { params }),
 };

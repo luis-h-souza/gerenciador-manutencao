@@ -30,7 +30,7 @@ const getUserRegions = (user) => expandRegionScopes(splitRegions(user?.regiao));
 
 const canAccessRegion = (user, regiao) => {
   if (!regiao) return false;
-  if (['ADMINISTRADOR', 'DIRETOR'].includes(user?.role)) return true;
+  if (['ADMINISTRADOR', 'DIRETOR', 'COORDENADOR'].includes(user?.role)) return true;
   return getUserRegions(user).includes(regiao);
 };
 

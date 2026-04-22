@@ -50,4 +50,14 @@ router.get('/kpi-mensal', autorizar(
   Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR, Roles.GESTOR
 ), ctrl.kpiMensal);
 
+// ─── Consolidado Regional (Visão em Camadas) ────────────────────────────────
+router.get('/consolidado/regional', autorizar(
+  Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR, Roles.GESTOR
+), ctrl.consolidadoRegional);
+
+// ─── Consolidado Loja (Detalhes) ────────────────────────────────────────────
+router.get('/consolidado/loja', autorizar(
+  Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR, Roles.GESTOR
+), ctrl.consolidadoLoja);
+
 module.exports = router;
