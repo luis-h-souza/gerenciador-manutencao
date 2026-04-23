@@ -13,5 +13,6 @@ router.get('/historico-mensal', ctrl.historicoMensal);
 router.get('/regional', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR), ctrl.resumoRegional);
 router.get('/regional/:regiao', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR), ctrl.detalheRegional);
 router.get('/ranking-coordenadores', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE), ctrl.rankingCoordenadores);
+router.get('/executivo', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE), ctrl.executivo);
 
 module.exports = router;

@@ -80,6 +80,7 @@ export const dashboardService = {
   regional:        (params = {}) => api.get('/dashboard/regional', { params }),
   detalheRegional: (regiao, params = {}) => api.get(`/dashboard/regional/${regiao}`, { params }),
   rankingCoordenadores: (params) => api.get('/dashboard/ranking-coordenadores', { params }),
+  executivo:       (params) => api.get('/dashboard/executivo', { params }),
 };
 
 // ─── Checklists ───────────────────────────────────────────────────────────

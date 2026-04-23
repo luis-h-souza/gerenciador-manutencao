@@ -18,21 +18,30 @@ import {
   ArrowLeft,
   Store,
   DollarSign,
-  AlertTriangle,
   UserRound,
   ChevronUp,
   ChevronDown,
+  TrendingUp,
+  TrendingDown,
+  Factory,
+  Tag,
+  Activity,
+  AlertTriangle
 } from "lucide-react";
 import {
+  ResponsiveContainer,
   BarChart,
   Bar,
   XAxis,
   YAxis,
   Tooltip,
-  ResponsiveContainer,
   Cell,
   PieChart,
   Pie,
+  ComposedChart,
+  Line,
+  CartesianGrid,
+  Legend,
 } from "recharts";
 import { chamadosService, dashboardService, lojasService, usuariosService } from "../../services";
 import { useAuth } from "../../contexts/AuthContext";
@@ -473,6 +482,120 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
   );
 }
 
+function PainelExecutivo({ mes, ano }) {
+  const { data: res, isLoading } = useQuery({
+    queryKey: ["dashboard-executivo", mes, ano],
+    queryFn: () => dashboardService.executivo({ mes: parseInt(mes), ano: parseInt(ano) }).then((r) => r.data),
+  });
+
+  if (isLoading) return <div className="flex justify-center p-12"><Loader2 className="animate-spin" style={{ color: "var(--color-brand-500)" }} size={32} /></div>;
+  if (!res) return null;
+
+  const { comparativo, ticketMedio, top5Lojas, fornecedores, pareto } = res;
+
+  return (
+    <div className="flex flex-col gap-6 animate-fade-in mb-8">
+      {/* Cards KPI */}
+      <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
+        <div className="card" style={{ padding: '20px', borderLeft: '4px solid var(--color-brand-500)' }}>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 rounded-lg" style={{ background: 'var(--color-brand-100)', color: 'var(--color-brand-600)' }}>
+              <DollarSign size={20} />
+            </div>
+            <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-text-secondary)' }}>Total Mês Atual</h3>
+          </div>
+          <div className="flex items-end gap-2">
+            <span style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>{fmt(comparativo.atual)}</span>
+          </div>
+        </div>
+
+        <div className={`card`} style={{ padding: '20px', borderLeft: `4px solid ${comparativo.variacao > 0 ? 'var(--color-danger)' : 'var(--color-success)'}` }}>
+          <div className="flex items-center gap-3 mb-2">
+            <div className={`p-2 rounded-lg ${comparativo.variacao > 0 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
+              {comparativo.variacao > 0 ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
+            </div>
+            <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-text-secondary)' }}>Variação (vs. Mês Anterior)</h3>
+          </div>
+          <div className="flex items-end gap-2">
+            <span style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>{comparativo.variacao > 0 ? '+' : ''}{comparativo.variacao.toFixed(1)}%</span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: '6px' }}>({fmt(comparativo.passado)})</span>
+          </div>
+        </div>
+
+        <div className="card" style={{ padding: '20px', borderLeft: '4px solid var(--color-warning)' }}>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 rounded-lg bg-orange-100 text-orange-600">
+              <Activity size={20} />
+            </div>
+            <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-text-secondary)' }}>Ticket Médio</h3>
+          </div>
+          <div className="flex items-end gap-2">
+            <span style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>{fmt(ticketMedio)}</span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: '6px' }}>por chamado</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Top 5 Lojas */}
+        <div className="card p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Store size={20} style={{ color: 'var(--color-danger)' }} />
+            <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>Top 5 Lojas Críticas (Custo)</h3>
+          </div>
+          <div className="flex flex-col gap-3">
+            {top5Lojas.map((loja, idx) => (
+              <div key={idx} className="flex justify-between items-center p-3 rounded-lg" style={{ background: 'var(--color-surface-600)' }}>
+                <span style={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>{idx + 1}. {loja.unidade}</span>
+                <span style={{ fontWeight: 700, color: 'var(--color-danger)' }}>{fmt(loja.valor)}</span>
+              </div>
+            ))}
+            {top5Lojas.length === 0 && <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Sem dados reportados.</p>}
+          </div>
+        </div>
+
+        {/* Fornecedores */}
+        <div className="card p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Factory size={20} style={{ color: 'var(--color-brand-500)' }} />
+            <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>Concentração por Fornecedor</h3>
+          </div>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie data={fornecedores} dataKey="valor" nameKey="empresa" cx="50%" cy="50%" outerRadius={80} innerRadius={50}>
+                {fornecedores.map((_, i) => <Cell key={i} fill={CORES[i % CORES.length]} />)}
+              </Pie>
+              <Tooltip formatter={(v) => fmt(v)} />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Pareto */}
+      <div className="card p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Tag size={20} style={{ color: 'var(--color-brand-600)' }} />
+          <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>Pareto de Segmentos</h3>
+        </div>
+        <ResponsiveContainer width="100%" height={300}>
+          <ComposedChart data={pareto} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
+            <XAxis dataKey="segmento" tick={{ fontSize: 12, fill: 'var(--color-text-muted)' }} />
+            <YAxis yAxisId="left" tickFormatter={(v) => `R$${(v/1000).toFixed(0)}k`} tick={{ fontSize: 12, fill: 'var(--color-text-muted)' }} />
+            <YAxis yAxisId="right" orientation="right" tickFormatter={(v) => `${v}%`} tick={{ fontSize: 12, fill: 'var(--color-text-muted)' }} />
+            <Tooltip 
+              formatter={(value, name) => [name === 'valor' ? fmt(value) : `${value.toFixed(1)}%`, name === 'valor' ? 'Custo' : '% Acumulada']}
+            />
+            <Bar yAxisId="left" dataKey="valor" fill="var(--color-brand-500)" radius={[4, 4, 0, 0]} name="Custo" />
+            <Line yAxisId="right" type="monotone" dataKey="acumulado" stroke="var(--color-danger)" strokeWidth={3} dot={{ r: 4 }} name="% Acumulada" />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
+
 function CorporativoRegioes({ onSelect, mes, ano, regioesContexto }) {
   const { data: regionalRes = {}, isLoading } = useQuery({
     queryKey: ["dashboard-regional", mes, ano],
@@ -706,7 +829,12 @@ export default function ChamadosPage() {
         </div>
       </div>
 
-      {/* ─── Etapa 0: Lista de Gerentes ─── */}
+      {/* ─── PAINEL EXECUTIVO ─── */}
+      {hasDrilldown && ["gerentes", "coordenadores", "regionais"].includes(etapa) && (
+        <PainelExecutivo mes={mes} ano={ano} />
+      )}
+
+      {/* ─── Lista de Gerentes ─── */}
       {etapa === "gerentes" && hasDrilldown && (
         <div className="flex flex-col gap-6 animate-fade-in">
           <div>
@@ -742,7 +870,7 @@ export default function ChamadosPage() {
         </div>
       )}
 
-      {/* ─── Etapa 0.5: Lista de Coordenadores ─── */}
+      {/* ─── Lista de Coordenadores ─── */}
       {etapa === "coordenadores" && hasDrilldown && (
         <div className="flex flex-col gap-6 animate-fade-in">
           <div className="flex items-center gap-3">
@@ -785,7 +913,7 @@ export default function ChamadosPage() {
         </div>
       )}
 
-      {/* ─── Etapa 1: Lista de Regionais ─── */}
+      {/* ─── Lista de Regionais ─── */}
       {etapa === "regionais" && hasDrilldown && (
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-3 mb-2">
@@ -810,7 +938,7 @@ export default function ChamadosPage() {
         </div>
       )}
 
-      {/* ─── Etapa 2: Lojas da Regional com Detalhes ─── */}
+      {/* ─── Lojas da Regional com Detalhes ─── */}
       {etapa === "lojas" && hasDrilldown && regionalSelecionada && (
         <div className="flex flex-col gap-8 animate-fade-in">
           <CorporativoRegiaoDetalhe
@@ -868,7 +996,7 @@ export default function ChamadosPage() {
         </div>
       )}
 
-      {/* ─── Etapa 3: Tabela de Chamados da Loja ─── */}
+      {/* ─── Tabela de Chamados da Loja ─── */}
       {etapa === "chamados" && (
         <div className="flex flex-col gap-6 animate-fade-in">
           {hasDrilldown && (

@@ -486,6 +486,82 @@ const rankingCoordenadores = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+const executivo = async (req, res, next) => {
+  try {
+    const { mes, ano } = req.query;
+    const mesNum = mes ? parseInt(mes) : new Date().getMonth() + 1;
+    const anoNum = ano ? parseInt(ano) : new Date().getFullYear();
+    
+    const inicioMes = new Date(anoNum, mesNum - 1, 1);
+    const fimMes    = new Date(anoNum, mesNum, 1);
+    const inicioMesPassado = new Date(anoNum, mesNum - 2, 1);
+    const fimMesPassado = new Date(anoNum, mesNum - 1, 1);
+
+    const filter = getAccessFilter(req.user);
+    const whereMesAtual = { ...filter, dataAbertura: { gte: inicioMes, lt: fimMes } };
+    const whereMesPassado = { ...filter, dataAbertura: { gte: inicioMesPassado, lt: fimMesPassado } };
+
+    const [gastosAtual, gastosPassado, chamadosAtualCount] = await Promise.all([
+      prisma.controleChamado.aggregate({ where: whereMesAtual, _sum: { valor: true } }),
+      prisma.controleChamado.aggregate({ where: whereMesPassado, _sum: { valor: true } }),
+      prisma.controleChamado.count({ where: whereMesAtual })
+    ]);
+
+    const totalAtual = parseFloat(gastosAtual._sum.valor || 0);
+    const totalPassado = parseFloat(gastosPassado._sum.valor || 0);
+    const ticketMedio = chamadosAtualCount > 0 ? totalAtual / chamadosAtualCount : 0;
+    const variacaoMoM = totalPassado > 0 ? ((totalAtual - totalPassado) / totalPassado) * 100 : 0;
+
+    const lojasGasto = await prisma.controleChamado.groupBy({
+      by: ['unidade'],
+      where: whereMesAtual,
+      _sum: { valor: true },
+      orderBy: { _sum: { valor: 'desc' } },
+      take: 5
+    });
+
+    const fornecedoresGasto = await prisma.controleChamado.groupBy({
+      by: ['empresa'],
+      where: whereMesAtual,
+      _sum: { valor: true },
+      orderBy: { _sum: { valor: 'desc' } }
+    });
+    
+    const fornecedores = fornecedoresGasto.map(f => ({
+      empresa: f.empresa || 'Sem Empresa',
+      valor: parseFloat(f._sum.valor || 0),
+      share: totalAtual > 0 ? (parseFloat(f._sum.valor || 0) / totalAtual) * 100 : 0
+    }));
+
+    const segmentosGasto = await prisma.controleChamado.groupBy({
+      by: ['segmento'],
+      where: whereMesAtual,
+      _sum: { valor: true },
+      orderBy: { _sum: { valor: 'desc' } }
+    });
+
+    let acumulado = 0;
+    const pareto = segmentosGasto.map(s => {
+      const valor = parseFloat(s._sum.valor || 0);
+      acumulado += valor;
+      return {
+        segmento: s.segmento || 'Diversos',
+        valor,
+        share: totalAtual > 0 ? (valor / totalAtual) * 100 : 0,
+        acumulado: totalAtual > 0 ? (acumulado / totalAtual) * 100 : 0
+      };
+    });
+
+    res.json({
+      comparativo: { atual: totalAtual, passado: totalPassado, variacao: variacaoMoM },
+      ticketMedio,
+      top5Lojas: lojasGasto.map(l => ({ unidade: l.unidade, valor: parseFloat(l._sum.valor || 0) })),
+      fornecedores,
+      pareto
+    });
+  } catch(err) { next(err); }
+};
+
 module.exports = {
   resumo,
   gastosPorSegmento,
@@ -493,4 +569,5 @@ module.exports = {
   resumoRegional,
   detalheRegional,
   rankingCoordenadores,
+  executivo,
 };
