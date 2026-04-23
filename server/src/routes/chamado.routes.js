@@ -17,7 +17,7 @@ router.get('/:id', ctrl.buscarPorId);
 router.post('/', createRateLimiter, autorizar(...GESTORES), [
   body('dataAbertura').isISO8601().withMessage('Data inválida'),
   body('numeroChamado').notEmpty(),
-  body('segmento').isIn(['ELETRICA','EMPILHADEIRA','REFRIGERACAO','SERRALHERIA','CIVIL','EQUIPAMENTOS','GERADOR','ELEVADOR','PCI','ALUGUEL','DIVERSOS']),
+  body('segmento').isIn(['ELETRICA','EMPILHADEIRA','REFRIGERACAO','REFRIGERACAO-PÇS','SERRALHERIA','AR-CONDICIONADO','SERVIÇOS GERAIS','CIVIL','EQUIPAMENTOS','GERADOR','ELEVADOR','PCI','ALUGUEL','DIVERSOS']),
   body('empresa').notEmpty(),
   body('descricao').notEmpty(),
   body('status').optional().isIn(['CHAMADO_ABERTO','AGUARDANDO_APROVACAO','AGUARDANDO_OM_ENTREGA','FINALIZADO','ALUGUEL_OUTROS']),

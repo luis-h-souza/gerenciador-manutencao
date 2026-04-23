@@ -1,5 +1,20 @@
 const prisma = require('../utils/prisma');
 const { getAccessFilter, getUserRegions, canAccessRegion } = require('../utils/access.utils');
+
+// Função para normalizar nomes de segmentos para exibição
+const formatarSegmento = (segmento) => {
+  if (!segmento) return 'Diversos';
+  
+  // Mapa de conversão de underscore para caracteres especiais
+  const conversoes = {
+    'AR_CONDICIONADO': 'AR-CONDICIONADO',
+    'REFRIGERACAO_PCS': 'REFRIGERACAO-PÇS',
+    'SERVICOS_GERAIS': 'SERVIÇOS GERAIS'
+  };
+  
+  // Se houver conversão mapeada, usa; senão retorna como está
+  return conversoes[segmento] || segmento;
+};
 const { getWeek, startOfMonth, endOfMonth } = require('date-fns');
 
 const hasRegionOverlap = (sourceRegions, targetRegions) => {
@@ -330,7 +345,7 @@ const detalheRegional = async (req, res, next) => {
         }
       },
       segmentos: gastosPorSegmento.map(s => ({
-        segmento: s.segmento,
+        segmento: formatarSegmento(s.segmento), // ✅ Aplica formatação
         valor: parseFloat(s._sum.valor || 0),
         quantidade: s._count
       })),
@@ -517,7 +532,7 @@ const executivo = async (req, res, next) => {
       where: whereMesAtual,
       _sum: { valor: true },
       orderBy: { _sum: { valor: 'desc' } },
-      take: 5
+      take: 10
     });
 
     const fornecedoresGasto = await prisma.controleChamado.groupBy({
@@ -533,31 +548,100 @@ const executivo = async (req, res, next) => {
       share: totalAtual > 0 ? (parseFloat(f._sum.valor || 0) / totalAtual) * 100 : 0
     }));
 
+    // Busca todos os registros para agregar corretamente
     const segmentosGasto = await prisma.controleChamado.groupBy({
       by: ['segmento'],
       where: whereMesAtual,
       _sum: { valor: true },
+      _count: true,
       orderBy: { _sum: { valor: 'desc' } }
     });
 
-    let acumulado = 0;
-    const pareto = segmentosGasto.map(s => {
+    // Normaliza segmentos: agrupa NULL, '', undefined como 'Diversos'
+    const segmentosNormalizados = {};
+    segmentosGasto.forEach(s => {
+      const segmento = (s.segmento || '').trim() || 'Diversos';
       const valor = parseFloat(s._sum.valor || 0);
-      acumulado += valor;
-      return {
-        segmento: s.segmento || 'Diversos',
-        valor,
-        share: totalAtual > 0 ? (valor / totalAtual) * 100 : 0,
-        acumulado: totalAtual > 0 ? (acumulado / totalAtual) * 100 : 0
-      };
+      if (!segmentosNormalizados[segmento]) {
+        segmentosNormalizados[segmento] = { valor: 0, count: 0 };
+      }
+      segmentosNormalizados[segmento].valor += valor;
+      segmentosNormalizados[segmento].count += s._count;
     });
+
+    // Pareto por Segmento
+    let acumulado = 0;
+    const paretoSegmentosRaw = Object.entries(segmentosNormalizados)
+      .map(([segmento, data]) => ({
+        segmento: formatarSegmento(segmento),
+        valor: data.valor,
+        count: data.count
+      }))
+      .filter(s => s.valor > 0)
+      .sort((a, b) => b.valor - a.valor)
+      .map(s => {
+        acumulado += s.valor;
+        return {
+          segmento: s.segmento,
+          valor: s.valor,
+          share: totalAtual > 0 ? (s.valor / totalAtual) * 100 : 0,
+          acumulado: totalAtual > 0 ? (acumulado / totalAtual) * 100 : 0
+        };
+      });
+    
+    // Normaliza acumulado para não ultrapassar 100%
+    const paretoSegmentos = paretoSegmentosRaw.map((item, idx, arr) => ({
+      ...item,
+      acumulado: Math.min(item.acumulado, 100)
+    }));
+
+    // Pareto por Empresa (Fornecedor)
+    acumulado = 0;
+    
+    // Normaliza empresas: agrupa vázios como 'Sem Empresa'
+    const empresasNormalizadas = {};
+    fornecedoresGasto.forEach(f => {
+      const empresa = (f.empresa || '').trim() || 'Sem Empresa';
+      const valor = parseFloat(f._sum.valor || 0);
+      if (!empresasNormalizadas[empresa]) {
+        empresasNormalizadas[empresa] = { valor: 0, count: 0 };
+      }
+      empresasNormalizadas[empresa].valor += valor;
+      empresasNormalizadas[empresa].count += f._count;
+    });
+
+    const paretoEmpresasRaw = Object.entries(empresasNormalizadas)
+      .map(([empresa, data]) => ({
+        empresa,
+        valor: data.valor,
+        count: data.count
+      }))
+      .filter(e => e.valor > 0)
+      .sort((a, b) => b.valor - a.valor)
+      .map(e => {
+        acumulado += e.valor;
+        return {
+          empresa: e.empresa,
+          valor: e.valor,
+          share: totalAtual > 0 ? (e.valor / totalAtual) * 100 : 0,
+          acumulado: totalAtual > 0 ? (acumulado / totalAtual) * 100 : 0
+        };
+      });
+    
+    // Normaliza acumulado para não ultrapassar 100%
+    const paretoEmpresas = paretoEmpresasRaw.map((item, idx, arr) => ({
+      ...item,
+      acumulado: Math.min(item.acumulado, 100)
+    }));
 
     res.json({
       comparativo: { atual: totalAtual, passado: totalPassado, variacao: variacaoMoM },
       ticketMedio,
       top5Lojas: lojasGasto.map(l => ({ unidade: l.unidade, valor: parseFloat(l._sum.valor || 0) })),
       fornecedores,
-      pareto
+      paretoSegmentos,
+      paretoEmpresas,
+      pareto: paretoSegmentos // Mantém compatibilidade com frontend antigo
     });
   } catch(err) { next(err); }
 };

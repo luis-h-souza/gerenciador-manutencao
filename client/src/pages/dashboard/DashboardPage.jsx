@@ -34,6 +34,9 @@ import {
   BarChart3,
   Users,
   Trophy,
+  CircleHelp,
+  Eye,
+  X,
 } from "lucide-react";
 
 const CORES_SEGMENTO = [
@@ -219,7 +222,17 @@ function RegionalDrilldown({
                 : "Carregando período..."}
             </p>
           </div>
-          <button className="btn btn-ghost btn-sm" onClick={onClose}>
+          <button
+            className="btn btn-ghost btn-sm"
+            onClick={onClose}
+            style={{
+              fontSize: "0.75rem",
+              gap: "4px",
+              border: "1px solid var(--color-border)",
+              background: "var(--color-surface-700)",
+            }}
+          >
+            <X size={14} />
             Fechar
           </button>
         </div>
@@ -247,7 +260,12 @@ function RegionalDrilldown({
                   background: "var(--color-surface-700)",
                 }}
               >
-                <p style={{ fontSize: "0.7rem", color: "var(--color-text-muted)" }}>
+                <p
+                  style={{
+                    fontSize: "0.7rem",
+                    color: "var(--color-text-muted)",
+                  }}
+                >
                   Gasto regional
                 </p>
                 <p
@@ -268,7 +286,12 @@ function RegionalDrilldown({
                   background: "var(--color-surface-700)",
                 }}
               >
-                <p style={{ fontSize: "0.7rem", color: "var(--color-text-muted)" }}>
+                <p
+                  style={{
+                    fontSize: "0.7rem",
+                    color: "var(--color-text-muted)",
+                  }}
+                >
                   Chamados
                 </p>
                 <p
@@ -289,7 +312,12 @@ function RegionalDrilldown({
                   background: "var(--color-surface-700)",
                 }}
               >
-                <p style={{ fontSize: "0.7rem", color: "var(--color-text-muted)" }}>
+                <p
+                  style={{
+                    fontSize: "0.7rem",
+                    color: "var(--color-text-muted)",
+                  }}
+                >
                   Mau uso
                 </p>
                 <p
@@ -381,14 +409,22 @@ function RegionalDrilldown({
                         <button
                           className="btn btn-ghost btn-sm"
                           onClick={() => onOpenLoja(loja.nome)}
+                          style={{
+                            gap: "6px",
+                            border: "1px solid var(--color-border)",
+                            background: "var(--color-surface-700)",
+                          }}
                         >
+                          <Eye size={14} />
                           Ver chamados
                         </button>
                       </div>
 
                       <div
                         className="grid gap-3 mt-3"
-                        style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}
+                        style={{
+                          gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                        }}
                       >
                         <div>
                           <p
@@ -439,7 +475,10 @@ function RegionalDrilldown({
               </div>
             </div>
 
-            <div className="grid gap-4 mt-5" style={{ gridTemplateColumns: "1fr 1fr" }}>
+            <div
+              className="grid gap-4 mt-5"
+              style={{ gridTemplateColumns: "1fr 1fr" }}
+            >
               <div>
                 <h4
                   style={{
@@ -463,12 +502,18 @@ function RegionalDrilldown({
                       }}
                     >
                       <span
-                        style={{ fontSize: "0.78rem", color: "var(--color-text-secondary)" }}
+                        style={{
+                          fontSize: "0.78rem",
+                          color: "var(--color-text-secondary)",
+                        }}
                       >
                         {item.segmento}
                       </span>
                       <strong
-                        style={{ fontSize: "0.8rem", color: "var(--color-text-primary)" }}
+                        style={{
+                          fontSize: "0.8rem",
+                          color: "var(--color-text-primary)",
+                        }}
                       >
                         {fmt(item.valor)}
                       </strong>
@@ -499,12 +544,18 @@ function RegionalDrilldown({
                       }}
                     >
                       <span
-                        style={{ fontSize: "0.78rem", color: "var(--color-text-secondary)" }}
+                        style={{
+                          fontSize: "0.78rem",
+                          color: "var(--color-text-secondary)",
+                        }}
                       >
                         {item.empresa}
                       </span>
                       <strong
-                        style={{ fontSize: "0.8rem", color: "var(--color-text-primary)" }}
+                        style={{
+                          fontSize: "0.8rem",
+                          color: "var(--color-text-primary)",
+                        }}
                       >
                         {fmt(item.valor)}
                       </strong>
@@ -524,6 +575,7 @@ function CorporativoDashboard({ filtro, setFiltro }) {
   const navigate = useNavigate();
   const [showExecutiveSummary, setShowExecutiveSummary] = useState(true);
   const [regionalSelecionada, setRegionalSelecionada] = useState(null);
+  const [rankingHelpOpen, setRankingHelpOpen] = useState(false);
   const { data: regionalRes, isLoading: l1 } = useQuery({
     queryKey: ["dashboard-regional", filtro],
     queryFn: () => dashboardService.regional(filtro).then((r) => r.data),
@@ -775,34 +827,94 @@ function CorporativoDashboard({ filtro, setFiltro }) {
             >
               Distribuição de Gastos por Segmento (Rede)
             </h3>
-            <ResponsiveContainer width="100%" height={280}>
-              <PieChart>
-                <Pie
-                  data={porSegmentoMacro}
-                  dataKey="total"
-                  nameKey="segmento"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  innerRadius={50}
-                >
-                  {porSegmentoMacro.map((_, i) => (
-                    <Cell
-                      key={i}
-                      fill={CORES_SEGMENTO[i % CORES_SEGMENTO.length]}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(v) => fmt(v)} />
-                <Legend
-                  iconType="circle"
-                  layout="horizontal"
-                  verticalAlign="bottom"
-                  align="center"
-                  wrapperStyle={{ fontSize: "12px", paddingTop: "10px" }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+            <div className="grid gap-4 items-start lg:grid-cols-2">
+              <div
+                style={{
+                  minWidth: 0,
+                  height: "clamp(240px, 42vw, 320px)",
+                }}
+              >
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={porSegmentoMacro}
+                      dataKey="total"
+                      nameKey="segmento"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius="72%"
+                      innerRadius="44%"
+                    >
+                      {porSegmentoMacro.map((_, i) => (
+                        <Cell
+                          key={i}
+                          fill={CORES_SEGMENTO[i % CORES_SEGMENTO.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(v) => fmt(v)} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div
+                className="flex flex-col gap-2"
+                style={{
+                  maxHeight: "clamp(220px, 36vw, 320px)",
+                  overflowY: "auto",
+                  paddingRight: "4px",
+                }}
+              >
+                {porSegmentoMacro.map((item, i) => (
+                  <div
+                    key={`${item.segmento}-${i}`}
+                    className="flex items-center justify-between gap-3"
+                    style={{
+                      padding: "10px 12px",
+                      borderRadius: "10px",
+                      background: "var(--color-surface-700)",
+                      border: "1px solid var(--color-border)",
+                    }}
+                  >
+                    <div
+                      className="flex items-center gap-2"
+                      style={{ minWidth: 0 }}
+                    >
+                      <span
+                        style={{
+                          width: "10px",
+                          height: "10px",
+                          borderRadius: "999px",
+                          background: CORES_SEGMENTO[i % CORES_SEGMENTO.length],
+                          flexShrink: 0,
+                        }}
+                      />
+                      <span
+                        style={{
+                          fontSize: "0.8125rem",
+                          color: "var(--color-text-secondary)",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                        title={item.segmento}
+                      >
+                        {item.segmento}
+                      </span>
+                    </div>
+                    <strong
+                      style={{
+                        fontSize: "0.8rem",
+                        color: "var(--color-text-primary)",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {fmt(item.total)}
+                    </strong>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -983,10 +1095,15 @@ function CorporativoDashboard({ filtro, setFiltro }) {
                 </button>
                 <button
                   className="btn btn-ghost btn-sm"
-                  style={{ fontSize: "0.75rem", gap: "4px" }}
+                  style={{
+                    fontSize: "0.75rem",
+                    gap: "4px",
+                    border: "1px solid var(--color-border)",
+                    background: "var(--color-surface-700)",
+                  }}
                   onClick={() =>
                     navigate(
-                      `/chamados?regiao=${reg.regiao}&mes=${filtro.mes}&ano=${filtro.ano}`,
+                      `/chamados?regiao=${reg.regiao}&mes=${filtro.mes}&ano=${filtro.ano}&view=regional-bi`,
                     )
                   }
                 >
@@ -1011,15 +1128,70 @@ function CorporativoDashboard({ filtro, setFiltro }) {
             >
               Ranking de Coordenadores
             </h2>
-            <p
+            <div
+              className="flex items-center gap-2"
               style={{
                 fontSize: "0.8125rem",
                 color: "var(--color-text-muted)",
               }}
             >
-              Indicador proxy por disponibilidade, eficiência de custo e
-              cobertura de checklist.
-            </p>
+              <p>
+                Indicador proxy por disponibilidade, eficiência de custo e
+                cobertura de checklist.
+              </p>
+              <div
+                style={{
+                  position: "relative",
+                  display: "inline-flex",
+                  alignItems: "center",
+                }}
+              >
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-sm"
+                  aria-label="Como funciona o score do ranking"
+                  title="Como funciona o score do ranking"
+                  onMouseEnter={() => setRankingHelpOpen(true)}
+                  onMouseLeave={() => setRankingHelpOpen(false)}
+                  onFocus={() => setRankingHelpOpen(true)}
+                  onBlur={() => setRankingHelpOpen(false)}
+                  style={{
+                    padding: "2px",
+                    minWidth: "auto",
+                    width: "22px",
+                    height: "22px",
+                    borderRadius: "999px",
+                    color: "var(--color-warning)",
+                  }}
+                >
+                  <CircleHelp size={15} />
+                </button>
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "calc(100% + 8px)",
+                    right: 0,
+                    width: "280px",
+                    padding: "10px 12px",
+                    borderRadius: "10px",
+                    background: "var(--color-surface-700)",
+                    border: "1px solid var(--color-border)",
+                    color: "var(--color-text-secondary)",
+                    boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+                    lineHeight: 1.4,
+                    zIndex: 10,
+                    opacity: rankingHelpOpen ? 1 : 0,
+                    visibility: rankingHelpOpen ? "visible" : "hidden",
+                    pointerEvents: rankingHelpOpen ? "auto" : "none",
+                    transition: "opacity 0.15s ease",
+                  }}
+                >
+                  O score sobe com mais disponibilidade, menor custo por chamado
+                  e melhor cobertura de checklist. Cai com equipamentos parados,
+                  carrinhos quebrados, tarefas ativas e registros de mau uso.
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1314,7 +1486,9 @@ function CorporativoDashboard({ filtro, setFiltro }) {
         loading={l6}
         onClose={() => setRegionalSelecionada(null)}
         onOpenRegional={(regiao) =>
-          navigate(`/chamados?regiao=${regiao}&mes=${filtro.mes}&ano=${filtro.ano}`)
+          navigate(
+            `/chamados?regiao=${regiao}&mes=${filtro.mes}&ano=${filtro.ano}`,
+          )
         }
         onOpenLoja={(unidade) =>
           navigate(

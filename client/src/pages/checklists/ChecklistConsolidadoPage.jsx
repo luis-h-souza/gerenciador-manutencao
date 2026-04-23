@@ -1,8 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../contexts/AuthContext";
-import { checklistService, usuariosService } from "../../services";
-import { ChevronDown, Calendar, ChevronUp, Loader2, MapPin, Store, X, CheckCircle2, AlertCircle, TrendingUp, UserRound } from "lucide-react";
+import { checklistService, usuariosService, dashboardService } from "../../services";
+import { ChevronDown, Calendar, ChevronUp, Loader2, MapPin, Store, X, CheckCircle2, AlertCircle, TrendingUp, UserRound, DollarSign } from "lucide-react";
+
+const fmt = (v) =>
+  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
 
 // ─── Componente Card de Checklist ────────────────────────────────────────────
 const ChecklistCard = ({ item, tipo, onClick }) => {
@@ -353,7 +356,8 @@ export default function ChecklistConsolidadoPage() {
     if (role === "GESTOR") return "lojas";
     return "regionais";
   };
-  const [etapa, setEtapa] = useState(() => getInitialEtapa(usuario?.role));
+  const etapaInicial = getInitialEtapa(usuario?.role);
+  const [etapa, setEtapa] = useState(() => etapaInicial);
 
   const [gerenteSelecionado, setGerenteSelecionado] = useState(null);
   const [coordenadorSelecionado, setCoordenadorSelecionado] = useState(null);
@@ -373,6 +377,11 @@ export default function ChecklistConsolidadoPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["checklist-consolidado-regional-all", mes, ano],
     queryFn: () => checklistService.consolidadoRegional({ mes, ano }).then((res) => res.data),
+  });
+
+  const { data: regionalFinanceiroRes } = useQuery({
+    queryKey: ["dashboard-regional-checklist", mes, ano],
+    queryFn: () => dashboardService.regional({ mes, ano }).then((res) => res.data),
   });
 
   // Agrupa as lojas por regional
@@ -471,6 +480,58 @@ export default function ChecklistConsolidadoPage() {
     return Math.ceil((((date - yearStart) / 86400000) + 1)/7);
   };
 
+  const totalSemanasEsperadas = useMemo(() => {
+    const inicio = new Date(ano, mes - 1, 1);
+    const fim = new Date(ano, mes, 0);
+    return Math.max(1, getWeekOfYear(fim) - getWeekOfYear(inicio) + 1);
+  }, [mes, ano]);
+
+  const regionalFinanceiro = regionalFinanceiroRes?.data || [];
+  const coberturaPorRegional = useMemo(() => {
+    return Array.from(regionaisAgrupadasFiltradas.entries()).map(([regiao, lojas]) => {
+      const lojasSemChecklist = lojas.filter(
+        (loja) => Object.keys(loja.consolidado || {}).length === 0
+      ).length;
+      const semanasPreenchidas = lojas.reduce(
+        (sum, loja) => sum + Math.min(Object.keys(loja.consolidado || {}).length, totalSemanasEsperadas),
+        0
+      );
+
+      return {
+        regiao,
+        lojas: lojas.length,
+        lojasSemChecklist,
+        coberturaPct:
+          lojas.length > 0
+            ? (semanasPreenchidas / (lojas.length * totalSemanasEsperadas)) * 100
+            : 0,
+      };
+    });
+  }, [regionaisAgrupadasFiltradas, totalSemanasEsperadas]);
+
+  const liderGastosRegional = [...regionalFinanceiro].sort(
+    (a, b) => Number(b.gastosMes || 0) - Number(a.gastosMes || 0)
+  )[0];
+  const piorCoberturaRegional = [...coberturaPorRegional].sort(
+    (a, b) => a.coberturaPct - b.coberturaPct
+  )[0];
+  const insightRegionalCritica =
+    liderGastosRegional &&
+    piorCoberturaRegional &&
+    liderGastosRegional.regiao === piorCoberturaRegional.regiao &&
+    piorCoberturaRegional.coberturaPct < 100
+      ? {
+          regiao: liderGastosRegional.regiao,
+          gastosMes: Number(liderGastosRegional.gastosMes || 0),
+          coberturaPct: Number(piorCoberturaRegional.coberturaPct || 0),
+          lojasSemChecklist: piorCoberturaRegional.lojasSemChecklist,
+        }
+      : null;
+
+  const regionaisBaixaCobertura = coberturaPorRegional
+    .filter((item) => item.coberturaPct < 50)
+    .sort((a, b) => a.coberturaPct - b.coberturaPct);
+
   const handleSelecionarLoja = (loja) => {
     setLojaSelecionada(loja);
     
@@ -496,8 +557,22 @@ export default function ChecklistConsolidadoPage() {
   };
 
   const handleVoltar = () => {
-    if (etapa === "checklist") setEtapa("lojas");
-    else if (etapa === "lojas") setEtapa("regionais");
+    if (etapa === "checklist") {
+      setEtapa("lojas");
+      setLojaSelecionada(null);
+    }
+    else if (etapa === "lojas") {
+      if (etapaInicial === "lojas") {
+        setRegionalSelecionada(null);
+        setLojasDaRegional([]);
+        setLojaSelecionada(null);
+      } else {
+        setEtapa("regionais");
+        setRegionalSelecionada(null);
+        setLojasDaRegional([]);
+        setLojaSelecionada(null);
+      }
+    }
     else if (etapa === "regionais") {
       if (["ADMINISTRADOR", "DIRETOR", "GERENTE"].includes(usuario?.role)) {
         setEtapa("coordenadores");
@@ -511,6 +586,8 @@ export default function ChecklistConsolidadoPage() {
       }
     }
   };
+
+  const mostrarBotaoVoltar = etapa !== etapaInicial;
 
   const hoje = new Date();
   const semanaAtualAno = getWeekOfYear(hoje);
@@ -581,7 +658,7 @@ export default function ChecklistConsolidadoPage() {
         {etapa === "coordenadores" && (
           <div className="flex flex-col gap-6 animate-fade-in">
             <div className="flex items-center gap-3">
-              {["ADMINISTRADOR", "DIRETOR"].includes(usuario?.role) && (
+              {mostrarBotaoVoltar && (
                 <button className="btn btn-ghost btn-sm" onClick={handleVoltar} style={{ padding: '8px' }}>
                   <ChevronUp className="rotate-270" size={18} />
                 </button>
@@ -666,9 +743,107 @@ export default function ChecklistConsolidadoPage() {
               </div>
             )}
 
+            <div
+              className="card"
+              style={{
+                padding: '20px',
+                borderLeft: `4px solid ${insightRegionalCritica ? 'var(--color-danger)' : 'var(--color-warning)'}`,
+              }}
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div
+                  className="p-2 rounded-lg"
+                  style={{
+                    background: insightRegionalCritica ? 'rgba(239,68,68,0.12)' : 'rgba(245,158,11,0.12)',
+                    color: insightRegionalCritica ? 'var(--color-danger)' : 'var(--color-warning)',
+                  }}
+                >
+                  <DollarSign size={20} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>
+                    Insights Correlacionados
+                  </h3>
+                  <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)' }}>
+                    Cruzamento entre gasto regional e adesão mensal aos checklists.
+                  </p>
+                </div>
+              </div>
+
+              {insightRegionalCritica || regionaisBaixaCobertura.length > 0 ? (
+                <div className="flex flex-col gap-3">
+                  {insightRegionalCritica && (
+                    <div
+                      style={{
+                        padding: '14px',
+                        borderRadius: '12px',
+                        background: 'rgba(239,68,68,0.08)',
+                        border: '1px solid rgba(239,68,68,0.22)',
+                      }}
+                    >
+                      <p style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--color-danger)' }}>
+                        A regional líder em gastos também é a de menor cobertura de checklist.
+                      </p>
+                      <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-secondary)', marginTop: '6px', lineHeight: 1.45 }}>
+                        {insightRegionalCritica.regiao} lidera os gastos do período com{' '}
+                        <strong>{fmt(insightRegionalCritica.gastosMes)}</strong> e está com cobertura em{' '}
+                        <strong>{insightRegionalCritica.coberturaPct.toFixed(1)}%</strong>.
+                        {insightRegionalCritica.lojasSemChecklist > 0
+                          ? ` Há ${insightRegionalCritica.lojasSemChecklist} loja(s) sem checklist no mês.`
+                          : ''}
+                      </p>
+                    </div>
+                  )}
+
+                  {regionaisBaixaCobertura.length > 0 && (
+                    <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+                      {regionaisBaixaCobertura.slice(0, 4).map((item) => (
+                        <div
+                          key={item.regiao}
+                          style={{
+                            padding: '12px',
+                            borderRadius: '10px',
+                            background: 'var(--color-surface-700)',
+                            border: '1px solid var(--color-border)',
+                          }}
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <strong style={{ fontSize: '0.875rem', color: 'var(--color-text-primary)' }}>
+                              {item.regiao}
+                            </strong>
+                            <span className="badge badge-warning" style={{ fontSize: '0.7rem' }}>
+                              {item.coberturaPct.toFixed(1)}%
+                            </span>
+                          </div>
+                          <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '6px' }}>
+                            {item.lojasSemChecklist > 0
+                              ? `${item.lojasSemChecklist} loja(s) sem checklist no mês`
+                              : 'Cobertura abaixo do ideal'}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div
+                  style={{
+                    padding: '14px',
+                    borderRadius: '12px',
+                    background: 'rgba(16,185,129,0.08)',
+                    border: '1px solid rgba(16,185,129,0.22)',
+                    color: 'var(--color-text-secondary)',
+                    fontSize: '0.8125rem',
+                  }}
+                >
+                  Sem alertas correlacionados relevantes no período. A regional líder em gastos não coincide com a menor cobertura de checklist.
+                </div>
+              )}
+            </div>
+
             <div className="flex flex-col gap-6">
               <div className="flex items-center gap-3">
-                {["ADMINISTRADOR", "DIRETOR", "GERENTE"].includes(usuario?.role) && (
+                {mostrarBotaoVoltar && (
                   <button className="btn btn-ghost btn-sm" onClick={handleVoltar} style={{ padding: '8px' }}>
                     <ChevronUp className="rotate-270" size={18} />
                   </button>
@@ -713,9 +888,11 @@ export default function ChecklistConsolidadoPage() {
         {etapa === "lojas" && regionalSelecionada && (
           <div className="flex flex-col gap-6 animate-fade-in">
             <div className="flex items-center gap-3">
-              <button className="btn btn-ghost btn-sm" onClick={handleVoltar} style={{ padding: '8px' }}>
-                <ChevronUp className="rotate-270" size={18} />
-              </button>
+              {mostrarBotaoVoltar && (
+                <button className="btn btn-ghost btn-sm" onClick={handleVoltar} style={{ padding: '8px' }}>
+                  <ChevronUp className="rotate-270" size={18} />
+                </button>
+              )}
               <div>
                 <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>Lojas - Regional {regionalSelecionada}</h2>
                 <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)' }}>Selecione a loja para visualizar os checklists consolidados</p>

@@ -31,14 +31,14 @@ Sistema completo para gerenciamento de tarefas, controle financeiro, estoque de 
 - **Helmet** — headers HTTP de segurança (CSP, HSTS, X-Frame-Options)
 - **CORS** configurado por whitelist via variável de ambiente
 - **Mass assignment prevenido** — controllers de estoque e fornecedor aceitam apenas campos explícitos do body
-- **RBAC** — 6 roles com hierarquia regional:
+- **RBAC** — 6 roles com visão em camadas:
 
 | Role | Escopo | Permissões |
 |---|---|---|
 | `ADMINISTRADOR` | Global | Acesso total a todas as regiões e funcionalidades |
-| `DIRETOR` | Global | Visão executiva consolidada |
-| `GERENTE` | Global | Visão gerencial consolidada |
-| `COORDENADOR` | Regional | Acesso restrito à **sua região** — visualiza checklists e dados |
+| `DIRETOR` | Global | Visão consolidada de toda a operação; pode consultar usuários e lojas, mas a gestão administrativa completa continua concentrada no administrador |
+| `GERENTE` | Regional múltiplo | Visão gerencial das **suas regionais**; acompanha coordenadores, gestores e indicadores da sua abrangência |
+| `COORDENADOR` | Regional múltiplo | Visão operacional das **suas regionais**; acompanha lojas, checklists e times dentro da sua abrangência |
 | `GESTOR` | Unidade | Acesso restrito à **sua loja** — **único** que preenche checklists |
 | `TECNICO` | Atribuição | Vê apenas tarefas **atribuídas a ele** |
 
@@ -109,11 +109,19 @@ npm run dev
 
 | Role | Escopo | Descrição |
 |---|---|---|
-| `DIRETOR / GERENTE` | **Global** | Visão consolidada de todas as regionais |
-| `ADMINISTRADOR` | **Global** | Gestão de infraestrutura e usuários |
-| `COORDENADOR` | **Regional** | Visualiza dados da **sua região** |
+| `ADMINISTRADOR` | **Global** | Camada máxima de acesso. Gerencia usuários, infraestrutura e todo o sistema |
+| `DIRETOR` | **Global** | Visão completa do sistema, com leitura ampla e acesso executivo |
+| `GERENTE` | **Regional múltiplo** | Visualiza dados das **suas regionais**; pode ter uma ou mais regionais atribuídas |
+| `COORDENADOR` | **Regional múltiplo** | Visualiza dados das **suas regionais**; pode ter uma ou mais regionais atribuídas |
 | `GESTOR` | **Unidade** | Visualiza sua loja. Único que preenche checklists |
 | `TECNICO` | **Atribuição** | Vê apenas tarefas designadas para ele |
+
+Fluxo de leitura por camada:
+`DIRETOR > GERENTE > COORDENADOR > GESTOR > TECNICO`
+
+- `GERENTE` acompanha a estrutura abaixo dele dentro das regionais atribuídas
+- `COORDENADOR` acompanha a sua operação regional até o nível de loja
+- `regiao` pode ser composta por mais de uma regional, separadas no cadastro do usuário
 
 ---
 
@@ -206,6 +214,56 @@ manutencao/
 
 ---
 
+## Funcionalidades atuais da aplicação
+
+O sistema já está operando com os módulos abaixo:
+
+### Dashboard Principal
+- KPIs executivos por perfil
+- Histórico mensal de gastos
+- Distribuição de gastos por segmento da rede em visualização tipo rosca com lista lateral
+- Ranking de coordenadores com tooltip explicando como o score sobe e cai
+- Drill-down regional com atalhos para:
+  - abrir chamados da regional
+  - ver chamados de uma loja específica
+  - abrir o BI regional diretamente na visão de gráficos
+
+### Controle Financeiro (Chamados)
+- Navegação por camadas: regionais -> lojas -> chamados
+- Abertura direta por URL para regional, loja ou visão de BI regional
+- KPIs financeiros do período
+- `Top 10 Lojas Críticas (Custo)`
+- Concentração por fornecedor com:
+  - gráfico de rosca
+  - legenda lateral limpa
+  - alerta visual quando um fornecedor ultrapassa 40% do budget do período
+  - tooltip de ajuda contextual
+- Pareto por segmentos ou por empresas com:
+  - barras de custo
+  - linha de percentual acumulado
+  - tooltip explicativo para o usuário
+
+### Checklists
+- Preenchimento semanal de equipamentos e carrinhos pelo `GESTOR`
+- Consulta consolidada para perfis gerenciais
+- Navegação por camadas até a loja com botão de voltar até a raiz do perfil
+- Insights correlacionados entre:
+  - gasto regional no financeiro
+  - cobertura mensal de checklist
+- Alertas para regionais com baixa cobertura e indício de correlação com maior gasto
+
+### Cadastros e Operação
+- Gestão de usuários com restrição por perfil
+- Gestão de lojas e regionais
+- Gestão de fornecedores
+- Gestão de estoque de peças, entradas, movimentações e saídas
+- Gestão de tarefas com atribuição, status e notificações
+
+### Documentação complementar
+- Guia do usuário: [docs/guia-do-usuario.md](docs/guia-do-usuario.md)
+
+---
+
 ## Endpoints da API
 
 ### Autenticação
@@ -268,11 +326,17 @@ manutencao/
 | PATCH | `/api/v1/notificacoes/:id/lida` | Marcar uma como lida |
 | PATCH | `/api/v1/notificacoes/marcar-todas-lidas` | Marcar todas como lidas |
 
-### Usuários & Fornecedores
+### Usuários, Lojas & Fornecedores
 | Método | Endpoint | Descrição |
 |---|---|---|
-| GET/POST | `/api/v1/usuarios` | Gestão de usuários (Admin/Diretor) |
-| PUT | `/api/v1/usuarios/:id` | Editar (suporta `regiao` e `lojaId`) |
+| GET | `/api/v1/usuarios` | Listagem de usuários para `ADMINISTRADOR`, `DIRETOR`, `GERENTE` e `COORDENADOR` |
+| POST | `/api/v1/usuarios` | Criação de usuários apenas por `ADMINISTRADOR` |
+| PUT | `/api/v1/usuarios/:id` | Edição de usuários por `ADMINISTRADOR` e `DIRETOR` |
+| DELETE | `/api/v1/usuarios/:id` | Desativação de usuários por `ADMINISTRADOR` e `DIRETOR` |
+| GET | `/api/v1/lojas` | Listagem de lojas para usuários autenticados; `COORDENADOR` enxerga apenas suas regionais |
+| GET | `/api/v1/lojas/regioes` | Lista de regionais disponíveis para filtros e formulários |
+| GET | `/api/v1/lojas/:id` | Detalhe de loja com restrição regional para `COORDENADOR` |
+| POST/PUT/DELETE | `/api/v1/lojas` | Gestão de lojas por `ADMINISTRADOR` e `DIRETOR` |
 | GET/POST | `/api/v1/fornecedores` | Gestão de fornecedores (global) |
 | PUT | `/api/v1/fornecedores/:id` | Editar fornecedor |
 
@@ -324,6 +388,9 @@ FrotaCarrinho            — capacidade por tipo/unidade
 - **Persistência:** após o usuário alternar manualmente via botão no header, a preferência é salva no `localStorage`
 - **Anti-flash:** script inline no `index.html` aplica o tema antes do primeiro render do React
 - **Sidebar:** aberta por padrão em desktop (≥ 1024px), fechada por padrão em mobile
+- **Tooltips de ajuda contextual:** gráficos e rankings críticos podem exibir explicações rápidas com botão `?`
+- **Drill-down preservado por contexto:** botões do dashboard podem levar direto para a regional, loja ou BI correspondente
+- **Visualização responsiva dos gráficos:** legendas laterais e ajustes de layout para telas menores
 
 ---
 

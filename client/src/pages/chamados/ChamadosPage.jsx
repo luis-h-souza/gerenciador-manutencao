@@ -26,7 +26,8 @@ import {
   Factory,
   Tag,
   Activity,
-  AlertTriangle
+  AlertTriangle,
+  CircleHelp,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -41,9 +42,13 @@ import {
   ComposedChart,
   Line,
   CartesianGrid,
-  Legend,
 } from "recharts";
-import { chamadosService, dashboardService, lojasService, usuariosService } from "../../services";
+import {
+  chamadosService,
+  dashboardService,
+  lojasService,
+  usuariosService,
+} from "../../services";
 import { useAuth } from "../../contexts/AuthContext";
 
 const SEGMENTOS = [
@@ -377,44 +382,116 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
         className="grid gap-4"
         style={{ gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }}
       >
-        <div className="card" style={{ padding: "20px", borderLeft: "4px solid var(--color-brand-500)" }}>
+        <div
+          className="card"
+          style={{
+            padding: "20px",
+            borderLeft: "4px solid var(--color-brand-500)",
+          }}
+        >
           <div className="flex items-center gap-3 mb-4">
-            <div className="flex items-center justify-center w-10 h-10 rounded-lg" style={{ background: "var(--color-brand-100)", color: "var(--color-brand-600)" }}>
+            <div
+              className="flex items-center justify-center w-10 h-10 rounded-lg"
+              style={{
+                background: "var(--color-brand-100)",
+                color: "var(--color-brand-600)",
+              }}
+            >
               <DollarSign size={20} />
             </div>
-            <h3 style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text-secondary)", textTransform: "uppercase" }}>
+            <h3
+              style={{
+                fontSize: "0.875rem",
+                fontWeight: 600,
+                color: "var(--color-text-secondary)",
+                textTransform: "uppercase",
+              }}
+            >
               Total Gasto (Mês)
             </h3>
           </div>
           <div className="flex items-end gap-2">
-            <span style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--color-text-primary)" }}>
+            <span
+              style={{
+                fontSize: "1.75rem",
+                fontWeight: 800,
+                color: "var(--color-text-primary)",
+              }}
+            >
               {fmt(detalhe.financeiro?.totalGasto)}
             </span>
           </div>
-          <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginTop: "8px" }}>
-            Referente a <strong>{detalhe.financeiro?.totalChamados} chamados</strong> abertos.
+          <p
+            style={{
+              fontSize: "0.75rem",
+              color: "var(--color-text-muted)",
+              marginTop: "8px",
+            }}
+          >
+            Referente a{" "}
+            <strong>{detalhe.financeiro?.totalChamados} chamados</strong>{" "}
+            abertos.
           </p>
         </div>
 
-        <div className="card" style={{ padding: "20px", borderLeft: "4px solid var(--color-danger)" }}>
+        <div
+          className="card"
+          style={{
+            padding: "20px",
+            borderLeft: "4px solid var(--color-danger)",
+          }}
+        >
           <div className="flex items-center gap-3 mb-4">
-            <div className="flex items-center justify-center w-10 h-10 rounded-lg" style={{ background: "var(--color-danger-100)", color: "var(--color-danger-600)" }}>
+            <div
+              className="flex items-center justify-center w-10 h-10 rounded-lg"
+              style={{
+                background: "var(--color-danger-100)",
+                color: "var(--color-danger-600)",
+              }}
+            >
               <AlertTriangle size={20} />
             </div>
-            <h3 style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-danger-600)", textTransform: "uppercase" }}>
+            <h3
+              style={{
+                fontSize: "0.875rem",
+                fontWeight: 600,
+                color: "var(--color-danger-600)",
+                textTransform: "uppercase",
+              }}
+            >
               Registros de Mau Uso
             </h3>
           </div>
           <div className="flex items-end gap-2">
-            <span style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--color-danger-700)" }}>
+            <span
+              style={{
+                fontSize: "1.75rem",
+                fontWeight: 800,
+                color: "var(--color-danger-700)",
+              }}
+            >
               {detalhe.financeiro?.mauUso?.quantidade ?? 0}
             </span>
-            <span style={{ fontSize: "0.875rem", color: "var(--color-danger-600)", marginBottom: "6px", fontWeight: 600 }}>
+            <span
+              style={{
+                fontSize: "0.875rem",
+                color: "var(--color-danger-600)",
+                marginBottom: "6px",
+                fontWeight: 600,
+              }}
+            >
               registros
             </span>
           </div>
-          <p style={{ fontSize: "0.75rem", color: "var(--color-danger-600)", marginTop: "8px" }}>
-            Prejuízo estimado: <strong>{fmt(detalhe.financeiro?.mauUso?.valor)}</strong>
+          <p
+            style={{
+              fontSize: "0.75rem",
+              color: "var(--color-danger-600)",
+              marginTop: "8px",
+            }}
+          >
+            Prejuízo estimado:{" "}
+            <strong>{fmt(detalhe.financeiro?.mauUso?.valor)}</strong>
           </p>
         </div>
       </div>
@@ -483,55 +560,190 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
 }
 
 function PainelExecutivo({ mes, ano }) {
+  const [paretoTipo, setParetoTipo] = useState("segmentos"); // 'segmentos' ou 'empresas'
+  const [fornecedorHelpOpen, setFornecedorHelpOpen] = useState(false);
+  const [paretoHelpOpen, setParetoHelpOpen] = useState(false);
+
   const { data: res, isLoading } = useQuery({
     queryKey: ["dashboard-executivo", mes, ano],
-    queryFn: () => dashboardService.executivo({ mes: parseInt(mes), ano: parseInt(ano) }).then((r) => r.data),
+    queryFn: () =>
+      dashboardService
+        .executivo({ mes: parseInt(mes), ano: parseInt(ano) })
+        .then((r) => r.data),
   });
 
-  if (isLoading) return <div className="flex justify-center p-12"><Loader2 className="animate-spin" style={{ color: "var(--color-brand-500)" }} size={32} /></div>;
+  if (isLoading)
+    return (
+      <div className="flex justify-center p-12">
+        <Loader2
+          className="animate-spin"
+          style={{ color: "var(--color-brand-500)" }}
+          size={32}
+        />
+      </div>
+    );
   if (!res) return null;
 
-  const { comparativo, ticketMedio, top5Lojas, fornecedores, pareto } = res;
+  const {
+    comparativo,
+    ticketMedio,
+    top5Lojas,
+    fornecedores,
+    paretoSegmentos,
+    paretoEmpresas,
+  } = res;
+
+  // Usar dados baseado no tipo selecionado
+  const paretoData =
+    paretoTipo === "segmentos" ? paretoSegmentos : paretoEmpresas;
+  const paretoLabel = paretoTipo === "segmentos" ? "segmento" : "empresa";
+  const paretoTitle =
+    paretoTipo === "segmentos"
+      ? "Pareto de Segmentos"
+      : "Pareto de Empresas (Fornecedores)";
+  const fornecedoresCriticos = fornecedores.filter(
+    (item) => Number(item.share || 0) > 40,
+  );
+  const principalFornecedor = fornecedores[0] || null;
+  const maiorShareFornecedor = Number(principalFornecedor?.share || 0);
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in mb-8">
       {/* Cards KPI */}
-      <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
-        <div className="card" style={{ padding: '20px', borderLeft: '4px solid var(--color-brand-500)' }}>
+      <div
+        className="grid gap-4"
+        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}
+      >
+        <div
+          className="card"
+          style={{
+            padding: "20px",
+            borderLeft: "4px solid var(--color-brand-500)",
+          }}
+        >
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg" style={{ background: 'var(--color-brand-100)', color: 'var(--color-brand-600)' }}>
+            <div
+              className="p-2 rounded-lg"
+              style={{
+                background: "var(--color-brand-100)",
+                color: "var(--color-brand-600)",
+              }}
+            >
               <DollarSign size={20} />
             </div>
-            <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-text-secondary)' }}>Total Mês Atual</h3>
+            <h3
+              style={{
+                fontSize: "0.875rem",
+                fontWeight: 600,
+                color: "var(--color-text-secondary)",
+              }}
+            >
+              Total Mês Atual
+            </h3>
           </div>
           <div className="flex items-end gap-2">
-            <span style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>{fmt(comparativo.atual)}</span>
+            <span
+              style={{
+                fontSize: "1.75rem",
+                fontWeight: 800,
+                color: "var(--color-text-primary)",
+              }}
+            >
+              {fmt(comparativo.atual)}
+            </span>
           </div>
         </div>
 
-        <div className={`card`} style={{ padding: '20px', borderLeft: `4px solid ${comparativo.variacao > 0 ? 'var(--color-danger)' : 'var(--color-success)'}` }}>
+        <div
+          className={`card`}
+          style={{
+            padding: "20px",
+            borderLeft: `4px solid ${comparativo.variacao > 0 ? "var(--color-danger)" : "var(--color-success)"}`,
+          }}
+        >
           <div className="flex items-center gap-3 mb-2">
-            <div className={`p-2 rounded-lg ${comparativo.variacao > 0 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
-              {comparativo.variacao > 0 ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
+            <div
+              className={`p-2 rounded-lg ${comparativo.variacao > 0 ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"}`}
+            >
+              {comparativo.variacao > 0 ? (
+                <TrendingUp size={20} />
+              ) : (
+                <TrendingDown size={20} />
+              )}
             </div>
-            <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-text-secondary)' }}>Variação (vs. Mês Anterior)</h3>
+            <h3
+              style={{
+                fontSize: "0.875rem",
+                fontWeight: 600,
+                color: "var(--color-text-secondary)",
+              }}
+            >
+              Variação (vs. Mês Anterior)
+            </h3>
           </div>
           <div className="flex items-end gap-2">
-            <span style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>{comparativo.variacao > 0 ? '+' : ''}{comparativo.variacao.toFixed(1)}%</span>
-            <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: '6px' }}>({fmt(comparativo.passado)})</span>
+            <span
+              style={{
+                fontSize: "1.75rem",
+                fontWeight: 800,
+                color: "var(--color-text-primary)",
+              }}
+            >
+              {comparativo.variacao > 0 ? "+" : ""}
+              {comparativo.variacao.toFixed(1)}%
+            </span>
+            <span
+              style={{
+                fontSize: "0.75rem",
+                color: "var(--color-text-muted)",
+                marginBottom: "6px",
+              }}
+            >
+              ({fmt(comparativo.passado)})
+            </span>
           </div>
         </div>
 
-        <div className="card" style={{ padding: '20px', borderLeft: '4px solid var(--color-warning)' }}>
+        <div
+          className="card"
+          style={{
+            padding: "20px",
+            borderLeft: "4px solid var(--color-warning)",
+          }}
+        >
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 rounded-lg bg-orange-100 text-orange-600">
               <Activity size={20} />
             </div>
-            <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-text-secondary)' }}>Ticket Médio</h3>
+            <h3
+              style={{
+                fontSize: "0.875rem",
+                fontWeight: 600,
+                color: "var(--color-text-secondary)",
+              }}
+            >
+              Ticket Médio
+            </h3>
           </div>
           <div className="flex items-end gap-2">
-            <span style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>{fmt(ticketMedio)}</span>
-            <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: '6px' }}>por chamado</span>
+            <span
+              style={{
+                fontSize: "1.75rem",
+                fontWeight: 800,
+                color: "var(--color-text-primary)",
+              }}
+            >
+              {fmt(ticketMedio)}
+            </span>
+            <span
+              style={{
+                fontSize: "0.75rem",
+                color: "var(--color-text-muted)",
+                marginBottom: "6px",
+              }}
+            >
+              por chamado
+            </span>
           </div>
         </div>
       </div>
@@ -540,55 +752,414 @@ function PainelExecutivo({ mes, ano }) {
         {/* Top 5 Lojas */}
         <div className="card p-6">
           <div className="flex items-center gap-2 mb-4">
-            <Store size={20} style={{ color: 'var(--color-danger)' }} />
-            <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>Top 5 Lojas Críticas (Custo)</h3>
+            <Store size={20} style={{ color: "var(--color-danger)" }} />
+            <h3
+              style={{
+                fontSize: "1.125rem",
+                fontWeight: 700,
+                color: "var(--color-text-primary)",
+              }}
+            >
+              Top 10 Lojas Críticas (Custo)
+            </h3>
           </div>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col  gap-3">
             {top5Lojas.map((loja, idx) => (
-              <div key={idx} className="flex justify-between items-center p-3 rounded-lg" style={{ background: 'var(--color-surface-600)' }}>
-                <span style={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>{idx + 1}. {loja.unidade}</span>
-                <span style={{ fontWeight: 700, color: 'var(--color-danger)' }}>{fmt(loja.valor)}</span>
+              <div
+                key={idx}
+                className="flex justify-between items-center p-3 rounded-lg"
+                style={{ background: "var(--color-surface-600)" }}
+              >
+                <span
+                  style={{
+                    fontWeight: 600,
+                    color: "var(--color-text-primary)",
+                  }}
+                >
+                  {idx + 1}. {loja.unidade}
+                </span>
+                <span style={{ fontWeight: 700, color: "var(--color-danger)" }}>
+                  {fmt(loja.valor)}
+                </span>
               </div>
             ))}
-            {top5Lojas.length === 0 && <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Sem dados reportados.</p>}
+            {top5Lojas.length === 0 && (
+              <p
+                style={{
+                  fontSize: "0.875rem",
+                  color: "var(--color-text-muted)",
+                }}
+              >
+                Sem dados reportados.
+              </p>
+            )}
           </div>
         </div>
 
         {/* Fornecedores */}
         <div className="card p-6">
           <div className="flex items-center gap-2 mb-4">
-            <Factory size={20} style={{ color: 'var(--color-brand-500)' }} />
-            <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>Concentração por Fornecedor</h3>
+            <Factory size={20} style={{ color: "var(--color-brand-500)" }} />
+            <div style={{ flex: 1 }}>
+              <div className="flex items-center gap-2">
+                <h3
+                  style={{
+                    fontSize: "1.125rem",
+                    fontWeight: 700,
+                    color: "var(--color-text-primary)",
+                  }}
+                >
+                  Concentração por Fornecedor
+                </h3>
+                <div
+                  style={{
+                    position: "relative",
+                    display: "inline-flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-sm"
+                    aria-label="Como ler a concentração por fornecedor"
+                    title="Como ler a concentração por fornecedor"
+                    onMouseEnter={() => setFornecedorHelpOpen(true)}
+                    onMouseLeave={() => setFornecedorHelpOpen(false)}
+                    onFocus={() => setFornecedorHelpOpen(true)}
+                    onBlur={() => setFornecedorHelpOpen(false)}
+                    style={{
+                      padding: "2px",
+                      minWidth: "auto",
+                      width: "22px",
+                      height: "22px",
+                      borderRadius: "999px",
+                      color: "var(--color-warning)",
+                    }}
+                  >
+                    <CircleHelp size={15} />
+                  </button>
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "calc(100% + 8px)",
+                      right: 0,
+                      width: "260px",
+                      padding: "10px 12px",
+                      borderRadius: "10px",
+                      background: "var(--color-surface-700)",
+                      border: "1px solid var(--color-border)",
+                      color: "var(--color-text-secondary)",
+                      boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+                      lineHeight: 1.4,
+                      zIndex: 10,
+                      opacity: fornecedorHelpOpen ? 1 : 0,
+                      visibility: fornecedorHelpOpen ? "visible" : "hidden",
+                      pointerEvents: fornecedorHelpOpen ? "auto" : "none",
+                      transition: "opacity 0.15s ease",
+                    }}
+                  >
+                    Mostra quanto do budget do mês está concentrado em cada
+                    fornecedor. Se algum passar de 40%, o painel sinaliza risco
+                    de dependência.
+                  </div>
+                </div>
+              </div>
+              <p
+                style={{
+                  fontSize: "0.8125rem",
+                  color: "var(--color-text-muted)",
+                  marginTop: "4px",
+                }}
+              >
+                Share do budget mensal por empresa de manutenção.
+              </p>
+            </div>
           </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie data={fornecedores} dataKey="valor" nameKey="empresa" cx="50%" cy="50%" outerRadius={80} innerRadius={50}>
-                {fornecedores.map((_, i) => <Cell key={i} fill={CORES[i % CORES.length]} />)}
-              </Pie>
-              <Tooltip formatter={(v) => fmt(v)} />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
+          <div
+            className="flex items-center justify-between gap-3 flex-wrap mb-4"
+            style={{
+              padding: "10px 12px",
+              borderRadius: "10px",
+              background:
+                fornecedoresCriticos.length > 0
+                  ? "rgba(239,68,68,0.08)"
+                  : "rgba(16,185,129,0.08)",
+              border: `1px solid ${
+                fornecedoresCriticos.length > 0
+                  ? "rgba(239,68,68,0.22)"
+                  : "rgba(16,185,129,0.22)"
+              }`,
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <AlertTriangle
+                size={16}
+                style={{
+                  color:
+                    fornecedoresCriticos.length > 0
+                      ? "var(--color-danger)"
+                      : "var(--color-success)",
+                }}
+              />
+              <span
+                style={{
+                  fontSize: "0.8125rem",
+                  color: "var(--color-text-secondary)",
+                }}
+              >
+                {fornecedoresCriticos.length > 0
+                  ? `Alerta: ${fornecedoresCriticos.length} fornecedor(es) acima de 40% do budget.`
+                  : "Distribuição sem concentração crítica acima de 40%."}
+              </span>
+            </div>
+            {principalFornecedor && (
+              <span
+                className={
+                  fornecedoresCriticos.length > 0
+                    ? "badge badge-danger"
+                    : "badge badge-success"
+                }
+                style={{ fontSize: "0.75rem" }}
+              >
+                Top 1: {principalFornecedor.empresa} •{" "}
+                {maiorShareFornecedor.toFixed(1)}%
+              </span>
+            )}
+          </div>
+          <div className="grid gap-4 items-start lg:grid-cols-2">
+            <div
+              style={{
+                minWidth: 0,
+                height: "clamp(260px, 48vw, 420px)",
+              }}
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={fornecedores}
+                    dataKey="valor"
+                    nameKey="empresa"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius="72%"
+                    innerRadius="44%"
+                  >
+                    {fornecedores.map((_, i) => (
+                      <Cell key={i} fill={CORES[i % CORES.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(v) => fmt(v)} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div
+              className="flex flex-col gap-2"
+              style={{
+                maxHeight: "clamp(220px, 42vw, 420px)",
+                overflowY: "auto",
+                paddingRight: "4px",
+              }}
+            >
+              {fornecedores.map((item, i) => {
+                const isCritico = Number(item.share || 0) > 40;
+                return (
+                <div
+                  key={`${item.empresa}-${i}`}
+                  className="flex items-center justify-between gap-3"
+                  style={{
+                    padding: "10px 12px",
+                    borderRadius: "10px",
+                    background: isCritico
+                      ? "rgba(239,68,68,0.08)"
+                      : "var(--color-surface-700)",
+                    border: isCritico
+                      ? "1px solid rgba(239,68,68,0.22)"
+                      : "1px solid var(--color-border)",
+                  }}
+                >
+                  <div
+                    className="flex items-center gap-2"
+                    style={{ minWidth: 0 }}
+                  >
+                    <span
+                      style={{
+                        width: "10px",
+                        height: "10px",
+                        borderRadius: "999px",
+                        background: CORES[i % CORES.length],
+                        flexShrink: 0,
+                      }}
+                    />
+                    <span
+                      style={{
+                        fontSize: "0.8125rem",
+                        color: "var(--color-text-secondary)",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                      title={item.empresa}
+                    >
+                      {item.empresa}
+                    </span>
+                  </div>
+                  <strong
+                    style={{
+                      fontSize: "0.8rem",
+                      color: isCritico
+                        ? "var(--color-danger)"
+                        : "var(--color-text-primary)",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {Number(item.share || 0).toFixed(1)}%
+                  </strong>
+                </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Pareto */}
       <div className="card p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Tag size={20} style={{ color: 'var(--color-brand-600)' }} />
-          <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>Pareto de Segmentos</h3>
+        <div className="flex items-center justify-between gap-4 mb-4">
+          <div className="flex items-center gap-2">
+            <Tag size={20} style={{ color: "var(--color-brand-600)" }} />
+            <div className="flex items-center gap-2">
+              <h3
+                style={{
+                  fontSize: "1.125rem",
+                  fontWeight: 700,
+                  color: "var(--color-text-primary)",
+                }}
+              >
+                {paretoTitle}
+              </h3>
+              <div
+                style={{
+                  position: "relative",
+                  display: "inline-flex",
+                  alignItems: "center",
+                }}
+              >
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-sm"
+                  aria-label="Como ler o gráfico de Pareto"
+                  title="Como ler o gráfico de Pareto"
+                  onMouseEnter={() => setParetoHelpOpen(true)}
+                  onMouseLeave={() => setParetoHelpOpen(false)}
+                  onFocus={() => setParetoHelpOpen(true)}
+                  onBlur={() => setParetoHelpOpen(false)}
+                  style={{
+                    padding: "2px",
+                    minWidth: "auto",
+                    width: "22px",
+                    height: "22px",
+                    borderRadius: "999px",
+                    color: "var(--color-warning)",
+                  }}
+                >
+                  <CircleHelp size={15} />
+                </button>
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "calc(100% + 8px)",
+                    left: 0,
+                    width: "260px",
+                    padding: "10px 12px",
+                    borderRadius: "10px",
+                    background: "var(--color-surface-700)",
+                    border: "1px solid var(--color-border)",
+                    color: "var(--color-text-secondary)",
+                    boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+                    lineHeight: 1.4,
+                    zIndex: 10,
+                    opacity: paretoHelpOpen ? 1 : 0,
+                    visibility: paretoHelpOpen ? "visible" : "hidden",
+                    pointerEvents: paretoHelpOpen ? "auto" : "none",
+                    transition: "opacity 0.15s ease",
+                  }}
+                >
+                  As barras mostram os maiores custos e a linha mostra a
+                  porcentagem acumulada. Use para ver quais poucos itens
+                  concentram a maior parte do gasto.
+                </div>
+              </div>
+            </div>
+          </div>
+          <select
+            value={paretoTipo}
+            onChange={(e) => setParetoTipo(e.target.value)}
+            className="select"
+            style={{ minWidth: "180px" }}
+          >
+            <option value="segmentos">Por Segmentos</option>
+            <option value="empresas">Por Empresas</option>
+          </select>
         </div>
         <ResponsiveContainer width="100%" height={300}>
-          <ComposedChart data={pareto} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
-            <XAxis dataKey="segmento" tick={{ fontSize: 12, fill: 'var(--color-text-muted)' }} />
-            <YAxis yAxisId="left" tickFormatter={(v) => `R$${(v/1000).toFixed(0)}k`} tick={{ fontSize: 12, fill: 'var(--color-text-muted)' }} />
-            <YAxis yAxisId="right" orientation="right" tickFormatter={(v) => `${v}%`} tick={{ fontSize: 12, fill: 'var(--color-text-muted)' }} />
-            <Tooltip 
-              formatter={(value, name) => [name === 'valor' ? fmt(value) : `${value.toFixed(1)}%`, name === 'valor' ? 'Custo' : '% Acumulada']}
+          <ComposedChart
+            data={paretoData}
+            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+          >
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+              stroke="var(--color-border)"
             />
-            <Bar yAxisId="left" dataKey="valor" fill="var(--color-brand-500)" radius={[4, 4, 0, 0]} name="Custo" />
-            <Line yAxisId="right" type="monotone" dataKey="acumulado" stroke="var(--color-danger)" strokeWidth={3} dot={{ r: 4 }} name="% Acumulada" />
+            <XAxis
+              dataKey={paretoLabel}
+              tick={{ fontSize: 12, fill: "var(--color-text-muted)" }}
+              angle={-45}
+              height={80}
+              interval={0}
+              textAnchor="end"
+            />
+            <YAxis
+              yAxisId="left"
+              tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
+              tick={{ fontSize: 12, fill: "var(--color-text-muted)" }}
+            />
+            <YAxis
+              yAxisId="right"
+              orientation="right"
+              tickFormatter={(v) => `${v}%`}
+              tick={{ fontSize: 12, fill: "var(--color-danger)" }}
+            />
+            <Tooltip
+              formatter={(value, name, item) => {
+                const isCusto = item?.dataKey === "valor" || name === "Custo";
+                return [
+                  isCusto ? fmt(value) : `${Number(value).toFixed(1)}%`,
+                  isCusto ? "Custo" : "% Acumulada",
+                ];
+              }}
+            />
+            <Bar
+              yAxisId="left"
+              dataKey="valor"
+              fill="var(--color-brand-500)"
+              radius={[4, 4, 0, 0]}
+              name="Custo"
+            />
+            <Line
+              yAxisId="right"
+              type="monotone"
+              dataKey="acumulado"
+              stroke="var(--color-danger)"
+              strokeWidth={3}
+              dot={{
+                r: 4,
+                fill: "var(--color-danger)",
+                stroke: "var(--color-danger)",
+              }}
+              name="% Acumulada"
+            />
           </ComposedChart>
         </ResponsiveContainer>
       </div>
@@ -626,7 +1197,9 @@ function CorporativoRegioes({ onSelect, mes, ano, regioesContexto }) {
     (a, b) => (b.gastosMes || 0) - (a.gastosMes || 0),
   );
   if (regioesContexto) {
-    regioesOrdenadas = regioesOrdenadas.filter(r => regioesContexto.includes(r.regiao.toUpperCase()));
+    regioesOrdenadas = regioesOrdenadas.filter((r) =>
+      regioesContexto.includes(r.regiao.toUpperCase()),
+    );
   }
 
   return (
@@ -696,6 +1269,9 @@ export default function ChamadosPage() {
   const [searchParams] = useSearchParams();
   const mesParam = searchParams.get("mes");
   const anoParam = searchParams.get("ano");
+  const regiaoParam = searchParams.get("regiao");
+  const unidadeParam = searchParams.get("unidade");
+  const viewParam = searchParams.get("view");
 
   const qc = useQueryClient();
   const [modal, setModal] = useState(null);
@@ -711,7 +1287,12 @@ export default function ChamadosPage() {
 
   const [ano, mes] = periodo.split("-");
 
-  const hasDrilldown = ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR"].includes(usuario?.role);
+  const hasDrilldown = [
+    "ADMINISTRADOR",
+    "DIRETOR",
+    "GERENTE",
+    "COORDENADOR",
+  ].includes(usuario?.role);
   const getInitialEtapa = (role) => {
     if (!hasDrilldown) return "chamados";
     if (["ADMINISTRADOR", "DIRETOR"].includes(role)) return "gerentes";
@@ -726,59 +1307,109 @@ export default function ChamadosPage() {
   const [regionalSelecionada, setRegionalSelecionada] = useState(null);
   const [lojaSelecionada, setLojaSelecionada] = useState(null);
 
-  const splitRegions = (r) => (r ? r.split(',').map(s => s.trim().toUpperCase()).filter(Boolean) : []);
+  useEffect(() => {
+    if (!hasDrilldown) return;
+
+    if (regiaoParam && unidadeParam) {
+      setRegionalSelecionada(regiaoParam);
+      setLojaSelecionada({ nome: unidadeParam, unidade: unidadeParam });
+      setEtapa("chamados");
+      return;
+    }
+
+    if (regiaoParam) {
+      setRegionalSelecionada(regiaoParam);
+      setLojaSelecionada(null);
+      setEtapa(viewParam === "regional-bi" ? "lojas" : "chamados");
+    }
+  }, [hasDrilldown, regiaoParam, unidadeParam, viewParam]);
+
+  const splitRegions = (r) =>
+    r
+      ? r
+          .split(",")
+          .map((s) => s.trim().toUpperCase())
+          .filter(Boolean)
+      : [];
   const hasOverlap = (r1, r2) => {
     const arr1 = splitRegions(r1);
     const arr2 = splitRegions(r2);
-    return arr1.some(r => arr2.includes(r));
+    return arr1.some((r) => arr2.includes(r));
   };
 
   const { data: gerentesData, isLoading: loadingGerentes } = useQuery({
     queryKey: ["gerentes-fin"],
-    queryFn: () => usuariosService.listar({ role: "GERENTE", limit: 100, ativo: true }).then(r => r.data?.data || []),
-    enabled: ["ADMINISTRADOR", "DIRETOR"].includes(usuario?.role) && etapa === "gerentes",
+    queryFn: () =>
+      usuariosService
+        .listar({ role: "GERENTE", limit: 100, ativo: true })
+        .then((r) => r.data?.data || []),
+    enabled:
+      ["ADMINISTRADOR", "DIRETOR"].includes(usuario?.role) &&
+      etapa === "gerentes",
   });
 
-  const { data: coordenadoresData, isLoading: loadingCoordenadores } = useQuery({
-    queryKey: ["coordenadores-fin"],
-    queryFn: () => usuariosService.listar({ role: "COORDENADOR", limit: 100, ativo: true }).then(r => r.data?.data || []),
-    enabled: ["ADMINISTRADOR", "DIRETOR", "GERENTE"].includes(usuario?.role),
-  });
+  const { data: coordenadoresData, isLoading: loadingCoordenadores } = useQuery(
+    {
+      queryKey: ["coordenadores-fin"],
+      queryFn: () =>
+        usuariosService
+          .listar({ role: "COORDENADOR", limit: 100, ativo: true })
+          .then((r) => r.data?.data || []),
+      enabled: ["ADMINISTRADOR", "DIRETOR", "GERENTE"].includes(usuario?.role),
+    },
+  );
 
   const coordenadoresFiltrados = (() => {
     if (!coordenadoresData) return [];
-    if (usuario?.role === "GERENTE") return coordenadoresData.filter(c => hasOverlap(c.regiao, usuario.regiao));
-    if (gerenteSelecionado) return coordenadoresData.filter(c => hasOverlap(c.regiao, gerenteSelecionado.regiao));
+    if (usuario?.role === "GERENTE")
+      return coordenadoresData.filter((c) =>
+        hasOverlap(c.regiao, usuario.regiao),
+      );
+    if (gerenteSelecionado)
+      return coordenadoresData.filter((c) =>
+        hasOverlap(c.regiao, gerenteSelecionado.regiao),
+      );
     return coordenadoresData;
   })();
 
   const regioesDoContexto = (() => {
-    if (coordenadorSelecionado) return splitRegions(coordenadorSelecionado.regiao);
+    if (coordenadorSelecionado)
+      return splitRegions(coordenadorSelecionado.regiao);
     if (usuario?.role === "COORDENADOR") return splitRegions(usuario.regiao);
-    return null; 
+    return null;
   })();
 
   // Busca lojas quando estiver na etapa "lojas"
   const { data: lojasRes, isLoading: loadingLojas } = useQuery({
     queryKey: ["lojas", regionalSelecionada],
-    queryFn: () => lojasService.listar({ limit: 1000 }).then(r => r.data), // Ideally we would pass regiao, filtering below
+    queryFn: () => lojasService.listar({ limit: 1000 }).then((r) => r.data), // Ideally we would pass regiao, filtering below
     enabled: etapa === "lojas" && !!regionalSelecionada,
   });
 
-  const lojasDaRegional = (lojasRes?.data || lojasRes || []).filter(l => l.regiao === regionalSelecionada);
+  const lojasDaRegional = (lojasRes?.data || lojasRes || []).filter(
+    (l) => l.regiao === regionalSelecionada,
+  );
 
   // Busca chamados da loja selecionada (ou geral se não houver drilldown)
   const { data, isLoading } = useQuery({
-    queryKey: ["chamados", filtros, ano, mes, regionalSelecionada, lojaSelecionada?.nome],
+    queryKey: [
+      "chamados",
+      filtros,
+      ano,
+      mes,
+      regionalSelecionada,
+      lojaSelecionada?.nome,
+    ],
     queryFn: () =>
       chamadosService
-        .listar({ 
-          ...filtros, 
-          ano, 
-          mes, 
-          regiao: hasDrilldown && lojaSelecionada ? undefined : regionalSelecionada, // Se tem loja, busca direto pela loja
-          unidade: lojaSelecionada?.nome, 
-          limit: 100 
+        .listar({
+          ...filtros,
+          ano,
+          mes,
+          regiao:
+            hasDrilldown && lojaSelecionada ? undefined : regionalSelecionada, // Se tem loja, busca direto pela loja
+          unidade: lojaSelecionada?.nome,
+          limit: 100,
         })
         .then((r) => r.data),
     enabled: etapa === "chamados",
@@ -807,12 +1438,21 @@ export default function ChamadosPage() {
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in pb-10">
-      
       {/* Cabeçalho de Controle e Seleção de Data */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>Controle Financeiro</h1>
-          <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Gerenciamento de gastos e chamados por loja</p>
+          <h1
+            style={{
+              fontSize: "1.5rem",
+              fontWeight: 700,
+              color: "var(--color-text-primary)",
+            }}
+          >
+            Controle Financeiro
+          </h1>
+          <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)" }}>
+            Gerenciamento de gastos e chamados por loja
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <input
@@ -830,41 +1470,107 @@ export default function ChamadosPage() {
       </div>
 
       {/* ─── PAINEL EXECUTIVO ─── */}
-      {hasDrilldown && ["gerentes", "coordenadores", "regionais"].includes(etapa) && (
-        <PainelExecutivo mes={mes} ano={ano} />
-      )}
+      {hasDrilldown &&
+        ["gerentes", "coordenadores", "regionais"].includes(etapa) && (
+          <PainelExecutivo mes={mes} ano={ano} />
+        )}
 
       {/* ─── Lista de Gerentes ─── */}
       {etapa === "gerentes" && hasDrilldown && (
         <div className="flex flex-col gap-6 animate-fade-in">
           <div>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>Gerentes Regionais</h2>
-            <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)' }}>Selecione um gerente para visualizar a equipe de coordenadores</p>
+            <h2
+              style={{
+                fontSize: "1.25rem",
+                fontWeight: 700,
+                color: "var(--color-text-primary)",
+              }}
+            >
+              Gerentes Regionais
+            </h2>
+            <p
+              style={{
+                fontSize: "0.8125rem",
+                color: "var(--color-text-muted)",
+              }}
+            >
+              Selecione um gerente para visualizar a equipe de coordenadores
+            </p>
           </div>
           {loadingGerentes ? (
-            <div className="flex justify-center p-12"><Loader2 className="animate-spin" style={{ color: 'var(--color-brand-500)' }} size={32} /></div>
+            <div className="flex justify-center p-12">
+              <Loader2
+                className="animate-spin"
+                style={{ color: "var(--color-brand-500)" }}
+                size={32}
+              />
+            </div>
           ) : gerentesData?.length > 0 ? (
-            <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
+            <div
+              className="grid gap-4"
+              style={{
+                gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              }}
+            >
               {gerentesData.map((gerente) => (
-                <div key={gerente.id} className="card hover-scale pointer" onClick={() => { setGerenteSelecionado(gerente); setEtapa("coordenadores"); }} style={{ padding: '20px' }}>
+                <div
+                  key={gerente.id}
+                  className="card hover-scale pointer"
+                  onClick={() => {
+                    setGerenteSelecionado(gerente);
+                    setEtapa("coordenadores");
+                  }}
+                  style={{ padding: "20px" }}
+                >
                   <div className="flex items-center gap-4">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-xl" style={{ background: 'var(--color-brand-100)', color: 'var(--color-brand-600)' }}>
+                    <div
+                      className="flex items-center justify-center w-12 h-12 rounded-xl"
+                      style={{
+                        background: "var(--color-brand-100)",
+                        color: "var(--color-brand-600)",
+                      }}
+                    >
                       <UserRound size={24} />
                     </div>
                     <div style={{ flex: 1 }}>
-                      <h3 style={{ fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '4px' }}>{gerente.nome}</h3>
-                      <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-                        <strong style={{ color: 'var(--color-brand-400)' }}>{splitRegions(gerente.regiao).length}</strong> regionais atreladas
+                      <h3
+                        style={{
+                          fontWeight: 700,
+                          color: "var(--color-text-primary)",
+                          marginBottom: "4px",
+                        }}
+                      >
+                        {gerente.nome}
+                      </h3>
+                      <p
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "var(--color-text-muted)",
+                        }}
+                      >
+                        <strong style={{ color: "var(--color-brand-400)" }}>
+                          {splitRegions(gerente.regiao).length}
+                        </strong>{" "}
+                        regionais atreladas
                       </p>
                     </div>
-                    <ChevronDown size={18} className="rotate-270" style={{ color: 'var(--color-text-muted)' }} />
+                    <ChevronDown
+                      size={18}
+                      className="rotate-270"
+                      style={{ color: "var(--color-text-muted)" }}
+                    />
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="card text-center p-12" style={{ border: '1px dashed var(--color-border)' }}>
-              <p style={{ color: 'var(--color-text-muted)' }}>Nenhum gerente encontrado.</p>
+            <div
+              className="card text-center p-12"
+              style={{ border: "1px dashed var(--color-border)" }}
+            >
+              <p style={{ color: "var(--color-text-muted)" }}>
+                Nenhum gerente encontrado.
+              </p>
             </div>
           )}
         </div>
@@ -875,39 +1581,113 @@ export default function ChamadosPage() {
         <div className="flex flex-col gap-6 animate-fade-in">
           <div className="flex items-center gap-3">
             {["ADMINISTRADOR", "DIRETOR"].includes(usuario?.role) && (
-              <button className="btn btn-ghost btn-sm" onClick={() => { setEtapa("gerentes"); setGerenteSelecionado(null); }} style={{ padding: '8px' }}>
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={() => {
+                  setEtapa("gerentes");
+                  setGerenteSelecionado(null);
+                }}
+                style={{ padding: "8px" }}
+              >
                 <ChevronUp className="rotate-270" size={18} />
               </button>
             )}
             <div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>Coordenadores</h2>
-              <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)' }}>{gerenteSelecionado ? `Equipe de ${gerenteSelecionado.nome}` : 'Selecione um coordenador'}</p>
+              <h2
+                style={{
+                  fontSize: "1.25rem",
+                  fontWeight: 700,
+                  color: "var(--color-text-primary)",
+                }}
+              >
+                Coordenadores
+              </h2>
+              <p
+                style={{
+                  fontSize: "0.8125rem",
+                  color: "var(--color-text-muted)",
+                }}
+              >
+                {gerenteSelecionado
+                  ? `Equipe de ${gerenteSelecionado.nome}`
+                  : "Selecione um coordenador"}
+              </p>
             </div>
           </div>
           {loadingCoordenadores ? (
-            <div className="flex justify-center p-12"><Loader2 className="animate-spin" style={{ color: 'var(--color-brand-500)' }} size={32} /></div>
+            <div className="flex justify-center p-12">
+              <Loader2
+                className="animate-spin"
+                style={{ color: "var(--color-brand-500)" }}
+                size={32}
+              />
+            </div>
           ) : coordenadoresFiltrados.length > 0 ? (
-            <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
+            <div
+              className="grid gap-4"
+              style={{
+                gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              }}
+            >
               {coordenadoresFiltrados.map((coordenador) => (
-                <div key={coordenador.id} className="card hover-scale pointer" onClick={() => { setCoordenadorSelecionado(coordenador); setEtapa("regionais"); }} style={{ padding: '20px' }}>
+                <div
+                  key={coordenador.id}
+                  className="card hover-scale pointer"
+                  onClick={() => {
+                    setCoordenadorSelecionado(coordenador);
+                    setEtapa("regionais");
+                  }}
+                  style={{ padding: "20px" }}
+                >
                   <div className="flex items-center gap-4">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-xl" style={{ background: 'var(--color-surface-600)', color: 'var(--color-text-primary)' }}>
+                    <div
+                      className="flex items-center justify-center w-12 h-12 rounded-xl"
+                      style={{
+                        background: "var(--color-surface-600)",
+                        color: "var(--color-text-primary)",
+                      }}
+                    >
                       <UserRound size={24} />
                     </div>
                     <div style={{ flex: 1 }}>
-                      <h3 style={{ fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '4px' }}>{coordenador.nome}</h3>
-                      <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-                        <strong style={{ color: 'var(--color-brand-400)' }}>{splitRegions(coordenador.regiao).length}</strong> regionais
+                      <h3
+                        style={{
+                          fontWeight: 700,
+                          color: "var(--color-text-primary)",
+                          marginBottom: "4px",
+                        }}
+                      >
+                        {coordenador.nome}
+                      </h3>
+                      <p
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "var(--color-text-muted)",
+                        }}
+                      >
+                        <strong style={{ color: "var(--color-brand-400)" }}>
+                          {splitRegions(coordenador.regiao).length}
+                        </strong>{" "}
+                        regionais
                       </p>
                     </div>
-                    <ChevronDown size={18} className="rotate-270" style={{ color: 'var(--color-text-muted)' }} />
+                    <ChevronDown
+                      size={18}
+                      className="rotate-270"
+                      style={{ color: "var(--color-text-muted)" }}
+                    />
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="card text-center p-12" style={{ border: '1px dashed var(--color-border)' }}>
-              <p style={{ color: 'var(--color-text-muted)' }}>Nenhum coordenador encontrado.</p>
+            <div
+              className="card text-center p-12"
+              style={{ border: "1px dashed var(--color-border)" }}
+            >
+              <p style={{ color: "var(--color-text-muted)" }}>
+                Nenhum coordenador encontrado.
+              </p>
             </div>
           )}
         </div>
@@ -917,13 +1697,31 @@ export default function ChamadosPage() {
       {etapa === "regionais" && hasDrilldown && (
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-3 mb-2">
-            {["ADMINISTRADOR", "DIRETOR", "GERENTE"].includes(usuario?.role) && (
-              <button className="btn btn-ghost btn-sm" onClick={() => { setEtapa("coordenadores"); setCoordenadorSelecionado(null); }} style={{ padding: '8px' }}>
+            {["ADMINISTRADOR", "DIRETOR", "GERENTE"].includes(
+              usuario?.role,
+            ) && (
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={() => {
+                  setEtapa("coordenadores");
+                  setCoordenadorSelecionado(null);
+                }}
+                style={{ padding: "8px" }}
+              >
                 <ChevronUp className="rotate-270" size={18} />
               </button>
             )}
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>
-              Regionais {coordenadorSelecionado ? `de ${coordenadorSelecionado.nome}` : ''}
+            <h2
+              style={{
+                fontSize: "1.25rem",
+                fontWeight: 700,
+                color: "var(--color-text-primary)",
+              }}
+            >
+              Regionais{" "}
+              {coordenadorSelecionado
+                ? `de ${coordenadorSelecionado.nome}`
+                : ""}
             </h2>
           </div>
           <CorporativoRegioes
@@ -952,44 +1750,94 @@ export default function ChamadosPage() {
           />
 
           <div>
-            <h3 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "16px", color: "var(--color-text-primary)" }}>
+            <h3
+              style={{
+                fontSize: "1.25rem",
+                fontWeight: 700,
+                marginBottom: "16px",
+                color: "var(--color-text-primary)",
+              }}
+            >
               Lojas da Regional {regionalSelecionada}
             </h3>
-            
+
             {loadingLojas ? (
               <div className="flex justify-center p-12">
-                <Loader2 size={32} className="animate-spin" style={{ color: "var(--color-brand-500)" }} />
+                <Loader2
+                  size={32}
+                  className="animate-spin"
+                  style={{ color: "var(--color-brand-500)" }}
+                />
               </div>
             ) : lojasDaRegional.length === 0 ? (
-              <div className="card text-center p-12" style={{ border: '1px dashed var(--color-border)' }}>
-                <p style={{ color: 'var(--color-text-muted)' }}>Nenhuma loja encontrada para esta região.</p>
+              <div
+                className="card text-center p-12"
+                style={{ border: "1px dashed var(--color-border)" }}
+              >
+                <p style={{ color: "var(--color-text-muted)" }}>
+                  Nenhuma loja encontrada para esta região.
+                </p>
               </div>
             ) : (
-              <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
-                {lojasDaRegional.sort((a,b)=>a.nome.localeCompare(b.nome)).map((loja) => (
-                  <div 
-                    key={loja.unidade || loja.id} 
-                    className="card hover-scale pointer" 
-                    onClick={() => {
-                      setLojaSelecionada(loja);
-                      setEtapa("chamados");
-                    }} 
-                    style={{ padding: '20px' }}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center justify-center w-12 h-12 rounded-xl" style={{ background: 'var(--color-brand-100)', color: 'var(--color-brand-600)' }}>
-                        <Store size={24} />
+              <div
+                className="grid gap-4"
+                style={{
+                  gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+                }}
+              >
+                {lojasDaRegional
+                  .sort((a, b) => a.nome.localeCompare(b.nome))
+                  .map((loja) => (
+                    <div
+                      key={loja.unidade || loja.id}
+                      className="card hover-scale pointer"
+                      onClick={() => {
+                        setLojaSelecionada(loja);
+                        setEtapa("chamados");
+                      }}
+                      style={{ padding: "20px" }}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div
+                          className="flex items-center justify-center w-12 h-12 rounded-xl"
+                          style={{
+                            background: "var(--color-brand-100)",
+                            color: "var(--color-brand-600)",
+                          }}
+                        >
+                          <Store size={24} />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <h3
+                            style={{
+                              fontWeight: 700,
+                              color: "var(--color-text-primary)",
+                              marginBottom: "4px",
+                            }}
+                          >
+                            {loja.nome}
+                          </h3>
+                          <p
+                            style={{
+                              fontSize: "0.75rem",
+                              color: "var(--color-text-muted)",
+                            }}
+                          >
+                            Unidade:{" "}
+                            <strong
+                              style={{ color: "var(--color-text-secondary)" }}
+                            >
+                              {loja.numero || loja.unidade || "S/N"}
+                            </strong>
+                          </p>
+                        </div>
+                        <ChevronRight
+                          size={18}
+                          style={{ color: "var(--color-text-muted)" }}
+                        />
                       </div>
-                      <div style={{ flex: 1 }}>
-                        <h3 style={{ fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '4px' }}>{loja.nome}</h3>
-                        <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-                          Unidade: <strong style={{ color: 'var(--color-text-secondary)' }}>{loja.numero || loja.unidade || "S/N"}</strong>
-                        </p>
-                      </div>
-                      <ChevronRight size={18} style={{ color: 'var(--color-text-muted)' }} />
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             )}
           </div>
@@ -1001,12 +1849,41 @@ export default function ChamadosPage() {
         <div className="flex flex-col gap-6 animate-fade-in">
           {hasDrilldown && (
             <div className="flex items-center gap-3 mb-2">
-              <button className="btn btn-ghost btn-sm" onClick={() => setEtapa("lojas")}>
-                <ArrowLeft size={18} /> Voltar para Lojas
-              </button>
+              {lojaSelecionada ? (
+                <button
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => setEtapa("lojas")}
+                >
+                  <ArrowLeft size={18} /> Voltar para Lojas
+                </button>
+              ) : regionalSelecionada ? (
+                <button
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => setEtapa("regionais")}
+                >
+                  <ArrowLeft size={18} /> Voltar para Regionais
+                </button>
+              ) : null}
               {lojaSelecionada && (
-                <h2 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+                <h2
+                  style={{
+                    fontSize: "1.25rem",
+                    fontWeight: 700,
+                    color: "var(--color-text-primary)",
+                  }}
+                >
                   Chamados: {lojaSelecionada.nome}
+                </h2>
+              )}
+              {!lojaSelecionada && regionalSelecionada && (
+                <h2
+                  style={{
+                    fontSize: "1.25rem",
+                    fontWeight: 700,
+                    color: "var(--color-text-primary)",
+                  }}
+                >
+                  Chamados da Regional: {regionalSelecionada}
                 </h2>
               )}
             </div>
@@ -1064,12 +1941,18 @@ export default function ChamadosPage() {
                 ))}
               </select>
             </div>
-            
+
             <div className="flex items-center gap-3">
-              <span className="badge badge-brand" style={{ fontSize: "0.8125rem" }}>
+              <span
+                className="badge badge-brand"
+                style={{ fontSize: "0.8125rem" }}
+              >
                 Total: {fmt(totalFiltrado)}
               </span>
-              <button className="btn btn-primary" onClick={() => setModal("novo")}>
+              <button
+                className="btn btn-primary"
+                onClick={() => setModal("novo")}
+              >
                 <Plus size={16} /> Novo Chamado
               </button>
             </div>
@@ -1120,7 +2003,9 @@ export default function ChamadosPage() {
                 ) : (
                   chamados.map((c) => (
                     <tr key={c.id}>
-                      <td style={{ whiteSpace: "nowrap", fontSize: "0.8125rem" }}>
+                      <td
+                        style={{ whiteSpace: "nowrap", fontSize: "0.8125rem" }}
+                      >
                         {c.dataAbertura
                           ? format(new Date(c.dataAbertura), "dd/MM/yy")
                           : "—"}
@@ -1221,7 +2106,8 @@ export default function ChamadosPage() {
                           <button
                             className="btn btn-ghost btn-sm"
                             onClick={() => {
-                              if (confirm("Remover chamado?")) remover.mutate(c.id);
+                              if (confirm("Remover chamado?"))
+                                remover.mutate(c.id);
                             }}
                             style={{
                               padding: "4px 6px",
