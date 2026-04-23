@@ -13,15 +13,10 @@ const listar = async (req, res, next) => {
     const regioesSolicitadas = splitRegions(regiao);
     if (role)             where.role  = role;
     if (ativo !== undefined) where.ativo = ativo === 'true';
-    if (regioesSolicitadas.length === 1) {
-      and.push({ OR: [{ regiao: regioesSolicitadas[0] }, { loja: { is: { regiao: regioesSolicitadas[0] } } }] });
-    } else if (regioesSolicitadas.length > 1) {
-      and.push({
-        OR: [
-          { regiao: { in: regioesSolicitadas } },
-          { loja: { is: { regiao: { in: regioesSolicitadas } } } },
-        ],
-      });
+    if (regioesSolicitadas.length > 0) {
+      const regReqContains = regioesSolicitadas.map(r => ({ regiao: { contains: r } }));
+      const lojaReqContains = regioesSolicitadas.map(r => ({ loja: { is: { regiao: r } } }));
+      and.push({ OR: [ ...regReqContains, ...lojaReqContains ] });
     }
 
     if (['GERENTE', 'COORDENADOR'].includes(req.user.role)) {
@@ -31,11 +26,12 @@ const listar = async (req, res, next) => {
       } else if (regioesSolicitadas.length && regioesSolicitadas.some((item) => !regioes.includes(item))) {
         and.push({ regiao: '__SEM_REGIAO__' });
       } else {
-        const regionFilter = regioes.length === 1 ? regioes[0] : { in: regioes };
+        const regContains = regioes.map(r => ({ regiao: { contains: r } }));
+        const lojaContains = regioes.map(r => ({ loja: { is: { regiao: r } } }));
         and.push({
           OR: [
-            { regiao: regionFilter },
-            { loja: { is: { regiao: regionFilter } } },
+            ...regContains,
+            ...lojaContains,
           ],
         });
       }

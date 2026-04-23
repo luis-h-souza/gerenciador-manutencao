@@ -397,10 +397,18 @@ const consolidadoRegional = async (req, res, next) => {
 
     const baseFilter = getAccessFilter(req.user);
     if (regiao && ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR'].includes(req.user.role)) {
-      if (!canAccessRegion(req.user, regiao)) {
-        return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
+      const { splitRegions, expandRegionScopes } = require('../utils/access.utils');
+      const requestedRegions = expandRegionScopes(splitRegions(regiao));
+      
+      if (req.user.role === 'GERENTE') {
+        const userRegions = require('../utils/access.utils').getUserRegions(req.user);
+        const hasAccess = requestedRegions.every(r => userRegions.includes(r));
+        if (!hasAccess) {
+          return res.status(403).json({ error: 'Acesso negado: uma ou mais regiões fora da sua abrangência' });
+        }
       }
-      baseFilter.regiao = regiao;
+      
+      baseFilter.regiao = requestedRegions.length > 1 ? { in: requestedRegions } : requestedRegions[0] || regiao;
     }
 
     const whereEquip = {
@@ -428,7 +436,9 @@ const consolidadoRegional = async (req, res, next) => {
     lojas.forEach(loja => {
       lojasPorUnidade.set(loja.nome, {
         unidade: loja.nome,
+        numero: loja.numero,
         nome: loja.nome,
+        regiao: loja.regiao,
         consolidado: {},
       });
     });

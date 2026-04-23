@@ -1876,3 +1876,165 @@
 {"level":"error","message":"Redis error:","timestamp":"2026-04-22T22:20:54.964Z"}
 {"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-22T22:20:54.965Z"}
 {"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T22:20:54.965Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-22T22:34:02.773Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-22T22:34:03.661Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T22:34:03.671Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T22:34:03.672Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-22T22:34:03.673Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T22:34:03.883Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T22:34:03.884Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T22:34:04.287Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T22:34:04.287Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T22:34:04.898Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-22T22:34:04.898Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T22:34:04.898Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-22T22:52:39.465Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-22T22:52:49.033Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T22:52:49.046Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T22:52:49.046Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-22T22:52:49.047Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T22:52:49.256Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T22:52:49.256Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T22:52:49.665Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T22:52:49.665Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T22:52:50.274Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-22T22:52:50.275Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T22:52:50.275Z"}
+{"level":"warn","message":"Acesso negado: adeilto.coordenador@manutencao.com (COORDENADOR) tentou acessar recurso restrito a [ADMINISTRADOR, DIRETOR]","timestamp":"2026-04-22T22:53:46.598Z"}
+{"level":"warn","message":"Acesso negado: adeilto.coordenador@manutencao.com (COORDENADOR) tentou acessar recurso restrito a [ADMINISTRADOR, DIRETOR]","timestamp":"2026-04-22T22:53:47.665Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-22T23:05:25.535Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-22T23:05:25.962Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:05:25.975Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:05:25.976Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-22T23:05:25.977Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:05:26.188Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:05:26.189Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:05:26.598Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:05:26.599Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:05:27.202Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-22T23:05:27.202Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:05:27.203Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-22T23:07:09.097Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-22T23:07:09.569Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:07:09.582Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:07:09.583Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-22T23:07:09.584Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:07:09.795Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:07:09.796Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:07:10.199Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:07:10.200Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:07:10.804Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-22T23:07:10.805Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:07:10.805Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-22T23:08:46.019Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-22T23:08:46.484Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:08:46.500Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:08:46.501Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-22T23:08:46.502Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:08:46.712Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:08:46.712Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:08:47.122Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:08:47.122Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:08:47.737Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-22T23:08:47.737Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:08:47.737Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-22T23:13:44.886Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-22T23:13:45.589Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:13:45.608Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:13:45.610Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-22T23:13:45.612Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:13:45.818Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:13:45.819Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:13:46.222Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:13:46.222Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:13:46.825Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-22T23:13:46.825Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:13:46.826Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-22T23:15:14.905Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-22T23:15:15.265Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:15:15.278Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:15:15.279Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-22T23:15:15.280Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:15:15.483Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:15:15.483Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:15:15.886Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:15:15.887Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:15:16.493Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-22T23:15:16.493Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:15:16.494Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-22T23:21:10.294Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-22T23:21:10.838Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:21:10.852Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:21:10.853Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-22T23:21:10.854Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:21:11.065Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:21:11.066Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:21:11.472Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:21:11.473Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:21:12.080Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-22T23:21:12.080Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:21:12.081Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-22T23:46:28.510Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-22T23:46:28.895Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:46:28.907Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:46:28.908Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-22T23:46:28.909Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:46:29.122Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:46:29.123Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:46:29.533Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:46:29.534Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:46:30.140Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-22T23:46:30.140Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:46:30.141Z"}
+{"level":"warn","message":"Acesso negado: adeilto.coordenador@manutencao.com (COORDENADOR) tentou acessar recurso restrito a [ADMINISTRADOR, DIRETOR, GERENTE]","timestamp":"2026-04-22T23:48:53.079Z"}
+{"level":"warn","message":"Acesso negado: adeilto.coordenador@manutencao.com (COORDENADOR) tentou acessar recurso restrito a [ADMINISTRADOR, DIRETOR, GERENTE]","timestamp":"2026-04-22T23:48:54.130Z"}
+{"level":"warn","message":"Acesso negado: adeilto.coordenador@manutencao.com (COORDENADOR) tentou acessar recurso restrito a [ADMINISTRADOR, DIRETOR, GERENTE]","timestamp":"2026-04-22T23:49:27.581Z"}
+{"level":"warn","message":"Acesso negado: adeilto.coordenador@manutencao.com (COORDENADOR) tentou acessar recurso restrito a [ADMINISTRADOR, DIRETOR, GERENTE]","timestamp":"2026-04-22T23:49:28.663Z"}
+{"level":"warn","message":"Acesso negado: adeilto.coordenador@manutencao.com (COORDENADOR) tentou acessar recurso restrito a [ADMINISTRADOR, DIRETOR, GERENTE]","timestamp":"2026-04-22T23:50:29.844Z"}
+{"level":"warn","message":"Acesso negado: adeilto.coordenador@manutencao.com (COORDENADOR) tentou acessar recurso restrito a [ADMINISTRADOR, DIRETOR, GERENTE]","timestamp":"2026-04-22T23:50:30.890Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-22T23:50:38.778Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-22T23:50:39.203Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:50:39.215Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:50:39.216Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-22T23:50:39.216Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:50:39.423Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:50:39.424Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:50:39.831Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:50:39.833Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-22T23:50:40.448Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-22T23:50:40.449Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-22T23:50:40.449Z"}
+{"level":"info","message":"Logout: adeilto.coordenador@manutencao.com","timestamp":"2026-04-22T23:59:04.935Z"}
+{"level":"info","message":"Login: rodnei@manutencao.com (GERENTE) de ::1","timestamp":"2026-04-22T23:59:13.062Z"}
+{"level":"warn","message":"Acesso negado: rodnei@manutencao.com (GERENTE) tentou acessar recurso restrito a [ADMINISTRADOR, DIRETOR]","timestamp":"2026-04-23T00:06:13.878Z"}
+{"level":"warn","message":"Acesso negado: rodnei@manutencao.com (GERENTE) tentou acessar recurso restrito a [ADMINISTRADOR, DIRETOR]","timestamp":"2026-04-23T00:06:14.922Z"}
+{"level":"warn","message":"Acesso negado: rodnei@manutencao.com (GERENTE) tentou acessar recurso restrito a [ADMINISTRADOR, DIRETOR]","timestamp":"2026-04-23T00:06:19.648Z"}
+{"level":"warn","message":"Acesso negado: rodnei@manutencao.com (GERENTE) tentou acessar recurso restrito a [ADMINISTRADOR, DIRETOR]","timestamp":"2026-04-23T00:06:20.712Z"}
+{"level":"warn","message":"Acesso negado: rodnei@manutencao.com (GERENTE) tentou acessar recurso restrito a [ADMINISTRADOR, DIRETOR]","timestamp":"2026-04-23T00:06:28.710Z"}
+{"level":"warn","message":"Acesso negado: rodnei@manutencao.com (GERENTE) tentou acessar recurso restrito a [ADMINISTRADOR, DIRETOR]","timestamp":"2026-04-23T00:06:29.757Z"}
+{"level":"warn","message":"Acesso negado: rodnei@manutencao.com (GERENTE) tentou acessar recurso restrito a [ADMINISTRADOR, DIRETOR]","timestamp":"2026-04-23T00:06:47.086Z"}
+{"level":"warn","message":"Acesso negado: rodnei@manutencao.com (GERENTE) tentou acessar recurso restrito a [ADMINISTRADOR, DIRETOR]","timestamp":"2026-04-23T00:06:48.138Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-23T00:08:00.171Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-23T00:08:00.800Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-23T00:08:00.813Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-23T00:08:00.814Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-23T00:08:00.815Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-23T00:08:01.020Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-23T00:08:01.021Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-23T00:08:01.429Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-23T00:08:01.430Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-23T00:08:02.035Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-23T00:08:02.035Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-23T00:08:02.036Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-23T00:09:42.363Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-23T00:09:42.996Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-23T00:09:43.009Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-23T00:09:43.010Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-23T00:09:43.010Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-23T00:09:43.218Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-23T00:09:43.219Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-23T00:09:43.630Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-23T00:09:43.631Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-23T00:09:44.238Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-23T00:09:44.239Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-23T00:09:44.239Z"}

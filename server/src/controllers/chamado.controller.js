@@ -8,6 +8,26 @@ const listar = async (req, res, next) => {
     
     const filter = getAccessFilter(req.user);
     const where = { ...filter };
+
+    const regiao = req.query.regiao;
+    if (regiao && ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR'].includes(req.user.role)) {
+      const { splitRegions, expandRegionScopes } = require('../utils/access.utils');
+      const requestedRegions = expandRegionScopes(splitRegions(regiao));
+      
+      if (['GERENTE', 'COORDENADOR'].includes(req.user.role)) {
+        const userRegions = require('../utils/access.utils').getUserRegions(req.user);
+        const hasAccess = requestedRegions.every(r => userRegions.includes(r));
+        if (!hasAccess) {
+          return res.status(403).json({ error: 'Acesso negado: uma ou mais regiões fora da sua abrangência' });
+        }
+      }
+      
+      where.regiao = requestedRegions.length > 1 ? { in: requestedRegions } : requestedRegions[0] || regiao;
+    }
+
+    if (req.query.unidade) {
+      where.unidade = req.query.unidade;
+    }
     
     if (status) where.status = status;
     if (segmento) where.segmento = segmento;

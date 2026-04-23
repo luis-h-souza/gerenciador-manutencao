@@ -729,7 +729,7 @@ function CorporativoDashboard({ filtro, setFiltro }) {
               Histórico de Gastos Global (6 meses)
             </h3>
             {/* No celular, o container respeitará o 100% do card */}
-            <ResponsiveContainer width="100%" height={220}>
+            <ResponsiveContainer width="100%" height={280}>
               <BarChart
                 data={historicoMacro}
                 barSize={32}
@@ -775,7 +775,7 @@ function CorporativoDashboard({ filtro, setFiltro }) {
             >
               Distribuição de Gastos por Segmento (Rede)
             </h3>
-            <ResponsiveContainer width="100%" height={220}>
+            <ResponsiveContainer width="100%" height={280}>
               <PieChart>
                 <Pie
                   data={porSegmentoMacro}

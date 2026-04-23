@@ -9,7 +9,8 @@ import { useAuth } from '../../contexts/AuthContext';
 const NAV = [
   { to: '/dashboard',    icon: LayoutDashboard, label: 'Dashboard',    roles: ['ADMINISTRADOR','DIRETOR','GERENTE','COORDENADOR','GESTOR','TECNICO'] },
   { to: '/tarefas',      icon: ClipboardList,   label: 'Tarefas',      roles: ['ADMINISTRADOR','DIRETOR','GERENTE','COORDENADOR','GESTOR','TECNICO'] },
-  { to: '/checklists',   icon: ClipboardCheck,  label: 'Checklists',   roles: ['ADMINISTRADOR','DIRETOR','GERENTE','COORDENADOR','GESTOR'] },
+  { to: '/checklists',   icon: ClipboardCheck,  label: 'Checklists',   roles: ['GESTOR'] },
+  { to: '/checklists-consolidado', icon: ClipboardCheck, label: 'Checklists', roles: ['ADMINISTRADOR','DIRETOR','GERENTE','COORDENADOR'] },
   { to: '/chamados',     icon: DollarSign,      label: 'Controle Financeiro', roles: ['ADMINISTRADOR','DIRETOR','GERENTE','COORDENADOR','GESTOR'] },
   { to: '/estoque',      icon: Package,         label: 'Estoque',      roles: ['ADMINISTRADOR','DIRETOR','GERENTE','COORDENADOR','GESTOR'] },
   { to: '/fornecedores', icon: Building2,       label: 'Fornecedores', roles: ['ADMINISTRADOR','DIRETOR','GERENTE','COORDENADOR','GESTOR'] },
