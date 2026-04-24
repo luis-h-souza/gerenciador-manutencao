@@ -101,9 +101,15 @@ const CORES = [
   "#f59e0b",
   "#ef4444",
   "#8b5cf6",
-  "#06b6d4",
-  "#f97316",
-  "#14b8a6",
+  "#e2670f",
+  "#4d7412",
+  "#ec4899",
+  "#fcd34d",
+  "#db2777",
+  "#c9ff71",
+  "#f87171",
+  "#eab308",
+  "#a78bfa",
 ];
 
 const TooltipCustom = ({ active, payload, label }) => {
@@ -496,7 +502,7 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
         </div>
       </div>
 
-      <div className="grid gap-6" style={{ gridTemplateColumns: "1fr 1fr" }}>
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
         <div className="card">
           <h3
             className="flex items-center gap-2 mb-4"
@@ -528,30 +534,101 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
 
         <div className="card">
           <h3
-            className="flex items-center gap-2 mb-4"
-            style={{ fontSize: "0.875rem", fontWeight: 600 }}
+            style={{
+              fontSize: "0.875rem",
+              fontWeight: 600,
+              color: "var(--color-text-primary)",
+              marginBottom: "16px",
+            }}
           >
-            <Building2 size={16} /> Top 10 Empresas
+            <span className="flex items-center gap-2">
+              <Building2 size={16} /> Top 10 Empresas
+            </span>
           </h3>
-          <div style={{ height: "300px" }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={detalhe.empresas}
-                  dataKey="valor"
-                  nameKey="empresa"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  innerRadius={60}
+          <div className="grid gap-4 items-start grid-cols-1 lg:grid-cols-2">
+            <div
+              style={{
+                minWidth: 0,
+                height: "clamp(240px, 42vw, 320px)",
+              }}
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={detalhe.empresas}
+                    dataKey="valor"
+                    nameKey="empresa"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius="72%"
+                    innerRadius="44%"
+                  >
+                    {detalhe.empresas?.map((_, i) => (
+                      <Cell key={i} fill={CORES[i % CORES.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(v) => fmt(v)} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div
+              className="flex flex-col gap-2"
+              style={{
+                maxHeight: "clamp(220px, 36vw, 320px)",
+                overflowY: "auto",
+                paddingRight: "4px",
+              }}
+            >
+              {detalhe.empresas?.map((item, i) => (
+                <div
+                  key={`${item.empresa}-${i}`}
+                  className="flex items-center justify-between gap-3"
+                  style={{
+                    padding: "10px 12px",
+                    borderRadius: "10px",
+                    background: "var(--color-surface-700)",
+                    border: "1px solid var(--color-border)",
+                  }}
                 >
-                  {detalhe.empresas?.map((_, i) => (
-                    <Cell key={i} fill={CORES[i % CORES.length]} />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(v) => fmt(v)} />
-              </PieChart>
-            </ResponsiveContainer>
+                  <div
+                    className="flex items-center gap-2"
+                    style={{ minWidth: 0 }}
+                  >
+                    <span
+                      style={{
+                        width: "10px",
+                        height: "10px",
+                        borderRadius: "999px",
+                        background: CORES[i % CORES.length],
+                        flexShrink: 0,
+                      }}
+                    />
+                    <span
+                      style={{
+                        fontSize: "0.8125rem",
+                        color: "var(--color-text-secondary)",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                      title={item.empresa}
+                    >
+                      {item.empresa}
+                    </span>
+                  </div>
+                  <strong
+                    style={{
+                      fontSize: "0.8rem",
+                      color: "var(--color-text-primary)",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {fmt(item.valor)}
+                  </strong>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -964,58 +1041,58 @@ function PainelExecutivo({ mes, ano }) {
               {fornecedores.map((item, i) => {
                 const isCritico = Number(item.share || 0) > 40;
                 return (
-                <div
-                  key={`${item.empresa}-${i}`}
-                  className="flex items-center justify-between gap-3"
-                  style={{
-                    padding: "10px 12px",
-                    borderRadius: "10px",
-                    background: isCritico
-                      ? "rgba(239,68,68,0.08)"
-                      : "var(--color-surface-700)",
-                    border: isCritico
-                      ? "1px solid rgba(239,68,68,0.22)"
-                      : "1px solid var(--color-border)",
-                  }}
-                >
                   <div
-                    className="flex items-center gap-2"
-                    style={{ minWidth: 0 }}
-                  >
-                    <span
-                      style={{
-                        width: "10px",
-                        height: "10px",
-                        borderRadius: "999px",
-                        background: CORES[i % CORES.length],
-                        flexShrink: 0,
-                      }}
-                    />
-                    <span
-                      style={{
-                        fontSize: "0.8125rem",
-                        color: "var(--color-text-secondary)",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                      title={item.empresa}
-                    >
-                      {item.empresa}
-                    </span>
-                  </div>
-                  <strong
+                    key={`${item.empresa}-${i}`}
+                    className="flex items-center justify-between gap-3"
                     style={{
-                      fontSize: "0.8rem",
-                      color: isCritico
-                        ? "var(--color-danger)"
-                        : "var(--color-text-primary)",
-                      flexShrink: 0,
+                      padding: "10px 12px",
+                      borderRadius: "10px",
+                      background: isCritico
+                        ? "rgba(239,68,68,0.08)"
+                        : "var(--color-surface-700)",
+                      border: isCritico
+                        ? "1px solid rgba(239,68,68,0.22)"
+                        : "1px solid var(--color-border)",
                     }}
                   >
-                    {Number(item.share || 0).toFixed(1)}%
-                  </strong>
-                </div>
+                    <div
+                      className="flex items-center gap-2"
+                      style={{ minWidth: 0 }}
+                    >
+                      <span
+                        style={{
+                          width: "10px",
+                          height: "10px",
+                          borderRadius: "999px",
+                          background: CORES[i % CORES.length],
+                          flexShrink: 0,
+                        }}
+                      />
+                      <span
+                        style={{
+                          fontSize: "0.8125rem",
+                          color: "var(--color-text-secondary)",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                        title={item.empresa}
+                      >
+                        {item.empresa}
+                      </span>
+                    </div>
+                    <strong
+                      style={{
+                        fontSize: "0.8rem",
+                        color: isCritico
+                          ? "var(--color-danger)"
+                          : "var(--color-text-primary)",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {Number(item.share || 0).toFixed(1)}%
+                    </strong>
+                  </div>
                 );
               })}
             </div>
@@ -1306,6 +1383,7 @@ export default function ChamadosPage() {
   const [coordenadorSelecionado, setCoordenadorSelecionado] = useState(null);
   const [regionalSelecionada, setRegionalSelecionada] = useState(null);
   const [lojaSelecionada, setLojaSelecionada] = useState(null);
+  const [visualizandoAnalise, setVisualizandoAnalise] = useState(false);
 
   useEffect(() => {
     if (!hasDrilldown) return;
@@ -1845,46 +1923,62 @@ export default function ChamadosPage() {
       )}
 
       {/* ─── Tabela de Chamados da Loja ─── */}
-      {etapa === "chamados" && (
+      {etapa === "chamados" && !visualizandoAnalise && (
         <div className="flex flex-col gap-6 animate-fade-in">
           {hasDrilldown && (
-            <div className="flex items-center gap-3 mb-2">
-              {lojaSelecionada ? (
-                <button
-                  className="btn btn-ghost btn-sm"
-                  onClick={() => setEtapa("lojas")}
-                >
-                  <ArrowLeft size={18} /> Voltar para Lojas
-                </button>
-              ) : regionalSelecionada ? (
-                <button
-                  className="btn btn-ghost btn-sm"
-                  onClick={() => setEtapa("regionais")}
-                >
-                  <ArrowLeft size={18} /> Voltar para Regionais
-                </button>
-              ) : null}
+            <div className="flex items-center justify-between gap-3 mb-2 flex-wrap">
+              <div className="flex items-center gap-3">
+                {lojaSelecionada ? (
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => setEtapa("lojas")}
+                  >
+                    <ArrowLeft size={18} /> Voltar para Lojas
+                  </button>
+                ) : regionalSelecionada ? (
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => setEtapa("regionais")}
+                  >
+                    <ArrowLeft size={18} /> Voltar para Regionais
+                  </button>
+                ) : null}
+                {lojaSelecionada && (
+                  <h2
+                    style={{
+                      fontSize: "1.25rem",
+                      fontWeight: 700,
+                      color: "var(--color-text-primary)",
+                    }}
+                  >
+                    Chamados: {lojaSelecionada.nome}
+                  </h2>
+                )}
+                {!lojaSelecionada && regionalSelecionada && (
+                  <h2
+                    style={{
+                      fontSize: "1.25rem",
+                      fontWeight: 700,
+                      color: "var(--color-text-primary)",
+                    }}
+                  >
+                    Chamados da Regional: {regionalSelecionada}
+                  </h2>
+                )}
+              </div>
+
               {lojaSelecionada && (
-                <h2
+                <button
+                  className="btn btn-ghost"
+                  onClick={() => setVisualizandoAnalise(true)}
                   style={{
-                    fontSize: "1.25rem",
-                    fontWeight: 700,
-                    color: "var(--color-text-primary)",
+                    gap: "6px",
+                    border: "1px solid var(--color-border)",
+                    background: "var(--color-surface-700)",
                   }}
                 >
-                  Chamados: {lojaSelecionada.nome}
-                </h2>
-              )}
-              {!lojaSelecionada && regionalSelecionada && (
-                <h2
-                  style={{
-                    fontSize: "1.25rem",
-                    fontWeight: 700,
-                    color: "var(--color-text-primary)",
-                  }}
-                >
-                  Chamados da Regional: {regionalSelecionada}
-                </h2>
+                  <BarChart3 size={16} /> Análise Gráfica
+                </button>
               )}
             </div>
           )}
@@ -1950,7 +2044,12 @@ export default function ChamadosPage() {
                 Total: {fmt(totalFiltrado)}
               </span>
               <button
-                className="btn btn-primary"
+                className="btn btn-primary btn-ghost"
+                style={{
+                    gap: "6px",
+                    border: "1px solid var(--color-border)",
+                    background: "var(--color-surface-700)",
+                  }}
                 onClick={() => setModal("novo")}
               >
                 <Plus size={16} /> Novo Chamado
@@ -2127,6 +2226,298 @@ export default function ChamadosPage() {
         </div>
       )}
 
+      {/* ─── Análise Gráfica da Loja ─── */}
+      {etapa === "chamados" && visualizandoAnalise && lojaSelecionada && (
+        <div className="flex flex-col gap-6 animate-fade-in">
+          <div className="flex items-center gap-3">
+            <button
+              className="btn btn-ghost btn-sm"
+              onClick={() => setVisualizandoAnalise(false)}
+            >
+              <ArrowLeft size={18} /> Voltar para Planilha
+            </button>
+            <h2
+              style={{
+                fontSize: "1.25rem",
+                fontWeight: 700,
+                color: "var(--color-text-primary)",
+              }}
+            >
+              Análise Gráfica: {lojaSelecionada.nome}
+            </h2>
+          </div>
+
+          <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+            {/* Gastos por Segmento */}
+            <div className="card">
+              <h3
+                style={{
+                  fontSize: "0.875rem",
+                  fontWeight: 600,
+                  color: "var(--color-text-primary)",
+                  marginBottom: "16px",
+                }}
+              >
+                Gastos por Segmento
+              </h3>
+              <div className="grid gap-4 items-start grid-cols-1 lg:grid-cols-2">
+                <div
+                  style={{
+                    minWidth: 0,
+                    height: "clamp(240px, 42vw, 320px)",
+                  }}
+                >
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={chamadosPorSegmento || []}
+                        dataKey="valor"
+                        nameKey="segmento"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius="72%"
+                        innerRadius="44%"
+                      >
+                        {(chamadosPorSegmento || []).map((_, i) => (
+                          <Cell
+                            key={i}
+                            fill={
+                              [
+                                "#0ea5e9",
+                                "#10b981",
+                                "#f59e0b",
+                                "#ef4444",
+                                "#8b5cf6",
+                                "#e2670f",
+                                "#4d7412",
+                                "#ec4899",
+                                "#fcd34d",
+                                "#db2777",
+                                "#c9ff71",
+                                "#f87171",
+                                "#eab308",
+                                "#a78bfa",
+                              ][i % 11]
+                            }
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(v) => fmt(v)} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div
+                  className="flex flex-col gap-2"
+                  style={{
+                    maxHeight: "clamp(220px, 36vw, 320px)",
+                    overflowY: "auto",
+                    paddingRight: "4px",
+                  }}
+                >
+                  {(chamadosPorSegmento || []).map((item, i) => (
+                    <div
+                      key={`${item.segmento}-${i}`}
+                      className="flex items-center justify-between gap-3"
+                      style={{
+                        padding: "10px 12px",
+                        borderRadius: "10px",
+                        background: "var(--color-surface-700)",
+                        border: "1px solid var(--color-border)",
+                      }}
+                    >
+                      <div
+                        className="flex items-center gap-2"
+                        style={{ minWidth: 0 }}
+                      >
+                        <span
+                          style={{
+                            width: "10px",
+                            height: "10px",
+                            borderRadius: "999px",
+                            background: [
+                              "#0ea5e9",
+                              "#10b981",
+                              "#f59e0b",
+                              "#ef4444",
+                              "#8b5cf6",
+                              "#e2670f",
+                              "#4d7412",
+                              "#ec4899",
+                              "#fcd34d",
+                              "#db2777",
+                              "#c9ff71",
+                              "#f87171",
+                              "#eab308",
+                              "#a78bfa",
+                            ][i % 11],
+                            flexShrink: 0,
+                          }}
+                        />
+                        <span
+                          style={{
+                            fontSize: "0.8125rem",
+                            color: "var(--color-text-secondary)",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                          title={item.segmento}
+                        >
+                          {item.segmento}
+                        </span>
+                      </div>
+                      <strong
+                        style={{
+                          fontSize: "0.8rem",
+                          color: "var(--color-text-primary)",
+                          flexShrink: 0,
+                        }}
+                      >
+                        {fmt(item.valor)}
+                      </strong>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Top 10 Empresas */}
+            <div className="card">
+              <h3
+                style={{
+                  fontSize: "0.875rem",
+                  fontWeight: 600,
+                  color: "var(--color-text-primary)",
+                  marginBottom: "16px",
+                }}
+              >
+                Top 10 Empresas
+              </h3>
+              <div className="grid gap-4 items-start grid-cols-1 lg:grid-cols-2">
+                <div
+                  style={{
+                    minWidth: 0,
+                    height: "clamp(240px, 42vw, 320px)",
+                  }}
+                >
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={chamadosPorEmpresa || []}
+                        dataKey="valor"
+                        nameKey="empresa"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius="72%"
+                        innerRadius="44%"
+                      >
+                        {(chamadosPorEmpresa || []).map((_, i) => (
+                          <Cell
+                            key={i}
+                            fill={
+                              [
+                                "#0ea5e9",
+                                "#10b981",
+                                "#f59e0b",
+                                "#ef4444",
+                                "#8b5cf6",
+                                "#e2670f",
+                                "#4d7412",
+                                "#ec4899",
+                                "#fcd34d",
+                                "#db2777",
+                                "#c9ff71",
+                                "#f87171",
+                                "#eab308",
+                                "#a78bfa",
+                              ][i % 11]
+                            }
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(v) => fmt(v)} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div
+                  className="flex flex-col gap-2"
+                  style={{
+                    maxHeight: "clamp(220px, 36vw, 320px)",
+                    overflowY: "auto",
+                    paddingRight: "4px",
+                  }}
+                >
+                  {(chamadosPorEmpresa || []).map((item, i) => (
+                    <div
+                      key={`${item.empresa}-${i}`}
+                      className="flex items-center justify-between gap-3"
+                      style={{
+                        padding: "10px 12px",
+                        borderRadius: "10px",
+                        background: "var(--color-surface-700)",
+                        border: "1px solid var(--color-border)",
+                      }}
+                    >
+                      <div
+                        className="flex items-center gap-2"
+                        style={{ minWidth: 0 }}
+                      >
+                        <span
+                          style={{
+                            width: "10px",
+                            height: "10px",
+                            borderRadius: "999px",
+                            background: [
+                              "#0ea5e9",
+                              "#10b981",
+                              "#f59e0b",
+                              "#ef4444",
+                              "#8b5cf6",
+                              "#e2670f",
+                              "#4d7412",
+                              "#ec4899",
+                              "#fcd34d",
+                              "#db2777",
+                              "#c9ff71",
+                              "#f87171",
+                              "#eab308",
+                              "#a78bfa",
+                            ][i % 11],
+                            flexShrink: 0,
+                          }}
+                        />
+                        <span
+                          style={{
+                            fontSize: "0.8125rem",
+                            color: "var(--color-text-secondary)",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                          title={item.empresa}
+                        >
+                          {item.empresa}
+                        </span>
+                      </div>
+                      <strong
+                        style={{
+                          fontSize: "0.8rem",
+                          color: "var(--color-text-primary)",
+                          flexShrink: 0,
+                        }}
+                      >
+                        {fmt(item.valor)}
+                      </strong>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {modal && (
         <ChamadoModal
           chamado={modal === "novo" ? null : modal}

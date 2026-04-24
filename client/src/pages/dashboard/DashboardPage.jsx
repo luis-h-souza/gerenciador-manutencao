@@ -45,12 +45,15 @@ const CORES_SEGMENTO = [
   "#f59e0b",
   "#ef4444",
   "#8b5cf6",
-  "#06b6d4",
-  "#f97316",
-  "#14b8a6",
-  "#84cc16",
+  "#e2670f",
+  "#4d7412",
   "#ec4899",
-  "#6366f1",
+  "#fcd34d",
+  "#db2777",
+  "#c9ff71",
+  "#f87171",
+  "#eab308",
+  "#a78bfa",
 ];
 
 const fmt = (v) =>
@@ -827,7 +830,7 @@ function CorporativoDashboard({ filtro, setFiltro }) {
             >
               Distribuição de Gastos por Segmento (Rede)
             </h3>
-            <div className="grid gap-4 items-start lg:grid-cols-2">
+            <div className="grid gap-4 items-start grid-cols-1 lg:grid-cols-2">
               <div
                 style={{
                   minWidth: 0,
@@ -1567,7 +1570,7 @@ function GestorDashboard({ filtro }) {
               gap: "4px",
             }}
           >
-            <MapPin size={14} /> {usuario?.unidade} · {usuario?.regiao}
+            <MapPin size={14} /> {usuario?.unidade}  {usuario?.regiao}
           </p>
         </div>
       </div>
@@ -1616,7 +1619,7 @@ function GestorDashboard({ filtro }) {
       </div>
 
       {/* Gráficos */}
-      <div className="grid gap-4" style={{ gridTemplateColumns: "1fr 1fr" }}>
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
         {/* Histórico mensal */}
         <div className="card">
           <h3
@@ -1684,39 +1687,94 @@ function GestorDashboard({ filtro }) {
               Sem dados para o período
             </div>
           ) : (
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie
-                  data={porSegmento}
-                  dataKey="total"
-                  nameKey="segmento"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={75}
-                  innerRadius={40}
-                >
-                  {porSegmento.map((_, i) => (
-                    <Cell
-                      key={i}
-                      fill={CORES_SEGMENTO[i % CORES_SEGMENTO.length]}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(v) => fmt(v)} />
-                <Legend
-                  formatter={(v) => (
-                    <span
+            <div className="grid gap-4 items-start grid-cols-1 lg:grid-cols-2">
+              <div
+                style={{
+                  minWidth: 0,
+                  height: "clamp(240px, 42vw, 320px)",
+                }}
+              >
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={porSegmento}
+                      dataKey="total"
+                      nameKey="segmento"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius="72%"
+                      innerRadius="44%"
+                    >
+                      {porSegmento.map((_, i) => (
+                        <Cell
+                          key={i}
+                          fill={CORES_SEGMENTO[i % CORES_SEGMENTO.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(v) => fmt(v)} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div
+                className="flex flex-col gap-2"
+                style={{
+                  maxHeight: "clamp(220px, 36vw, 320px)",
+                  overflowY: "auto",
+                  paddingRight: "4px",
+                }}
+              >
+                {porSegmento.map((item, i) => (
+                  <div
+                    key={`${item.segmento}-${i}`}
+                    className="flex items-center justify-between gap-3"
+                    style={{
+                      padding: "10px 12px",
+                      borderRadius: "10px",
+                      background: "var(--color-surface-700)",
+                      border: "1px solid var(--color-border)",
+                    }}
+                  >
+                    <div
+                      className="flex items-center gap-2"
+                      style={{ minWidth: 0 }}
+                    >
+                      <span
+                        style={{
+                          width: "10px",
+                          height: "10px",
+                          borderRadius: "999px",
+                          background: CORES_SEGMENTO[i % CORES_SEGMENTO.length],
+                          flexShrink: 0,
+                        }}
+                      />
+                      <span
+                        style={{
+                          fontSize: "0.8125rem",
+                          color: "var(--color-text-secondary)",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                        title={item.segmento}
+                      >
+                        {item.segmento}
+                      </span>
+                    </div>
+                    <strong
                       style={{
-                        fontSize: "0.75rem",
-                        color: "var(--color-text-secondary)",
+                        fontSize: "0.8rem",
+                        color: "var(--color-text-primary)",
+                        flexShrink: 0,
                       }}
                     >
-                      {v}
-                    </span>
-                  )}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+                      {fmt(item.total)}
+                    </strong>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
         </div>
       </div>
