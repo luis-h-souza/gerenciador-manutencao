@@ -7,6 +7,10 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  CartesianGrid,
+  AreaChart,
+  Area,
+  ReferenceLine,
   ResponsiveContainer,
   PieChart,
   Pie,
@@ -78,7 +82,7 @@ function StatCard({ label, value, sub, icon: Icon, accent, trend }) {
     );
 
   return (
-    <div className="stat-card">
+    <div className="stat-card" style={{ "--stat-accent": accent }}>
       <div className="flex items-start justify-between">
         <div>
           <p
@@ -119,9 +123,12 @@ function StatCard({ label, value, sub, icon: Icon, accent, trend }) {
         </div>
         <div
           className="flex items-center justify-center w-10 h-10 rounded-xl"
-          style={{ background: accent + "20" }}
+          style={{ 
+            background: accent ? "rgba(14, 165, 233, 0.1)" : "var(--color-surface-600)",
+            color: accent || "var(--color-brand-500)" 
+          }}
         >
-          <Icon size={20} style={{ color: accent }} />
+          <Icon size={20} />
         </div>
       </div>
     </div>
@@ -772,51 +779,71 @@ function CorporativoDashboard({ filtro, setFiltro }) {
         {/* Gráficos Macros */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Card 1: Histórico de Gastos */}
-          <div className="card">
-            <h3
-              style={{
-                fontSize: "0.875rem",
-                fontWeight: 600,
-                color: "var(--color-text-primary)",
-                marginBottom: "16px",
-              }}
-            >
-              Histórico de Gastos Global (6 meses)
-            </h3>
-            {/* No celular, o container respeitará o 100% do card */}
-            <ResponsiveContainer width="100%" height={280}>
-              <BarChart
-                data={historicoMacro}
-                barSize={32}
-                onClick={(state) => {
-                  if (state && state.activePayload) {
-                    const d = state.activePayload[0].payload;
-                    navigate(`/chamados?mes=${d.mesNum}&ano=${d.anoNum}`);
-                  }
-                }}
-                style={{ cursor: "pointer" }}
-              >
-                <XAxis
-                  dataKey="mes"
-                  tick={{ fill: "var(--color-text-muted)", fontSize: 12 }}
-                  axisLine={false}
-                  tickLine={false}
-                />
-                <YAxis
-                  tick={{ fill: "var(--color-text-muted)", fontSize: 11 }}
-                  axisLine={false}
-                  tickLine={false}
-                  tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
-                />
-                <Tooltip content={<TooltipCustom />} />
-                <Bar
-                  dataKey="valor"
-                  fill="var(--color-brand-600)"
-                  radius={[4, 4, 0, 0]}
-                  name="R$ Gasto"
-                />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="card h-full flex flex-col">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <TrendingUp size={18} style={{ color: "var(--color-brand-500)" }} />
+                <h3 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+                  Histórico de Gastos Global (6 meses)
+                </h3>
+              </div>
+              {historicoMacro.length > 0 && (
+                <div className="text-right">
+                  <p style={{ fontSize: '0.6rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Média Rede</p>
+                  <p style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--color-brand-400)' }}>
+                    {fmt(historicoMacro.reduce((acc, h) => acc + (h.valor || 0), 0) / historicoMacro.length)}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div style={{ flex: 1, minHeight: 280 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart 
+                  data={historicoMacro} 
+                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                  onClick={(state) => {
+                    if (state && state.activePayload) {
+                      const d = state.activePayload[0].payload;
+                      navigate(`/chamados?mes=${d.mesNum}&ano=${d.anoNum}`);
+                    }
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  <defs>
+                    <linearGradient id="colorGastoMacro" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--color-brand-500)" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="var(--color-brand-500)" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
+                  <XAxis 
+                    dataKey="mes" 
+                    tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} 
+                    axisLine={false}
+                    tickLine={false}
+                    dy={10}
+                  />
+                  <YAxis 
+                    tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} 
+                    tick={{ fontSize: 10, fill: "var(--color-text-muted)" }} 
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <Tooltip content={<TooltipCustom />} />
+                  <Area 
+                    type="monotone" 
+                    dataKey="valor" 
+                    name="Total Gasto"
+                    stroke="var(--color-brand-500)" 
+                    strokeWidth={3}
+                    fillOpacity={1} 
+                    fill="url(#colorGastoMacro)" 
+                    activeDot={{ r: 6, strokeWidth: 0 }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
           <div className="card">
@@ -1527,6 +1554,9 @@ function GestorDashboard({ filtro }) {
   });
 
   const loading = l1 || l2 || l3;
+  const avgGastos = (historico && historico.length > 0)
+    ? historico.reduce((acc, h) => acc + (Number(h.valor) || 0), 0) / historico.length 
+    : 0;
 
   if (loading) {
     return (
@@ -1621,50 +1651,85 @@ function GestorDashboard({ filtro }) {
       {/* Gráficos */}
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
         {/* Histórico mensal */}
-        <div className="card">
-          <h3
-            style={{
-              fontSize: "0.875rem",
-              fontWeight: 600,
-              color: "var(--color-text-primary)",
-              marginBottom: "16px",
-            }}
-          >
-            Histórico de Gastos (6 meses)
-          </h3>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart
-              data={historico}
-              barSize={28}
-              onClick={(state) => {
-                if (state && state.activePayload) {
-                  const d = state.activePayload[0].payload;
-                  navigate(`/chamados?mes=${d.mesNum}&ano=${d.anoNum}`);
-                }
-              }}
-              style={{ cursor: "pointer" }}
-            >
-              <XAxis
-                dataKey="mes"
-                tick={{ fill: "var(--color-text-muted)", fontSize: 12 }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                tick={{ fill: "var(--color-text-muted)", fontSize: 11 }}
-                axisLine={false}
-                tickLine={false}
-                tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
-              />
-              <Tooltip content={<TooltipCustom />} />
-              <Bar
-                dataKey="valor"
-                fill="var(--color-brand-600)"
-                radius={[4, 4, 0, 0]}
-                name="R$ Gasto"
-              />
-            </BarChart>
-          </ResponsiveContainer>
+        <div className="card h-full flex flex-col">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <TrendingUp size={18} style={{ color: "var(--color-brand-500)" }} />
+              <h3 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+                Evolução de Gastos (6 meses)
+              </h3>
+            </div>
+            {avgGastos > 0 && (
+              <div className="text-right">
+                <p style={{ fontSize: '0.6rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Média Mensal</p>
+                <p style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--color-brand-400)' }}>{fmt(avgGastos)}</p>
+              </div>
+            )}
+          </div>
+
+          <div style={{ flex: 1, minHeight: 220 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart 
+                data={historico} 
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                onClick={(state) => {
+                  if (state && state.activePayload) {
+                    const d = state.activePayload[0].payload;
+                    navigate(`/chamados?mes=${d.mesNum}&ano=${d.anoNum}`);
+                  }
+                }}
+                style={{ cursor: "pointer" }}
+              >
+                <defs>
+                  <linearGradient id="colorGastoDash" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="var(--color-brand-500)" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="var(--color-brand-500)" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
+                <XAxis 
+                  dataKey="mes" 
+                  tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} 
+                  axisLine={false}
+                  tickLine={false}
+                  dy={10}
+                />
+                <YAxis 
+                  tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} 
+                  tick={{ fontSize: 10, fill: "var(--color-text-muted)" }} 
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <Tooltip content={<TooltipCustom />} />
+                <ReferenceLine 
+                  y={avgGastos} 
+                  stroke="var(--color-text-muted)" 
+                  strokeDasharray="5 5" 
+                  label={{ position: 'right', value: 'Média', fill: 'var(--color-text-muted)', fontSize: 10 }} 
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="valor" 
+                  name="Total Gasto"
+                  stroke="var(--color-brand-500)" 
+                  strokeWidth={3}
+                  fillOpacity={1} 
+                  fill="url(#colorGastoDash)" 
+                  activeDot={{ r: 6, strokeWidth: 0 }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="mt-4 flex items-center justify-center gap-4 border-t border-border pt-4">
+            <div className="flex items-center gap-2">
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--color-brand-500)' }} />
+              <span style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)' }}>Investimento</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div style={{ width: 10, height: 1, borderTop: '1px dashed var(--color-text-muted)' }} />
+              <span style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)' }}>Média</span>
+            </div>
+          </div>
         </div>
 
         {/* Gastos por segmento */}
@@ -1679,7 +1744,7 @@ function GestorDashboard({ filtro }) {
           >
             Gastos por Segmento
           </h3>
-          {porSegmento.length === 0 ? (
+          {!porSegmento || porSegmento.length === 0 ? (
             <div
               className="flex items-center justify-center h-48"
               style={{ color: "var(--color-text-muted)", fontSize: "0.875rem" }}

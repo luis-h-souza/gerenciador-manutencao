@@ -269,7 +269,7 @@ body {
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 2px;
-  background: linear-gradient(90deg, var(--color-brand-600), var(--color-brand-400));
+  background: var(--stat-accent, linear-gradient(90deg, var(--color-brand-600), var(--color-brand-400)));
 }
 
 /* Sidebar nav item */

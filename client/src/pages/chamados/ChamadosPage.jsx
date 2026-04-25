@@ -900,47 +900,46 @@ function PainelExecutivo({ mes, ano }) {
                   <button
                     type="button"
                     className="btn btn-ghost btn-sm"
-                    aria-label="Como ler a concentração por fornecedor"
-                    title="Como ler a concentração por fornecedor"
                     onMouseEnter={() => setFornecedorHelpOpen(true)}
                     onMouseLeave={() => setFornecedorHelpOpen(false)}
-                    onFocus={() => setFornecedorHelpOpen(true)}
-                    onBlur={() => setFornecedorHelpOpen(false)}
                     style={{
-                      padding: "2px",
-                      minWidth: "auto",
-                      width: "22px",
-                      height: "22px",
-                      borderRadius: "999px",
+                      padding: 0,
+                      minWidth: "20px",
+                      width: "20px",
+                      height: "20px",
+                      borderRadius: "50%",
                       color: "var(--color-warning)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
-                    <CircleHelp size={15} />
+                    <CircleHelp size={14} />
                   </button>
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "calc(100% + 8px)",
-                      right: 0,
-                      width: "260px",
-                      padding: "10px 12px",
-                      borderRadius: "10px",
-                      background: "var(--color-surface-700)",
-                      border: "1px solid var(--color-border)",
-                      color: "var(--color-text-secondary)",
-                      boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-                      lineHeight: 1.4,
-                      zIndex: 10,
-                      opacity: fornecedorHelpOpen ? 1 : 0,
-                      visibility: fornecedorHelpOpen ? "visible" : "hidden",
-                      pointerEvents: fornecedorHelpOpen ? "auto" : "none",
-                      transition: "opacity 0.15s ease",
-                    }}
-                  >
-                    Mostra quanto do budget do mês está concentrado em cada
-                    fornecedor. Se algum passar de 40%, o painel sinaliza risco
-                    de dependência.
-                  </div>
+                  {fornecedorHelpOpen && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        bottom: "calc(100% + 8px)",
+                        left: 0,
+                        width: "260px",
+                        padding: "10px 12px",
+                        borderRadius: "10px",
+                        background: "var(--color-surface-700)",
+                        border: "1px solid var(--color-border)",
+                        color: "var(--color-text-secondary)",
+                        boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+                        lineHeight: 1.4,
+                        zIndex: 50,
+                        fontSize: '0.75rem'
+                      }}
+                    >
+                      <p style={{ fontWeight: 700, color: 'var(--color-brand-400)', marginBottom: '4px' }}>Concentração de Budget</p>
+                      Mostra quanto do budget do mês está concentrado em cada
+                      fornecedor. Se algum passar de 40%, o painel sinaliza risco
+                      de dependência.
+                    </div>
+                  )}
                 </div>
               </div>
               <p
@@ -1116,57 +1115,47 @@ function PainelExecutivo({ mes, ano }) {
               >
                 {paretoTitle}
               </h3>
-              <div
-                style={{
-                  position: "relative",
-                  display: "inline-flex",
-                  alignItems: "center",
-                }}
-              >
-                <button
-                  type="button"
-                  className="btn btn-ghost btn-sm"
-                  aria-label="Como ler o grÃ¡fico de Pareto"
-                  title="Como ler o grÃ¡fico de Pareto"
-                  onMouseEnter={() => setParetoHelpOpen(true)}
-                  onMouseLeave={() => setParetoHelpOpen(false)}
-                  onFocus={() => setParetoHelpOpen(true)}
-                  onBlur={() => setParetoHelpOpen(false)}
-                  style={{
-                    padding: "2px",
-                    minWidth: "auto",
-                    width: "22px",
-                    height: "22px",
-                    borderRadius: "999px",
-                    color: "var(--color-warning)",
-                  }}
-                >
-                  <CircleHelp size={15} />
-                </button>
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "calc(100% + 8px)",
-                    left: 0,
-                    width: "260px",
-                    padding: "10px 12px",
-                    borderRadius: "10px",
-                    background: "var(--color-surface-700)",
-                    border: "1px solid var(--color-border)",
-                    color: "var(--color-text-secondary)",
-                    boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-                    lineHeight: 1.4,
-                    zIndex: 10,
-                    opacity: paretoHelpOpen ? 1 : 0,
-                    visibility: paretoHelpOpen ? "visible" : "hidden",
-                    pointerEvents: paretoHelpOpen ? "auto" : "none",
-                    transition: "opacity 0.15s ease",
-                  }}
-                >
-                  As barras mostram os maiores custos e a linha mostra a
-                  porcentagem acumulada. Use para ver quais poucos itens
-                  concentram a maior parte do gasto.
-                </div>
+                <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-sm"
+                    onMouseEnter={() => setParetoHelpOpen(true)}
+                    onMouseLeave={() => setParetoHelpOpen(false)}
+                    style={{
+                      padding: 0,
+                      minWidth: "auto",
+                      width: "20px",
+                      height: "20px",
+                      borderRadius: "50%",
+                      color: "var(--color-warning)",
+                    }}
+                  >
+                    <CircleHelp size={14} />
+                  </button>
+                  {paretoHelpOpen && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: "calc(100% + 8px)",
+                      left: 0,
+                      width: "260px",
+                      padding: "10px 12px",
+                      borderRadius: "10px",
+                      background: "var(--color-surface-700)",
+                      border: "1px solid var(--color-border)",
+                      color: "var(--color-text-secondary)",
+                      boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+                      lineHeight: 1.4,
+                      zIndex: 50,
+                      fontSize: '0.75rem'
+                    }}
+                  >
+                    <p style={{ fontWeight: 700, color: 'var(--color-brand-400)', marginBottom: '4px' }}>Análise de Pareto (ABC)</p>
+                    As barras mostram os maiores custos e a linha mostra a
+                    porcentagem acumulada. Use para ver quais poucos itens
+                    concentram a maior parte do gasto.
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -1174,7 +1163,7 @@ function PainelExecutivo({ mes, ano }) {
             value={paretoTipo}
             onChange={(e) => setParetoTipo(e.target.value)}
             className="select"
-            style={{ minWidth: "180px" }}
+            style={{ width: 'auto', height: '32px', padding: '0 10px', fontSize: '0.75rem' }}
           >
             <option value="segmentos">Por Segmentos</option>
             <option value="empresas">Por Empresas</option>
@@ -1449,6 +1438,8 @@ export default function ChamadosPage() {
     return null;
   });
   const [visualizandoAnalise, setVisualizandoAnalise] = useState(false);
+  const [paretoTipo, setParetoTipo] = useState("segmentos"); // 'segmentos' ou 'empresas'
+  const [paretoHelpOpen, setParetoHelpOpen] = useState(false);
 
   useEffect(() => {
     if (!hasDrilldown) return;
@@ -1605,11 +1596,25 @@ export default function ChamadosPage() {
     .map((s) => {
       acumuladoPareto += s.valor;
       return {
-        segmento: s.segmento,
+        label: s.segmento,
         valor: s.valor,
         acumulado: totalFiltrado > 0 ? Math.min((acumuladoPareto / totalFiltrado) * 100, 100) : 0,
       };
     });
+
+  let acumuladoParetoEmp = 0;
+  const chamadosParetoEmpresas = chamadosPorEmpresa
+    .filter((e) => e.valor > 0)
+    .map((e) => {
+      acumuladoParetoEmp += e.valor;
+      return {
+        label: e.empresa,
+        valor: e.valor,
+        acumulado: totalFiltrado > 0 ? Math.min((acumuladoParetoEmp / totalFiltrado) * 100, 100) : 0,
+      };
+    });
+
+  const paretoData = paretoTipo === "segmentos" ? chamadosParetoSegmentos : chamadosParetoEmpresas;
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in pb-10">
@@ -2429,17 +2434,73 @@ export default function ChamadosPage() {
             </div>
           </div>
 
-          {/* Pareto de Segmentos */}
-          {chamadosParetoSegmentos.length > 0 && (
+          {/* Pareto de Segmentos / Empresas */}
+          {paretoData.length > 0 && (
             <div className="card p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Tag size={18} style={{ color: "var(--color-brand-600)" }} />
-                <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--color-text-primary)" }}>Pareto de Segmentos</h3>
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2">
+                  <Tag size={18} style={{ color: "var(--color-brand-600)" }} />
+                  <div className="flex items-center gap-2">
+                    <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+                      Análise de Pareto: {paretoTipo === "segmentos" ? "Segmentos" : "Empresas"}
+                    </h3>
+                    <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+                      <button 
+                        type="button"
+                        className="btn btn-ghost btn-sm" 
+                        style={{ padding: 0, minWidth: 'auto', width: '20px', height: '20px', borderRadius: '50%', color: 'var(--color-text-muted)' }}
+                        onMouseEnter={() => setParetoHelpOpen(true)}
+                        onMouseLeave={() => setParetoHelpOpen(false)}
+                      >
+                        <CircleHelp size={14} style={{ color: "var(--color-warning)" }}/>
+                      </button>
+                      {paretoHelpOpen && (
+                        <div style={{
+                          position: "absolute",
+                          bottom: "calc(100% + 8px)",
+                          left: 0,
+                          width: "260px",
+                          padding: "10px 12px",
+                          borderRadius: "10px",
+                          background: "var(--color-surface-700)",
+                          border: "1px solid var(--color-border)",
+                          color: "var(--color-text-secondary)",
+                          boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+                          lineHeight: 1.4,
+                          zIndex: 50,
+                          fontSize: '0.75rem'
+                        }}>
+                          <p style={{ fontWeight: 700, color: 'var(--color-brand-400)', marginBottom: '4px' }}>O que é a Análise de Pareto?</p>
+                          Indica que aproximadamente 80% dos custos costumam vir de apenas 20% das causas ({paretoTipo === "segmentos" ? "Segmentos" : "Empresas"}). 
+                          As barras mostram o valor individual e a linha vermelha o impacto acumulado.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                
+                <select 
+                  className="select" 
+                  style={{ width: 'auto', height: '32px', padding: '0 10px', fontSize: '0.75rem' }}
+                  value={paretoTipo}
+                  onChange={(e) => setParetoTipo(e.target.value)}
+                >
+                  <option value="segmentos">Por Segmento</option>
+                  <option value="empresas">Por Empresa</option>
+                </select>
               </div>
+
               <ResponsiveContainer width="100%" height={280}>
-                <ComposedChart data={chamadosParetoSegmentos} margin={{ top: 20, right: 30, bottom: 55, left: 10 }}>
+                <ComposedChart data={paretoData} margin={{ top: 20, right: 30, bottom: 55, left: 10 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
-                  <XAxis dataKey="segmento" tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} angle={-40} height={70} interval={0} textAnchor="end" />
+                  <XAxis 
+                    dataKey="label" 
+                    tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} 
+                    angle={-40} 
+                    height={70} 
+                    interval={0} 
+                    textAnchor="end" 
+                  />
                   <YAxis yAxisId="left" tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} />
                   <YAxis yAxisId="right" orientation="right" tickFormatter={(v) => `${v}%`} tick={{ fontSize: 11, fill: "var(--color-danger)" }} domain={[0, 100]} />
                   <Tooltip content={<TooltipCustom />} />
@@ -2447,6 +2508,9 @@ export default function ChamadosPage() {
                   <Line yAxisId="right" type="monotone" dataKey="acumulado" stroke="var(--color-danger)" strokeWidth={2.5} dot={{ r: 4, fill: "var(--color-danger)" }} name="% Acumulada" />
                 </ComposedChart>
               </ResponsiveContainer>
+              <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: '10px', textAlign: 'center' }}>
+                * A linha vermelha indica o percentual acumulado em relação ao gasto total da loja no mês.
+              </p>
             </div>
           )}
 
