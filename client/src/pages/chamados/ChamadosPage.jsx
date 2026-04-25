@@ -55,10 +55,10 @@ const SEGMENTOS = [
   "ELETRICA",
   "EMPILHADEIRA",
   "REFRIGERACAO",
-  "REFRIGERACAO-PÇS",
+  "REFRIGERACAO-PÃ‡S",
   "SERRALHERIA",
   "AR-CONDICIONADO",
-  "SERVIÇOS GERAIS",
+  "SERVIÃ‡OS GERAIS",
   "CIVIL",
   "EQUIPAMENTOS",
   "GERADOR",
@@ -76,7 +76,7 @@ const STATUSES = [
 ];
 const STATUS_LABEL = {
   CHAMADO_ABERTO: "Aberto",
-  AGUARDANDO_APROVACAO: "Ag. Aprovação",
+  AGUARDANDO_APROVACAO: "Ag. AprovaÃ§Ã£o",
   AGUARDANDO_OM_ENTREGA: "Ag. OM/Entrega",
   FINALIZADO: "Finalizado",
   ALUGUEL_OUTROS: "Aluguel/Outros",
@@ -91,10 +91,10 @@ const STATUS_BADGE = {
 const fmt = (v) =>
   v
     ? new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      }).format(v)
-    : "—";
+      style: "currency",
+      currency: "BRL",
+    }).format(v)
+    : "â€”";
 const CORES = [
   "#0ea5e9",
   "#10b981",
@@ -146,17 +146,17 @@ function ChamadoModal({ chamado, onClose }) {
   } = useForm({
     defaultValues: isEdit
       ? {
-          ...chamado,
-          dataAbertura: chamado.dataAbertura
-            ? format(new Date(chamado.dataAbertura), "yyyy-MM-dd")
-            : "",
-          valor: chamado.valor || "",
-        }
+        ...chamado,
+        dataAbertura: chamado.dataAbertura
+          ? format(new Date(chamado.dataAbertura), "yyyy-MM-dd")
+          : "",
+        valor: chamado.valor || "",
+      }
       : {
-          dataAbertura: format(new Date(), "yyyy-MM-dd"),
-          status: "CHAMADO_ABERTO",
-          mauUso: false,
-        },
+        dataAbertura: format(new Date(), "yyyy-MM-dd"),
+        status: "CHAMADO_ABERTO",
+        mauUso: false,
+      },
   });
 
   const mutation = useMutation({
@@ -208,18 +208,18 @@ function ChamadoModal({ chamado, onClose }) {
               <input
                 type="date"
                 className="input"
-                {...register("dataAbertura", { required: "Obrigatório" })}
+                {...register("dataAbertura", { required: "ObrigatÃ³rio" })}
               />
               {errors.dataAbertura && (
                 <p className="field-error">{errors.dataAbertura.message}</p>
               )}
             </div>
             <div>
-              <label className="label">Número do Chamado (CSA) *</label>
+              <label className="label">NÃºmero do Chamado (CSA) *</label>
               <input
                 className="input"
                 placeholder="CSA-00000"
-                {...register("numeroChamado", { required: "Obrigatório" })}
+                {...register("numeroChamado", { required: "ObrigatÃ³rio" })}
               />
             </div>
           </div>
@@ -232,7 +232,7 @@ function ChamadoModal({ chamado, onClose }) {
               <label className="label">Segmento *</label>
               <select
                 className="select"
-                {...register("segmento", { required: "Obrigatório" })}
+                {...register("segmento", { required: "ObrigatÃ³rio" })}
               >
                 <option value="">Selecione...</option>
                 {SEGMENTOS.map((s) => (
@@ -250,18 +250,18 @@ function ChamadoModal({ chamado, onClose }) {
               <input
                 className="input"
                 placeholder="Nome da empresa"
-                {...register("empresa", { required: "Obrigatório" })}
+                {...register("empresa", { required: "ObrigatÃ³rio" })}
               />
             </div>
           </div>
 
           <div>
-            <label className="label">Descrição *</label>
+            <label className="label">DescriÃ§Ã£o *</label>
             <textarea
               className="input"
               rows={2}
               style={{ resize: "vertical" }}
-              {...register("descricao", { required: "Obrigatório" })}
+              {...register("descricao", { required: "ObrigatÃ³rio" })}
             />
           </div>
 
@@ -270,7 +270,7 @@ function ChamadoModal({ chamado, onClose }) {
             style={{ gridTemplateColumns: "1fr 1fr 1fr" }}
           >
             <div>
-              <label className="label">Nº Orçamento</label>
+              <label className="label">NÂº OrÃ§amento</label>
               <input
                 className="input"
                 placeholder="ORC-000"
@@ -686,6 +686,7 @@ function PainelExecutivo({ mes, ano }) {
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in mb-8">
+
       {/* Cards KPI */}
       <div
         className="grid gap-4"
@@ -826,6 +827,7 @@ function PainelExecutivo({ mes, ano }) {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
+        
         {/* Top 5 Lojas */}
         <div className="card p-6">
           <div className="flex items-center gap-2 mb-4">
@@ -961,11 +963,10 @@ function PainelExecutivo({ mes, ano }) {
                 fornecedoresCriticos.length > 0
                   ? "rgba(239,68,68,0.08)"
                   : "rgba(16,185,129,0.08)",
-              border: `1px solid ${
-                fornecedoresCriticos.length > 0
+              border: `1px solid ${fornecedoresCriticos.length > 0
                   ? "rgba(239,68,68,0.22)"
                   : "rgba(16,185,129,0.22)"
-              }`,
+                }`,
             }}
           >
             <div className="flex items-center gap-2">
@@ -1125,8 +1126,8 @@ function PainelExecutivo({ mes, ano }) {
                 <button
                   type="button"
                   className="btn btn-ghost btn-sm"
-                  aria-label="Como ler o gráfico de Pareto"
-                  title="Como ler o gráfico de Pareto"
+                  aria-label="Como ler o grÃ¡fico de Pareto"
+                  title="Como ler o grÃ¡fico de Pareto"
                   onMouseEnter={() => setParetoHelpOpen(true)}
                   onMouseLeave={() => setParetoHelpOpen(false)}
                   onFocus={() => setParetoHelpOpen(true)}
@@ -1341,6 +1342,61 @@ function CorporativoRegioes({ onSelect, mes, ano, regioesContexto }) {
   );
 }
 
+function AnaliseLojaHistorico({ regiao, unidade }) {
+  const { data: historico, isLoading } = useQuery({
+    queryKey: ["historico-mensal-loja", regiao, unidade],
+    queryFn: () =>
+      dashboardService
+        .historicoMensal({ regiao, unidade })
+        .then((r) => r.data),
+    enabled: !!unidade,
+  });
+
+  if (isLoading)
+    return (
+      <div className="card p-6">
+        <div className="skeleton" style={{ height: "260px", borderRadius: "8px" }} />
+      </div>
+    );
+  if (!historico?.length) return null;
+
+  return (
+    <div className="card p-6">
+      <div className="flex items-center gap-2 mb-4">
+        <TrendingUp size={18} style={{ color: "var(--color-success)" }} />
+        <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+          Evolução Mensal de Gastos
+        </h3>
+      </div>
+      <ResponsiveContainer width="100%" height={240}>
+        <ComposedChart data={historico} margin={{ top: 10, right: 20, bottom: 20, left: 10 }}>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
+          <XAxis dataKey="mes" tick={{ fontSize: 12, fill: "var(--color-text-muted)" }} />
+          <YAxis
+            tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
+            tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
+          />
+          <Tooltip
+            content={({ active, payload, label }) => {
+              if (!active || !payload?.length) return null;
+              return (
+                <div style={{ background: "var(--color-surface-700)", border: "1px solid var(--color-border)", borderRadius: "8px", padding: "10px 14px", fontSize: "0.8125rem" }}>
+                  <p style={{ color: "var(--color-text-secondary)", marginBottom: "4px", fontWeight: 600 }}>{label}</p>
+                  {payload.map((p, i) => (
+                    <p key={i} style={{ color: p.color }}>{p.name}: {p.name === "Chamados" ? p.value : fmt(p.value)}</p>
+                  ))}
+                </div>
+              );
+            }}
+          />
+          <Bar dataKey="valor" name="Gasto" fill="var(--color-brand-500)" radius={[4, 4, 0, 0]} />
+          <Line type="monotone" dataKey="quantidade" name="Chamados" stroke="var(--color-warning)" strokeWidth={2} dot={{ r: 3 }} yAxisId={0} />
+        </ComposedChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
 export default function ChamadosPage() {
   const { usuario } = useAuth();
   const [searchParams] = useSearchParams();
@@ -1405,9 +1461,9 @@ export default function ChamadosPage() {
   const splitRegions = (r) =>
     r
       ? r
-          .split(",")
-          .map((s) => s.trim().toUpperCase())
-          .filter(Boolean)
+        .split(",")
+        .map((s) => s.trim().toUpperCase())
+        .filter(Boolean)
       : [];
   const hasOverlap = (r1, r2) => {
     const arr1 = splitRegions(r1);
@@ -1514,6 +1570,38 @@ export default function ChamadosPage() {
     0,
   );
 
+  // ———————————————————————————————————————————————— Dados para Análise Gráfica da Loja ————————————————————————————————————————
+  const chamadosPorSegmento = Object.values(
+    chamados.reduce((acc, c) => {
+      const seg = c.segmento || "DIVERSOS";
+      if (!acc[seg]) acc[seg] = { segmento: seg, valor: 0, count: 0 };
+      acc[seg].valor += parseFloat(c.valor || 0);
+      acc[seg].count += 1;
+      return acc;
+    }, {})
+  ).sort((a, b) => b.valor - a.valor);
+
+  const chamadosPorEmpresa = Object.values(
+    chamados.reduce((acc, c) => {
+      const emp = c.empresa || "Sem Empresa";
+      if (!acc[emp]) acc[emp] = { empresa: emp, valor: 0 };
+      acc[emp].valor += parseFloat(c.valor || 0);
+      return acc;
+    }, {})
+  ).sort((a, b) => b.valor - a.valor).slice(0, 10);
+
+  let acumuladoPareto = 0;
+  const chamadosParetoSegmentos = chamadosPorSegmento
+    .filter((s) => s.valor > 0)
+    .map((s) => {
+      acumuladoPareto += s.valor;
+      return {
+        segmento: s.segmento,
+        valor: s.valor,
+        acumulado: totalFiltrado > 0 ? Math.min((acumuladoPareto / totalFiltrado) * 100, 100) : 0,
+      };
+    });
+
   return (
     <div className="flex flex-col gap-6 animate-fade-in pb-10">
       {/* Cabeçalho de Controle e Seleção de Data */}
@@ -1547,13 +1635,13 @@ export default function ChamadosPage() {
         </div>
       </div>
 
-      {/* ─── PAINEL EXECUTIVO ─── */}
+      {/* ——— PAINEL EXECUTIVO ——— */}
       {hasDrilldown &&
         ["gerentes", "coordenadores", "regionais"].includes(etapa) && (
           <PainelExecutivo mes={mes} ano={ano} />
         )}
 
-      {/* ─── Lista de Gerentes ─── */}
+      {/* ——— Lista de Gerentes ——— */}
       {etapa === "gerentes" && hasDrilldown && (
         <div className="flex flex-col gap-6 animate-fade-in">
           <div>
@@ -1654,7 +1742,7 @@ export default function ChamadosPage() {
         </div>
       )}
 
-      {/* ─── Lista de Coordenadores ─── */}
+      {/* ——— Lista de Coordenadores ——— */}
       {etapa === "coordenadores" && hasDrilldown && (
         <div className="flex flex-col gap-6 animate-fade-in">
           <div className="flex items-center gap-3">
@@ -1771,24 +1859,24 @@ export default function ChamadosPage() {
         </div>
       )}
 
-      {/* ─── Lista de Regionais ─── */}
+      {/* ——— Lista de Regionais ——— */}
       {etapa === "regionais" && hasDrilldown && (
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-3 mb-2">
             {["ADMINISTRADOR", "DIRETOR", "GERENTE"].includes(
               usuario?.role,
             ) && (
-              <button
-                className="btn btn-ghost btn-sm"
-                onClick={() => {
-                  setEtapa("coordenadores");
-                  setCoordenadorSelecionado(null);
-                }}
-                style={{ padding: "8px" }}
-              >
-                <ChevronUp className="rotate-270" size={18} />
-              </button>
-            )}
+                <button
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => {
+                    setEtapa("coordenadores");
+                    setCoordenadorSelecionado(null);
+                  }}
+                  style={{ padding: "8px" }}
+                >
+                  <ChevronUp className="rotate-270" size={18} />
+                </button>
+              )}
             <h2
               style={{
                 fontSize: "1.25rem",
@@ -1814,7 +1902,7 @@ export default function ChamadosPage() {
         </div>
       )}
 
-      {/* ─── Lojas da Regional com Detalhes ─── */}
+      {/* ——— Lojas da Regional com Detalhes ——— */}
       {etapa === "lojas" && hasDrilldown && regionalSelecionada && (
         <div className="flex flex-col gap-8 animate-fade-in">
           <CorporativoRegiaoDetalhe
@@ -1922,7 +2010,7 @@ export default function ChamadosPage() {
         </div>
       )}
 
-      {/* ─── Tabela de Chamados da Loja ─── */}
+      {/* ——— Tabela de Chamados da Loja ——— */}
       {etapa === "chamados" && !visualizandoAnalise && (
         <div className="flex flex-col gap-6 animate-fade-in">
           {hasDrilldown && (
@@ -1977,7 +2065,7 @@ export default function ChamadosPage() {
                     background: "var(--color-surface-700)",
                   }}
                 >
-                  <BarChart3 size={16} /> Análise Gráfica
+                  <BarChart3 size={16} style={{ color: "var(--color-brand-500)" }} /> Análise Gráfica
                 </button>
               )}
             </div>
@@ -2046,13 +2134,13 @@ export default function ChamadosPage() {
               <button
                 className="btn btn-primary btn-ghost"
                 style={{
-                    gap: "6px",
-                    border: "1px solid var(--color-border)",
-                    background: "var(--color-surface-700)",
-                  }}
+                  gap: "6px",
+                  border: "1px solid var(--color-border)",
+                  background: "var(--color-surface-700)",
+                }}
                 onClick={() => setModal("novo")}
               >
-                <Plus size={16} /> Novo Chamado
+                <Plus size={16} style={{ color: "var(--color-brand-500)" }}/> Novo Chamado
               </button>
             </div>
           </div>
@@ -2226,7 +2314,7 @@ export default function ChamadosPage() {
         </div>
       )}
 
-      {/* ─── Análise Gráfica da Loja ─── */}
+      {/* ——— Análise Gráfica da Loja ——— */}
       {etapa === "chamados" && visualizandoAnalise && lojaSelecionada && (
         <div className="flex flex-col gap-6 animate-fade-in">
           <div className="flex items-center gap-3">
@@ -2236,288 +2324,116 @@ export default function ChamadosPage() {
             >
               <ArrowLeft size={18} /> Voltar para Planilha
             </button>
-            <h2
-              style={{
-                fontSize: "1.25rem",
-                fontWeight: 700,
-                color: "var(--color-text-primary)",
-              }}
-            >
+            <h2 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
               Análise Gráfica: {lojaSelecionada.nome}
             </h2>
+          </div>
+
+          {/* KPI Cards */}
+          <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
+            <div className="card" style={{ padding: "18px", borderLeft: "4px solid var(--color-brand-500)" }}>
+              <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginBottom: "6px", textTransform: "uppercase", fontWeight: 600 }}>Total do Mês</p>
+              <span style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--color-text-primary)" }}>{fmt(totalFiltrado)}</span>
+            </div>
+            <div className="card" style={{ padding: "18px", borderLeft: "4px solid var(--color-warning)" }}>
+              <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginBottom: "6px", textTransform: "uppercase", fontWeight: 600 }}>Chamados</p>
+              <span style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--color-text-primary)" }}>{chamados.length}</span>
+            </div>
+            <div className="card" style={{ padding: "18px", borderLeft: "4px solid var(--color-success)" }}>
+              <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginBottom: "6px", textTransform: "uppercase", fontWeight: 600 }}>Ticket Médio</p>
+              <span style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--color-text-primary)" }}>{fmt(chamados.length > 0 ? totalFiltrado / chamados.length : 0)}</span>
+            </div>
+            <div className="card" style={{ padding: "18px", borderLeft: "4px solid var(--color-danger)" }}>
+              <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginBottom: "6px", textTransform: "uppercase", fontWeight: 600 }}>Mau Uso</p>
+              <span style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--color-danger)" }}>{chamados.filter((c) => c.mauUso).length}</span>
+            </div>
           </div>
 
           <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
             {/* Gastos por Segmento */}
             <div className="card">
-              <h3
-                style={{
-                  fontSize: "0.875rem",
-                  fontWeight: 600,
-                  color: "var(--color-text-primary)",
-                  marginBottom: "16px",
-                }}
-              >
-                Gastos por Segmento
-              </h3>
+              <h3 style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text-primary)", marginBottom: "16px" }}>Gastos por Segmento</h3>
               <div className="grid gap-4 items-start grid-cols-1 lg:grid-cols-2">
-                <div
-                  style={{
-                    minWidth: 0,
-                    height: "clamp(240px, 42vw, 320px)",
-                  }}
-                >
+                <div style={{ minWidth: 0, height: "clamp(240px, 42vw, 320px)" }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
-                      <Pie
-                        data={chamadosPorSegmento || []}
-                        dataKey="valor"
-                        nameKey="segmento"
-                        cx="50%"
-                        cy="50%"
-                        outerRadius="72%"
-                        innerRadius="44%"
-                      >
-                        {(chamadosPorSegmento || []).map((_, i) => (
-                          <Cell
-                            key={i}
-                            fill={
-                              [
-                                "#0ea5e9",
-                                "#10b981",
-                                "#f59e0b",
-                                "#ef4444",
-                                "#8b5cf6",
-                                "#e2670f",
-                                "#4d7412",
-                                "#ec4899",
-                                "#fcd34d",
-                                "#db2777",
-                                "#c9ff71",
-                                "#f87171",
-                                "#eab308",
-                                "#a78bfa",
-                              ][i % 11]
-                            }
-                          />
-                        ))}
+                      <Pie data={chamadosPorSegmento} dataKey="valor" nameKey="segmento" cx="50%" cy="50%" outerRadius="72%" innerRadius="44%">
+                        {chamadosPorSegmento.map((_, i) => <Cell key={i} fill={CORES[i % CORES.length]} />)}
                       </Pie>
                       <Tooltip formatter={(v) => fmt(v)} />
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
-
-                <div
-                  className="flex flex-col gap-2"
-                  style={{
-                    maxHeight: "clamp(220px, 36vw, 320px)",
-                    overflowY: "auto",
-                    paddingRight: "4px",
-                  }}
-                >
-                  {(chamadosPorSegmento || []).map((item, i) => (
-                    <div
-                      key={`${item.segmento}-${i}`}
-                      className="flex items-center justify-between gap-3"
-                      style={{
-                        padding: "10px 12px",
-                        borderRadius: "10px",
-                        background: "var(--color-surface-700)",
-                        border: "1px solid var(--color-border)",
-                      }}
-                    >
-                      <div
-                        className="flex items-center gap-2"
-                        style={{ minWidth: 0 }}
-                      >
-                        <span
-                          style={{
-                            width: "10px",
-                            height: "10px",
-                            borderRadius: "999px",
-                            background: [
-                              "#0ea5e9",
-                              "#10b981",
-                              "#f59e0b",
-                              "#ef4444",
-                              "#8b5cf6",
-                              "#e2670f",
-                              "#4d7412",
-                              "#ec4899",
-                              "#fcd34d",
-                              "#db2777",
-                              "#c9ff71",
-                              "#f87171",
-                              "#eab308",
-                              "#a78bfa",
-                            ][i % 11],
-                            flexShrink: 0,
-                          }}
-                        />
-                        <span
-                          style={{
-                            fontSize: "0.8125rem",
-                            color: "var(--color-text-secondary)",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}
-                          title={item.segmento}
-                        >
-                          {item.segmento}
-                        </span>
+                <div className="flex flex-col gap-2" style={{ maxHeight: "clamp(220px, 36vw, 320px)", overflowY: "auto", paddingRight: "4px" }}>
+                  {chamadosPorSegmento.map((item, i) => (
+                    <div key={`seg-${i}`} className="flex items-center justify-between gap-3" style={{ padding: "10px 12px", borderRadius: "10px", background: "var(--color-surface-700)", border: "1px solid var(--color-border)" }}>
+                      <div className="flex items-center gap-2" style={{ minWidth: 0 }}>
+                        <span style={{ width: "10px", height: "10px", borderRadius: "999px", background: CORES[i % CORES.length], flexShrink: 0 }} />
+                        <span style={{ fontSize: "0.8125rem", color: "var(--color-text-secondary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={item.segmento}>{item.segmento}</span>
                       </div>
-                      <strong
-                        style={{
-                          fontSize: "0.8rem",
-                          color: "var(--color-text-primary)",
-                          flexShrink: 0,
-                        }}
-                      >
-                        {fmt(item.valor)}
-                      </strong>
+                      <strong style={{ fontSize: "0.8rem", color: "var(--color-text-primary)", flexShrink: 0 }}>{fmt(item.valor)}</strong>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* Top 10 Empresas */}
+            {/* Top Empresas */}
             <div className="card">
-              <h3
-                style={{
-                  fontSize: "0.875rem",
-                  fontWeight: 600,
-                  color: "var(--color-text-primary)",
-                  marginBottom: "16px",
-                }}
-              >
-                Top 10 Empresas
-              </h3>
+              <h3 style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text-primary)", marginBottom: "16px" }}>Top Empresas (Fornecedores)</h3>
               <div className="grid gap-4 items-start grid-cols-1 lg:grid-cols-2">
-                <div
-                  style={{
-                    minWidth: 0,
-                    height: "clamp(240px, 42vw, 320px)",
-                  }}
-                >
+                <div style={{ minWidth: 0, height: "clamp(240px, 42vw, 320px)" }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
-                      <Pie
-                        data={chamadosPorEmpresa || []}
-                        dataKey="valor"
-                        nameKey="empresa"
-                        cx="50%"
-                        cy="50%"
-                        outerRadius="72%"
-                        innerRadius="44%"
-                      >
-                        {(chamadosPorEmpresa || []).map((_, i) => (
-                          <Cell
-                            key={i}
-                            fill={
-                              [
-                                "#0ea5e9",
-                                "#10b981",
-                                "#f59e0b",
-                                "#ef4444",
-                                "#8b5cf6",
-                                "#e2670f",
-                                "#4d7412",
-                                "#ec4899",
-                                "#fcd34d",
-                                "#db2777",
-                                "#c9ff71",
-                                "#f87171",
-                                "#eab308",
-                                "#a78bfa",
-                              ][i % 11]
-                            }
-                          />
-                        ))}
+                      <Pie data={chamadosPorEmpresa} dataKey="valor" nameKey="empresa" cx="50%" cy="50%" outerRadius="72%" innerRadius="44%">
+                        {chamadosPorEmpresa.map((_, i) => <Cell key={i} fill={CORES[i % CORES.length]} />)}
                       </Pie>
                       <Tooltip formatter={(v) => fmt(v)} />
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
-
-                <div
-                  className="flex flex-col gap-2"
-                  style={{
-                    maxHeight: "clamp(220px, 36vw, 320px)",
-                    overflowY: "auto",
-                    paddingRight: "4px",
-                  }}
-                >
-                  {(chamadosPorEmpresa || []).map((item, i) => (
-                    <div
-                      key={`${item.empresa}-${i}`}
-                      className="flex items-center justify-between gap-3"
-                      style={{
-                        padding: "10px 12px",
-                        borderRadius: "10px",
-                        background: "var(--color-surface-700)",
-                        border: "1px solid var(--color-border)",
-                      }}
-                    >
-                      <div
-                        className="flex items-center gap-2"
-                        style={{ minWidth: 0 }}
-                      >
-                        <span
-                          style={{
-                            width: "10px",
-                            height: "10px",
-                            borderRadius: "999px",
-                            background: [
-                              "#0ea5e9",
-                              "#10b981",
-                              "#f59e0b",
-                              "#ef4444",
-                              "#8b5cf6",
-                              "#e2670f",
-                              "#4d7412",
-                              "#ec4899",
-                              "#fcd34d",
-                              "#db2777",
-                              "#c9ff71",
-                              "#f87171",
-                              "#eab308",
-                              "#a78bfa",
-                            ][i % 11],
-                            flexShrink: 0,
-                          }}
-                        />
-                        <span
-                          style={{
-                            fontSize: "0.8125rem",
-                            color: "var(--color-text-secondary)",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}
-                          title={item.empresa}
-                        >
-                          {item.empresa}
-                        </span>
+                <div className="flex flex-col gap-2" style={{ maxHeight: "clamp(220px, 36vw, 320px)", overflowY: "auto", paddingRight: "4px" }}>
+                  {chamadosPorEmpresa.map((item, i) => (
+                    <div key={`emp-${i}`} className="flex items-center justify-between gap-3" style={{ padding: "10px 12px", borderRadius: "10px", background: "var(--color-surface-700)", border: "1px solid var(--color-border)" }}>
+                      <div className="flex items-center gap-2" style={{ minWidth: 0 }}>
+                        <span style={{ width: "10px", height: "10px", borderRadius: "999px", background: CORES[i % CORES.length], flexShrink: 0 }} />
+                        <span style={{ fontSize: "0.8125rem", color: "var(--color-text-secondary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={item.empresa}>{item.empresa}</span>
                       </div>
-                      <strong
-                        style={{
-                          fontSize: "0.8rem",
-                          color: "var(--color-text-primary)",
-                          flexShrink: 0,
-                        }}
-                      >
-                        {fmt(item.valor)}
-                      </strong>
+                      <strong style={{ fontSize: "0.8rem", color: "var(--color-text-primary)", flexShrink: 0 }}>{fmt(item.valor)}</strong>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Pareto de Segmentos */}
+          {chamadosParetoSegmentos.length > 0 && (
+            <div className="card p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Tag size={18} style={{ color: "var(--color-brand-600)" }} />
+                <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--color-text-primary)" }}>Pareto de Segmentos</h3>
+              </div>
+              <ResponsiveContainer width="100%" height={280}>
+                <ComposedChart data={chamadosParetoSegmentos} margin={{ top: 20, right: 30, bottom: 55, left: 10 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
+                  <XAxis dataKey="segmento" tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} angle={-40} height={70} interval={0} textAnchor="end" />
+                  <YAxis yAxisId="left" tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} />
+                  <YAxis yAxisId="right" orientation="right" tickFormatter={(v) => `${v}%`} tick={{ fontSize: 11, fill: "var(--color-danger)" }} domain={[0, 100]} />
+                  <Tooltip content={<TooltipCustom />} />
+                  <Bar yAxisId="left" dataKey="valor" fill="var(--color-brand-500)" radius={[4, 4, 0, 0]} name="Custo" />
+                  <Line yAxisId="right" type="monotone" dataKey="acumulado" stroke="var(--color-danger)" strokeWidth={2.5} dot={{ r: 4, fill: "var(--color-danger)" }} name="% Acumulada" />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+
+          {/* Evolução Mensal */}
+          <AnaliseLojaHistorico regiao={regionalSelecionada} unidade={lojaSelecionada?.nome} />
         </div>
       )}
+
+      {/* Modal de Detalhes */}
       {modal && (
         <ChamadoModal
           chamado={modal === "novo" ? null : modal}

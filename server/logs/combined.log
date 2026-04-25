@@ -2582,3 +2582,39 @@
 {"level":"info","message":"Logout: loja246@manutencao.com","timestamp":"2026-04-24T22:13:35.416Z"}
 {"level":"info","message":"Login: luciano.coordenador@manutencao.com (COORDENADOR) de ::1","timestamp":"2026-04-24T22:13:46.766Z"}
 {"level":"info","message":"SIGINT recebido. Encerrando servidor...","timestamp":"2026-04-24T22:22:42.191Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-25T00:27:35.978Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-25T00:27:31.968Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-25T00:27:43.008Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-25T00:27:43.010Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-25T00:27:43.026Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-25T00:27:43.027Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-25T00:27:43.028Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-25T00:27:43.024Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-25T00:27:43.025Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-25T00:27:43.026Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-25T00:27:43.231Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-25T00:27:43.229Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-25T00:27:43.232Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-25T00:27:43.230Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-25T00:27:43.643Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-25T00:27:43.641Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-25T00:27:43.643Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-25T00:27:43.642Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-25T00:27:44.251Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-25T00:27:44.249Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-25T00:27:44.252Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-25T00:27:44.250Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-25T00:27:44.252Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-25T00:27:44.250Z"}
+{"level":"info","message":"Login: loja246@manutencao.com (GESTOR) de ::1","timestamp":"2026-04-25T00:28:39.415Z"}
+{"level":"info","message":"Logout: loja246@manutencao.com","timestamp":"2026-04-25T00:38:39.661Z"}
+{"level":"info","message":"Login: nathan.coordenador@manutencao.com (COORDENADOR) de ::1","timestamp":"2026-04-25T00:38:45.668Z"}
+{"level":"info","message":"Logout: nathan.coordenador@manutencao.com","timestamp":"2026-04-25T00:46:06.550Z"}
+{"level":"info","message":"Login: loja246@manutencao.com (GESTOR) de ::1","timestamp":"2026-04-25T00:46:13.303Z"}
+{"level":"warn","message":"Acesso negado: loja246@manutencao.com (GESTOR) tentou acessar recurso restrito a [ADMINISTRADOR, DIRETOR, GERENTE, COORDENADOR]","timestamp":"2026-04-25T00:46:15.920Z"}
+{"level":"warn","message":"Acesso negado: loja246@manutencao.com (GESTOR) tentou acessar recurso restrito a [ADMINISTRADOR, DIRETOR, GERENTE, COORDENADOR]","timestamp":"2026-04-25T00:46:16.976Z"}
+{"level":"info","message":"Logout: loja246@manutencao.com","timestamp":"2026-04-25T00:51:47.398Z"}
+{"level":"info","message":"Login: nathan.coordenador@manutencao.com (COORDENADOR) de ::1","timestamp":"2026-04-25T00:51:53.698Z"}
+{"level":"info","message":"Logout: nathan.coordenador@manutencao.com","timestamp":"2026-04-25T00:54:59.104Z"}
+{"level":"info","message":"Login: rodnei@manutencao.com (GERENTE) de ::1","timestamp":"2026-04-25T00:55:06.683Z"}
+{"level":"info","message":"Logout: rodnei@manutencao.com","timestamp":"2026-04-25T01:00:27.308Z"}
