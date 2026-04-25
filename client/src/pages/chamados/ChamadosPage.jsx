@@ -208,18 +208,18 @@ function ChamadoModal({ chamado, onClose }) {
               <input
                 type="date"
                 className="input"
-                {...register("dataAbertura", { required: "ObrigatÃ³rio" })}
+                {...register("dataAbertura", { required: "Obrigatório" })}
               />
               {errors.dataAbertura && (
                 <p className="field-error">{errors.dataAbertura.message}</p>
               )}
             </div>
             <div>
-              <label className="label">NÃºmero do Chamado (CSA) *</label>
+              <label className="label">Nº do Chamado (CSA) *</label>
               <input
                 className="input"
                 placeholder="CSA-00000"
-                {...register("numeroChamado", { required: "ObrigatÃ³rio" })}
+                {...register("numeroChamado", { required: "Obrigatório" })}
               />
             </div>
           </div>
@@ -232,7 +232,7 @@ function ChamadoModal({ chamado, onClose }) {
               <label className="label">Segmento *</label>
               <select
                 className="select"
-                {...register("segmento", { required: "ObrigatÃ³rio" })}
+                {...register("segmento", { required: "Obrigatório" })}
               >
                 <option value="">Selecione...</option>
                 {SEGMENTOS.map((s) => (
@@ -250,18 +250,18 @@ function ChamadoModal({ chamado, onClose }) {
               <input
                 className="input"
                 placeholder="Nome da empresa"
-                {...register("empresa", { required: "ObrigatÃ³rio" })}
+                {...register("empresa", { required: "Obrigatório" })}
               />
             </div>
           </div>
 
           <div>
-            <label className="label">DescriÃ§Ã£o *</label>
+            <label className="label">Descrição *</label>
             <textarea
               className="input"
               rows={2}
               style={{ resize: "vertical" }}
-              {...register("descricao", { required: "ObrigatÃ³rio" })}
+              {...register("descricao", { required: "Obrigatório" })}
             />
           </div>
 
@@ -270,7 +270,7 @@ function ChamadoModal({ chamado, onClose }) {
             style={{ gridTemplateColumns: "1fr 1fr 1fr" }}
           >
             <div>
-              <label className="label">NÂº OrÃ§amento</label>
+              <label className="label">Nº Orçamento</label>
               <input
                 className="input"
                 placeholder="ORC-000"
@@ -2078,14 +2078,29 @@ export default function ChamadosPage() {
             </div>
           )}
 
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <div className="flex items-center gap-2 flex-wrap">
-              <div className="relative">
+          {/* ——— Barra de Ferramentas (Filtros e Ações) ——— */}
+          <div 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between', 
+              gap: '20px', 
+              flexWrap: 'wrap',
+              padding: '16px 20px',
+              background: 'var(--color-surface-800)',
+              border: '1px solid var(--color-border)',
+              borderRadius: '12px',
+              marginBottom: '4px'
+            }}
+          >
+            {/* Bloco de Filtros */}
+            <div className="flex items-center gap-3 flex-1 min-w-[320px]">
+              <div className="relative flex-1 max-w-[300px]">
                 <Search
                   size={15}
                   style={{
                     position: "absolute",
-                    left: "10px",
+                    left: "12px",
                     top: "50%",
                     transform: "translateY(-50%)",
                     color: "var(--color-text-muted)",
@@ -2093,61 +2108,71 @@ export default function ChamadosPage() {
                 />
                 <input
                   className="input"
-                  style={{ paddingLeft: "32px", width: "200px" }}
-                  placeholder="Empresa ou chamado..."
+                  style={{ paddingLeft: "36px" }}
+                  placeholder="Buscar empresa ou chamado..."
                   value={busca}
                   onChange={(e) => setBusca(e.target.value)}
                 />
               </div>
-              <select
-                className="select"
-                style={{ width: "auto" }}
-                value={filtros.status}
-                onChange={(e) =>
-                  setFiltros((f) => ({ ...f, status: e.target.value }))
-                }
-              >
-                <option value="">Todos os status</option>
-                {STATUSES.map((s) => (
-                  <option key={s} value={s}>
-                    {STATUS_LABEL[s]}
-                  </option>
-                ))}
-              </select>
-              <select
-                className="select"
-                style={{ width: "auto" }}
-                value={filtros.segmento}
-                onChange={(e) =>
-                  setFiltros((f) => ({ ...f, segmento: e.target.value }))
-                }
-              >
-                <option value="">Todos os segmentos</option>
-                {SEGMENTOS.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
+              
+              <div className="flex items-center gap-2">
+                <select
+                  className="select"
+                  style={{ width: "auto", minWidth: "140px" }}
+                  value={filtros.status}
+                  onChange={(e) =>
+                    setFiltros((f) => ({ ...f, status: e.target.value }))
+                  }
+                >
+                  <option value="">Todos Status</option>
+                  {STATUSES.map((s) => (
+                    <option key={s} value={s}>
+                      {STATUS_LABEL[s]}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  className="select"
+                  style={{ width: "auto", minWidth: "140px" }}
+                  value={filtros.segmento}
+                  onChange={(e) =>
+                    setFiltros((f) => ({ ...f, segmento: e.target.value }))
+                  }
+                >
+                  <option value="">Todos Segmentos</option>
+                  {SEGMENTOS.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <span
-                className="badge badge-brand"
-                style={{ fontSize: "0.8125rem" }}
-              >
-                Total: {fmt(totalFiltrado)}
-              </span>
+            {/* Bloco de Resumo e Ação */}
+            <div className="flex items-center gap-6">
+              <div className="flex flex-col items-end">
+                <span style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em', marginBottom: '2px' }}>
+                  Investimento Total
+                </span>
+                <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-brand-400)', lineHeight: 1 }}>
+                  {fmt(totalFiltrado)}
+                </span>
+              </div>
+
+              <div style={{ width: '1px', height: '32px', background: 'var(--color-border)' }}></div>
+
               <button
-                className="btn btn-primary btn-ghost"
-                style={{
-                  gap: "6px",
-                  border: "1px solid var(--color-border)",
-                  background: "var(--color-surface-700)",
+                className="btn btn-primary"
+                style={{ 
+                  height: '42px', 
+                  padding: '0 20px', 
+                  boxShadow: '0 4px 12px rgba(14, 165, 233, 0.2)' 
                 }}
                 onClick={() => setModal("novo")}
               >
-                <Plus size={16} style={{ color: "var(--color-brand-500)" }}/> Novo Chamado
+                <Plus size={18} /> Novo Chamado
               </button>
             </div>
           </div>
