@@ -1342,7 +1342,7 @@ function CorporativoRegioes({ onSelect, mes, ano, regioesContexto }) {
   );
 }
 
-function AnaliseLojaHistorico({ regiao, unidade }) {
+function AnaliseLojaHistorico({ regiao, unidade, height = 240 }) {
   const { data: historico, isLoading } = useQuery({
     queryKey: ["historico-mensal-loja", regiao, unidade],
     queryFn: () =>
@@ -1355,44 +1355,46 @@ function AnaliseLojaHistorico({ regiao, unidade }) {
   if (isLoading)
     return (
       <div className="card p-6">
-        <div className="skeleton" style={{ height: "260px", borderRadius: "8px" }} />
+        <div className="skeleton" style={{ height: `${height + 20}px`, borderRadius: "8px" }} />
       </div>
     );
   if (!historico?.length) return null;
 
   return (
-    <div className="card p-6">
+    <div className="card p-6" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <div className="flex items-center gap-2 mb-4">
         <TrendingUp size={18} style={{ color: "var(--color-success)" }} />
-        <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+        <h3 style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text-primary)" }}>
           Evolução Mensal de Gastos
         </h3>
       </div>
-      <ResponsiveContainer width="100%" height={240}>
-        <ComposedChart data={historico} margin={{ top: 10, right: 20, bottom: 20, left: 10 }}>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
-          <XAxis dataKey="mes" tick={{ fontSize: 12, fill: "var(--color-text-muted)" }} />
-          <YAxis
-            tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
-            tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
-          />
-          <Tooltip
-            content={({ active, payload, label }) => {
-              if (!active || !payload?.length) return null;
-              return (
-                <div style={{ background: "var(--color-surface-700)", border: "1px solid var(--color-border)", borderRadius: "8px", padding: "10px 14px", fontSize: "0.8125rem" }}>
-                  <p style={{ color: "var(--color-text-secondary)", marginBottom: "4px", fontWeight: 600 }}>{label}</p>
-                  {payload.map((p, i) => (
-                    <p key={i} style={{ color: p.color }}>{p.name}: {p.name === "Chamados" ? p.value : fmt(p.value)}</p>
-                  ))}
-                </div>
-              );
-            }}
-          />
-          <Bar dataKey="valor" name="Gasto" fill="var(--color-brand-500)" radius={[4, 4, 0, 0]} />
-          <Line type="monotone" dataKey="quantidade" name="Chamados" stroke="var(--color-warning)" strokeWidth={2} dot={{ r: 3 }} yAxisId={0} />
-        </ComposedChart>
-      </ResponsiveContainer>
+      <div style={{ flex: 1, minHeight: 0 }}>
+        <ResponsiveContainer width="100%" height={height}>
+          <ComposedChart data={historico} margin={{ top: 10, right: 20, bottom: 0, left: 10 }}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
+            <XAxis dataKey="mes" tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} />
+            <YAxis
+              tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
+              tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
+            />
+            <Tooltip
+              content={({ active, payload, label }) => {
+                if (!active || !payload?.length) return null;
+                return (
+                  <div style={{ background: "var(--color-surface-700)", border: "1px solid var(--color-border)", borderRadius: "8px", padding: "10px 14px", fontSize: "0.8125rem" }}>
+                    <p style={{ color: "var(--color-text-secondary)", marginBottom: "4px", fontWeight: 600 }}>{label}</p>
+                    {payload.map((p, i) => (
+                      <p key={i} style={{ color: p.color }}>{p.name}: {p.name === "Chamados" ? p.value : fmt(p.value)}</p>
+                    ))}
+                  </div>
+                );
+              }}
+            />
+            <Bar dataKey="valor" name="Gasto" fill="var(--color-brand-500)" radius={[4, 4, 0, 0]} />
+            <Line type="monotone" dataKey="quantidade" name="Chamados" stroke="var(--color-warning)" strokeWidth={2} dot={{ r: 3 }} yAxisId={0} />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }
@@ -2382,59 +2384,47 @@ export default function ChamadosPage() {
           </div>
 
           <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
-            {/* Gastos por Segmento */}
-            <div className="card">
-              <h3 style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text-primary)", marginBottom: "16px" }}>Gastos por Segmento</h3>
-              <div className="grid gap-4 items-start grid-cols-1 lg:grid-cols-2">
-                <div style={{ minWidth: 0, height: "clamp(240px, 42vw, 320px)" }}>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie data={chamadosPorSegmento} dataKey="valor" nameKey="segmento" cx="50%" cy="50%" outerRadius="72%" innerRadius="44%">
-                        {chamadosPorSegmento.map((_, i) => <Cell key={i} fill={CORES[i % CORES.length]} />)}
-                      </Pie>
-                      <Tooltip formatter={(v) => fmt(v)} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="flex flex-col gap-2" style={{ maxHeight: "clamp(220px, 36vw, 320px)", overflowY: "auto", paddingRight: "4px" }}>
-                  {chamadosPorSegmento.map((item, i) => (
-                    <div key={`seg-${i}`} className="flex items-center justify-between gap-3" style={{ padding: "10px 12px", borderRadius: "10px", background: "var(--color-surface-700)", border: "1px solid var(--color-border)" }}>
-                      <div className="flex items-center gap-2" style={{ minWidth: 0 }}>
-                        <span style={{ width: "10px", height: "10px", borderRadius: "999px", background: CORES[i % CORES.length], flexShrink: 0 }} />
-                        <span style={{ fontSize: "0.8125rem", color: "var(--color-text-secondary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={item.segmento}>{item.segmento}</span>
-                      </div>
-                      <strong style={{ fontSize: "0.8rem", color: "var(--color-text-primary)", flexShrink: 0 }}>{fmt(item.valor)}</strong>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            {/* Evolução Mensal */}
+            <AnaliseLojaHistorico 
+              regiao={regionalSelecionada} 
+              unidade={lojaSelecionada?.nome} 
+              height={260} 
+            />
 
             {/* Top Empresas */}
             <div className="card">
-              <h3 style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text-primary)", marginBottom: "16px" }}>Top Empresas (Fornecedores)</h3>
-              <div className="grid gap-4 items-start grid-cols-1 lg:grid-cols-2">
-                <div style={{ minWidth: 0, height: "clamp(240px, 42vw, 320px)" }}>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie data={chamadosPorEmpresa} dataKey="valor" nameKey="empresa" cx="50%" cy="50%" outerRadius="72%" innerRadius="44%">
-                        {chamadosPorEmpresa.map((_, i) => <Cell key={i} fill={CORES[i % CORES.length]} />)}
-                      </Pie>
-                      <Tooltip formatter={(v) => fmt(v)} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="flex flex-col gap-2" style={{ maxHeight: "clamp(220px, 36vw, 320px)", overflowY: "auto", paddingRight: "4px" }}>
-                  {chamadosPorEmpresa.map((item, i) => (
-                    <div key={`emp-${i}`} className="flex items-center justify-between gap-3" style={{ padding: "10px 12px", borderRadius: "10px", background: "var(--color-surface-700)", border: "1px solid var(--color-border)" }}>
-                      <div className="flex items-center gap-2" style={{ minWidth: 0 }}>
-                        <span style={{ width: "10px", height: "10px", borderRadius: "999px", background: CORES[i % CORES.length], flexShrink: 0 }} />
-                        <span style={{ fontSize: "0.8125rem", color: "var(--color-text-secondary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={item.empresa}>{item.empresa}</span>
-                      </div>
-                      <strong style={{ fontSize: "0.8rem", color: "var(--color-text-primary)", flexShrink: 0 }}>{fmt(item.valor)}</strong>
-                    </div>
-                  ))}
-                </div>
+              <h3 style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text-primary)", marginBottom: "16px" }}>
+                Top 10 Empresas (Fornecedores)
+              </h3>
+              <div style={{ height: "320px" }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart 
+                    data={chamadosPorEmpresa} 
+                    layout="vertical"
+                    margin={{ left: 10, right: 30 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--color-border)" />
+                    <XAxis type="number" hide />
+                    <YAxis 
+                      dataKey="empresa" 
+                      type="category" 
+                      width={110} 
+                      tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} 
+                    />
+                    <Tooltip content={<TooltipCustom />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+                    <Bar 
+                      dataKey="valor" 
+                      fill="var(--color-brand-600)" 
+                      radius={[0, 4, 4, 0]} 
+                      barSize={18}
+                      name="Gasto"
+                    >
+                      {chamadosPorEmpresa.map((_, i) => (
+                        <Cell key={i} fill={CORES[(i + 4) % CORES.length]} fillOpacity={0.9} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </div>
           </div>
@@ -2460,8 +2450,6 @@ export default function ChamadosPage() {
             </div>
           )}
 
-          {/* Evolução Mensal */}
-          <AnaliseLojaHistorico regiao={regionalSelecionada} unidade={lojaSelecionada?.nome} />
         </div>
       )}
 
