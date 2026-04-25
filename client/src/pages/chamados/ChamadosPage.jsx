@@ -1425,12 +1425,14 @@ export default function ChamadosPage() {
     "DIRETOR",
     "GERENTE",
     "COORDENADOR",
+    "GESTOR",
   ].includes(usuario?.role);
   const getInitialEtapa = (role) => {
     if (!hasDrilldown) return "chamados";
     if (["ADMINISTRADOR", "DIRETOR"].includes(role)) return "gerentes";
     if (role === "GERENTE") return "coordenadores";
     if (role === "COORDENADOR") return "regionais";
+    if (role === "GESTOR") return "chamados";
     return "regionais";
   };
   const [etapa, setEtapa] = useState(() => getInitialEtapa(usuario?.role));
@@ -1438,7 +1440,12 @@ export default function ChamadosPage() {
   const [gerenteSelecionado, setGerenteSelecionado] = useState(null);
   const [coordenadorSelecionado, setCoordenadorSelecionado] = useState(null);
   const [regionalSelecionada, setRegionalSelecionada] = useState(null);
-  const [lojaSelecionada, setLojaSelecionada] = useState(null);
+  const [lojaSelecionada, setLojaSelecionada] = useState(() => {
+    if (usuario?.role === "GESTOR" && usuario?.loja) {
+      return usuario.loja;
+    }
+    return null;
+  });
   const [visualizandoAnalise, setVisualizandoAnalise] = useState(false);
 
   useEffect(() => {
@@ -2016,7 +2023,7 @@ export default function ChamadosPage() {
           {hasDrilldown && (
             <div className="flex items-center justify-between gap-3 mb-2 flex-wrap">
               <div className="flex items-center gap-3">
-                {lojaSelecionada ? (
+                {lojaSelecionada && usuario?.role !== "GESTOR" ? (
                   <button
                     className="btn btn-ghost btn-sm"
                     onClick={() => setEtapa("lojas")}
