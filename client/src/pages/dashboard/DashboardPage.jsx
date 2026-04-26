@@ -16,6 +16,8 @@ import {
   Pie,
   Cell,
   Legend,
+  ComposedChart,
+  Line,
 } from "recharts";
 import {
   dashboardService,
@@ -145,19 +147,25 @@ const TooltipCustom = ({ active, payload, label }) => {
         borderRadius: "8px",
         padding: "10px 14px",
         fontSize: "0.8125rem",
+        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.3)",
       }}
     >
-      <p style={{ color: "var(--color-text-secondary)", marginBottom: "4px" }}>
+      <p style={{ color: "var(--color-text-secondary)", marginBottom: "4px", fontWeight: 700 }}>
         {label}
       </p>
-      {payload.map((p, i) => (
-        <p key={i} style={{ color: p.color, fontWeight: 600 }}>
-          {p.name}:{" "}
-          {p.name?.includes("R$") || p.dataKey === "valor"
-            ? fmt(p.value)
-            : p.value}
-        </p>
-      ))}
+      {payload.map((p, i) => {
+        const isCurrency = p.name?.toLowerCase().includes("custo") || p.name?.toLowerCase().includes("valor") || p.name?.includes("R$") || p.dataKey === "valor" || p.dataKey === "total";
+        const isPercent = p.name?.toLowerCase().includes("%") || p.name?.toLowerCase().includes("acumulada") || p.dataKey === "acumulado";
+        
+        return (
+          <p key={i} style={{ color: p.color, fontWeight: 600, display: 'flex', justifyContent: 'space-between', gap: '16px' }}>
+            <span>{p.name}:</span>
+            <span>
+              {isCurrency ? fmt(p.value) : isPercent ? `${Number(p.value).toFixed(1)}%` : p.value}
+            </span>
+          </p>
+        );
+      })}
     </div>
   );
 };
@@ -260,8 +268,7 @@ function RegionalDrilldown({
         ) : (
           <>
             <div
-              className="grid gap-3"
-              style={{ gridTemplateColumns: "repeat(3, minmax(0, 1fr))" }}
+              className="grid gap-3 grid-cols-1 sm:grid-cols-3"
             >
               <div
                 style={{
@@ -280,11 +287,15 @@ function RegionalDrilldown({
                 </p>
                 <p
                   style={{
-                    fontSize: "1rem",
-                    fontWeight: 700,
+                    fontSize: "0.95rem",
+                    fontWeight: 800,
                     color: "var(--color-success)",
                     marginTop: "4px",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis"
                   }}
+                  title={fmt(detalhe?.financeiro?.totalGasto)}
                 >
                   {fmt(detalhe?.financeiro?.totalGasto)}
                 </p>
@@ -431,10 +442,7 @@ function RegionalDrilldown({
                       </div>
 
                       <div
-                        className="grid gap-3 mt-3"
-                        style={{
-                          gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-                        }}
+                        className="grid gap-3 mt-3 grid-cols-1 sm:grid-cols-2"
                       >
                         <div>
                           <p
@@ -486,8 +494,7 @@ function RegionalDrilldown({
             </div>
 
             <div
-              className="grid gap-4 mt-5"
-              style={{ gridTemplateColumns: "1fr 1fr" }}
+              className="grid gap-4 mt-5 grid-cols-1 sm:grid-cols-2"
             >
               <div>
                 <h4
@@ -882,7 +889,7 @@ function CorporativoDashboard({ filtro, setFiltro }) {
                         />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(v) => fmt(v)} />
+                    <Tooltip content={<TooltipCustom />} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -1732,7 +1739,6 @@ function GestorDashboard({ filtro }) {
           </div>
         </div>
 
-        {/* Gastos por segmento */}
         <div className="card">
           <h3
             style={{
@@ -1777,7 +1783,7 @@ function GestorDashboard({ filtro }) {
                         />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(v) => fmt(v)} />
+                    <Tooltip content={<TooltipCustom />} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>

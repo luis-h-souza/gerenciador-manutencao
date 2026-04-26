@@ -144,16 +144,28 @@ const TooltipCustom = ({ active, payload, label }) => {
         borderRadius: "8px",
         padding: "10px 14px",
         fontSize: "0.8125rem",
+        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.3)",
       }}
     >
-      <p style={{ color: "var(--color-text-secondary)", marginBottom: "4px" }}>
+      <p style={{ color: "var(--color-text-secondary)", marginBottom: "4px", fontWeight: 700 }}>
         {label}
       </p>
-      {payload.map((p, i) => (
-        <p key={i} style={{ color: p.color, fontWeight: 600 }}>
-          {p.name}: {fmt(p.value)}
-        </p>
-      ))}
+      {payload.map((p, i) => {
+        const isCurrency = p.name?.toLowerCase().includes("custo") || p.name?.toLowerCase().includes("valor") || p.name?.includes("R$") || p.dataKey === "valor" || p.dataKey === "total";
+        const isPercent = p.name?.toLowerCase().includes("%") || p.name?.toLowerCase().includes("acumulada") || p.dataKey === "acumulado";
+        
+        // Cores fixas: Azul para custo, Vermelho para acumulado
+        const itemColor = isCurrency ? "var(--color-brand-500)" : isPercent ? "var(--color-danger)" : p.color;
+
+        return (
+          <p key={i} style={{ color: itemColor, fontWeight: 600, display: 'flex', justifyContent: 'space-between', gap: '16px' }}>
+            <span>{p.name}:</span>
+            <span>
+              {isCurrency ? fmt(p.value) : isPercent ? `${Number(p.value).toFixed(1)}%` : p.value}
+            </span>
+          </p>
+        );
+      })}
     </div>
   );
 };
@@ -400,6 +412,7 @@ function ChamadoModal({ chamado, onClose }) {
 }
 
 function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
+  const [paretoHelpOpen, setParetoHelpOpen] = useState(false);
   const { data: detalhe, isLoading } = useQuery({
     queryKey: ["dashboard-detalhe-regional", regiao, mes, ano],
     queryFn: () =>
@@ -558,14 +571,14 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
       </div>
 
       <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
-        <div className="card">
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', height: '420px' }}>
           <h3
             className="flex items-center gap-2 mb-4"
             style={{ fontSize: "0.875rem", fontWeight: 600 }}
           >
             <BarChart3 size={16} /> Gastos por Segmento
           </h3>
-          <div style={{ height: "300px" }}>
+          <div style={{ flex: 1, minHeight: 0 }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={detalhe.segmentos} layout="vertical">
                 <XAxis type="number" hide />
@@ -578,113 +591,181 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
                 <Tooltip content={<TooltipCustom />} />
                 <Bar
                   dataKey="valor"
-                  fill="var(--color-brand-500)"
                   radius={[0, 4, 4, 0]}
                   name="Valor"
-                />
+                >
+                  {detalhe.segmentos?.map((_, i) => (
+                    <Cell key={i} fill={CORES[i % CORES.length]} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="card">
-          <h3
-            style={{
-              fontSize: "0.875rem",
-              fontWeight: 600,
-              color: "var(--color-text-primary)",
-              marginBottom: "16px",
-            }}
-          >
-            <span className="flex items-center gap-2">
-              <Building2 size={16} /> Top 10 Empresas
-            </span>
-          </h3>
-          <div className="grid gap-4 items-start grid-cols-1 lg:grid-cols-2">
-            <div
-              style={{
-                minWidth: 0,
-                height: "clamp(240px, 42vw, 320px)",
-              }}
-            >
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={detalhe.empresas}
-                    dataKey="valor"
-                    nameKey="empresa"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius="72%"
-                    innerRadius="44%"
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', height: '420px' }}>
+          <div className="flex flex-col gap-1 mb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Building2 size={16} style={{ color: "var(--color-brand-500)" }} />
+                <h3 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+                  Concentração por Fornecedor (Risco)
+                </h3>
+                <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+                  <button 
+                    type="button"
+                    className="btn btn-ghost btn-sm" 
+                    style={{ padding: 0, minWidth: 'auto', width: '20px', height: '20px', borderRadius: '50%', color: 'var(--color-warning)' }}
+                    onMouseEnter={() => setParetoHelpOpen('concentracao')}
+                    onMouseLeave={() => setParetoHelpOpen(false)}
                   >
-                    {detalhe.empresas?.map((_, i) => (
-                      <Cell key={i} fill={CORES[i % CORES.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(v) => fmt(v)} />
-                </PieChart>
-              </ResponsiveContainer>
+                    <CircleHelp size={14} />
+                  </button>
+                  {paretoHelpOpen === 'concentracao' && (
+                    <div style={{
+                      position: "absolute",
+                      bottom: "calc(100% + 8px)",
+                      left: 0,
+                      width: "260px",
+                      padding: "10px 12px",
+                      borderRadius: "10px",
+                      background: "var(--color-surface-700)",
+                      border: "1px solid var(--color-border)",
+                      color: "var(--color-text-secondary)",
+                      boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+                      lineHeight: 1.4,
+                      zIndex: 50,
+                      fontSize: '0.75rem'
+                    }}>
+                      <p style={{ fontWeight: 700, color: 'var(--color-brand-400)', marginBottom: '4px' }}>Concentração de Budget</p>
+                      Mostra quanto do budget da regional está concentrado em cada fornecedor. 
+                      Se algum passar de 40%, o painel sinaliza risco de dependência.
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
+            <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
+              Share do budget mensal por empresa de manutenção.
+            </p>
+          </div>
 
-            <div
-              className="flex flex-col gap-2"
-              style={{
-                maxHeight: "clamp(220px, 36vw, 320px)",
-                overflowY: "auto",
-                paddingRight: "4px",
-              }}
-            >
-              {detalhe.empresas?.map((item, i) => (
+          {(() => {
+            const totalGasto = detalhe.financeiro?.totalGasto || 1;
+            const fornecedoresComShare = detalhe.empresas?.map(item => ({
+              ...item,
+              share: (item.valor / totalGasto) * 100
+            })) || [];
+            const criticos = fornecedoresComShare.filter(f => f.share > 40);
+            const top1 = fornecedoresComShare[0];
+
+            return (
+              <>
                 <div
-                  key={`${item.empresa}-${i}`}
-                  className="flex items-center justify-between gap-3"
+                  className="flex items-center justify-between gap-3 flex-wrap mb-4"
                   style={{
                     padding: "10px 12px",
                     borderRadius: "10px",
-                    background: "var(--color-surface-700)",
-                    border: "1px solid var(--color-border)",
+                    background: criticos.length > 0 ? "rgba(239,68,68,0.08)" : "rgba(16,185,129,0.08)",
+                    border: `1px solid ${criticos.length > 0 ? "rgba(239,68,68,0.22)" : "rgba(16,185,129,0.22)"}`,
                   }}
                 >
-                  <div
-                    className="flex items-center gap-2"
-                    style={{ minWidth: 0 }}
-                  >
-                    <span
-                      style={{
-                        width: "10px",
-                        height: "10px",
-                        borderRadius: "999px",
-                        background: CORES[i % CORES.length],
-                        flexShrink: 0,
-                      }}
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle
+                      size={16}
+                      style={{ color: criticos.length > 0 ? "var(--color-danger)" : "var(--color-success)" }}
                     />
-                    <span
-                      style={{
-                        fontSize: "0.8125rem",
-                        color: "var(--color-text-secondary)",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                      title={item.empresa}
-                    >
-                      {item.empresa}
+                    <span style={{ fontSize: "0.8125rem", color: "var(--color-text-secondary)" }}>
+                      {criticos.length > 0
+                        ? `Alerta: ${criticos.length} fornecedor(es) acima de 40% do budget.`
+                        : "Distribuição sem concentração crítica acima de 40%."}
                     </span>
                   </div>
-                  <strong
-                    style={{
-                      fontSize: "0.8rem",
-                      color: "var(--color-text-primary)",
-                      flexShrink: 0,
-                    }}
-                  >
-                    {fmt(item.valor)}
-                  </strong>
+                  {top1 && (
+                    <span className={criticos.length > 0 ? "badge badge-danger" : "badge badge-success"} style={{ fontSize: "0.75rem" }}>
+                      Top 1: {top1.empresa} • {top1.share.toFixed(1)}%
+                    </span>
+                  )}
                 </div>
-              ))}
-            </div>
-          </div>
+
+                <div
+                  className="flex flex-col gap-2 custom-scrollbar"
+                  style={{
+                    flex: 1,
+                    overflowY: "auto",
+                    paddingRight: "4px",
+                  }}
+                >
+                  {fornecedoresComShare.map((item, i) => {
+                    const isCritico = item.share > 40;
+                    return (
+                      <div
+                        key={`${item.empresa}-${i}`}
+                        style={{
+                          padding: "10px 12px",
+                          borderRadius: "10px",
+                          background: isCritico ? "rgba(239,68,68,0.05)" : "var(--color-surface-700)",
+                          border: isCritico ? "1px solid rgba(239,68,68,0.2)" : "1px solid var(--color-border)",
+                          position: 'relative',
+                          overflow: 'hidden',
+                          flexShrink: 0
+                        }}
+                      >
+                        {/* Barra de Progresso no Fundo */}
+                        <div style={{
+                          position: 'absolute',
+                          left: 0,
+                          top: 0,
+                          bottom: 0,
+                          width: `${item.share}%`,
+                          background: isCritico ? 'rgba(239, 68, 68, 0.15)' : 'rgba(14, 165, 233, 0.08)',
+                          transition: 'width 0.5s ease-out'
+                        }} />
+
+                        <div className="flex items-center justify-between gap-3 relative z-10">
+                          <div className="flex flex-col min-w-0">
+                            <span
+                              style={{
+                                fontSize: "0.8125rem",
+                                fontWeight: 700,
+                                color: "var(--color-text-primary)",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                              }}
+                              title={item.empresa}
+                            >
+                              {item.empresa}
+                            </span>
+                            <span style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>
+                              {fmt(item.valor)}
+                            </span>
+                          </div>
+
+                          <div className="flex flex-col items-end shrink-0">
+                            <div className="flex items-center gap-1">
+                              {isCritico && <AlertTriangle size={10} style={{ color: 'var(--color-danger)' }} />}
+                              <span style={{
+                                fontSize: "0.875rem",
+                                fontWeight: 800,
+                                color: isCritico ? 'var(--color-danger)' : 'var(--color-brand-400)'
+                              }}>
+                                {item.share.toFixed(1)}%
+                              </span>
+                            </div>
+                            {isCritico && <span style={{ fontSize: '0.55rem', color: 'var(--color-danger)', fontWeight: 700, textTransform: 'uppercase' }}>Crítico</span>}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <p style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginTop: '12px', borderTop: '1px solid var(--color-border)', paddingTop: '8px' }}>
+                  * Alertas para fornecedores com mais de 40% de participação.
+                </p>
+              </>
+            );
+          })()}
         </div>
       </div>
     </div>
@@ -1224,50 +1305,51 @@ function PainelExecutivo({ mes, ano }) {
             <option value="empresas">Por Empresas</option>
           </select>
         </div>
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={320}>
           <ComposedChart
             data={paretoData}
-            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+            margin={{ top: 10, right: 10, bottom: 20, left: 0 }}
           >
             <CartesianGrid
               strokeDasharray="3 3"
               vertical={false}
               stroke="var(--color-border)"
+              opacity={0.5}
             />
             <XAxis
               dataKey={paretoLabel}
-              tick={{ fontSize: 12, fill: "var(--color-text-muted)" }}
-              angle={-45}
-              height={80}
+              tick={{ fontSize: 10, fill: "var(--color-text-muted)" }}
+              axisLine={false}
+              tickLine={false}
+              height={60}
               interval={0}
               textAnchor="end"
+              angle={-35}
             />
             <YAxis
               yAxisId="left"
               tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
-              tick={{ fontSize: 12, fill: "var(--color-text-muted)" }}
+              tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
+              axisLine={false}
+              tickLine={false}
             />
             <YAxis
               yAxisId="right"
               orientation="right"
               tickFormatter={(v) => `${v}%`}
-              tick={{ fontSize: 12, fill: "var(--color-danger)" }}
+              tick={{ fontSize: 11, fill: "var(--color-danger)" }}
+              axisLine={false}
+              tickLine={false}
+              domain={[0, 100]}
             />
-            <Tooltip
-              formatter={(value, name, item) => {
-                const isCusto = item?.dataKey === "valor" || name === "Custo";
-                return [
-                  isCusto ? fmt(value) : `${Number(value).toFixed(1)}%`,
-                  isCusto ? "Custo" : "% Acumulada",
-                ];
-              }}
-            />
+            <Tooltip content={<TooltipCustom />} />
             <Bar
               yAxisId="left"
               dataKey="valor"
               fill="var(--color-brand-500)"
               radius={[4, 4, 0, 0]}
               name="Custo"
+              barSize={40}
             />
             <Line
               yAxisId="right"
@@ -1275,11 +1357,8 @@ function PainelExecutivo({ mes, ano }) {
               dataKey="acumulado"
               stroke="var(--color-danger)"
               strokeWidth={3}
-              dot={{
-                r: 4,
-                fill: "var(--color-danger)",
-                stroke: "var(--color-danger)",
-              }}
+              dot={{ r: 3, fill: "var(--color-danger)", strokeWidth: 2 }}
+              activeDot={{ r: 5 }}
               name="% Acumulada"
             />
           </ComposedChart>
@@ -2505,11 +2584,30 @@ export default function ChamadosPage() {
                   <YAxis yAxisId="left" tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} />
                   <YAxis yAxisId="right" orientation="right" tickFormatter={(v) => `${v}%`} tick={{ fontSize: 11, fill: "var(--color-danger)" }} domain={[0, 100]} />
                   <Tooltip content={<TooltipCustom />} />
-                  <Bar yAxisId="left" dataKey="valor" fill="var(--color-brand-500)" radius={[4, 4, 0, 0]} name="Custo" />
-                  <Line yAxisId="right" type="monotone" dataKey="acumulado" stroke="var(--color-danger)" strokeWidth={2.5} dot={{ r: 4, fill: "var(--color-danger)" }} name="% Acumulada" />
+                  <Bar 
+                    yAxisId="left" 
+                    dataKey="valor" 
+                    radius={[4, 4, 0, 0]} 
+                    name="Custo"
+                    barSize={40}
+                  >
+                    {paretoData?.map((_, i) => (
+                      <Cell key={i} fill={CORES[i % CORES.length]} />
+                    ))}
+                  </Bar>
+                  <Line 
+                    yAxisId="right" 
+                    type="monotone" 
+                    dataKey="acumulado" 
+                    stroke="var(--color-danger)" 
+                    strokeWidth={3} 
+                    dot={{ r: 3, fill: "var(--color-danger)", strokeWidth: 2 }} 
+                    activeDot={{ r: 5 }}
+                    name="% Acumulada" 
+                  />
                 </ComposedChart>
               </ResponsiveContainer>
-              <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: '10px', textAlign: 'center' }}>
+              <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '10px', textAlign: 'center' }}>
                 * A linha vermelha indica o percentual acumulado em relação ao gasto total da loja no mês.
               </p>
             </div>
