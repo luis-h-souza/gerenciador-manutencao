@@ -31,10 +31,21 @@ function TarefaModal({ tarefa, onClose }) {
   const isEdit = !!tarefa;
 
   const { data: usuarios = [] } = useQuery({
-    queryKey: ['usuarios-lista'],
-    queryFn: () => usuariosService.listar({ role: 'TECNICO', limit: 100 }).then(r => r.data.data),
-    enabled: !['TECNICO'].includes(usuario?.role),
+    queryKey: ['usuarios-atribuicao', usuario?.role],
+    queryFn: () => {
+      let targetRole = '';
+      if (usuario?.role === 'DIRETOR') targetRole = 'GERENTE';
+      if (usuario?.role === 'GERENTE') targetRole = 'COORDENADOR';
+      if (usuario?.role === 'COORDENADOR') targetRole = 'GESTOR,TECNICO';
+      if (usuario?.role === 'GESTOR') targetRole = 'TECNICO';
+      if (!targetRole) return [];
+      return usuariosService.listar({ role: targetRole, limit: 100 }).then(r => r.data.data);
+    },
+    enabled: !!usuario && !['TECNICO'].includes(usuario?.role),
   });
+
+  const canEditStatus = ['ADMINISTRADOR', 'DIRETOR', 'GESTOR'].includes(usuario?.role) || 
+                       (usuario?.role === 'TECNICO' && tarefa?.atribuidoParaId === usuario.id);
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
     defaultValues: isEdit ? {
@@ -91,9 +102,15 @@ function TarefaModal({ tarefa, onClose }) {
           {isEdit && (
             <div>
               <label className="label">Status</label>
-              <select className="select" {...register('status')}>
+              <select 
+                className="select" 
+                {...register('status')} 
+                disabled={!canEditStatus}
+                style={!canEditStatus ? { opacity: 0.7, cursor: 'not-allowed', background: 'var(--color-surface-600)' } : {}}
+              >
                 {Object.entries(STATUS_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
               </select>
+              {!canEditStatus && <p style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginTop: '4px' }}>Apenas o responsável ou gestor pode atualizar o status.</p>}
             </div>
           )}
 
@@ -107,7 +124,8 @@ function TarefaModal({ tarefa, onClose }) {
                 <label className="label">Atribuir para</label>
                 <select className="select" {...register('atribuidoParaId')}>
                   <option value="">Não atribuído</option>
-                  {usuarios.map(u => <option key={u.id} value={u.id}>{u.nome}</option>)}
+                  {usuario?.role === 'GESTOR' && <option value={usuario.id}>Atribuir a mim mesmo</option>}
+                  {usuarios.map(u => <option key={u.id} value={u.id}>{u.nome} ({u.role})</option>)}
                 </select>
               </div>
             )}
