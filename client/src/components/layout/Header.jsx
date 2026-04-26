@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Menu, Bell, LogOut } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { notificacoesService } from '../../services';
 import toast from 'react-hot-toast';
 
@@ -20,6 +20,7 @@ export default function Header({ onMenuClick }) {
   const { logout } = useAuth();
   const { pathname } = useLocation();
   const [showNotif, setShowNotif] = useState(false);
+  const qc = useQueryClient();
 
   const { data: notifs = [] } = useQuery({
     queryKey: ['notificacoes'],
@@ -32,6 +33,17 @@ export default function Header({ onMenuClick }) {
   const handleLogout = async () => {
     await logout();
     toast.success('Até logo!');
+  };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      await notificacoesService.marcarTodasLidas();
+      await qc.invalidateQueries({ queryKey: ['notificacoes'] });
+      setShowNotif(false);
+      toast.success('Notificações marcadas como lidas');
+    } catch (err) {
+      toast.error('Erro ao atualizar notificações');
+    }
   };
 
   return (
@@ -82,10 +94,7 @@ export default function Header({ onMenuClick }) {
                 {naoLidas > 0 && (
                   <button
                     className="btn btn-ghost btn-sm"
-                    onClick={async () => {
-                      await notificacoesService.marcarTodasLidas();
-                      setShowNotif(false);
-                    }}
+                    onClick={handleMarkAllAsRead}
                     style={{ fontSize: '0.75rem', padding: '2px 8px' }}
                   >
                     Marcar todas
