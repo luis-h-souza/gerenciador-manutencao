@@ -811,6 +811,7 @@ function CorporativoDashboard({ filtro, setFiltro }) {
                   margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
                   onClick={(state) => {
                     if (state && state.activePayload) {
+                      if (!state.activePayload || state.activePayload.length === 0) return;
                       const d = state.activePayload[0].payload;
                       navigate(`/chamados?mes=${d.mesNum}&ano=${d.anoNum}`);
                     }
@@ -1681,6 +1682,7 @@ function GestorDashboard({ filtro }) {
                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
                 onClick={(state) => {
                   if (state && state.activePayload) {
+                    if (!state.activePayload || state.activePayload.length === 0) return;
                     const d = state.activePayload[0].payload;
                     navigate(`/chamados?mes=${d.mesNum}&ano=${d.anoNum}`);
                   }

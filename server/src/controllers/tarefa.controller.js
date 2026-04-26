@@ -36,8 +36,9 @@ async function validarAtribuicao(fromUser, toUserId) {
 
   if (fromUser.role === 'GESTOR') {
     if (toUser.id === fromUser.id) return true;
-    const sameUnit = toUser.role === 'TECNICO' && toUser.unidade === fromUser.unidade;
-    if (sameUnit) return true;
+    // Compara lojaId para maior precisão
+    const sameStore = toUser.role === 'TECNICO' && toUser.lojaId === fromUser.lojaId;
+    if (sameStore) return true;
     throw new Error('Gestores só podem atribuir para si mesmos ou técnicos de sua unidade');
   }
 
@@ -116,6 +117,7 @@ const buscarPorId = async (req, res, next) => {
 const criar = async (req, res, next) => {
   try {
     const { descricao, prioridade, dataConclusao, areResponsavel, atribuidoParaId } = req.body;
+    const context = getCreationContext(req.user);
     // Validar hierarquia de atribuição
     try {
       await validarAtribuicao(req.user, atribuidoParaId);

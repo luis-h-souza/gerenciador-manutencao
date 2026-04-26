@@ -32,7 +32,7 @@ router.put('/:id',
   ], validate, ctrl.atualizar);
 
 router.delete('/:id',
-  autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR),
+  autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR, Roles.GESTOR),
   ctrl.remover);
 
 module.exports = router;
