@@ -230,3 +230,7 @@
 {"level":"error","message":"Redis error:","timestamp":"2026-04-26T00:29:17.328Z"}
 {"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-26T00:29:17.329Z"}
 {"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-26T00:29:17.329Z"}
+{"level":"info","message":"Logout: godoi@manutencao.com","timestamp":"2026-04-26T00:35:11.038Z"}
+{"level":"info","message":"Login: nathan.coordenador@manutencao.com (COORDENADOR) de ::1","timestamp":"2026-04-26T00:35:16.688Z"}
+{"level":"info","message":"Logout: nathan.coordenador@manutencao.com","timestamp":"2026-04-26T01:09:07.232Z"}
+{"level":"info","message":"Login: marco.diretor@manutencao.com (DIRETOR) de ::1","timestamp":"2026-04-26T01:09:13.603Z"}
