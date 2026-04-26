@@ -192,7 +192,7 @@ const atualizar = async (req, res, next) => {
         if (tarefaExiste.atribuidoParaId === req.user.id) podeMudarStatus = true;
         else {
           const target = await prisma.usuario.findUnique({ where: { id: tarefaExiste.atribuidoParaId } });
-          if (target?.role === 'TECNICO' && target.unidade === req.user.unidade) podeMudarStatus = true;
+          if (target?.role === 'TECNICO' && target.lojaId === req.user.lojaId) podeMudarStatus = true;
         }
       }
 
