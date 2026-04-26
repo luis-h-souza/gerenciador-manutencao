@@ -71,7 +71,10 @@ const criar = async (req, res, next) => {
         regiao: context.regiao,
         unidade: context.unidade,
         dataAbertura: new Date(req.body.dataAbertura),
+        dataAprovacao: req.body.dataAprovacao ? new Date(req.body.dataAprovacao) : null,
         valor: req.body.valor ? parseFloat(req.body.valor) : null,
+        solicitacao: req.body.solicitacao || null,
+        numeroOM: req.body.numeroOM || null,
       },
     });
     res.status(201).json(chamado);
@@ -89,6 +92,7 @@ const atualizar = async (req, res, next) => {
 
     const data = { ...req.body };
     if (data.dataAbertura) data.dataAbertura = new Date(data.dataAbertura);
+    if (data.dataAprovacao) data.dataAprovacao = new Date(data.dataAprovacao);
     if (data.valor !== undefined) data.valor = data.valor ? parseFloat(data.valor) : null;
 
     const chamado = await prisma.controleChamado.update({ where: { id: req.params.id }, data });

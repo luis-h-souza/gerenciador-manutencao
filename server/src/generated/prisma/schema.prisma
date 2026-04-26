@@ -115,8 +115,11 @@ model ControleChamado {
   regiao          String?
   unidade         String?
   numeroOrcamento String?
+  solicitacao     String?
+  dataAprovacao   DateTime?
+  numeroOM        String?
   valor           Decimal?        @db.Decimal(12, 2)
-  status          StatusChamado   @default(CHAMADO_ABERTO)
+  status          StatusChamado   @default(AGUARDANDO_APROVACAO)
   mauUso          Boolean         @default(false)
   criadoEm        DateTime        @default(now())
   atualizadoEm    DateTime        @updatedAt
@@ -136,6 +139,20 @@ model Fornecedor {
   atualizadoEm DateTime @updatedAt
 
   @@map("fornecedores")
+}
+
+model MetaOrcamentaria {
+  id           String   @id @default(uuid())
+  regiao       String
+  unidade      String? // Opcional: meta pode ser por regional ou por loja específica
+  ano          Int
+  mes          Int
+  valorMeta    Decimal  @db.Decimal(12, 2)
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  @@unique([regiao, unidade, ano, mes], name: "meta_unica")
+  @@map("metas_orcamentarias")
 }
 
 model Peca {
@@ -293,24 +310,50 @@ enum StatusTarefa {
 }
 
 enum SegmentoChamado {
-  ELETRICA
-  EMPILHADEIRA
-  REFRIGERACAO
-  REFRIGERACAO_PÇS
   AR_CONDICIONADO
-  SERRALHERIA
+  CARRINHO_CLIENTE
+  CARRO_PIPA
+  LIMPEZA_ESGOTO
   CIVIL
-  EQUIPAMENTOS
-  SERVIÇOS_GERAIS
+  COZINHA_REFEITORIO
+  ELETRICA
+  TRANSPALETEIRA
+  EMPILHADEIRA
   GERADOR
-  ELEVADOR
-  PCI
-  DIVERSOS
-  ALUGUEL
+  HIDRAULICA
+  LAUDOS
+  NOBREAK
+  MATERIAL_MANUTENCAO
+  PINTURA
+  REFRIGERACAO
+  REFRIGERACAO_PECAS
+  SERRALHERIA
+  SISTEMA_INCENDIO
+  LOCACAO
+  LIMPEZA
+  TRATAMENTO_AGUA
+  PORTA_PALETES
+  FERRAMENTAS
+  COMUNICACAO_VISUAL
+  ELEVADORES
+  ESTEIRAS
+  TELHADO
+  CHECKOUT
+  VIDRACARIA
+  FATIADORA
+  SERRA_FITA
+  EMBALADORA
+  MAQUINA_VACUO
+  LAVA_LOUCA
+  CAFETERIA
+  SISTEMA_SOM
+  FRENTE_CAIXA
+  GALERIAS
+  FRETE
+  OUTROS
 }
 
 enum StatusChamado {
-  CHAMADO_ABERTO
   AGUARDANDO_APROVACAO
   AGUARDANDO_OM_ENTREGA
   FINALIZADO

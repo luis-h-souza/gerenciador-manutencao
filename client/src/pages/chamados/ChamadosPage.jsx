@@ -52,49 +52,71 @@ import {
 import { useAuth } from "../../contexts/AuthContext";
 
 const SEGMENTOS = [
-  "ELETRICA",
-  "EMPILHADEIRA",
-  "REFRIGERACAO",
-  "REFRIGERACAO-PÃ‡S",
-  "SERRALHERIA",
-  "AR-CONDICIONADO",
-  "SERVIÃ‡OS GERAIS",
+  "AR_CONDICIONADO",
+  "CARRINHO_CLIENTE",
+  "CARRO_PIPA",
+  "LIMPEZA_ESGOTO",
   "CIVIL",
-  "EQUIPAMENTOS",
+  "COZINHA_REFEITORIO",
+  "ELETRICA",
+  "TRANSPALETEIRA",
+  "EMPILHADEIRA",
   "GERADOR",
-  "ELEVADOR",
-  "PCI",
-  "DIVERSOS",
-  "ALUGUEL",
+  "HIDRAULICA",
+  "LAUDOS",
+  "NOBREAK",
+  "MATERIAL_MANUTENCAO",
+  "PINTURA",
+  "REFRIGERACAO",
+  "REFRIGERACAO_PECAS",
+  "SERRALHERIA",
+  "SISTEMA_INCENDIO",
+  "LOCACAO",
+  "LIMPEZA",
+  "TRATAMENTO_AGUA",
+  "PORTA_PALETES",
+  "FERRAMENTAS",
+  "COMUNICACAO_VISUAL",
+  "ELEVADORES",
+  "ESTEIRAS",
+  "TELHADO",
+  "CHECKOUT",
+  "VIDRACARIA",
+  "FATIADORA",
+  "SERRA_FITA",
+  "EMBALADORA",
+  "MAQUINA_VACUO",
+  "LAVA_LOUCA",
+  "CAFETERIA",
+  "SISTEMA_SOM",
+  "FRENTE_CAIXA",
+  "GALERIAS",
+  "FRETE",
+  "OUTROS",
 ];
 const STATUSES = [
-  "CHAMADO_ABERTO",
   "AGUARDANDO_APROVACAO",
   "AGUARDANDO_OM_ENTREGA",
   "FINALIZADO",
   "ALUGUEL_OUTROS",
 ];
 const STATUS_LABEL = {
-  CHAMADO_ABERTO: "Aberto",
-  AGUARDANDO_APROVACAO: "Ag. AprovaÃ§Ã£o",
+  AGUARDANDO_APROVACAO: "Ag. Aprovação",
   AGUARDANDO_OM_ENTREGA: "Ag. OM/Entrega",
   FINALIZADO: "Finalizado",
   ALUGUEL_OUTROS: "Aluguel/Outros",
 };
 const STATUS_BADGE = {
-  CHAMADO_ABERTO: "badge-info",
   AGUARDANDO_APROVACAO: "badge-warning",
   AGUARDANDO_OM_ENTREGA: "badge-warning",
   FINALIZADO: "badge-success",
   ALUGUEL_OUTROS: "badge-neutral",
 };
 const fmt = (v) =>
-  v
-    ? new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(v)
-    : "â€”";
+  new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(v || 0);
 const CORES = [
   "#0ea5e9",
   "#10b981",
@@ -150,12 +172,20 @@ function ChamadoModal({ chamado, onClose }) {
         dataAbertura: chamado.dataAbertura
           ? format(new Date(chamado.dataAbertura), "yyyy-MM-dd")
           : "",
+        dataAprovacao: chamado.dataAprovacao
+          ? format(new Date(chamado.dataAprovacao), "yyyy-MM-dd")
+          : "",
         valor: chamado.valor || "",
+        solicitacao: chamado.solicitacao || "",
+        numeroOM: chamado.numeroOM || "",
       }
       : {
         dataAbertura: format(new Date(), "yyyy-MM-dd"),
-        status: "CHAMADO_ABERTO",
+        dataAprovacao: "",
+        status: "AGUARDANDO_APROVACAO",
         mauUso: false,
+        solicitacao: "",
+        numeroOM: "",
       },
   });
 
@@ -222,12 +252,14 @@ function ChamadoModal({ chamado, onClose }) {
                 {...register("numeroChamado", { required: "Obrigatório" })}
               />
             </div>
-          </div>
-
-          <div
-            className="grid gap-4"
-            style={{ gridTemplateColumns: "1fr 1fr" }}
-          >
+            <div>
+              <label className="label">Solicitação</label>
+              <input
+                className="input"
+                placeholder="Nº da Solicitação"
+                {...register("solicitacao")}
+              />
+            </div>
             <div>
               <label className="label">Segmento *</label>
               <select
@@ -237,7 +269,7 @@ function ChamadoModal({ chamado, onClose }) {
                 <option value="">Selecione...</option>
                 {SEGMENTOS.map((s) => (
                   <option key={s} value={s}>
-                    {s.charAt(0) + s.slice(1).toLowerCase().replace("_", " ")}
+                    {s.split('_').map(word => word.charAt(0) + word.slice(1).toLowerCase()).join(' ')}
                   </option>
                 ))}
               </select>
@@ -245,14 +277,15 @@ function ChamadoModal({ chamado, onClose }) {
                 <p className="field-error">{errors.segmento.message}</p>
               )}
             </div>
-            <div>
-              <label className="label">Empresa *</label>
-              <input
-                className="input"
-                placeholder="Nome da empresa"
-                {...register("empresa", { required: "Obrigatório" })}
-              />
-            </div>
+          </div>
+
+          <div>
+            <label className="label">Empresa *</label>
+            <input
+              className="input"
+              placeholder="Nome da empresa"
+              {...register("empresa", { required: "Obrigatório" })}
+            />
           </div>
 
           <div>
@@ -277,6 +310,28 @@ function ChamadoModal({ chamado, onClose }) {
                 {...register("numeroOrcamento")}
               />
             </div>
+            <div>
+              <label className="label">Nº da OM</label>
+              <input
+                className="input"
+                placeholder="Nº da OM"
+                {...register("numeroOM")}
+              />
+            </div>
+            <div>
+              <label className="label">Data de Aprovação</label>
+              <input
+                type="date"
+                className="input"
+                {...register("dataAprovacao")}
+              />
+            </div>
+          </div>
+
+          <div
+            className="grid gap-4"
+            style={{ gridTemplateColumns: "1fr 1fr 1fr" }}
+          >
             <div>
               <label className="label">Valor (R$)</label>
               <input
@@ -2150,7 +2205,7 @@ export default function ChamadosPage() {
                   <option value="">Todos Segmentos</option>
                   {SEGMENTOS.map((s) => (
                     <option key={s} value={s}>
-                      {s}
+                      {s.split('_').map(word => word.charAt(0) + word.slice(1).toLowerCase()).join(' ')}
                     </option>
                   ))}
                 </select>
@@ -2188,16 +2243,19 @@ export default function ChamadosPage() {
             <table className="table">
               <thead>
                 <tr>
-                  <th>Data</th>
+                  <th style={{ whiteSpace: 'nowrap' }}>Abertura</th>
+                  <th>Solicitação</th>
                   <th>Chamado</th>
                   <th>Segmento</th>
                   <th>Empresa</th>
                   <th>Descrição</th>
                   <th>Orçamento</th>
+                  <th style={{ whiteSpace: 'nowrap' }}>Mau Uso</th>
+                  <th style={{ whiteSpace: 'nowrap' }}>Aprovação</th>
+                  <th>OM</th>
                   <th>Valor</th>
                   <th>Status</th>
-                  <th>Mau Uso</th>
-                  <th style={{ width: "80px" }}>Ações</th>
+                  <th style={{ width: "60px" }}>Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -2229,116 +2287,59 @@ export default function ChamadosPage() {
                 ) : (
                   chamados.map((c) => (
                     <tr key={c.id}>
-                      <td
-                        style={{ whiteSpace: "nowrap", fontSize: "0.8125rem" }}
-                      >
-                        {c.dataAbertura
-                          ? format(new Date(c.dataAbertura), "dd/MM/yy")
-                          : "—"}
+                      <td style={{ whiteSpace: "nowrap", fontSize: "0.75rem" }}>
+                        {c.dataAbertura ? format(new Date(c.dataAbertura), "dd/MM/yy") : "-"}
                       </td>
-                      <td
-                        style={{
-                          fontWeight: 600,
-                          fontSize: "0.8125rem",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
+                      <td style={{ fontSize: "0.75rem", color: "var(--color-text-secondary)" }}>
+                        {c.solicitacao || "-"}
+                      </td>
+                      <td style={{ fontWeight: 600, fontSize: "0.75rem", whiteSpace: "nowrap" }}>
                         {c.numeroChamado}
                       </td>
                       <td>
-                        <span
-                          className="badge badge-brand"
-                          style={{ fontSize: "0.7rem" }}
-                        >
-                          {c.segmento}
+                        <span className="badge badge-brand" style={{ fontSize: "0.65rem", whiteSpace: 'nowrap' }}>
+                          {c.segmento?.split('_').map(word => word.charAt(0) + word.slice(1).toLowerCase()).join(' ')}
                         </span>
                       </td>
-                      <td
-                        style={{
-                          fontSize: "0.8125rem",
-                          maxWidth: "150px",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
+                      <td style={{ fontSize: "0.75rem", maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                         {c.empresa}
                       </td>
-                      <td
-                        style={{
-                          fontSize: "0.8125rem",
-                          maxWidth: "200px",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
-                        title={c.descricao}
-                      >
+                      <td style={{ fontSize: "0.75rem", maxWidth: "180px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={c.descricao}>
                         {c.descricao}
                       </td>
-                      <td
-                        style={{
-                          fontSize: "0.8125rem",
-                          color: "var(--color-text-secondary)",
-                        }}
-                      >
-                        {c.numeroOrcamento || "—"}
+                      <td style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
+                        {c.numeroOrcamento || "-"}
                       </td>
-                      <td
-                        style={{
-                          fontWeight: 600,
-                          whiteSpace: "nowrap",
-                          color: "var(--color-success)",
-                        }}
-                      >
+                      <td style={{ textAlign: 'center' }}>
+                        {c.mauUso ? (
+                          <span className="badge badge-danger" style={{ fontSize: "0.65rem" }}>Sim</span>
+                        ) : (
+                          <span style={{ color: "var(--color-text-muted)", fontSize: "0.75rem" }}>Não</span>
+                        )}
+                      </td>
+                      <td style={{ whiteSpace: "nowrap", fontSize: "0.75rem", color: "var(--color-text-secondary)" }}>
+                        {c.dataAprovacao ? format(new Date(c.dataAprovacao), "dd/MM/yy") : "-"}
+                      </td>
+                      <td style={{ fontSize: "0.75rem", fontWeight: 500 }}>
+                        {c.numeroOM || "-"}
+                      </td>
+                      <td style={{ fontWeight: 700, whiteSpace: "nowrap", color: "var(--color-success)", fontSize: "0.75rem" }}>
                         {fmt(c.valor)}
                       </td>
                       <td>
-                        <span
-                          className={`badge ${STATUS_BADGE[c.status]}`}
-                          style={{ fontSize: "0.7rem" }}
-                        >
+                        <span className={`badge ${STATUS_BADGE[c.status]}`} style={{ fontSize: "0.65rem", whiteSpace: 'nowrap' }}>
                           {STATUS_LABEL[c.status]}
                         </span>
                       </td>
                       <td>
-                        {c.mauUso ? (
-                          <span
-                            className="badge badge-danger"
-                            style={{ fontSize: "0.7rem" }}
-                          >
-                            Sim
-                          </span>
-                        ) : (
-                          <span
-                            style={{
-                              color: "var(--color-text-muted)",
-                              fontSize: "0.8125rem",
-                            }}
-                          >
-                            Não
-                          </span>
-                        )}
-                      </td>
-                      <td>
                         <div className="flex items-center gap-1">
-                          <button
-                            className="btn btn-ghost btn-sm"
-                            onClick={() => setModal(c)}
-                            style={{ padding: "4px 6px" }}
-                          >
+                          <button className="btn btn-ghost btn-sm" onClick={() => setModal(c)} style={{ padding: "2px" }}>
                             <Pencil size={14} />
                           </button>
                           <button
                             className="btn btn-ghost btn-sm"
-                            onClick={() => {
-                              if (confirm("Remover chamado?"))
-                                remover.mutate(c.id);
-                            }}
-                            style={{
-                              padding: "4px 6px",
-                              color: "var(--color-danger)",
-                            }}
+                            onClick={() => { if (confirm("Remover chamado?")) remover.mutate(c.id); }}
+                            style={{ padding: "2px", color: "var(--color-danger)" }}
                           >
                             <Trash2 size={14} />
                           </button>

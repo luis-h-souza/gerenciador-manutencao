@@ -54,6 +54,11 @@ export type ControleChamado = $Result.DefaultSelection<Prisma.$ControleChamadoPa
  */
 export type Fornecedor = $Result.DefaultSelection<Prisma.$FornecedorPayload>
 /**
+ * Model MetaOrcamentaria
+ * 
+ */
+export type MetaOrcamentaria = $Result.DefaultSelection<Prisma.$MetaOrcamentariaPayload>
+/**
  * Model Peca
  * 
  */
@@ -136,27 +141,53 @@ export type StatusTarefa = (typeof StatusTarefa)[keyof typeof StatusTarefa]
 
 
 export const SegmentoChamado: {
-  ELETRICA: 'ELETRICA',
-  EMPILHADEIRA: 'EMPILHADEIRA',
-  REFRIGERACAO: 'REFRIGERACAO',
-  REFRIGERACAO_PÇS: 'REFRIGERACAO_PÇS',
   AR_CONDICIONADO: 'AR_CONDICIONADO',
-  SERRALHERIA: 'SERRALHERIA',
+  CARRINHO_CLIENTE: 'CARRINHO_CLIENTE',
+  CARRO_PIPA: 'CARRO_PIPA',
+  LIMPEZA_ESGOTO: 'LIMPEZA_ESGOTO',
   CIVIL: 'CIVIL',
-  EQUIPAMENTOS: 'EQUIPAMENTOS',
-  SERVIÇOS_GERAIS: 'SERVIÇOS_GERAIS',
+  COZINHA_REFEITORIO: 'COZINHA_REFEITORIO',
+  ELETRICA: 'ELETRICA',
+  TRANSPALETEIRA: 'TRANSPALETEIRA',
+  EMPILHADEIRA: 'EMPILHADEIRA',
   GERADOR: 'GERADOR',
-  ELEVADOR: 'ELEVADOR',
-  PCI: 'PCI',
-  DIVERSOS: 'DIVERSOS',
-  ALUGUEL: 'ALUGUEL'
+  HIDRAULICA: 'HIDRAULICA',
+  LAUDOS: 'LAUDOS',
+  NOBREAK: 'NOBREAK',
+  MATERIAL_MANUTENCAO: 'MATERIAL_MANUTENCAO',
+  PINTURA: 'PINTURA',
+  REFRIGERACAO: 'REFRIGERACAO',
+  REFRIGERACAO_PECAS: 'REFRIGERACAO_PECAS',
+  SERRALHERIA: 'SERRALHERIA',
+  SISTEMA_INCENDIO: 'SISTEMA_INCENDIO',
+  LOCACAO: 'LOCACAO',
+  LIMPEZA: 'LIMPEZA',
+  TRATAMENTO_AGUA: 'TRATAMENTO_AGUA',
+  PORTA_PALETES: 'PORTA_PALETES',
+  FERRAMENTAS: 'FERRAMENTAS',
+  COMUNICACAO_VISUAL: 'COMUNICACAO_VISUAL',
+  ELEVADORES: 'ELEVADORES',
+  ESTEIRAS: 'ESTEIRAS',
+  TELHADO: 'TELHADO',
+  CHECKOUT: 'CHECKOUT',
+  VIDRACARIA: 'VIDRACARIA',
+  FATIADORA: 'FATIADORA',
+  SERRA_FITA: 'SERRA_FITA',
+  EMBALADORA: 'EMBALADORA',
+  MAQUINA_VACUO: 'MAQUINA_VACUO',
+  LAVA_LOUCA: 'LAVA_LOUCA',
+  CAFETERIA: 'CAFETERIA',
+  SISTEMA_SOM: 'SISTEMA_SOM',
+  FRENTE_CAIXA: 'FRENTE_CAIXA',
+  GALERIAS: 'GALERIAS',
+  FRETE: 'FRETE',
+  OUTROS: 'OUTROS'
 };
 
 export type SegmentoChamado = (typeof SegmentoChamado)[keyof typeof SegmentoChamado]
 
 
 export const StatusChamado: {
-  CHAMADO_ABERTO: 'CHAMADO_ABERTO',
   AGUARDANDO_APROVACAO: 'AGUARDANDO_APROVACAO',
   AGUARDANDO_OM_ENTREGA: 'AGUARDANDO_OM_ENTREGA',
   FINALIZADO: 'FINALIZADO',
@@ -439,6 +470,16 @@ export class PrismaClient<
     * ```
     */
   get fornecedor(): Prisma.FornecedorDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.metaOrcamentaria`: Exposes CRUD operations for the **MetaOrcamentaria** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MetaOrcamentarias
+    * const metaOrcamentarias = await prisma.metaOrcamentaria.findMany()
+    * ```
+    */
+  get metaOrcamentaria(): Prisma.MetaOrcamentariaDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.peca`: Exposes CRUD operations for the **Peca** model.
@@ -971,6 +1012,7 @@ export namespace Prisma {
     Notificacao: 'Notificacao',
     ControleChamado: 'ControleChamado',
     Fornecedor: 'Fornecedor',
+    MetaOrcamentaria: 'MetaOrcamentaria',
     Peca: 'Peca',
     EntradaPeca: 'EntradaPeca',
     MovimentacaoPeca: 'MovimentacaoPeca',
@@ -995,7 +1037,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "loja" | "usuario" | "refreshToken" | "sessao" | "tarefa" | "notificacao" | "controleChamado" | "fornecedor" | "peca" | "entradaPeca" | "movimentacaoPeca" | "saidaPeca" | "checklistEquipamento" | "checklistEquipamentoItem" | "checklistCarrinho" | "checklistCarrinhoItem" | "frotaCarrinho"
+      modelProps: "loja" | "usuario" | "refreshToken" | "sessao" | "tarefa" | "notificacao" | "controleChamado" | "fornecedor" | "metaOrcamentaria" | "peca" | "entradaPeca" | "movimentacaoPeca" | "saidaPeca" | "checklistEquipamento" | "checklistEquipamentoItem" | "checklistCarrinho" | "checklistCarrinhoItem" | "frotaCarrinho"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1588,6 +1630,80 @@ export namespace Prisma {
           count: {
             args: Prisma.FornecedorCountArgs<ExtArgs>
             result: $Utils.Optional<FornecedorCountAggregateOutputType> | number
+          }
+        }
+      }
+      MetaOrcamentaria: {
+        payload: Prisma.$MetaOrcamentariaPayload<ExtArgs>
+        fields: Prisma.MetaOrcamentariaFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MetaOrcamentariaFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MetaOrcamentariaPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MetaOrcamentariaFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MetaOrcamentariaPayload>
+          }
+          findFirst: {
+            args: Prisma.MetaOrcamentariaFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MetaOrcamentariaPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MetaOrcamentariaFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MetaOrcamentariaPayload>
+          }
+          findMany: {
+            args: Prisma.MetaOrcamentariaFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MetaOrcamentariaPayload>[]
+          }
+          create: {
+            args: Prisma.MetaOrcamentariaCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MetaOrcamentariaPayload>
+          }
+          createMany: {
+            args: Prisma.MetaOrcamentariaCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MetaOrcamentariaCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MetaOrcamentariaPayload>[]
+          }
+          delete: {
+            args: Prisma.MetaOrcamentariaDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MetaOrcamentariaPayload>
+          }
+          update: {
+            args: Prisma.MetaOrcamentariaUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MetaOrcamentariaPayload>
+          }
+          deleteMany: {
+            args: Prisma.MetaOrcamentariaDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MetaOrcamentariaUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.MetaOrcamentariaUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MetaOrcamentariaPayload>[]
+          }
+          upsert: {
+            args: Prisma.MetaOrcamentariaUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MetaOrcamentariaPayload>
+          }
+          aggregate: {
+            args: Prisma.MetaOrcamentariaAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMetaOrcamentaria>
+          }
+          groupBy: {
+            args: Prisma.MetaOrcamentariaGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MetaOrcamentariaGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MetaOrcamentariaCountArgs<ExtArgs>
+            result: $Utils.Optional<MetaOrcamentariaCountAggregateOutputType> | number
           }
         }
       }
@@ -2373,6 +2489,7 @@ export namespace Prisma {
     notificacao?: NotificacaoOmit
     controleChamado?: ControleChamadoOmit
     fornecedor?: FornecedorOmit
+    metaOrcamentaria?: MetaOrcamentariaOmit
     peca?: PecaOmit
     entradaPeca?: EntradaPecaOmit
     movimentacaoPeca?: MovimentacaoPecaOmit
@@ -9779,6 +9896,9 @@ export namespace Prisma {
     regiao: string | null
     unidade: string | null
     numeroOrcamento: string | null
+    solicitacao: string | null
+    dataAprovacao: Date | null
+    numeroOM: string | null
     valor: Decimal | null
     status: $Enums.StatusChamado | null
     mauUso: boolean | null
@@ -9796,6 +9916,9 @@ export namespace Prisma {
     regiao: string | null
     unidade: string | null
     numeroOrcamento: string | null
+    solicitacao: string | null
+    dataAprovacao: Date | null
+    numeroOM: string | null
     valor: Decimal | null
     status: $Enums.StatusChamado | null
     mauUso: boolean | null
@@ -9813,6 +9936,9 @@ export namespace Prisma {
     regiao: number
     unidade: number
     numeroOrcamento: number
+    solicitacao: number
+    dataAprovacao: number
+    numeroOM: number
     valor: number
     status: number
     mauUso: number
@@ -9840,6 +9966,9 @@ export namespace Prisma {
     regiao?: true
     unidade?: true
     numeroOrcamento?: true
+    solicitacao?: true
+    dataAprovacao?: true
+    numeroOM?: true
     valor?: true
     status?: true
     mauUso?: true
@@ -9857,6 +9986,9 @@ export namespace Prisma {
     regiao?: true
     unidade?: true
     numeroOrcamento?: true
+    solicitacao?: true
+    dataAprovacao?: true
+    numeroOM?: true
     valor?: true
     status?: true
     mauUso?: true
@@ -9874,6 +10006,9 @@ export namespace Prisma {
     regiao?: true
     unidade?: true
     numeroOrcamento?: true
+    solicitacao?: true
+    dataAprovacao?: true
+    numeroOM?: true
     valor?: true
     status?: true
     mauUso?: true
@@ -9978,6 +10113,9 @@ export namespace Prisma {
     regiao: string | null
     unidade: string | null
     numeroOrcamento: string | null
+    solicitacao: string | null
+    dataAprovacao: Date | null
+    numeroOM: string | null
     valor: Decimal | null
     status: $Enums.StatusChamado
     mauUso: boolean
@@ -10014,6 +10152,9 @@ export namespace Prisma {
     regiao?: boolean
     unidade?: boolean
     numeroOrcamento?: boolean
+    solicitacao?: boolean
+    dataAprovacao?: boolean
+    numeroOM?: boolean
     valor?: boolean
     status?: boolean
     mauUso?: boolean
@@ -10031,6 +10172,9 @@ export namespace Prisma {
     regiao?: boolean
     unidade?: boolean
     numeroOrcamento?: boolean
+    solicitacao?: boolean
+    dataAprovacao?: boolean
+    numeroOM?: boolean
     valor?: boolean
     status?: boolean
     mauUso?: boolean
@@ -10048,6 +10192,9 @@ export namespace Prisma {
     regiao?: boolean
     unidade?: boolean
     numeroOrcamento?: boolean
+    solicitacao?: boolean
+    dataAprovacao?: boolean
+    numeroOM?: boolean
     valor?: boolean
     status?: boolean
     mauUso?: boolean
@@ -10065,6 +10212,9 @@ export namespace Prisma {
     regiao?: boolean
     unidade?: boolean
     numeroOrcamento?: boolean
+    solicitacao?: boolean
+    dataAprovacao?: boolean
+    numeroOM?: boolean
     valor?: boolean
     status?: boolean
     mauUso?: boolean
@@ -10072,7 +10222,7 @@ export namespace Prisma {
     atualizadoEm?: boolean
   }
 
-  export type ControleChamadoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "dataAbertura" | "numeroChamado" | "segmento" | "empresa" | "descricao" | "regiao" | "unidade" | "numeroOrcamento" | "valor" | "status" | "mauUso" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["controleChamado"]>
+  export type ControleChamadoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "dataAbertura" | "numeroChamado" | "segmento" | "empresa" | "descricao" | "regiao" | "unidade" | "numeroOrcamento" | "solicitacao" | "dataAprovacao" | "numeroOM" | "valor" | "status" | "mauUso" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["controleChamado"]>
 
   export type $ControleChamadoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "ControleChamado"
@@ -10087,6 +10237,9 @@ export namespace Prisma {
       regiao: string | null
       unidade: string | null
       numeroOrcamento: string | null
+      solicitacao: string | null
+      dataAprovacao: Date | null
+      numeroOM: string | null
       valor: Prisma.Decimal | null
       status: $Enums.StatusChamado
       mauUso: boolean
@@ -10524,6 +10677,9 @@ export namespace Prisma {
     readonly regiao: FieldRef<"ControleChamado", 'String'>
     readonly unidade: FieldRef<"ControleChamado", 'String'>
     readonly numeroOrcamento: FieldRef<"ControleChamado", 'String'>
+    readonly solicitacao: FieldRef<"ControleChamado", 'String'>
+    readonly dataAprovacao: FieldRef<"ControleChamado", 'DateTime'>
+    readonly numeroOM: FieldRef<"ControleChamado", 'String'>
     readonly valor: FieldRef<"ControleChamado", 'Decimal'>
     readonly status: FieldRef<"ControleChamado", 'StatusChamado'>
     readonly mauUso: FieldRef<"ControleChamado", 'Boolean'>
@@ -11949,6 +12105,1087 @@ export namespace Prisma {
      * Omit specific fields from the Fornecedor
      */
     omit?: FornecedorOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model MetaOrcamentaria
+   */
+
+  export type AggregateMetaOrcamentaria = {
+    _count: MetaOrcamentariaCountAggregateOutputType | null
+    _avg: MetaOrcamentariaAvgAggregateOutputType | null
+    _sum: MetaOrcamentariaSumAggregateOutputType | null
+    _min: MetaOrcamentariaMinAggregateOutputType | null
+    _max: MetaOrcamentariaMaxAggregateOutputType | null
+  }
+
+  export type MetaOrcamentariaAvgAggregateOutputType = {
+    ano: number | null
+    mes: number | null
+    valorMeta: Decimal | null
+  }
+
+  export type MetaOrcamentariaSumAggregateOutputType = {
+    ano: number | null
+    mes: number | null
+    valorMeta: Decimal | null
+  }
+
+  export type MetaOrcamentariaMinAggregateOutputType = {
+    id: string | null
+    regiao: string | null
+    unidade: string | null
+    ano: number | null
+    mes: number | null
+    valorMeta: Decimal | null
+    criadoEm: Date | null
+    atualizadoEm: Date | null
+  }
+
+  export type MetaOrcamentariaMaxAggregateOutputType = {
+    id: string | null
+    regiao: string | null
+    unidade: string | null
+    ano: number | null
+    mes: number | null
+    valorMeta: Decimal | null
+    criadoEm: Date | null
+    atualizadoEm: Date | null
+  }
+
+  export type MetaOrcamentariaCountAggregateOutputType = {
+    id: number
+    regiao: number
+    unidade: number
+    ano: number
+    mes: number
+    valorMeta: number
+    criadoEm: number
+    atualizadoEm: number
+    _all: number
+  }
+
+
+  export type MetaOrcamentariaAvgAggregateInputType = {
+    ano?: true
+    mes?: true
+    valorMeta?: true
+  }
+
+  export type MetaOrcamentariaSumAggregateInputType = {
+    ano?: true
+    mes?: true
+    valorMeta?: true
+  }
+
+  export type MetaOrcamentariaMinAggregateInputType = {
+    id?: true
+    regiao?: true
+    unidade?: true
+    ano?: true
+    mes?: true
+    valorMeta?: true
+    criadoEm?: true
+    atualizadoEm?: true
+  }
+
+  export type MetaOrcamentariaMaxAggregateInputType = {
+    id?: true
+    regiao?: true
+    unidade?: true
+    ano?: true
+    mes?: true
+    valorMeta?: true
+    criadoEm?: true
+    atualizadoEm?: true
+  }
+
+  export type MetaOrcamentariaCountAggregateInputType = {
+    id?: true
+    regiao?: true
+    unidade?: true
+    ano?: true
+    mes?: true
+    valorMeta?: true
+    criadoEm?: true
+    atualizadoEm?: true
+    _all?: true
+  }
+
+  export type MetaOrcamentariaAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MetaOrcamentaria to aggregate.
+     */
+    where?: MetaOrcamentariaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MetaOrcamentarias to fetch.
+     */
+    orderBy?: MetaOrcamentariaOrderByWithRelationInput | MetaOrcamentariaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MetaOrcamentariaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MetaOrcamentarias from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MetaOrcamentarias.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MetaOrcamentarias
+    **/
+    _count?: true | MetaOrcamentariaCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: MetaOrcamentariaAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: MetaOrcamentariaSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MetaOrcamentariaMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MetaOrcamentariaMaxAggregateInputType
+  }
+
+  export type GetMetaOrcamentariaAggregateType<T extends MetaOrcamentariaAggregateArgs> = {
+        [P in keyof T & keyof AggregateMetaOrcamentaria]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMetaOrcamentaria[P]>
+      : GetScalarType<T[P], AggregateMetaOrcamentaria[P]>
+  }
+
+
+
+
+  export type MetaOrcamentariaGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MetaOrcamentariaWhereInput
+    orderBy?: MetaOrcamentariaOrderByWithAggregationInput | MetaOrcamentariaOrderByWithAggregationInput[]
+    by: MetaOrcamentariaScalarFieldEnum[] | MetaOrcamentariaScalarFieldEnum
+    having?: MetaOrcamentariaScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MetaOrcamentariaCountAggregateInputType | true
+    _avg?: MetaOrcamentariaAvgAggregateInputType
+    _sum?: MetaOrcamentariaSumAggregateInputType
+    _min?: MetaOrcamentariaMinAggregateInputType
+    _max?: MetaOrcamentariaMaxAggregateInputType
+  }
+
+  export type MetaOrcamentariaGroupByOutputType = {
+    id: string
+    regiao: string
+    unidade: string | null
+    ano: number
+    mes: number
+    valorMeta: Decimal
+    criadoEm: Date
+    atualizadoEm: Date
+    _count: MetaOrcamentariaCountAggregateOutputType | null
+    _avg: MetaOrcamentariaAvgAggregateOutputType | null
+    _sum: MetaOrcamentariaSumAggregateOutputType | null
+    _min: MetaOrcamentariaMinAggregateOutputType | null
+    _max: MetaOrcamentariaMaxAggregateOutputType | null
+  }
+
+  type GetMetaOrcamentariaGroupByPayload<T extends MetaOrcamentariaGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MetaOrcamentariaGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MetaOrcamentariaGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MetaOrcamentariaGroupByOutputType[P]>
+            : GetScalarType<T[P], MetaOrcamentariaGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MetaOrcamentariaSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    regiao?: boolean
+    unidade?: boolean
+    ano?: boolean
+    mes?: boolean
+    valorMeta?: boolean
+    criadoEm?: boolean
+    atualizadoEm?: boolean
+  }, ExtArgs["result"]["metaOrcamentaria"]>
+
+  export type MetaOrcamentariaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    regiao?: boolean
+    unidade?: boolean
+    ano?: boolean
+    mes?: boolean
+    valorMeta?: boolean
+    criadoEm?: boolean
+    atualizadoEm?: boolean
+  }, ExtArgs["result"]["metaOrcamentaria"]>
+
+  export type MetaOrcamentariaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    regiao?: boolean
+    unidade?: boolean
+    ano?: boolean
+    mes?: boolean
+    valorMeta?: boolean
+    criadoEm?: boolean
+    atualizadoEm?: boolean
+  }, ExtArgs["result"]["metaOrcamentaria"]>
+
+  export type MetaOrcamentariaSelectScalar = {
+    id?: boolean
+    regiao?: boolean
+    unidade?: boolean
+    ano?: boolean
+    mes?: boolean
+    valorMeta?: boolean
+    criadoEm?: boolean
+    atualizadoEm?: boolean
+  }
+
+  export type MetaOrcamentariaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "regiao" | "unidade" | "ano" | "mes" | "valorMeta" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["metaOrcamentaria"]>
+
+  export type $MetaOrcamentariaPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MetaOrcamentaria"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      regiao: string
+      unidade: string | null
+      ano: number
+      mes: number
+      valorMeta: Prisma.Decimal
+      criadoEm: Date
+      atualizadoEm: Date
+    }, ExtArgs["result"]["metaOrcamentaria"]>
+    composites: {}
+  }
+
+  type MetaOrcamentariaGetPayload<S extends boolean | null | undefined | MetaOrcamentariaDefaultArgs> = $Result.GetResult<Prisma.$MetaOrcamentariaPayload, S>
+
+  type MetaOrcamentariaCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MetaOrcamentariaFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MetaOrcamentariaCountAggregateInputType | true
+    }
+
+  export interface MetaOrcamentariaDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MetaOrcamentaria'], meta: { name: 'MetaOrcamentaria' } }
+    /**
+     * Find zero or one MetaOrcamentaria that matches the filter.
+     * @param {MetaOrcamentariaFindUniqueArgs} args - Arguments to find a MetaOrcamentaria
+     * @example
+     * // Get one MetaOrcamentaria
+     * const metaOrcamentaria = await prisma.metaOrcamentaria.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MetaOrcamentariaFindUniqueArgs>(args: SelectSubset<T, MetaOrcamentariaFindUniqueArgs<ExtArgs>>): Prisma__MetaOrcamentariaClient<$Result.GetResult<Prisma.$MetaOrcamentariaPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one MetaOrcamentaria that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {MetaOrcamentariaFindUniqueOrThrowArgs} args - Arguments to find a MetaOrcamentaria
+     * @example
+     * // Get one MetaOrcamentaria
+     * const metaOrcamentaria = await prisma.metaOrcamentaria.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MetaOrcamentariaFindUniqueOrThrowArgs>(args: SelectSubset<T, MetaOrcamentariaFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MetaOrcamentariaClient<$Result.GetResult<Prisma.$MetaOrcamentariaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MetaOrcamentaria that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MetaOrcamentariaFindFirstArgs} args - Arguments to find a MetaOrcamentaria
+     * @example
+     * // Get one MetaOrcamentaria
+     * const metaOrcamentaria = await prisma.metaOrcamentaria.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MetaOrcamentariaFindFirstArgs>(args?: SelectSubset<T, MetaOrcamentariaFindFirstArgs<ExtArgs>>): Prisma__MetaOrcamentariaClient<$Result.GetResult<Prisma.$MetaOrcamentariaPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MetaOrcamentaria that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MetaOrcamentariaFindFirstOrThrowArgs} args - Arguments to find a MetaOrcamentaria
+     * @example
+     * // Get one MetaOrcamentaria
+     * const metaOrcamentaria = await prisma.metaOrcamentaria.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MetaOrcamentariaFindFirstOrThrowArgs>(args?: SelectSubset<T, MetaOrcamentariaFindFirstOrThrowArgs<ExtArgs>>): Prisma__MetaOrcamentariaClient<$Result.GetResult<Prisma.$MetaOrcamentariaPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more MetaOrcamentarias that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MetaOrcamentariaFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MetaOrcamentarias
+     * const metaOrcamentarias = await prisma.metaOrcamentaria.findMany()
+     * 
+     * // Get first 10 MetaOrcamentarias
+     * const metaOrcamentarias = await prisma.metaOrcamentaria.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const metaOrcamentariaWithIdOnly = await prisma.metaOrcamentaria.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MetaOrcamentariaFindManyArgs>(args?: SelectSubset<T, MetaOrcamentariaFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MetaOrcamentariaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a MetaOrcamentaria.
+     * @param {MetaOrcamentariaCreateArgs} args - Arguments to create a MetaOrcamentaria.
+     * @example
+     * // Create one MetaOrcamentaria
+     * const MetaOrcamentaria = await prisma.metaOrcamentaria.create({
+     *   data: {
+     *     // ... data to create a MetaOrcamentaria
+     *   }
+     * })
+     * 
+     */
+    create<T extends MetaOrcamentariaCreateArgs>(args: SelectSubset<T, MetaOrcamentariaCreateArgs<ExtArgs>>): Prisma__MetaOrcamentariaClient<$Result.GetResult<Prisma.$MetaOrcamentariaPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many MetaOrcamentarias.
+     * @param {MetaOrcamentariaCreateManyArgs} args - Arguments to create many MetaOrcamentarias.
+     * @example
+     * // Create many MetaOrcamentarias
+     * const metaOrcamentaria = await prisma.metaOrcamentaria.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MetaOrcamentariaCreateManyArgs>(args?: SelectSubset<T, MetaOrcamentariaCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MetaOrcamentarias and returns the data saved in the database.
+     * @param {MetaOrcamentariaCreateManyAndReturnArgs} args - Arguments to create many MetaOrcamentarias.
+     * @example
+     * // Create many MetaOrcamentarias
+     * const metaOrcamentaria = await prisma.metaOrcamentaria.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MetaOrcamentarias and only return the `id`
+     * const metaOrcamentariaWithIdOnly = await prisma.metaOrcamentaria.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MetaOrcamentariaCreateManyAndReturnArgs>(args?: SelectSubset<T, MetaOrcamentariaCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MetaOrcamentariaPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a MetaOrcamentaria.
+     * @param {MetaOrcamentariaDeleteArgs} args - Arguments to delete one MetaOrcamentaria.
+     * @example
+     * // Delete one MetaOrcamentaria
+     * const MetaOrcamentaria = await prisma.metaOrcamentaria.delete({
+     *   where: {
+     *     // ... filter to delete one MetaOrcamentaria
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MetaOrcamentariaDeleteArgs>(args: SelectSubset<T, MetaOrcamentariaDeleteArgs<ExtArgs>>): Prisma__MetaOrcamentariaClient<$Result.GetResult<Prisma.$MetaOrcamentariaPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one MetaOrcamentaria.
+     * @param {MetaOrcamentariaUpdateArgs} args - Arguments to update one MetaOrcamentaria.
+     * @example
+     * // Update one MetaOrcamentaria
+     * const metaOrcamentaria = await prisma.metaOrcamentaria.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MetaOrcamentariaUpdateArgs>(args: SelectSubset<T, MetaOrcamentariaUpdateArgs<ExtArgs>>): Prisma__MetaOrcamentariaClient<$Result.GetResult<Prisma.$MetaOrcamentariaPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more MetaOrcamentarias.
+     * @param {MetaOrcamentariaDeleteManyArgs} args - Arguments to filter MetaOrcamentarias to delete.
+     * @example
+     * // Delete a few MetaOrcamentarias
+     * const { count } = await prisma.metaOrcamentaria.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MetaOrcamentariaDeleteManyArgs>(args?: SelectSubset<T, MetaOrcamentariaDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MetaOrcamentarias.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MetaOrcamentariaUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MetaOrcamentarias
+     * const metaOrcamentaria = await prisma.metaOrcamentaria.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MetaOrcamentariaUpdateManyArgs>(args: SelectSubset<T, MetaOrcamentariaUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MetaOrcamentarias and returns the data updated in the database.
+     * @param {MetaOrcamentariaUpdateManyAndReturnArgs} args - Arguments to update many MetaOrcamentarias.
+     * @example
+     * // Update many MetaOrcamentarias
+     * const metaOrcamentaria = await prisma.metaOrcamentaria.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more MetaOrcamentarias and only return the `id`
+     * const metaOrcamentariaWithIdOnly = await prisma.metaOrcamentaria.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends MetaOrcamentariaUpdateManyAndReturnArgs>(args: SelectSubset<T, MetaOrcamentariaUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MetaOrcamentariaPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one MetaOrcamentaria.
+     * @param {MetaOrcamentariaUpsertArgs} args - Arguments to update or create a MetaOrcamentaria.
+     * @example
+     * // Update or create a MetaOrcamentaria
+     * const metaOrcamentaria = await prisma.metaOrcamentaria.upsert({
+     *   create: {
+     *     // ... data to create a MetaOrcamentaria
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MetaOrcamentaria we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MetaOrcamentariaUpsertArgs>(args: SelectSubset<T, MetaOrcamentariaUpsertArgs<ExtArgs>>): Prisma__MetaOrcamentariaClient<$Result.GetResult<Prisma.$MetaOrcamentariaPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of MetaOrcamentarias.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MetaOrcamentariaCountArgs} args - Arguments to filter MetaOrcamentarias to count.
+     * @example
+     * // Count the number of MetaOrcamentarias
+     * const count = await prisma.metaOrcamentaria.count({
+     *   where: {
+     *     // ... the filter for the MetaOrcamentarias we want to count
+     *   }
+     * })
+    **/
+    count<T extends MetaOrcamentariaCountArgs>(
+      args?: Subset<T, MetaOrcamentariaCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MetaOrcamentariaCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MetaOrcamentaria.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MetaOrcamentariaAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MetaOrcamentariaAggregateArgs>(args: Subset<T, MetaOrcamentariaAggregateArgs>): Prisma.PrismaPromise<GetMetaOrcamentariaAggregateType<T>>
+
+    /**
+     * Group by MetaOrcamentaria.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MetaOrcamentariaGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MetaOrcamentariaGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MetaOrcamentariaGroupByArgs['orderBy'] }
+        : { orderBy?: MetaOrcamentariaGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MetaOrcamentariaGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMetaOrcamentariaGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MetaOrcamentaria model
+   */
+  readonly fields: MetaOrcamentariaFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MetaOrcamentaria.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MetaOrcamentariaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MetaOrcamentaria model
+   */
+  interface MetaOrcamentariaFieldRefs {
+    readonly id: FieldRef<"MetaOrcamentaria", 'String'>
+    readonly regiao: FieldRef<"MetaOrcamentaria", 'String'>
+    readonly unidade: FieldRef<"MetaOrcamentaria", 'String'>
+    readonly ano: FieldRef<"MetaOrcamentaria", 'Int'>
+    readonly mes: FieldRef<"MetaOrcamentaria", 'Int'>
+    readonly valorMeta: FieldRef<"MetaOrcamentaria", 'Decimal'>
+    readonly criadoEm: FieldRef<"MetaOrcamentaria", 'DateTime'>
+    readonly atualizadoEm: FieldRef<"MetaOrcamentaria", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MetaOrcamentaria findUnique
+   */
+  export type MetaOrcamentariaFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MetaOrcamentaria
+     */
+    select?: MetaOrcamentariaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MetaOrcamentaria
+     */
+    omit?: MetaOrcamentariaOmit<ExtArgs> | null
+    /**
+     * Filter, which MetaOrcamentaria to fetch.
+     */
+    where: MetaOrcamentariaWhereUniqueInput
+  }
+
+  /**
+   * MetaOrcamentaria findUniqueOrThrow
+   */
+  export type MetaOrcamentariaFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MetaOrcamentaria
+     */
+    select?: MetaOrcamentariaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MetaOrcamentaria
+     */
+    omit?: MetaOrcamentariaOmit<ExtArgs> | null
+    /**
+     * Filter, which MetaOrcamentaria to fetch.
+     */
+    where: MetaOrcamentariaWhereUniqueInput
+  }
+
+  /**
+   * MetaOrcamentaria findFirst
+   */
+  export type MetaOrcamentariaFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MetaOrcamentaria
+     */
+    select?: MetaOrcamentariaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MetaOrcamentaria
+     */
+    omit?: MetaOrcamentariaOmit<ExtArgs> | null
+    /**
+     * Filter, which MetaOrcamentaria to fetch.
+     */
+    where?: MetaOrcamentariaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MetaOrcamentarias to fetch.
+     */
+    orderBy?: MetaOrcamentariaOrderByWithRelationInput | MetaOrcamentariaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MetaOrcamentarias.
+     */
+    cursor?: MetaOrcamentariaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MetaOrcamentarias from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MetaOrcamentarias.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MetaOrcamentarias.
+     */
+    distinct?: MetaOrcamentariaScalarFieldEnum | MetaOrcamentariaScalarFieldEnum[]
+  }
+
+  /**
+   * MetaOrcamentaria findFirstOrThrow
+   */
+  export type MetaOrcamentariaFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MetaOrcamentaria
+     */
+    select?: MetaOrcamentariaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MetaOrcamentaria
+     */
+    omit?: MetaOrcamentariaOmit<ExtArgs> | null
+    /**
+     * Filter, which MetaOrcamentaria to fetch.
+     */
+    where?: MetaOrcamentariaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MetaOrcamentarias to fetch.
+     */
+    orderBy?: MetaOrcamentariaOrderByWithRelationInput | MetaOrcamentariaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MetaOrcamentarias.
+     */
+    cursor?: MetaOrcamentariaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MetaOrcamentarias from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MetaOrcamentarias.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MetaOrcamentarias.
+     */
+    distinct?: MetaOrcamentariaScalarFieldEnum | MetaOrcamentariaScalarFieldEnum[]
+  }
+
+  /**
+   * MetaOrcamentaria findMany
+   */
+  export type MetaOrcamentariaFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MetaOrcamentaria
+     */
+    select?: MetaOrcamentariaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MetaOrcamentaria
+     */
+    omit?: MetaOrcamentariaOmit<ExtArgs> | null
+    /**
+     * Filter, which MetaOrcamentarias to fetch.
+     */
+    where?: MetaOrcamentariaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MetaOrcamentarias to fetch.
+     */
+    orderBy?: MetaOrcamentariaOrderByWithRelationInput | MetaOrcamentariaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MetaOrcamentarias.
+     */
+    cursor?: MetaOrcamentariaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MetaOrcamentarias from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MetaOrcamentarias.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MetaOrcamentarias.
+     */
+    distinct?: MetaOrcamentariaScalarFieldEnum | MetaOrcamentariaScalarFieldEnum[]
+  }
+
+  /**
+   * MetaOrcamentaria create
+   */
+  export type MetaOrcamentariaCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MetaOrcamentaria
+     */
+    select?: MetaOrcamentariaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MetaOrcamentaria
+     */
+    omit?: MetaOrcamentariaOmit<ExtArgs> | null
+    /**
+     * The data needed to create a MetaOrcamentaria.
+     */
+    data: XOR<MetaOrcamentariaCreateInput, MetaOrcamentariaUncheckedCreateInput>
+  }
+
+  /**
+   * MetaOrcamentaria createMany
+   */
+  export type MetaOrcamentariaCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MetaOrcamentarias.
+     */
+    data: MetaOrcamentariaCreateManyInput | MetaOrcamentariaCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MetaOrcamentaria createManyAndReturn
+   */
+  export type MetaOrcamentariaCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MetaOrcamentaria
+     */
+    select?: MetaOrcamentariaSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MetaOrcamentaria
+     */
+    omit?: MetaOrcamentariaOmit<ExtArgs> | null
+    /**
+     * The data used to create many MetaOrcamentarias.
+     */
+    data: MetaOrcamentariaCreateManyInput | MetaOrcamentariaCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MetaOrcamentaria update
+   */
+  export type MetaOrcamentariaUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MetaOrcamentaria
+     */
+    select?: MetaOrcamentariaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MetaOrcamentaria
+     */
+    omit?: MetaOrcamentariaOmit<ExtArgs> | null
+    /**
+     * The data needed to update a MetaOrcamentaria.
+     */
+    data: XOR<MetaOrcamentariaUpdateInput, MetaOrcamentariaUncheckedUpdateInput>
+    /**
+     * Choose, which MetaOrcamentaria to update.
+     */
+    where: MetaOrcamentariaWhereUniqueInput
+  }
+
+  /**
+   * MetaOrcamentaria updateMany
+   */
+  export type MetaOrcamentariaUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MetaOrcamentarias.
+     */
+    data: XOR<MetaOrcamentariaUpdateManyMutationInput, MetaOrcamentariaUncheckedUpdateManyInput>
+    /**
+     * Filter which MetaOrcamentarias to update
+     */
+    where?: MetaOrcamentariaWhereInput
+    /**
+     * Limit how many MetaOrcamentarias to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MetaOrcamentaria updateManyAndReturn
+   */
+  export type MetaOrcamentariaUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MetaOrcamentaria
+     */
+    select?: MetaOrcamentariaSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MetaOrcamentaria
+     */
+    omit?: MetaOrcamentariaOmit<ExtArgs> | null
+    /**
+     * The data used to update MetaOrcamentarias.
+     */
+    data: XOR<MetaOrcamentariaUpdateManyMutationInput, MetaOrcamentariaUncheckedUpdateManyInput>
+    /**
+     * Filter which MetaOrcamentarias to update
+     */
+    where?: MetaOrcamentariaWhereInput
+    /**
+     * Limit how many MetaOrcamentarias to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MetaOrcamentaria upsert
+   */
+  export type MetaOrcamentariaUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MetaOrcamentaria
+     */
+    select?: MetaOrcamentariaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MetaOrcamentaria
+     */
+    omit?: MetaOrcamentariaOmit<ExtArgs> | null
+    /**
+     * The filter to search for the MetaOrcamentaria to update in case it exists.
+     */
+    where: MetaOrcamentariaWhereUniqueInput
+    /**
+     * In case the MetaOrcamentaria found by the `where` argument doesn't exist, create a new MetaOrcamentaria with this data.
+     */
+    create: XOR<MetaOrcamentariaCreateInput, MetaOrcamentariaUncheckedCreateInput>
+    /**
+     * In case the MetaOrcamentaria was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MetaOrcamentariaUpdateInput, MetaOrcamentariaUncheckedUpdateInput>
+  }
+
+  /**
+   * MetaOrcamentaria delete
+   */
+  export type MetaOrcamentariaDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MetaOrcamentaria
+     */
+    select?: MetaOrcamentariaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MetaOrcamentaria
+     */
+    omit?: MetaOrcamentariaOmit<ExtArgs> | null
+    /**
+     * Filter which MetaOrcamentaria to delete.
+     */
+    where: MetaOrcamentariaWhereUniqueInput
+  }
+
+  /**
+   * MetaOrcamentaria deleteMany
+   */
+  export type MetaOrcamentariaDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MetaOrcamentarias to delete
+     */
+    where?: MetaOrcamentariaWhereInput
+    /**
+     * Limit how many MetaOrcamentarias to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * MetaOrcamentaria without action
+   */
+  export type MetaOrcamentariaDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MetaOrcamentaria
+     */
+    select?: MetaOrcamentariaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MetaOrcamentaria
+     */
+    omit?: MetaOrcamentariaOmit<ExtArgs> | null
   }
 
 
@@ -22368,6 +23605,9 @@ export namespace Prisma {
     regiao: 'regiao',
     unidade: 'unidade',
     numeroOrcamento: 'numeroOrcamento',
+    solicitacao: 'solicitacao',
+    dataAprovacao: 'dataAprovacao',
+    numeroOM: 'numeroOM',
     valor: 'valor',
     status: 'status',
     mauUso: 'mauUso',
@@ -22391,6 +23631,20 @@ export namespace Prisma {
   };
 
   export type FornecedorScalarFieldEnum = (typeof FornecedorScalarFieldEnum)[keyof typeof FornecedorScalarFieldEnum]
+
+
+  export const MetaOrcamentariaScalarFieldEnum: {
+    id: 'id',
+    regiao: 'regiao',
+    unidade: 'unidade',
+    ano: 'ano',
+    mes: 'mes',
+    valorMeta: 'valorMeta',
+    criadoEm: 'criadoEm',
+    atualizadoEm: 'atualizadoEm'
+  };
+
+  export type MetaOrcamentariaScalarFieldEnum = (typeof MetaOrcamentariaScalarFieldEnum)[keyof typeof MetaOrcamentariaScalarFieldEnum]
 
 
   export const PecaScalarFieldEnum: {
@@ -23224,6 +24478,9 @@ export namespace Prisma {
     regiao?: StringNullableFilter<"ControleChamado"> | string | null
     unidade?: StringNullableFilter<"ControleChamado"> | string | null
     numeroOrcamento?: StringNullableFilter<"ControleChamado"> | string | null
+    solicitacao?: StringNullableFilter<"ControleChamado"> | string | null
+    dataAprovacao?: DateTimeNullableFilter<"ControleChamado"> | Date | string | null
+    numeroOM?: StringNullableFilter<"ControleChamado"> | string | null
     valor?: DecimalNullableFilter<"ControleChamado"> | Decimal | DecimalJsLike | number | string | null
     status?: EnumStatusChamadoFilter<"ControleChamado"> | $Enums.StatusChamado
     mauUso?: BoolFilter<"ControleChamado"> | boolean
@@ -23241,6 +24498,9 @@ export namespace Prisma {
     regiao?: SortOrderInput | SortOrder
     unidade?: SortOrderInput | SortOrder
     numeroOrcamento?: SortOrderInput | SortOrder
+    solicitacao?: SortOrderInput | SortOrder
+    dataAprovacao?: SortOrderInput | SortOrder
+    numeroOM?: SortOrderInput | SortOrder
     valor?: SortOrderInput | SortOrder
     status?: SortOrder
     mauUso?: SortOrder
@@ -23261,6 +24521,9 @@ export namespace Prisma {
     regiao?: StringNullableFilter<"ControleChamado"> | string | null
     unidade?: StringNullableFilter<"ControleChamado"> | string | null
     numeroOrcamento?: StringNullableFilter<"ControleChamado"> | string | null
+    solicitacao?: StringNullableFilter<"ControleChamado"> | string | null
+    dataAprovacao?: DateTimeNullableFilter<"ControleChamado"> | Date | string | null
+    numeroOM?: StringNullableFilter<"ControleChamado"> | string | null
     valor?: DecimalNullableFilter<"ControleChamado"> | Decimal | DecimalJsLike | number | string | null
     status?: EnumStatusChamadoFilter<"ControleChamado"> | $Enums.StatusChamado
     mauUso?: BoolFilter<"ControleChamado"> | boolean
@@ -23278,6 +24541,9 @@ export namespace Prisma {
     regiao?: SortOrderInput | SortOrder
     unidade?: SortOrderInput | SortOrder
     numeroOrcamento?: SortOrderInput | SortOrder
+    solicitacao?: SortOrderInput | SortOrder
+    dataAprovacao?: SortOrderInput | SortOrder
+    numeroOM?: SortOrderInput | SortOrder
     valor?: SortOrderInput | SortOrder
     status?: SortOrder
     mauUso?: SortOrder
@@ -23303,6 +24569,9 @@ export namespace Prisma {
     regiao?: StringNullableWithAggregatesFilter<"ControleChamado"> | string | null
     unidade?: StringNullableWithAggregatesFilter<"ControleChamado"> | string | null
     numeroOrcamento?: StringNullableWithAggregatesFilter<"ControleChamado"> | string | null
+    solicitacao?: StringNullableWithAggregatesFilter<"ControleChamado"> | string | null
+    dataAprovacao?: DateTimeNullableWithAggregatesFilter<"ControleChamado"> | Date | string | null
+    numeroOM?: StringNullableWithAggregatesFilter<"ControleChamado"> | string | null
     valor?: DecimalNullableWithAggregatesFilter<"ControleChamado"> | Decimal | DecimalJsLike | number | string | null
     status?: EnumStatusChamadoWithAggregatesFilter<"ControleChamado"> | $Enums.StatusChamado
     mauUso?: BoolWithAggregatesFilter<"ControleChamado"> | boolean
@@ -23380,6 +24649,76 @@ export namespace Prisma {
     ativo?: BoolWithAggregatesFilter<"Fornecedor"> | boolean
     criadoEm?: DateTimeWithAggregatesFilter<"Fornecedor"> | Date | string
     atualizadoEm?: DateTimeWithAggregatesFilter<"Fornecedor"> | Date | string
+  }
+
+  export type MetaOrcamentariaWhereInput = {
+    AND?: MetaOrcamentariaWhereInput | MetaOrcamentariaWhereInput[]
+    OR?: MetaOrcamentariaWhereInput[]
+    NOT?: MetaOrcamentariaWhereInput | MetaOrcamentariaWhereInput[]
+    id?: StringFilter<"MetaOrcamentaria"> | string
+    regiao?: StringFilter<"MetaOrcamentaria"> | string
+    unidade?: StringNullableFilter<"MetaOrcamentaria"> | string | null
+    ano?: IntFilter<"MetaOrcamentaria"> | number
+    mes?: IntFilter<"MetaOrcamentaria"> | number
+    valorMeta?: DecimalFilter<"MetaOrcamentaria"> | Decimal | DecimalJsLike | number | string
+    criadoEm?: DateTimeFilter<"MetaOrcamentaria"> | Date | string
+    atualizadoEm?: DateTimeFilter<"MetaOrcamentaria"> | Date | string
+  }
+
+  export type MetaOrcamentariaOrderByWithRelationInput = {
+    id?: SortOrder
+    regiao?: SortOrder
+    unidade?: SortOrderInput | SortOrder
+    ano?: SortOrder
+    mes?: SortOrder
+    valorMeta?: SortOrder
+    criadoEm?: SortOrder
+    atualizadoEm?: SortOrder
+  }
+
+  export type MetaOrcamentariaWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    meta_unica?: MetaOrcamentariaMeta_unicaCompoundUniqueInput
+    AND?: MetaOrcamentariaWhereInput | MetaOrcamentariaWhereInput[]
+    OR?: MetaOrcamentariaWhereInput[]
+    NOT?: MetaOrcamentariaWhereInput | MetaOrcamentariaWhereInput[]
+    regiao?: StringFilter<"MetaOrcamentaria"> | string
+    unidade?: StringNullableFilter<"MetaOrcamentaria"> | string | null
+    ano?: IntFilter<"MetaOrcamentaria"> | number
+    mes?: IntFilter<"MetaOrcamentaria"> | number
+    valorMeta?: DecimalFilter<"MetaOrcamentaria"> | Decimal | DecimalJsLike | number | string
+    criadoEm?: DateTimeFilter<"MetaOrcamentaria"> | Date | string
+    atualizadoEm?: DateTimeFilter<"MetaOrcamentaria"> | Date | string
+  }, "id" | "meta_unica">
+
+  export type MetaOrcamentariaOrderByWithAggregationInput = {
+    id?: SortOrder
+    regiao?: SortOrder
+    unidade?: SortOrderInput | SortOrder
+    ano?: SortOrder
+    mes?: SortOrder
+    valorMeta?: SortOrder
+    criadoEm?: SortOrder
+    atualizadoEm?: SortOrder
+    _count?: MetaOrcamentariaCountOrderByAggregateInput
+    _avg?: MetaOrcamentariaAvgOrderByAggregateInput
+    _max?: MetaOrcamentariaMaxOrderByAggregateInput
+    _min?: MetaOrcamentariaMinOrderByAggregateInput
+    _sum?: MetaOrcamentariaSumOrderByAggregateInput
+  }
+
+  export type MetaOrcamentariaScalarWhereWithAggregatesInput = {
+    AND?: MetaOrcamentariaScalarWhereWithAggregatesInput | MetaOrcamentariaScalarWhereWithAggregatesInput[]
+    OR?: MetaOrcamentariaScalarWhereWithAggregatesInput[]
+    NOT?: MetaOrcamentariaScalarWhereWithAggregatesInput | MetaOrcamentariaScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MetaOrcamentaria"> | string
+    regiao?: StringWithAggregatesFilter<"MetaOrcamentaria"> | string
+    unidade?: StringNullableWithAggregatesFilter<"MetaOrcamentaria"> | string | null
+    ano?: IntWithAggregatesFilter<"MetaOrcamentaria"> | number
+    mes?: IntWithAggregatesFilter<"MetaOrcamentaria"> | number
+    valorMeta?: DecimalWithAggregatesFilter<"MetaOrcamentaria"> | Decimal | DecimalJsLike | number | string
+    criadoEm?: DateTimeWithAggregatesFilter<"MetaOrcamentaria"> | Date | string
+    atualizadoEm?: DateTimeWithAggregatesFilter<"MetaOrcamentaria"> | Date | string
   }
 
   export type PecaWhereInput = {
@@ -24566,6 +25905,9 @@ export namespace Prisma {
     regiao?: string | null
     unidade?: string | null
     numeroOrcamento?: string | null
+    solicitacao?: string | null
+    dataAprovacao?: Date | string | null
+    numeroOM?: string | null
     valor?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.StatusChamado
     mauUso?: boolean
@@ -24583,6 +25925,9 @@ export namespace Prisma {
     regiao?: string | null
     unidade?: string | null
     numeroOrcamento?: string | null
+    solicitacao?: string | null
+    dataAprovacao?: Date | string | null
+    numeroOM?: string | null
     valor?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.StatusChamado
     mauUso?: boolean
@@ -24600,6 +25945,9 @@ export namespace Prisma {
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
     numeroOrcamento?: NullableStringFieldUpdateOperationsInput | string | null
+    solicitacao?: NullableStringFieldUpdateOperationsInput | string | null
+    dataAprovacao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    numeroOM?: NullableStringFieldUpdateOperationsInput | string | null
     valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumStatusChamadoFieldUpdateOperationsInput | $Enums.StatusChamado
     mauUso?: BoolFieldUpdateOperationsInput | boolean
@@ -24617,6 +25965,9 @@ export namespace Prisma {
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
     numeroOrcamento?: NullableStringFieldUpdateOperationsInput | string | null
+    solicitacao?: NullableStringFieldUpdateOperationsInput | string | null
+    dataAprovacao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    numeroOM?: NullableStringFieldUpdateOperationsInput | string | null
     valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumStatusChamadoFieldUpdateOperationsInput | $Enums.StatusChamado
     mauUso?: BoolFieldUpdateOperationsInput | boolean
@@ -24634,6 +25985,9 @@ export namespace Prisma {
     regiao?: string | null
     unidade?: string | null
     numeroOrcamento?: string | null
+    solicitacao?: string | null
+    dataAprovacao?: Date | string | null
+    numeroOM?: string | null
     valor?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.StatusChamado
     mauUso?: boolean
@@ -24651,6 +26005,9 @@ export namespace Prisma {
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
     numeroOrcamento?: NullableStringFieldUpdateOperationsInput | string | null
+    solicitacao?: NullableStringFieldUpdateOperationsInput | string | null
+    dataAprovacao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    numeroOM?: NullableStringFieldUpdateOperationsInput | string | null
     valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumStatusChamadoFieldUpdateOperationsInput | $Enums.StatusChamado
     mauUso?: BoolFieldUpdateOperationsInput | boolean
@@ -24668,6 +26025,9 @@ export namespace Prisma {
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
     numeroOrcamento?: NullableStringFieldUpdateOperationsInput | string | null
+    solicitacao?: NullableStringFieldUpdateOperationsInput | string | null
+    dataAprovacao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    numeroOM?: NullableStringFieldUpdateOperationsInput | string | null
     valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumStatusChamadoFieldUpdateOperationsInput | $Enums.StatusChamado
     mauUso?: BoolFieldUpdateOperationsInput | boolean
@@ -24755,6 +26115,83 @@ export namespace Prisma {
     segmento?: StringFieldUpdateOperationsInput | string
     cnpj?: StringFieldUpdateOperationsInput | string
     ativo?: BoolFieldUpdateOperationsInput | boolean
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MetaOrcamentariaCreateInput = {
+    id?: string
+    regiao: string
+    unidade?: string | null
+    ano: number
+    mes: number
+    valorMeta: Decimal | DecimalJsLike | number | string
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+  }
+
+  export type MetaOrcamentariaUncheckedCreateInput = {
+    id?: string
+    regiao: string
+    unidade?: string | null
+    ano: number
+    mes: number
+    valorMeta: Decimal | DecimalJsLike | number | string
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+  }
+
+  export type MetaOrcamentariaUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    ano?: IntFieldUpdateOperationsInput | number
+    mes?: IntFieldUpdateOperationsInput | number
+    valorMeta?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MetaOrcamentariaUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    ano?: IntFieldUpdateOperationsInput | number
+    mes?: IntFieldUpdateOperationsInput | number
+    valorMeta?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MetaOrcamentariaCreateManyInput = {
+    id?: string
+    regiao: string
+    unidade?: string | null
+    ano: number
+    mes: number
+    valorMeta: Decimal | DecimalJsLike | number | string
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+  }
+
+  export type MetaOrcamentariaUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    ano?: IntFieldUpdateOperationsInput | number
+    mes?: IntFieldUpdateOperationsInput | number
+    valorMeta?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MetaOrcamentariaUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    ano?: IntFieldUpdateOperationsInput | number
+    mes?: IntFieldUpdateOperationsInput | number
+    valorMeta?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -26013,6 +27450,9 @@ export namespace Prisma {
     regiao?: SortOrder
     unidade?: SortOrder
     numeroOrcamento?: SortOrder
+    solicitacao?: SortOrder
+    dataAprovacao?: SortOrder
+    numeroOM?: SortOrder
     valor?: SortOrder
     status?: SortOrder
     mauUso?: SortOrder
@@ -26034,6 +27474,9 @@ export namespace Prisma {
     regiao?: SortOrder
     unidade?: SortOrder
     numeroOrcamento?: SortOrder
+    solicitacao?: SortOrder
+    dataAprovacao?: SortOrder
+    numeroOM?: SortOrder
     valor?: SortOrder
     status?: SortOrder
     mauUso?: SortOrder
@@ -26051,6 +27494,9 @@ export namespace Prisma {
     regiao?: SortOrder
     unidade?: SortOrder
     numeroOrcamento?: SortOrder
+    solicitacao?: SortOrder
+    dataAprovacao?: SortOrder
+    numeroOM?: SortOrder
     valor?: SortOrder
     status?: SortOrder
     mauUso?: SortOrder
@@ -26134,6 +27580,85 @@ export namespace Prisma {
     atualizadoEm?: SortOrder
   }
 
+  export type DecimalFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+  }
+
+  export type MetaOrcamentariaMeta_unicaCompoundUniqueInput = {
+    regiao: string
+    unidade: string
+    ano: number
+    mes: number
+  }
+
+  export type MetaOrcamentariaCountOrderByAggregateInput = {
+    id?: SortOrder
+    regiao?: SortOrder
+    unidade?: SortOrder
+    ano?: SortOrder
+    mes?: SortOrder
+    valorMeta?: SortOrder
+    criadoEm?: SortOrder
+    atualizadoEm?: SortOrder
+  }
+
+  export type MetaOrcamentariaAvgOrderByAggregateInput = {
+    ano?: SortOrder
+    mes?: SortOrder
+    valorMeta?: SortOrder
+  }
+
+  export type MetaOrcamentariaMaxOrderByAggregateInput = {
+    id?: SortOrder
+    regiao?: SortOrder
+    unidade?: SortOrder
+    ano?: SortOrder
+    mes?: SortOrder
+    valorMeta?: SortOrder
+    criadoEm?: SortOrder
+    atualizadoEm?: SortOrder
+  }
+
+  export type MetaOrcamentariaMinOrderByAggregateInput = {
+    id?: SortOrder
+    regiao?: SortOrder
+    unidade?: SortOrder
+    ano?: SortOrder
+    mes?: SortOrder
+    valorMeta?: SortOrder
+    criadoEm?: SortOrder
+    atualizadoEm?: SortOrder
+  }
+
+  export type MetaOrcamentariaSumOrderByAggregateInput = {
+    ano?: SortOrder
+    mes?: SortOrder
+    valorMeta?: SortOrder
+  }
+
+  export type DecimalWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedDecimalFilter<$PrismaModel>
+    _sum?: NestedDecimalFilter<$PrismaModel>
+    _min?: NestedDecimalFilter<$PrismaModel>
+    _max?: NestedDecimalFilter<$PrismaModel>
+  }
+
   export type EntradaPecaListRelationFilter = {
     every?: EntradaPecaWhereInput
     some?: EntradaPecaWhereInput
@@ -26199,17 +27724,6 @@ export namespace Prisma {
     quantidadeEstoque?: SortOrder
   }
 
-  export type DecimalFilter<$PrismaModel = never> = {
-    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
-    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
-    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
-  }
-
   export type PecaScalarRelationFilter = {
     is?: PecaWhereInput
     isNot?: PecaWhereInput
@@ -26261,22 +27775,6 @@ export namespace Prisma {
     quantidade?: SortOrder
     valorUnitario?: SortOrder
     total?: SortOrder
-  }
-
-  export type DecimalWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
-    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
-    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    not?: NestedDecimalWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedDecimalFilter<$PrismaModel>
-    _sum?: NestedDecimalFilter<$PrismaModel>
-    _min?: NestedDecimalFilter<$PrismaModel>
-    _max?: NestedDecimalFilter<$PrismaModel>
   }
 
   export type EnumStatusMovimentacaoFilter<$PrismaModel = never> = {
@@ -27214,6 +28712,14 @@ export namespace Prisma {
     set?: $Enums.StatusChamado
   }
 
+  export type DecimalFieldUpdateOperationsInput = {
+    set?: Decimal | DecimalJsLike | number | string
+    increment?: Decimal | DecimalJsLike | number | string
+    decrement?: Decimal | DecimalJsLike | number | string
+    multiply?: Decimal | DecimalJsLike | number | string
+    divide?: Decimal | DecimalJsLike | number | string
+  }
+
   export type EntradaPecaCreateNestedManyWithoutPecaInput = {
     create?: XOR<EntradaPecaCreateWithoutPecaInput, EntradaPecaUncheckedCreateWithoutPecaInput> | EntradaPecaCreateWithoutPecaInput[] | EntradaPecaUncheckedCreateWithoutPecaInput[]
     connectOrCreate?: EntradaPecaCreateOrConnectWithoutPecaInput | EntradaPecaCreateOrConnectWithoutPecaInput[]
@@ -27344,14 +28850,6 @@ export namespace Prisma {
     create?: XOR<PecaCreateWithoutEntradasInput, PecaUncheckedCreateWithoutEntradasInput>
     connectOrCreate?: PecaCreateOrConnectWithoutEntradasInput
     connect?: PecaWhereUniqueInput
-  }
-
-  export type DecimalFieldUpdateOperationsInput = {
-    set?: Decimal | DecimalJsLike | number | string
-    increment?: Decimal | DecimalJsLike | number | string
-    decrement?: Decimal | DecimalJsLike | number | string
-    multiply?: Decimal | DecimalJsLike | number | string
-    divide?: Decimal | DecimalJsLike | number | string
   }
 
   export type PecaUpdateOneRequiredWithoutEntradasNestedInput = {
