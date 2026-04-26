@@ -39,6 +39,16 @@ const listar = async (req, res, next) => {
     if (req.user.role === 'GESTOR') {
       where.lojaId = req.user.lojaId || '__SEM_LOJA__';
     }
+
+    // Nenhuma role (exceto ADMINISTRADOR) pode ver dados de administradores
+    if (req.user.role !== 'ADMINISTRADOR') {
+      if (where.AND) {
+        where.AND.push({ role: { not: 'ADMINISTRADOR' } });
+      } else {
+        where.role = { not: 'ADMINISTRADOR' };
+      }
+    }
+
     if (and.length) where.AND = and;
 
     const [usuarios, total] = await Promise.all([
@@ -81,6 +91,11 @@ const buscarPorId = async (req, res, next) => {
       return res.status(403).json({ error: 'Acesso negado: usuário de outra loja' });
     }
 
+    // Nenhuma role (exceto ADMINISTRADOR) pode ver dados de administradores
+    if (usuario.role === 'ADMINISTRADOR' && req.user.role !== 'ADMINISTRADOR') {
+      return res.status(403).json({ error: 'Acesso negado: dados restritos' });
+    }
+
     res.json(usuario);
   } catch (err) { next(err); }
 };
@@ -109,6 +124,16 @@ const criar = async (req, res, next) => {
 
 const atualizar = async (req, res, next) => {
   try {
+    const targetId = req.params.id;
+    const existingUser = await prisma.usuario.findUnique({ where: { id: targetId } });
+
+    if (!existingUser) return res.status(404).json({ error: 'Usuário não encontrado' });
+
+    // Nenhuma role (exceto ADMINISTRADOR) pode editar um administrador
+    if (existingUser.role === 'ADMINISTRADOR' && req.user.role !== 'ADMINISTRADOR') {
+      return res.status(403).json({ error: 'Acesso negado: não é possível alterar um administrador' });
+    }
+
     const { nome, email, senha, role, ativo, regiao, lojaId } = req.body;
     const data = {};
     if (nome   !== undefined) data.nome   = nome;
@@ -131,8 +156,18 @@ const atualizar = async (req, res, next) => {
 
 const remover = async (req, res, next) => {
   try {
+    const targetId = req.params.id;
+    const existingUser = await prisma.usuario.findUnique({ where: { id: targetId } });
+
+    if (!existingUser) return res.status(404).json({ error: 'Usuário não encontrado' });
+
+    // Nenhuma role (exceto ADMINISTRADOR) pode remover um administrador
+    if (existingUser.role === 'ADMINISTRADOR' && req.user.role !== 'ADMINISTRADOR') {
+      return res.status(403).json({ error: 'Acesso negado: não é possível remover um administrador' });
+    }
+
     // Soft delete
-    await prisma.usuario.update({ where: { id: req.params.id }, data: { ativo: false } });
+    await prisma.usuario.update({ where: { id: targetId }, data: { ativo: false } });
     res.json({ message: 'Usuário desativado com sucesso' });
   } catch (err) { next(err); }
 };

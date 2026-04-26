@@ -1,0 +1,2140 @@
+openapi: 3.0.0
+info:
+  title: Sistema de Gerenciamento de Manutenção (SGM)
+  description: |-
+    O **Sistema de Gerenciamento de Manutenção (SGM)** é uma plataforma completa para gerenciamento de tarefas, controle financeiro, estoque, checklists e dashboards executivos.
+    
+    ### Características Principais
+    - REST API Stateless com JWT + Refresh Tokens
+    - RBAC com 6 roles e isolamento regional
+    - Rate Limiting em 3 camadas
+  version: 1.0.0
+  contact:
+    name: Luis Henrique
+    url: https://github.com/luis-h-souza/gerenciador-manutencao
+    email: luis.h.desenvolvimento@gmail.com
+
+servers:
+  - url: https://api.gerenciador-manutencao.com/api/v1
+    description: Production server
+  - url: http://localhost:3001/api/v1
+    description: Local development server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+    
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: ERROR_CODE
+        message:
+          type: string
+          example: Mensagem descritiva do erro
+        details:
+          type: object
+          additionalProperties: true
+        timestamp:
+          type: string
+          format: date-time
+        path:
+          type: string
+
+    Pagination:
+      type: object
+      properties:
+        total:
+          type: integer
+        skip:
+          type: integer
+        take:
+          type: integer
+        hasMore:
+          type: boolean
+
+    Role:
+      type: string
+      enum: [ADMINISTRADOR, DIRETOR, GERENTE, COORDENADOR, GESTOR, TECNICO]
+
+    Prioridade:
+      type: string
+      enum: [ALTA, MEDIA, BAIXA]
+
+    StatusTarefa:
+      type: string
+      enum: [ABERTA, EM_EXECUCAO, CONCLUIDA, CANCELADA]
+
+    StatusChamado:
+      type: string
+      enum: [ABERTO, FECHADO, CANCELADO]
+
+    Segmento:
+      type: string
+      enum: [ELETRICO, MECANICO, HIDRAULICO, OUTRO]
+
+    Usuario:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        nome:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          $ref: '#/components/schemas/Role'
+        regiao:
+          type: array
+          items:
+            type: string
+        lojaId:
+          type: string
+          format: uuid
+          nullable: true
+        ativo:
+          type: boolean
+        criadoEm:
+          type: string
+          format: date-time
+        atualizadoEm:
+          type: string
+          format: date-time
+        ultimoAcesso:
+          type: string
+          format: date-time
+          nullable: true
+
+    Tarefa:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        titulo:
+          type: string
+        descricao:
+          type: string
+          nullable: true
+        prioridade:
+          $ref: '#/components/schemas/Prioridade'
+        status:
+          $ref: '#/components/schemas/StatusTarefa'
+        regiao:
+          type: string
+        unidade:
+          type: string
+          format: uuid
+        atribuidoA:
+          type: string
+          format: uuid
+          nullable: true
+        criadoPor:
+          type: string
+          format: uuid
+        dataVencimento:
+          type: string
+          format: date
+        criadoEm:
+          type: string
+          format: date-time
+        atualizadoEm:
+          type: string
+          format: date-time
+
+    Chamado:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        numero:
+          type: string
+        dataAbertura:
+          type: string
+          format: date
+        dataFechamento:
+          type: string
+          format: date
+          nullable: true
+        valor:
+          type: number
+          format: decimal
+        status:
+          $ref: '#/components/schemas/StatusChamado'
+        segmento:
+          $ref: '#/components/schemas/Segmento'
+        fornecedorId:
+          type: string
+          format: uuid
+        lojaId:
+          type: string
+          format: uuid
+        regiao:
+          type: string
+        mauUso:
+          type: boolean
+        observacoes:
+          type: string
+          nullable: true
+        criadoEm:
+          type: string
+          format: date-time
+        atualizadoEm:
+          type: string
+          format: date-time
+
+    Peca:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        descricao:
+          type: string
+        codigo:
+          type: string
+        estoque:
+          type: integer
+        estoqueMinimo:
+          type: integer
+        valor:
+          type: number
+          format: decimal
+        ativo:
+          type: boolean
+        criadoEm:
+          type: string
+          format: date-time
+        atualizadoEm:
+          type: string
+          format: date-time
+
+    EntradaPeca:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        pecaId:
+          type: string
+          format: uuid
+        fornecedorId:
+          type: string
+          format: uuid
+        numeroNF:
+          type: string
+        quantidade:
+          type: integer
+        valorUnitario:
+          type: number
+          format: decimal
+        dataEntrada:
+          type: string
+          format: date
+        criadoEm:
+          type: string
+          format: date-time
+
+    MovimentacaoPeca:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        pecaId:
+          type: string
+          format: uuid
+        lojaRequisitante:
+          type: string
+          format: uuid
+        chamadoId:
+          type: string
+          format: uuid
+          nullable: true
+        quantidade:
+          type: integer
+        status:
+          type: string
+          enum: [PENDENTE, RECEBIDO, CANCELADO]
+        criadoEm:
+          type: string
+          format: date-time
+        recebidoEm:
+          type: string
+          format: date-time
+          nullable: true
+
+    SaidaPeca:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        pecaId:
+          type: string
+          format: uuid
+        destino:
+          type: string
+        nomeRetirou:
+          type: string
+        quantidade:
+          type: integer
+        dataRetirada:
+          type: string
+          format: date
+        criadoEm:
+          type: string
+          format: date-time
+
+    Loja:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        nome:
+          type: string
+        regiao:
+          type: string
+        cidade:
+          type: string
+        estado:
+          type: string
+        endereco:
+          type: string
+        ativa:
+          type: boolean
+        criadoEm:
+          type: string
+          format: date-time
+        atualizadoEm:
+          type: string
+          format: date-time
+
+    Fornecedor:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        nome:
+          type: string
+        cnpj:
+          type: string
+        segmento:
+          $ref: '#/components/schemas/Segmento'
+        contato:
+          type: string
+          nullable: true
+        email:
+          type: string
+          format: email
+          nullable: true
+        telefone:
+          type: string
+          nullable: true
+        ativo:
+          type: boolean
+        criadoEm:
+          type: string
+          format: date-time
+        atualizadoEm:
+          type: string
+          format: date-time
+
+    Notificacao:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        titulo:
+          type: string
+        mensagem:
+          type: string
+        tipo:
+          type: string
+          enum: [TAREFA, CHAMADO, CHECKLIST, SISTEMA]
+        lida:
+          type: boolean
+        tarefaId:
+          type: string
+          format: uuid
+          nullable: true
+        usuarioId:
+          type: string
+          format: uuid
+        criadoEm:
+          type: string
+          format: date-time
+        lidoEm:
+          type: string
+          format: date-time
+          nullable: true
+
+    ChecklistItemEquipamento:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        tipo:
+          type: string
+        operacional:
+          type: boolean
+        quantidade:
+          type: integer
+        quantidadeQuebrada:
+          type: integer
+        numeroSerie:
+          type: string
+          nullable: true
+        chamadoId:
+          type: string
+          format: uuid
+          nullable: true
+        valor:
+          type: number
+          format: decimal
+
+    ChecklistEquipamento:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        semana:
+          type: integer
+        ano:
+          type: integer
+        regiao:
+          type: string
+        unidade:
+          type: string
+          format: uuid
+        preenchidoPor:
+          type: string
+          format: uuid
+        criadoEm:
+          type: string
+          format: date-time
+        atualizadoEm:
+          type: string
+          format: date-time
+        itens:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChecklistItemEquipamento'
+
+    ChecklistItemCarrinho:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        tipo:
+          type: string
+        total:
+          type: integer
+        quebrados:
+          type: integer
+        chamadoId:
+          type: string
+          format: uuid
+          nullable: true
+
+    ChecklistCarrinho:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        semana:
+          type: integer
+        ano:
+          type: integer
+        regiao:
+          type: string
+        unidade:
+          type: string
+          format: uuid
+        preenchidoPor:
+          type: string
+          format: uuid
+        criadoEm:
+          type: string
+          format: date-time
+        atualizadoEm:
+          type: string
+          format: date-time
+        itens:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChecklistItemCarrinho'
+
+security:
+  - bearerAuth: []
+
+paths:
+  /auth/login:
+    post:
+      tags: [Autenticação]
+      summary: Login de usuário
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, senha]
+              properties:
+                email:
+                  type: string
+                  format: email
+                senha:
+                  type: string
+      responses:
+        '200':
+          description: Login realizado com sucesso
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          user:
+                            $ref: '#/components/schemas/Usuario'
+                          accessToken:
+                            type: string
+                          refreshToken:
+                            type: string
+                          expiresIn:
+                            type: integer
+        '401':
+          description: Credenciais inválidas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/refresh:
+    post:
+      tags: [Autenticação]
+      summary: Renova access token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: Token renovado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          accessToken:
+                            type: string
+                          refreshToken:
+                            type: string
+                          expiresIn:
+                            type: integer
+        '401':
+          description: Refresh token inválido
+
+  /auth/logout:
+    post:
+      tags: [Autenticação]
+      summary: Logout de usuário
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+                revokeAll:
+                  type: boolean
+      responses:
+        '200':
+          description: Logout realizado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+
+  /auth/me:
+    get:
+      tags: [Autenticação]
+      summary: Obter dados do usuário logado
+      responses:
+        '200':
+          description: Dados do usuário
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Usuario'
+
+  /tarefas:
+    get:
+      tags: [Tarefas]
+      summary: Listar tarefas
+      parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/StatusTarefa'
+        - name: prioridade
+          in: query
+          schema:
+            $ref: '#/components/schemas/Prioridade'
+        - name: atribuidoA
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: regiao
+          in: query
+          schema:
+            type: string
+        - name: skip
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: take
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Lista de tarefas
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Tarefa'
+                      pagination:
+                        $ref: '#/components/schemas/Pagination'
+    post:
+      tags: [Tarefas]
+      summary: Criar tarefa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [titulo, prioridade, unidade, dataVencimento]
+              properties:
+                titulo:
+                  type: string
+                descricao:
+                  type: string
+                prioridade:
+                  $ref: '#/components/schemas/Prioridade'
+                regiao:
+                  type: string
+                unidade:
+                  type: string
+                  format: uuid
+                atribuidoA:
+                  type: string
+                  format: uuid
+                dataVencimento:
+                  type: string
+                  format: date
+      responses:
+        '201':
+          description: Tarefa criada
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Tarefa'
+                      notification:
+                        type: object
+                        properties:
+                          usuarioId:
+                            type: string
+                          titulo:
+                            type: string
+                          mensagem:
+                            type: string
+
+  /tarefas/{id}:
+    get:
+      tags: [Tarefas]
+      summary: Obter tarefa por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Detalhes da tarefa
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Tarefa'
+    put:
+      tags: [Tarefas]
+      summary: Atualizar tarefa
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                titulo:
+                  type: string
+                descricao:
+                  type: string
+                status:
+                  $ref: '#/components/schemas/StatusTarefa'
+                prioridade:
+                  $ref: '#/components/schemas/Prioridade'
+                atribuidoA:
+                  type: string
+                  format: uuid
+                dataVencimento:
+                  type: string
+                  format: date
+      responses:
+        '200':
+          description: Tarefa atualizada
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Tarefa'
+                      notification:
+                        type: object
+                        properties:
+                          usuarioId:
+                            type: string
+                          titulo:
+                            type: string
+                          mensagem:
+                            type: string
+    delete:
+      tags: [Tarefas]
+      summary: Deletar tarefa
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Tarefa deletada
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+
+  /chamados:
+    get:
+      tags: [Chamados]
+      summary: Listar chamados
+      parameters:
+        - name: mes
+          in: query
+          schema:
+            type: integer
+        - name: ano
+          in: query
+          schema:
+            type: integer
+        - name: regiao
+          in: query
+          schema:
+            type: string
+        - name: segmento
+          in: query
+          schema:
+            $ref: '#/components/schemas/Segmento'
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/StatusChamado'
+        - name: skip
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: take
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Lista de chamados
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Chamado'
+                      pagination:
+                        $ref: '#/components/schemas/Pagination'
+    post:
+      tags: [Chamados]
+      summary: Criar chamado
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [numero, dataAbertura, valor, segmento, fornecedorId, lojaId]
+              properties:
+                numero:
+                  type: string
+                dataAbertura:
+                  type: string
+                  format: date
+                valor:
+                  type: number
+                segmento:
+                  $ref: '#/components/schemas/Segmento'
+                fornecedorId:
+                  type: string
+                  format: uuid
+                lojaId:
+                  type: string
+                  format: uuid
+                mauUso:
+                  type: boolean
+                observacoes:
+                  type: string
+      responses:
+        '201':
+          description: Chamado criado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Chamado'
+
+  /chamados/{id}:
+    put:
+      tags: [Chamados]
+      summary: Atualizar chamado
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  $ref: '#/components/schemas/StatusChamado'
+                dataFechamento:
+                  type: string
+                  format: date
+                valor:
+                  type: number
+                observacoes:
+                  type: string
+      responses:
+        '200':
+          description: Chamado atualizado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Chamado'
+    delete:
+      tags: [Chamados]
+      summary: Deletar chamado
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Chamado deletado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+
+  /chamados/resumo:
+    get:
+      tags: [Chamados]
+      summary: Resumo de chamados por mês
+      parameters:
+        - name: mes
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: ano
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Resumo consolidado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          mes:
+                            type: integer
+                          ano:
+                            type: integer
+                          totalChamados:
+                            type: integer
+                          valorTotal:
+                            type: number
+                          mediaPorChamado:
+                            type: number
+                          segmentos:
+                            type: object
+                            additionalProperties:
+                              type: object
+                              properties:
+                                quantidade:
+                                  type: integer
+                                valor:
+                                  type: number
+                                percentual:
+                                  type: number
+
+  /estoque/pecas:
+    get:
+      tags: [Estoque]
+      summary: Listar peças
+      parameters:
+        - name: codigo
+          in: query
+          schema:
+            type: string
+        - name: descricao
+          in: query
+          schema:
+            type: string
+        - name: emAlerta
+          in: query
+          schema:
+            type: boolean
+        - name: skip
+          in: query
+          schema:
+            type: integer
+        - name: take
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de peças
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Peca'
+                      pagination:
+                        $ref: '#/components/schemas/Pagination'
+    post:
+      tags: [Estoque]
+      summary: Criar peça
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [descricao, codigo, estoqueMinimo, valor]
+              properties:
+                descricao:
+                  type: string
+                codigo:
+                  type: string
+                estoqueMinimo:
+                  type: integer
+                valor:
+                  type: number
+      responses:
+        '201':
+          description: Peça criada
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Peca'
+
+  /estoque/entradas:
+    get:
+      tags: [Estoque]
+      summary: Listar entradas de estoque
+      parameters:
+        - name: fornecedorId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: dataInicio
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: dataFim
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Lista de entradas
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/EntradaPeca'
+                      pagination:
+                        $ref: '#/components/schemas/Pagination'
+    post:
+      tags: [Estoque]
+      summary: Criar entrada de estoque
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [pecaId, fornecedorId, numeroNF, quantidade, valorUnitario, dataEntrada]
+              properties:
+                pecaId:
+                  type: string
+                  format: uuid
+                fornecedorId:
+                  type: string
+                  format: uuid
+                numeroNF:
+                  type: string
+                quantidade:
+                  type: integer
+                valorUnitario:
+                  type: number
+                dataEntrada:
+                  type: string
+                  format: date
+      responses:
+        '201':
+          description: Entrada criada
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/EntradaPeca'
+
+  /estoque/movimentacoes:
+    get:
+      tags: [Estoque]
+      summary: Listar movimentações de estoque
+      responses:
+        '200':
+          description: Lista de movimentações
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/MovimentacaoPeca'
+                      pagination:
+                        $ref: '#/components/schemas/Pagination'
+    post:
+      tags: [Estoque]
+      summary: Criar movimentação de estoque
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [pecaId, lojaRequisitanteId, quantidade]
+              properties:
+                pecaId:
+                  type: string
+                  format: uuid
+                lojaRequisitanteId:
+                  type: string
+                  format: uuid
+                chamadoId:
+                  type: string
+                  format: uuid
+                quantidade:
+                  type: integer
+      responses:
+        '201':
+          description: Movimentação criada
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/MovimentacaoPeca'
+
+  /estoque/saidas:
+    get:
+      tags: [Estoque]
+      summary: Listar saídas definitivas
+      responses:
+        '200':
+          description: Lista de saídas
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/SaidaPeca'
+                      pagination:
+                        $ref: '#/components/schemas/Pagination'
+    post:
+      tags: [Estoque]
+      summary: Criar saída definitiva
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [pecaId, destino, nomeRetirou, quantidade, dataRetirada]
+              properties:
+                pecaId:
+                  type: string
+                  format: uuid
+                destino:
+                  type: string
+                nomeRetirou:
+                  type: string
+                quantidade:
+                  type: integer
+                dataRetirada:
+                  type: string
+                  format: date
+      responses:
+        '201':
+          description: Saída criada
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/SaidaPeca'
+
+  /dashboard/resumo:
+    get:
+      tags: [Dashboard]
+      summary: Resumo de KPIs
+      responses:
+        '200':
+          description: KPIs executivos
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          kpis:
+                            type: object
+                          pecasEmAlerta:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Peca'
+
+  /dashboard/historico-mensal:
+    get:
+      tags: [Dashboard]
+      summary: Histórico mensal de gastos
+      responses:
+        '200':
+          description: Histórico dos últimos 6 meses
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            mes:
+                              type: integer
+                            ano:
+                              type: integer
+                            totalGasto:
+                              type: number
+                            chamados:
+                              type: integer
+
+  /dashboard/gastos-por-segmento:
+    get:
+      tags: [Dashboard]
+      summary: Gastos por segmento
+      responses:
+        '200':
+          description: Distribuição por segmento
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          segmentos:
+                            type: array
+                            items:
+                              type: object
+
+  /dashboard/regional:
+    get:
+      tags: [Dashboard]
+      summary: Visão regional
+      parameters:
+        - name: regiao
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Visão consolidada regional
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+
+  /checklists/equipamentos:
+    get:
+      tags: [Checklists]
+      summary: Listar checklists de equipamentos
+      parameters:
+        - name: regiao
+          in: query
+          schema:
+            type: string
+        - name: unidade
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: semana
+          in: query
+          schema:
+            type: integer
+        - name: ano
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de checklists
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ChecklistEquipamento'
+                      pagination:
+                        $ref: '#/components/schemas/Pagination'
+    post:
+      tags: [Checklists]
+      summary: Criar/Atualizar checklist de equipamentos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [semana, ano, regiao, unidade, itens]
+              properties:
+                semana:
+                  type: integer
+                ano:
+                  type: integer
+                regiao:
+                  type: string
+                unidade:
+                  type: string
+                  format: uuid
+                itens:
+                  type: array
+                  items:
+                    type: object
+      responses:
+        '201':
+          description: Checklist criado/atualizado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ChecklistEquipamento'
+
+  /checklists/equipamentos/semana:
+    get:
+      tags: [Checklists]
+      summary: Obter checklist da semana atual (equipamentos)
+      responses:
+        '200':
+          description: Checklist atual
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ChecklistEquipamento'
+
+  /checklists/equipamentos/kpi:
+    get:
+      tags: [Checklists]
+      summary: KPI da semana (equipamentos)
+      responses:
+        '200':
+          description: KPI consolidado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+
+  /checklists/carrinhos:
+    get:
+      tags: [Checklists]
+      summary: Listar checklists de carrinhos
+      responses:
+        '200':
+          description: Lista de checklists
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ChecklistCarrinho'
+                      pagination:
+                        $ref: '#/components/schemas/Pagination'
+    post:
+      tags: [Checklists]
+      summary: Criar/Atualizar checklist de carrinhos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [semana, ano, regiao, unidade, itens]
+              properties:
+                semana:
+                  type: integer
+                ano:
+                  type: integer
+                regiao:
+                  type: string
+                unidade:
+                  type: string
+                  format: uuid
+                itens:
+                  type: array
+                  items:
+                    type: object
+      responses:
+        '201':
+          description: Checklist criado/atualizado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ChecklistCarrinho'
+
+  /checklists/carrinhos/kpi:
+    get:
+      tags: [Checklists]
+      summary: KPI da semana (carrinhos)
+      responses:
+        '200':
+          description: KPI consolidado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+
+  /checklists/kpi-mensal:
+    get:
+      tags: [Checklists]
+      summary: KPI mensal consolidado
+      responses:
+        '200':
+          description: KPI mensal (equipamentos + carrinhos)
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+
+  /notificacoes:
+    get:
+      tags: [Notificações]
+      summary: Listar notificações do usuário
+      parameters:
+        - name: lida
+          in: query
+          schema:
+            type: boolean
+        - name: skip
+          in: query
+          schema:
+            type: integer
+        - name: take
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de notificações
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Notificacao'
+                      pagination:
+                        $ref: '#/components/schemas/Pagination'
+
+  /notificacoes/{id}/lida:
+    patch:
+      tags: [Notificações]
+      summary: Marcar notificação como lida
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Notificação atualizada
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Notificacao'
+
+  /notificacoes/marcar-todas-lidas:
+    patch:
+      tags: [Notificações]
+      summary: Marcar todas notificações como lidas
+      responses:
+        '200':
+          description: Notificações atualizadas
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+
+  /usuarios:
+    get:
+      tags: [Usuários]
+      summary: Listar usuários
+      parameters:
+        - name: role
+          in: query
+          schema:
+            $ref: '#/components/schemas/Role'
+        - name: regiao
+          in: query
+          schema:
+            type: string
+        - name: ativo
+          in: query
+          schema:
+            type: boolean
+        - name: skip
+          in: query
+          schema:
+            type: integer
+        - name: take
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: |-
+            Lista de usuários. 
+            Nota: Nenhuma role (exceto ADMINISTRADOR) tem permissão para visualizar, editar ou remover usuários com perfil de ADMINISTRADOR.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Usuario'
+                      pagination:
+                        $ref: '#/components/schemas/Pagination'
+    post:
+      tags: [Usuários]
+      summary: Criar usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nome, email, senha, role]
+              properties:
+                nome:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                senha:
+                  type: string
+                role:
+                  $ref: '#/components/schemas/Role'
+                regiao:
+                  type: array
+                  items:
+                    type: string
+                lojaId:
+                  type: string
+                  format: uuid
+      responses:
+        '201':
+          description: Usuário criado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Usuario'
+
+  /usuarios/{id}:
+    get:
+      tags: [Usuários]
+      summary: Obter usuário por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: |-
+            Dados do usuário.
+            Nota: Nenhuma role (exceto ADMINISTRADOR) tem permissão para visualizar dados de um ADMINISTRADOR.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Usuario'
+    put:
+      tags: [Usuários]
+      summary: Atualizar usuário
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome:
+                  type: string
+                email:
+                  type: string
+                role:
+                  $ref: '#/components/schemas/Role'
+                regiao:
+                  type: array
+                  items:
+                    type: string
+                ativo:
+                  type: boolean
+      responses:
+        '200':
+          description: |-
+            Usuário atualizado.
+            Nota: Somente um ADMINISTRADOR pode atualizar os dados de outro ADMINISTRADOR.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Usuario'
+    delete:
+      tags: [Usuários]
+      summary: Deletar/Desativar usuário
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Usuário desativado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+
+  /lojas:
+    get:
+      tags: [Lojas]
+      summary: Listar lojas
+      parameters:
+        - name: regiao
+          in: query
+          schema:
+            type: string
+        - name: ativa
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Lista de lojas
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Loja'
+                      pagination:
+                        $ref: '#/components/schemas/Pagination'
+    post:
+      tags: [Lojas]
+      summary: Criar loja
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nome, regiao, cidade, estado, endereco]
+              properties:
+                nome:
+                  type: string
+                regiao:
+                  type: string
+                cidade:
+                  type: string
+                estado:
+                  type: string
+                endereco:
+                  type: string
+      responses:
+        '201':
+          description: Loja criada
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Loja'
+
+  /lojas/regioes:
+    get:
+      tags: [Lojas]
+      summary: Listar regiões disponíveis
+      responses:
+        '200':
+          description: Lista de regiões
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+
+  /lojas/{id}:
+    get:
+      tags: [Lojas]
+      summary: Obter loja por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Detalhes da loja
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Loja'
+    put:
+      tags: [Lojas]
+      summary: Atualizar loja
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome:
+                  type: string
+                regiao:
+                  type: string
+                ativa:
+                  type: boolean
+                endereco:
+                  type: string
+      responses:
+        '200':
+          description: Loja atualizada
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Loja'
+    delete:
+      tags: [Lojas]
+      summary: Deletar loja
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Loja deletada
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+
+  /fornecedores:
+    get:
+      tags: [Fornecedores]
+      summary: Listar fornecedores
+      parameters:
+        - name: segmento
+          in: query
+          schema:
+            $ref: '#/components/schemas/Segmento'
+        - name: ativo
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Lista de fornecedores
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Fornecedor'
+                      pagination:
+                        $ref: '#/components/schemas/Pagination'
+    post:
+      tags: [Fornecedores]
+      summary: Criar fornecedor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nome, cnpj, segmento]
+              properties:
+                nome:
+                  type: string
+                cnpj:
+                  type: string
+                segmento:
+                  $ref: '#/components/schemas/Segmento'
+                contato:
+                  type: string
+                email:
+                  type: string
+                telefone:
+                  type: string
+      responses:
+        '201':
+          description: Fornecedor criado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Fornecedor'
+
+  /fornecedores/{id}:
+    get:
+      tags: [Fornecedores]
+      summary: Obter fornecedor por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Detalhes do fornecedor
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Fornecedor'
+    put:
+      tags: [Fornecedores]
+      summary: Atualizar fornecedor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome:
+                  type: string
+                segmento:
+                  $ref: '#/components/schemas/Segmento'
+                ativo:
+                  type: boolean
+                contato:
+                  type: string
+                email:
+                  type: string
+                telefone:
+                  type: string
+      responses:
+        '200':
+          description: Fornecedor atualizado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Fornecedor'
+    delete:
+      tags: [Fornecedores]
+      summary: Deletar fornecedor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Fornecedor deletado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      message:
+                        type: string

@@ -25,7 +25,13 @@ const dashboardRoutes = require('./routes/dashboard.routes');
 const checklistRoutes = require('./routes/checklist.routes');
 const lojaRoutes      = require('./routes/loja.routes');
 
+const path = require('path');
+
 const app = express();
+
+// Servir documentação estática (Redoc)
+app.use('/docs', express.static(path.join(__dirname, '../public')));
+
 
 // ─── CORS (Produção Segura) ──────────────────────────────────────────────────
 const defaultOrigins = [
@@ -139,9 +145,10 @@ app.get('/', (req, res) => {
   res.json({
     message: 'SGM API Online',
     version: '1.0.0',
-    documentation: 'https://github.com/luis-h-souza/gerenciador-manutencao'
+    documentation: '/docs'
   });
 });
+
 
 // ─── API Routes ───────────────────────────────────────────────────────────────
 const API = '/api/v1';
