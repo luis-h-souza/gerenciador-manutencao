@@ -1210,20 +1210,22 @@ function CorporativoDashboard({ filtro, setFiltro }) {
                     top: "calc(100% + 8px)",
                     right: 0,
                     width: "280px",
-                    padding: "10px 12px",
+                    padding: "12px 14px",
                     borderRadius: "10px",
                     background: "var(--color-surface-700)",
                     border: "1px solid var(--color-border)",
                     color: "var(--color-text-secondary)",
-                    boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-                    lineHeight: 1.4,
-                    zIndex: 10,
+                    boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+                    lineHeight: 1.5,
+                    zIndex: 50,
                     opacity: rankingHelpOpen ? 1 : 0,
                     visibility: rankingHelpOpen ? "visible" : "hidden",
                     pointerEvents: rankingHelpOpen ? "auto" : "none",
-                    transition: "opacity 0.15s ease",
+                    transition: "all 0.2s ease",
+                    fontSize: "0.75rem",
                   }}
                 >
+                  <p style={{ fontWeight: 700, color: 'var(--color-brand-400)', marginBottom: '4px' }}>Como funciona o Score?</p>
                   O score sobe com mais disponibilidade, menor custo por chamado
                   e melhor cobertura de checklist. Cai com equipamentos parados,
                   carrinhos quebrados, tarefas ativas e registros de mau uso.

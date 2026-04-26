@@ -22,8 +22,8 @@ O acesso muda conforme o perfil do usuario:
 - `DIRETOR`: visao global da operacao
 - `GERENTE`: visao das suas regionais
 - `COORDENADOR`: visao das suas regionais
-- `GESTOR`: visao da sua loja e preenchimento de checklist
-- `TECNICO`: visao das tarefas atribuidas
+- `GESTOR`: visao da sua loja, preenchimento de checklist e gestao de tarefas da unidade
+- `TECNICO`: visao das tarefas atribuidas e atualizacao de progresso
 
 ---
 
@@ -132,33 +132,6 @@ Os perfis gerenciais acessam o consolidado por camadas:
 
 Sempre que o usuario desce um nivel, aparece um botao de voltar. Ao retornar para a raiz do seu perfil, esse botao desaparece.
 
-### O que pode ser acompanhado
-
-- adesao no mes
-- lojas com preenchimento
-- lojas pendentes
-- consolidado por regional
-- consolidado por loja
-
-### Insights Correlacionados
-
-Dentro do consolidado de checklists existe um painel chamado `Insights Correlacionados`.
-
-Ele cruza:
-
-- gasto regional do financeiro
-- cobertura mensal de checklist
-
-Com isso, o sistema pode destacar:
-
-- se a regional que mais gasta tambem e a de menor cobertura
-- quantas lojas ficaram sem checklist no mes
-- quais regionais estao abaixo da cobertura ideal
-
-O objetivo desse bloco e ajudar a responder a pergunta:
-
-"Regioes com menor disciplina de checklist estao pressionando mais o custo corretivo?"
-
 ---
 
 ## 5. Tarefas
@@ -167,13 +140,24 @@ O modulo de Tarefas organiza as demandas operacionais da manutencao.
 
 ### O que o usuario pode fazer
 
-- criar tarefa
-- atribuir para um tecnico
-- acompanhar status
-- priorizar execucao
-- receber notificacoes quando houver mudanca relevante
+- criar tarefa e atribuir conforme hierarquia (ex: Diretor -> Gerente)
+- acompanhar status e priorizar execucao
+- receber notificações automáticas de novas tarefas ou mudanças de status
+- marcar todas as notificações como lidas instantaneamente no cabeçalho
 
-Para o tecnico, a tela funciona como fila de trabalho das tarefas atribuidas.
+### Hierarquia de Atribuição
+Para garantir a ordem operacional, as tarefas seguem este fluxo de comando:
+- **Diretor**: atribui tarefas para Gerentes.
+- **Gerente**: atribui para Coordenadores de sua regional. (Pode deletar, mas não altera status).
+- **Coordenador**: atribui para Gestores e Técnicos de sua regional. (Pode deletar, mas não altera status).
+- **Gestor**: atribui para Técnicos de sua unidade e para si mesmo. (Pode atualizar status e deletar).
+- **Técnico**: visualiza e atualiza o status de suas próprias tarefas.
+
+### Centro de Notificações
+Localizado no sino (topo da tela), o centro de notificações alerta sobre:
+- Novas tarefas recebidas
+- Mudanças de status em tarefas que você criou ou gerencia
+- Você pode clicar em **"Marcar todas como lidas"** para limpar seus alertas de uma só vez.
 
 ---
 
@@ -189,39 +173,17 @@ O modulo de Estoque controla pecas e sua movimentacao.
 - saidas definitivas
 - atualizacao do saldo de estoque
 
-Esse modulo ajuda a rastrear consumo, abastecimento e destino das pecas utilizadas na manutencao.
-
 ---
 
 ## 7. Fornecedores
 
 O modulo de Fornecedores centraliza os parceiros de manutencao.
 
-### Funcionalidades
-
-- cadastrar fornecedor
-- editar dados de contato
-- organizar por segmento
-- manter base unica de apoio ao financeiro e a operacao
-
 ---
 
 ## 8. Usuarios e lojas
 
 O sistema tambem possui gestao administrativa para estruturar o acesso.
-
-### Usuarios
-
-- cadastro de usuarios
-- edicao de perfil
-- controle por cargo
-- desativacao sem exclusao fisica
-
-### Lojas
-
-- cadastro de lojas
-- associacao por regional
-- uso da estrutura de lojas nos modulos de dashboard, financeiro e checklists
 
 ---
 

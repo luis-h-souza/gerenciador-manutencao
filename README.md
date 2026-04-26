@@ -39,8 +39,8 @@ Sistema completo para gerenciamento de tarefas, controle financeiro, estoque de 
 | `DIRETOR` | Global | Visão consolidada de toda a operação; pode consultar usuários e lojas, mas a gestão administrativa completa continua concentrada no administrador |
 | `GERENTE` | Regional múltiplo | Visão gerencial das **suas regionais**; acompanha coordenadores, gestores e indicadores da sua abrangência |
 | `COORDENADOR` | Regional múltiplo | Visão operacional das **suas regionais**; acompanha lojas, checklists e times dentro da sua abrangência |
-| `GESTOR` | Unidade | Acesso restrito à **sua loja** — **único** que preenche checklists |
-| `TECNICO` | Atribuição | Vê apenas tarefas **atribuídas a ele** |
+| `GESTOR` | Unidade | Acesso à **sua loja**; único que preenche checklists. Gerencia tarefas da sua unidade. |
+| `TECNICO` | Atribuição | Vê apenas tarefas **atribuídas a ele**. Pode atualizar o status. |
 
 - **Isolamento regional (RLS de negócio):** filtros automáticos aplicados nos controllers via `getAccessFilter()`. Sem região definida → acesso bloqueado por padrão (fail-secure)
 - **Soft delete** para usuários (nunca removidos fisicamente)
@@ -113,8 +113,8 @@ npm run dev
 | `DIRETOR` | **Global** | Visão completa do sistema, com leitura ampla e acesso executivo |
 | `GERENTE` | **Regional múltiplo** | Visualiza dados das **suas regionais**; pode ter uma ou mais regionais atribuídas |
 | `COORDENADOR` | **Regional múltiplo** | Visualiza dados das **suas regionais**; pode ter uma ou mais regionais atribuídas |
-| `GESTOR` | **Unidade** | Visualiza sua loja. Único que preenche checklists |
-| `TECNICO` | **Atribuição** | Vê apenas tarefas designadas para ele |
+| `GESTOR` | **Unidade** | Visualiza sua loja. Único que preenche checklists. Gerencia tarefas da sua unidade. |
+| `TECNICO` | **Atribuição** | Vê apenas tarefas designadas para ele. Atualiza status de execução. |
 
 Fluxo de leitura por camada:
 `DIRETOR > GERENTE > COORDENADOR > GESTOR > TECNICO`
@@ -257,7 +257,11 @@ O sistema já está operando com os módulos abaixo:
 - Gestão de lojas e regionais
 - Gestão de fornecedores
 - Gestão de estoque de peças, entradas, movimentações e saídas
-- Gestão de tarefas com atribuição, status e notificações
+### Gestão de Tarefas
+- Organização de demandas por prioridade e status
+- **Hierarquia de Atribuição**: Fluxo de comando rígido (Diretor -> Gerente -> Coordenador -> Gestor -> Técnico)
+- **Centro de Notificações**: Alertas em tempo real e função de leitura em massa no cabeçalho
+- **Restrição de Status**: Gerentes e Coordenadores gerenciam a fila mas não alteram o progresso operacional
 
 ### Documentação complementar
 - Guia do usuário: [docs/guia-do-usuario.md](docs/guia-do-usuario.md)
@@ -329,7 +333,7 @@ O sistema já está operando com os módulos abaixo:
 ### Usuários, Lojas & Fornecedores
 | Método | Endpoint | Descrição |
 |---|---|---|
-| GET | `/api/v1/usuarios` | Listagem de usuários para `ADMINISTRADOR`, `DIRETOR`, `GERENTE` e `COORDENADOR` |
+| GET | `/api/v1/usuarios` | Listagem de usuários para `ADMINISTRADOR`, `DIRETOR`, `GERENTE`, `COORDENADOR` e `GESTOR` |
 | POST | `/api/v1/usuarios` | Criação de usuários apenas por `ADMINISTRADOR` |
 | PUT | `/api/v1/usuarios/:id` | Edição de usuários por `ADMINISTRADOR` e `DIRETOR` |
 | DELETE | `/api/v1/usuarios/:id` | Desativação de usuários por `ADMINISTRADOR` e `DIRETOR` |
