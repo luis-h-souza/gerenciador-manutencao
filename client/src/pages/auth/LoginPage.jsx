@@ -1,7 +1,7 @@
 // src/pages/auth/LoginPage.jsx
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Wrench, Eye, EyeOff, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';

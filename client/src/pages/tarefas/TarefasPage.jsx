@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { tarefasService, usuariosService } from '../../services';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from "../../hooks/useAuth";
 import { Plus, X, Loader2, Pencil, Trash2, User } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';

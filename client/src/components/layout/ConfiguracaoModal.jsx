@@ -4,7 +4,7 @@ import { X, Sun, Moon, Eye, EyeOff } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../hooks/useTheme';
 import { authService, usuariosService, lojasService } from '../../services';
 

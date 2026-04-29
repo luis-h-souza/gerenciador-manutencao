@@ -1,11 +1,11 @@
-// src/components/layout/AppLayout.jsx
-import { useState } from 'react';
+// src/components/layout/MainLayout.jsx
+import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import Sidebar from './Sidebar';
-import Header from './Header';
+import AsideMenu from './AsideMenu/AsideMenu';
+import Header from './Header/Header';
 import ConfiguracaoModal from './ConfiguracaoModal';
 
-export default function AppLayout() {
+export default function MainLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 1024);
   const [showConfig, setShowConfig] = useState(false);
 
@@ -21,7 +21,7 @@ export default function AppLayout() {
       )}
 
       {/* Sidebar */}
-      <Sidebar
+      <AsideMenu
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         onOpenConfig={() => setShowConfig(true)}

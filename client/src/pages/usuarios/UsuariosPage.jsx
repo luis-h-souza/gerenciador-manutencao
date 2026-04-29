@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { usuariosService, lojasService } from '../../services';
 import { Plus, X, Loader2, Pencil, UserX, ShieldCheck, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from "../../hooks/useAuth";
 
 const ROLES = ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR', 'GESTOR', 'TECNICO'];
 const ROLE_BADGE = { 

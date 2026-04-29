@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 import { checklistService, usuariosService, dashboardService } from "../../services";
 import { ChevronDown, Calendar, ChevronUp, Loader2, MapPin, Store, X, CheckCircle2, AlertCircle, TrendingUp, UserRound, DollarSign } from "lucide-react";
 

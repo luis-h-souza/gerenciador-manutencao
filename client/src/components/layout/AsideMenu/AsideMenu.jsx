@@ -1,6 +1,6 @@
-// src/components/layout/Sidebar.jsx
+// src/components/layout/AsideMenu/AsideMenu.jsx
+import React, { useState, useEffect } from 'react';
 import { NavLink } from "react-router-dom";
-import { useState, useEffect } from "react";
 import {
   LayoutDashboard,
   ClipboardList,
@@ -14,7 +14,8 @@ import {
   Settings,
   Store,
 } from "lucide-react";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../../contexts/AuthContext";
+import NavItem from "./NavItem";
 
 const NAV = [
   {
@@ -87,7 +88,7 @@ const NAV = [
   },
 ];
 
-export default function Sidebar({ open, onClose, onOpenConfig }) {
+export default function AsideMenu({ open, onClose, onOpenConfig }) {
   const { usuario } = useAuth();
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
@@ -173,17 +174,12 @@ export default function Sidebar({ open, onClose, onOpenConfig }) {
 
       {/* Nav items */}
       <nav className="flex-1 px-3 py-3 flex flex-col gap-0.5 overflow-y-auto">
-        {itensVisiveis.map(({ to, icon: Icon, label }) => (
-          <NavLink
-            key={to}
-            to={to}
+        {itensVisiveis.map((item) => (
+          <NavItem
+            key={item.to}
+            {...item}
             onClick={handleNavClick}
-            className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
-            style={{ whiteSpace: "nowrap" }}
-          >
-            <Icon size={17} className="nav-icon shrink-0" />
-            <span>{label}</span>
-          </NavLink>
+          />
         ))}
       </nav>
 
@@ -225,7 +221,7 @@ export default function Sidebar({ open, onClose, onOpenConfig }) {
                 textOverflow: "ellipsis",
               }}
             >
-              {usuario?.nome}
+              {usuario?.nome?.charAt(0).toUpperCase() + usuario?.nome?.slice(1).toLowerCase()}
             </div>
             <div
               style={{
@@ -234,7 +230,7 @@ export default function Sidebar({ open, onClose, onOpenConfig }) {
                 whiteSpace: "nowrap",
               }}
             >
-              {usuario?.role}
+              {usuario?.role?.charAt(0).toUpperCase() + usuario?.role?.slice(1).toLowerCase()}
             </div>
           </div>
           <Settings

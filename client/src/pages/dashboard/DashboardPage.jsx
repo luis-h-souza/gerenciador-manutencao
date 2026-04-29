@@ -24,7 +24,7 @@ import {
   tarefasService,
   checklistService,
 } from "../../services";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 import {
   ClipboardList,
   DollarSign,

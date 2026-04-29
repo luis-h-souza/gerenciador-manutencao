@@ -22,15 +22,6 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: false,
     chunkSizeWarningLimit: 1000,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          query: ['@tanstack/react-query'],
-          charts: ['recharts'],
-        },
-      },
-    },
+    // Removido rollupOptions para usar o padrão do Vite, que evita o TypeError do manualChunks
   },
 });
