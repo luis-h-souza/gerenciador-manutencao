@@ -625,7 +625,7 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
                     <div style={{
                       position: "absolute",
                       bottom: "calc(100% + 8px)",
-                      left: 0,
+                      right: 0,
                       width: "260px",
                       padding: "10px 12px",
                       borderRadius: "10px",
@@ -1057,7 +1057,7 @@ function PainelExecutivo({ mes, ano }) {
                       style={{
                         position: "absolute",
                         bottom: "calc(100% + 8px)",
-                        left: 0,
+                        right: -30,
                         width: "260px",
                         padding: "10px 12px",
                         borderRadius: "10px",
@@ -1273,7 +1273,7 @@ function PainelExecutivo({ mes, ano }) {
                     style={{
                       position: "absolute",
                       bottom: "calc(100% + 8px)",
-                      left: 0,
+                      right: -30,
                       width: "260px",
                       padding: "10px 12px",
                       borderRadius: "10px",
@@ -2538,7 +2538,7 @@ export default function ChamadosPage() {
                         <div style={{
                           position: "absolute",
                           bottom: "calc(100% + 8px)",
-                          left: 0,
+                          right: -30,
                           width: "260px",
                           padding: "10px 12px",
                           borderRadius: "10px",

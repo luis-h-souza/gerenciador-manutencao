@@ -229,7 +229,7 @@ const LojasStatusModal = ({ isOpen, onClose, tipo, lojas }) => {
                    {agrupadas.get(regiao).sort((a,b)=>a.nome.localeCompare(b.nome)).map(loja => (
                       <li key={loja.unidade} className="flex items-center gap-2" style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>
                          <Store size={14} style={{ color: 'var(--color-text-muted)' }} /> 
-                         <strong>{loja.nome}</strong> {loja.numero && <span style={{ color: 'var(--color-text-muted)' }}>(Und: {loja.numero})</span>}
+                         <strong>{loja.nome}</strong> {loja.numero && <span style={{ color: 'var(--color-text-muted)' }}>(loja {loja.numero})</span>}
                       </li>
                    ))}
                  </ul>

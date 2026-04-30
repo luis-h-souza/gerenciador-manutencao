@@ -91,8 +91,14 @@ const atualizar = async (req, res, next) => {
     if (!existe) return res.status(404).json({ error: 'Chamado não encontrado ou acesso negado' });
 
     const data = { ...req.body };
+    delete data.id;
+    delete data.criadoEm;
+    delete data.atualizadoEm;
+    
     if (data.dataAbertura) data.dataAbertura = new Date(data.dataAbertura);
     if (data.dataAprovacao) data.dataAprovacao = new Date(data.dataAprovacao);
+    else if (data.dataAprovacao === '') data.dataAprovacao = null;
+    
     if (data.valor !== undefined) data.valor = data.valor ? parseFloat(data.valor) : null;
 
     const chamado = await prisma.controleChamado.update({ where: { id: req.params.id }, data });
