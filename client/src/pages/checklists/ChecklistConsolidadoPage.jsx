@@ -415,7 +415,7 @@ export default function ChecklistConsolidadoPage() {
 
   const { data: coordenadoresData, isLoading: loadingCoordenadores } = useQuery({
     queryKey: ["coordenadores"],
-    queryFn: () => usuariosService.listar({ role: "COORDENADOR", limit: 100, ativo: true }).then(r => r.data?.data || []),
+    queryFn: () => usuariosService.listar({ role: "COORDENADOR", lojaId: "null", limit: 100, ativo: true }).then(r => r.data?.data || []),
     enabled: ["ADMINISTRADOR", "DIRETOR", "GERENTE"].includes(usuario?.role),
   });
 
@@ -715,7 +715,7 @@ export default function ChecklistConsolidadoPage() {
                   </div>
                 </div>
 
-                <div className="card hover-scale pointer" onClick={() => { setTipoModalLojas('preenchidas'); setModalLojasAberto(true); }} style={{ padding: '20px', borderLeft: '4px solid var(--color-success)' }}>
+                <div className="card hover-scale pointer" onClick={() => { setTipoModalLojas('preenchidas'); setModalLojasAberto(true); }} style={{ padding: '20px', borderLeft: '4px solid var(--color-success)', cursor: 'pointer' }}>
                   <div className="flex items-center gap-3 mb-2">
                     <div className="p-2 rounded-lg bg-green-100 text-green-600">
                       <CheckCircle2 size={20} />
@@ -728,7 +728,7 @@ export default function ChecklistConsolidadoPage() {
                   </div>
                 </div>
 
-                <div className="card hover-scale pointer" onClick={() => { setTipoModalLojas('pendentes'); setModalLojasAberto(true); }} style={{ padding: '20px', borderLeft: '4px solid var(--color-danger)' }}>
+                <div className="card hover-scale pointer" onClick={() => { setTipoModalLojas('pendentes'); setModalLojasAberto(true); }} style={{ padding: '20px', borderLeft: '4px solid var(--color-danger)', cursor: 'pointer' }}>
                   <div className="flex items-center gap-3 mb-2">
                     <div className="p-2 rounded-lg bg-red-100 text-red-600">
                       <AlertCircle size={20} />

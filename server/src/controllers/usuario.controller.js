@@ -6,13 +6,17 @@ const { splitRegions, getUserRegions, canAccessRegion } = require('../utils/acce
 
 const listar = async (req, res, next) => {
   try {
-    const { role, ativo, regiao, page = 1, limit = 20 } = req.query;
+    const { role, ativo, regiao, page = 1, limit = 20, lojaId } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const where = {};
     const and = [];
     const regioesSolicitadas = splitRegions(regiao);
     if (role)             where.role  = role;
     if (ativo !== undefined) where.ativo = ativo === 'true';
+    if (lojaId !== undefined) {
+      if (lojaId === 'null') where.lojaId = null;
+      else where.lojaId = lojaId;
+    }
     if (regioesSolicitadas.length > 0) {
       const regReqContains = regioesSolicitadas.map(r => ({ regiao: { contains: r } }));
       const lojaReqContains = regioesSolicitadas.map(r => ({ loja: { is: { regiao: r } } }));

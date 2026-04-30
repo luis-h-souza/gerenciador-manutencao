@@ -1621,7 +1621,7 @@ export default function ChamadosPage() {
       queryKey: ["coordenadores-fin"],
       queryFn: () =>
         usuariosService
-          .listar({ role: "COORDENADOR", limit: 100, ativo: true })
+          .listar({ role: "COORDENADOR", lojaId: "null", limit: 100, ativo: true })
           .then((r) => r.data?.data || []),
       enabled: ["ADMINISTRADOR", "DIRETOR", "GERENTE"].includes(usuario?.role),
     },

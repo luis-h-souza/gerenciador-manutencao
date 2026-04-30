@@ -371,7 +371,7 @@ const rankingCoordenadores = async (req, res, next) => {
     const regioesPermitidas = getUserRegions(req.user);
 
     const coordenadores = await prisma.usuario.findMany({
-      where: { role: 'COORDENADOR', ativo: true },
+      where: { role: 'COORDENADOR', ativo: true, lojaId: null },
       select: { id: true, nome: true, email: true, regiao: true },
       orderBy: { nome: 'asc' },
     });
