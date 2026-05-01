@@ -4,14 +4,14 @@ const { getAccessFilter, getUserRegions, canAccessRegion } = require('../utils/a
 // Função para normalizar nomes de segmentos para exibição
 const formatarSegmento = (segmento) => {
   if (!segmento) return 'Diversos';
-  
+
   // Mapa de conversão de underscore para caracteres especiais
   const conversoes = {
     'AR_CONDICIONADO': 'AR-CONDICIONADO',
     'REFRIGERACAO_PCS': 'REFRIGERACAO-PÇS',
     'SERVICOS_GERAIS': 'SERVIÇOS GERAIS'
   };
-  
+
   // Se houver conversão mapeada, usa; senão retorna como está
   return conversoes[segmento] || segmento;
 };
@@ -26,7 +26,7 @@ const resumo = async (req, res, next) => {
   try {
     const { mes, ano, regiao, unidade } = req.query;
     const agora = new Date();
-    
+
     // Se não fornecido, usa o mês atual
     const mesIdx = mes ? parseInt(mes) - 1 : agora.getMonth();
     const anoNum = ano ? parseInt(ano) : agora.getFullYear();
@@ -88,7 +88,7 @@ const resumo = async (req, res, next) => {
       financeiro: { chamadosMes: totalChamadosMes, gastosMes: gastoAtual, gastosMesPassado: gastoAnterior, variacaoPercent: variacaoGastos.toFixed(1), mauUso: chamadosMauUso },
       fornecedores: { total: totalFornecedores },
       estoque: { pecasBaixoEstoque },
-      contexto: { 
+      contexto: {
         unidade: req.user.loja?.nome || null,
         regiao: req.user.regiao
       }
@@ -101,16 +101,16 @@ const gastosPorSegmento = async (req, res, next) => {
     const { mes, ano, regiao, unidade } = req.query;
     const mesNum = mes ? parseInt(mes) : new Date().getMonth() + 1;
     const anoNum = ano ? parseInt(ano) : new Date().getFullYear();
-    
+
     const dataInicio = new Date(anoNum, mesNum - 1, 1);
     const dataFim = new Date(anoNum, mesNum, 1);
 
     const filter = getAccessFilter(req.user);
-    const where = { 
+    const where = {
       ...filter,
-      dataAbertura: { gte: dataInicio, lt: dataFim } 
+      dataAbertura: { gte: dataInicio, lt: dataFim }
     };
-    
+
     // Filtros manuais (para níveis corporativos)
     if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE'].includes(req.user.role)) {
       if (regiao) {
@@ -142,7 +142,7 @@ const historicoMensal = async (req, res, next) => {
   try {
     const { regiao, unidade } = req.query;
     const filter = getAccessFilter(req.user);
-    
+
     const baseWhere = { ...filter };
     if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE'].includes(req.user.role)) {
       if (regiao) {
@@ -160,12 +160,12 @@ const historicoMensal = async (req, res, next) => {
       d.setMonth(d.getMonth() - i);
       const inicio = new Date(d.getFullYear(), d.getMonth(), 1);
       const fim = new Date(d.getFullYear(), d.getMonth() + 1, 0);
-      
+
       const agg = await prisma.controleChamado.aggregate({
         where: { ...baseWhere, dataAbertura: { gte: inicio, lte: fim } },
         _sum: { valor: true }, _count: true,
       });
-      
+
       meses.push({
         mes: inicio.toLocaleString('pt-BR', { month: 'short', year: '2-digit' }),
         mesNum: inicio.getMonth() + 1,
@@ -365,8 +365,8 @@ const rankingCoordenadores = async (req, res, next) => {
     const anoNum = req.query.ano ? parseInt(req.query.ano) : agora.getFullYear();
     const inicioMes = startOfMonth(new Date(anoNum, mesNum - 1));
     const fimMes = endOfMonth(new Date(anoNum, mesNum - 1));
-    const semanaInicio = getWeek(inicioMes, { weekStartsOn: 1 });
-    const semanaFim = getWeek(fimMes, { weekStartsOn: 1 });
+    const semanaInicio = getWeek(inicioMes, { weekStartsOn: 5 });
+    const semanaFim    = getWeek(fimMes,    { weekStartsOn: 5 });
     const totalSemanasNoMes = Math.max(1, semanaFim - semanaInicio + 1);
     const regioesPermitidas = getUserRegions(req.user);
 
@@ -506,7 +506,7 @@ const executivo = async (req, res, next) => {
     const { mes, ano } = req.query;
     const mesNum = mes ? parseInt(mes) : new Date().getMonth() + 1;
     const anoNum = ano ? parseInt(ano) : new Date().getFullYear();
-    
+
     const inicioMes = new Date(anoNum, mesNum - 1, 1);
     const fimMes    = new Date(anoNum, mesNum, 1);
     const inicioMesPassado = new Date(anoNum, mesNum - 2, 1);
@@ -541,7 +541,7 @@ const executivo = async (req, res, next) => {
       _sum: { valor: true },
       orderBy: { _sum: { valor: 'desc' } }
     });
-    
+
     const fornecedores = fornecedoresGasto.map(f => ({
       empresa: f.empresa || 'Sem Empresa',
       valor: parseFloat(f._sum.valor || 0),
@@ -588,7 +588,7 @@ const executivo = async (req, res, next) => {
           acumulado: totalAtual > 0 ? (acumulado / totalAtual) * 100 : 0
         };
       });
-    
+
     // Normaliza acumulado para não ultrapassar 100%
     const paretoSegmentos = paretoSegmentosRaw.map((item, idx, arr) => ({
       ...item,
@@ -597,7 +597,7 @@ const executivo = async (req, res, next) => {
 
     // Pareto por Empresa (Fornecedor)
     acumulado = 0;
-    
+
     // Normaliza empresas: agrupa vázios como 'Sem Empresa'
     const empresasNormalizadas = {};
     fornecedoresGasto.forEach(f => {
@@ -627,7 +627,7 @@ const executivo = async (req, res, next) => {
           acumulado: totalAtual > 0 ? (acumulado / totalAtual) * 100 : 0
         };
       });
-    
+
     // Normaliza acumulado para não ultrapassar 100%
     const paretoEmpresas = paretoEmpresasRaw.map((item, idx, arr) => ({
       ...item,

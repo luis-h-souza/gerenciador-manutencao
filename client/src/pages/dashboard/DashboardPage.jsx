@@ -125,9 +125,11 @@ function StatCard({ label, value, sub, icon: Icon, accent, trend }) {
         </div>
         <div
           className="flex items-center justify-center w-10 h-10 rounded-xl"
-          style={{ 
-            background: accent ? "rgba(14, 165, 233, 0.1)" : "var(--color-surface-600)",
-            color: accent || "var(--color-brand-500)" 
+          style={{
+            background: accent
+              ? "rgba(14, 165, 233, 0.1)"
+              : "var(--color-surface-600)",
+            color: accent || "var(--color-brand-500)",
           }}
         >
           <Icon size={20} />
@@ -150,18 +152,45 @@ const TooltipCustom = ({ active, payload, label }) => {
         boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.3)",
       }}
     >
-      <p style={{ color: "var(--color-text-secondary)", marginBottom: "4px", fontWeight: 700 }}>
+      <p
+        style={{
+          color: "var(--color-text-secondary)",
+          marginBottom: "4px",
+          fontWeight: 700,
+        }}
+      >
         {label}
       </p>
       {payload.map((p, i) => {
-        const isCurrency = p.name?.toLowerCase().includes("custo") || p.name?.toLowerCase().includes("valor") || p.name?.includes("R$") || p.dataKey === "valor" || p.dataKey === "total";
-        const isPercent = p.name?.toLowerCase().includes("%") || p.name?.toLowerCase().includes("acumulada") || p.dataKey === "acumulado";
-        
+        const isCurrency =
+          p.name?.toLowerCase().includes("custo") ||
+          p.name?.toLowerCase().includes("valor") ||
+          p.name?.includes("R$") ||
+          p.dataKey === "valor" ||
+          p.dataKey === "total";
+        const isPercent =
+          p.name?.toLowerCase().includes("%") ||
+          p.name?.toLowerCase().includes("acumulada") ||
+          p.dataKey === "acumulado";
+
         return (
-          <p key={i} style={{ color: p.color, fontWeight: 600, display: 'flex', justifyContent: 'space-between', gap: '16px' }}>
+          <p
+            key={i}
+            style={{
+              color: p.color,
+              fontWeight: 600,
+              display: "flex",
+              justifyContent: "space-between",
+              gap: "16px",
+            }}
+          >
             <span>{p.name}:</span>
             <span>
-              {isCurrency ? fmt(p.value) : isPercent ? `${Number(p.value).toFixed(1)}%` : p.value}
+              {isCurrency
+                ? fmt(p.value)
+                : isPercent
+                  ? `${Number(p.value).toFixed(1)}%`
+                  : p.value}
             </span>
           </p>
         );
@@ -267,9 +296,7 @@ function RegionalDrilldown({
           </div>
         ) : (
           <>
-            <div
-              className="grid gap-3 grid-cols-1 sm:grid-cols-3"
-            >
+            <div className="grid gap-3 grid-cols-1 sm:grid-cols-3">
               <div
                 style={{
                   padding: "14px",
@@ -293,7 +320,7 @@ function RegionalDrilldown({
                     marginTop: "4px",
                     whiteSpace: "nowrap",
                     overflow: "hidden",
-                    textOverflow: "ellipsis"
+                    textOverflow: "ellipsis",
                   }}
                   title={fmt(detalhe?.financeiro?.totalGasto)}
                 >
@@ -441,9 +468,7 @@ function RegionalDrilldown({
                         </button>
                       </div>
 
-                      <div
-                        className="grid gap-3 mt-3 grid-cols-1 sm:grid-cols-2"
-                      >
+                      <div className="grid gap-3 mt-3 grid-cols-1 sm:grid-cols-2">
                         <div>
                           <p
                             style={{
@@ -493,9 +518,7 @@ function RegionalDrilldown({
               </div>
             </div>
 
-            <div
-              className="grid gap-4 mt-5 grid-cols-1 sm:grid-cols-2"
-            >
+            <div className="grid gap-4 mt-5 grid-cols-1 sm:grid-cols-2">
               <div>
                 <h4
                   style={{
@@ -789,16 +812,45 @@ function CorporativoDashboard({ filtro, setFiltro }) {
           <div className="card h-full flex flex-col">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
-                <TrendingUp size={18} style={{ color: "var(--color-brand-500)" }} />
-                <h3 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+                <TrendingUp
+                  size={18}
+                  style={{ color: "var(--color-brand-500)" }}
+                />
+                <h3
+                  style={{
+                    fontSize: "0.875rem",
+                    fontWeight: 700,
+                    color: "var(--color-text-primary)",
+                  }}
+                >
                   Histórico de Gastos Global (6 meses)
                 </h3>
               </div>
               {historicoMacro.length > 0 && (
                 <div className="text-right">
-                  <p style={{ fontSize: '0.6rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Média Rede</p>
-                  <p style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--color-brand-400)' }}>
-                    {fmt(historicoMacro.reduce((acc, h) => acc + (h.valor || 0), 0) / historicoMacro.length)}
+                  <p
+                    style={{
+                      fontSize: "0.6rem",
+                      color: "var(--color-text-muted)",
+                      textTransform: "uppercase",
+                      fontWeight: 600,
+                    }}
+                  >
+                    Média Rede
+                  </p>
+                  <p
+                    style={{
+                      fontSize: "0.875rem",
+                      fontWeight: 700,
+                      color: "var(--color-brand-400)",
+                    }}
+                  >
+                    {fmt(
+                      historicoMacro.reduce(
+                        (acc, h) => acc + (h.valor || 0),
+                        0,
+                      ) / historicoMacro.length,
+                    )}
                   </p>
                 </div>
               )}
@@ -806,12 +858,16 @@ function CorporativoDashboard({ filtro, setFiltro }) {
 
             <div style={{ flex: 1, minHeight: 280 }}>
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart 
-                  data={historicoMacro} 
+                <AreaChart
+                  data={historicoMacro}
                   margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
                   onClick={(state) => {
                     if (state && state.activePayload) {
-                      if (!state.activePayload || state.activePayload.length === 0) return;
+                      if (
+                        !state.activePayload ||
+                        state.activePayload.length === 0
+                      )
+                        return;
                       const d = state.activePayload[0].payload;
                       navigate(`/chamados?mes=${d.mesNum}&ano=${d.anoNum}`);
                     }
@@ -819,34 +875,52 @@ function CorporativoDashboard({ filtro, setFiltro }) {
                   style={{ cursor: "pointer" }}
                 >
                   <defs>
-                    <linearGradient id="colorGastoMacro" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="var(--color-brand-500)" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="var(--color-brand-500)" stopOpacity={0} />
+                    <linearGradient
+                      id="colorGastoMacro"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="5%"
+                        stopColor="var(--color-brand-500)"
+                        stopOpacity={0.3}
+                      />
+                      <stop
+                        offset="95%"
+                        stopColor="var(--color-brand-500)"
+                        stopOpacity={0}
+                      />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
-                  <XAxis 
-                    dataKey="mes" 
-                    tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} 
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="var(--color-border)"
+                  />
+                  <XAxis
+                    dataKey="mes"
+                    tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
                     axisLine={false}
                     tickLine={false}
                     dy={10}
                   />
-                  <YAxis 
-                    tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} 
-                    tick={{ fontSize: 10, fill: "var(--color-text-muted)" }} 
+                  <YAxis
+                    tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
+                    tick={{ fontSize: 10, fill: "var(--color-text-muted)" }}
                     axisLine={false}
                     tickLine={false}
                   />
                   <Tooltip content={<TooltipCustom />} />
-                  <Area 
-                    type="monotone" 
-                    dataKey="valor" 
+                  <Area
+                    type="monotone"
+                    dataKey="valor"
                     name="Total Gasto"
-                    stroke="var(--color-brand-500)" 
+                    stroke="var(--color-brand-500)"
                     strokeWidth={3}
-                    fillOpacity={1} 
-                    fill="url(#colorGastoMacro)" 
+                    fillOpacity={1}
+                    fill="url(#colorGastoMacro)"
                     activeDot={{ r: 6, strokeWidth: 0 }}
                   />
                 </AreaChart>
@@ -1225,7 +1299,15 @@ function CorporativoDashboard({ filtro, setFiltro }) {
                     fontSize: "0.75rem",
                   }}
                 >
-                  <p style={{ fontWeight: 700, color: 'var(--color-brand-400)', marginBottom: '4px' }}>Como funciona o Score?</p>
+                  <p
+                    style={{
+                      fontWeight: 700,
+                      color: "var(--color-brand-400)",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    Como funciona o Score?
+                  </p>
                   O score sobe com mais disponibilidade, menor custo por chamado
                   e melhor cobertura de checklist. Cai com equipamentos parados,
                   carrinhos quebrados, tarefas ativas e registros de mau uso.
@@ -1544,6 +1626,7 @@ function GestorDashboard({ filtro }) {
   const { usuario } = useAuth();
   const navigate = useNavigate();
   const isGestor = usuario?.role === "GESTOR";
+  const [weeksToShow, setWeeksToShow] = useState(1);
   const { data: resumo, isLoading: l1 } = useQuery({
     queryKey: ["dashboard-resumo", filtro],
     queryFn: () => dashboardService.resumo(filtro).then((r) => r.data),
@@ -1558,15 +1641,20 @@ function GestorDashboard({ filtro }) {
       dashboardService.gastosPorSegmento(filtro).then((r) => r.data),
   });
   const { data: kpiChecklist } = useQuery({
-    queryKey: ["dashboard-kpi-checklist", filtro],
-    queryFn: () => checklistService.kpiMensal(filtro).then((r) => r.data),
+    queryKey: ["dashboard-kpi-checklist", filtro, weeksToShow],
+    queryFn: () =>
+      checklistService
+        .kpiMensal({ ...filtro, weeksToShow })
+        .then((r) => r.data),
     staleTime: 5 * 60 * 1000,
   });
 
   const loading = l1 || l2 || l3;
-  const avgGastos = (historico && historico.length > 0)
-    ? historico.reduce((acc, h) => acc + (Number(h.valor) || 0), 0) / historico.length 
-    : 0;
+  const avgGastos =
+    historico && historico.length > 0
+      ? historico.reduce((acc, h) => acc + (Number(h.valor) || 0), 0) /
+        historico.length
+      : 0;
 
   if (loading) {
     return (
@@ -1610,7 +1698,7 @@ function GestorDashboard({ filtro }) {
               gap: "4px",
             }}
           >
-            <MapPin size={14} /> {usuario?.unidade}  {usuario?.regiao}
+            <MapPin size={14} /> {usuario?.unidade} {usuario?.regiao}
           </p>
         </div>
       </div>
@@ -1664,27 +1752,57 @@ function GestorDashboard({ filtro }) {
         <div className="card h-full flex flex-col">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
-              <TrendingUp size={18} style={{ color: "var(--color-brand-500)" }} />
-              <h3 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+              <TrendingUp
+                size={18}
+                style={{ color: "var(--color-brand-500)" }}
+              />
+              <h3
+                style={{
+                  fontSize: "0.875rem",
+                  fontWeight: 700,
+                  color: "var(--color-text-primary)",
+                }}
+              >
                 Evolução de Gastos (6 meses)
               </h3>
             </div>
             {avgGastos > 0 && (
               <div className="text-right">
-                <p style={{ fontSize: '0.6rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Média Mensal</p>
-                <p style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--color-brand-400)' }}>{fmt(avgGastos)}</p>
+                <p
+                  style={{
+                    fontSize: "0.6rem",
+                    color: "var(--color-text-muted)",
+                    textTransform: "uppercase",
+                    fontWeight: 600,
+                  }}
+                >
+                  Média Mensal
+                </p>
+                <p
+                  style={{
+                    fontSize: "0.875rem",
+                    fontWeight: 700,
+                    color: "var(--color-brand-400)",
+                  }}
+                >
+                  {fmt(avgGastos)}
+                </p>
               </div>
             )}
           </div>
 
           <div style={{ flex: 1, minHeight: 220 }}>
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart 
-                data={historico} 
+              <AreaChart
+                data={historico}
                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
                 onClick={(state) => {
                   if (state && state.activePayload) {
-                    if (!state.activePayload || state.activePayload.length === 0) return;
+                    if (
+                      !state.activePayload ||
+                      state.activePayload.length === 0
+                    )
+                      return;
                     const d = state.activePayload[0].payload;
                     navigate(`/chamados?mes=${d.mesNum}&ano=${d.anoNum}`);
                   }
@@ -1692,40 +1810,63 @@ function GestorDashboard({ filtro }) {
                 style={{ cursor: "pointer" }}
               >
                 <defs>
-                  <linearGradient id="colorGastoDash" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--color-brand-500)" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="var(--color-brand-500)" stopOpacity={0} />
+                  <linearGradient
+                    id="colorGastoDash"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop
+                      offset="5%"
+                      stopColor="var(--color-brand-500)"
+                      stopOpacity={0.3}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor="var(--color-brand-500)"
+                      stopOpacity={0}
+                    />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
-                <XAxis 
-                  dataKey="mes" 
-                  tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} 
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="var(--color-border)"
+                />
+                <XAxis
+                  dataKey="mes"
+                  tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
                   axisLine={false}
                   tickLine={false}
                   dy={10}
                 />
-                <YAxis 
-                  tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} 
-                  tick={{ fontSize: 10, fill: "var(--color-text-muted)" }} 
+                <YAxis
+                  tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
+                  tick={{ fontSize: 10, fill: "var(--color-text-muted)" }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <Tooltip content={<TooltipCustom />} />
-                <ReferenceLine 
-                  y={avgGastos} 
-                  stroke="var(--color-text-muted)" 
-                  strokeDasharray="5 5" 
-                  label={{ position: 'right', value: 'Média', fill: 'var(--color-text-muted)', fontSize: 10 }} 
+                <ReferenceLine
+                  y={avgGastos}
+                  stroke="var(--color-text-muted)"
+                  strokeDasharray="5 5"
+                  label={{
+                    position: "right",
+                    value: "Média",
+                    fill: "var(--color-text-muted)",
+                    fontSize: 10,
+                  }}
                 />
-                <Area 
-                  type="monotone" 
-                  dataKey="valor" 
+                <Area
+                  type="monotone"
+                  dataKey="valor"
                   name="Total Gasto"
-                  stroke="var(--color-brand-500)" 
+                  stroke="var(--color-brand-500)"
                   strokeWidth={3}
-                  fillOpacity={1} 
-                  fill="url(#colorGastoDash)" 
+                  fillOpacity={1}
+                  fill="url(#colorGastoDash)"
                   activeDot={{ r: 6, strokeWidth: 0 }}
                 />
               </AreaChart>
@@ -1733,12 +1874,39 @@ function GestorDashboard({ filtro }) {
           </div>
           <div className="mt-4 flex items-center justify-center gap-4 border-t border-border pt-4">
             <div className="flex items-center gap-2">
-              <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--color-brand-500)' }} />
-              <span style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)' }}>Investimento</span>
+              <div
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: "50%",
+                  background: "var(--color-brand-500)",
+                }}
+              />
+              <span
+                style={{
+                  fontSize: "0.7rem",
+                  color: "var(--color-text-secondary)",
+                }}
+              >
+                Investimento
+              </span>
             </div>
             <div className="flex items-center gap-2">
-              <div style={{ width: 10, height: 1, borderTop: '1px dashed var(--color-text-muted)' }} />
-              <span style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)' }}>Média</span>
+              <div
+                style={{
+                  width: 10,
+                  height: 1,
+                  borderTop: "1px dashed var(--color-text-muted)",
+                }}
+              />
+              <span
+                style={{
+                  fontSize: "0.7rem",
+                  color: "var(--color-text-secondary)",
+                }}
+              >
+                Média
+              </span>
             </div>
           </div>
         </div>
@@ -1865,20 +2033,34 @@ function GestorDashboard({ filtro }) {
             display: "flex",
             alignItems: "center",
             gap: "8px",
+            justifyContent: "space-between",
           }}
         >
-          <ClipboardCheck
-            size={16}
-            style={{ color: "var(--color-brand-400)" }}
-          />
-          {usuario?.role === "COORDENADOR"
-            ? "Atividade Mensal (Consolidado Regional)"
-            : "Meus Checklists"}{" "}
-          —{" "}
-          {new Date().toLocaleString("pt-BR", {
-            month: "long",
-            year: "numeric",
-          })}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <ClipboardCheck
+              size={16}
+              style={{ color: "var(--color-brand-400)" }}
+            />
+            {usuario?.role === "COORDENADOR"
+              ? "Atividade Mensal (Consolidado Regional)"
+              : "Meus Checklists"}{" "}
+            —{" "}
+            {new Date().toLocaleString("pt-BR", {
+              month: "long",
+              year: "numeric",
+            })}
+          </div>
+          <select
+            className="select"
+            style={{ width: "auto", minWidth: "160px" }}
+            value={weeksToShow}
+            onChange={(e) => setWeeksToShow(parseInt(e.target.value))}
+          >
+            <option value={1}>Última semana</option>
+            <option value={2}>2 últimas semanas</option>
+            <option value={3}>3 últimas semanas</option>
+            <option value={4}>Mês inteiro</option>
+          </select>
         </h3>
         {!kpiChecklist ? (
           <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)" }}>

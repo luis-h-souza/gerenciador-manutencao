@@ -34,3 +34,136 @@
 {"level":"error","message":"Redis error:","timestamp":"2026-04-26T18:18:53.902Z"}
 {"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-26T18:18:53.903Z"}
 {"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-26T18:18:53.903Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-30T21:46:00.872Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-30T21:46:01.576Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T21:46:01.584Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T21:46:01.585Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-30T21:46:01.586Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T21:46:01.789Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T21:46:01.790Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T21:46:02.200Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T21:46:02.201Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T21:46:02.815Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-30T21:46:02.817Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T21:46:02.819Z"}
+{"level":"info","message":"Logout: loja246@manutencao.com","timestamp":"2026-04-30T21:47:28.677Z"}
+{"level":"info","message":"SIGINT recebido. Encerrando servidor...","timestamp":"2026-04-30T21:56:07.468Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-30T23:35:08.589Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-30T23:35:09.195Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:35:09.203Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:35:09.204Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-30T23:35:09.205Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:35:09.412Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:35:09.413Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:35:09.824Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:35:09.824Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:35:10.439Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-30T23:35:10.439Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:35:10.440Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-30T23:35:27.197Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-30T23:35:27.552Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:35:27.562Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:35:27.563Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-30T23:35:27.564Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:35:27.772Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:35:27.773Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:35:28.175Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:35:28.175Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:35:28.782Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-30T23:35:28.783Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:35:28.783Z"}
+{"level":"info","message":"Login: loja246@manutencao.com (GESTOR) de ::1","timestamp":"2026-04-30T23:35:32.134Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-30T23:35:39.833Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-30T23:35:40.166Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:35:40.175Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:35:40.176Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-30T23:35:40.177Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:35:40.389Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:35:40.391Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:35:40.808Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:35:40.808Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:35:41.418Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-30T23:35:41.419Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:35:41.420Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-30T23:35:41.851Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-30T23:35:42.211Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:35:42.220Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:35:42.221Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-30T23:35:42.222Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:35:42.438Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:35:42.438Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:35:42.852Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:35:42.854Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:35:43.461Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-30T23:35:43.461Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:35:43.462Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/dashboard/historico-mensal?mes=4&ano=2026&regiao=","timestamp":"2026-04-30T23:46:43.635Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/dashboard/historico-mensal?mes=4&ano=2026&regiao=","timestamp":"2026-04-30T23:46:44.661Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=14&ano=2026","timestamp":"2026-04-30T23:47:08.134Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=15&ano=2026","timestamp":"2026-04-30T23:47:08.141Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=16&ano=2026","timestamp":"2026-04-30T23:47:08.143Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=17&ano=2026","timestamp":"2026-04-30T23:47:08.145Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=18&ano=2026","timestamp":"2026-04-30T23:47:08.148Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=9&ano=2026","timestamp":"2026-04-30T23:47:20.298Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=10&ano=2026","timestamp":"2026-04-30T23:47:20.304Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=11&ano=2026","timestamp":"2026-04-30T23:47:20.306Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=13&ano=2026","timestamp":"2026-04-30T23:47:20.310Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=12&ano=2026","timestamp":"2026-04-30T23:47:20.312Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=14&ano=2026","timestamp":"2026-04-30T23:47:20.314Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos/semana?semana=17&ano=2026&unidade=LIMEIRA+II","timestamp":"2026-04-30T23:47:25.041Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos/semana?semana=17&ano=2026&unidade=LIMEIRA+II","timestamp":"2026-04-30T23:47:26.055Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos/semana?semana=14&ano=2026&unidade=LIMEIRA+II","timestamp":"2026-04-30T23:47:33.132Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos/semana?semana=14&ano=2026&unidade=LIMEIRA+II","timestamp":"2026-04-30T23:47:34.143Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/dashboard/historico-mensal?mes=4&ano=2026&regiao=","timestamp":"2026-04-30T23:47:35.259Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/dashboard/historico-mensal?mes=4&ano=2026&regiao=","timestamp":"2026-04-30T23:47:36.279Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/notificacoes","timestamp":"2026-04-30T23:47:39.701Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/kpi-mensal?mes=4&ano=2026&regiao=&weeksToShow=2","timestamp":"2026-04-30T23:47:40.592Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/notificacoes","timestamp":"2026-04-30T23:47:40.712Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/kpi-mensal?mes=4&ano=2026&regiao=&weeksToShow=2","timestamp":"2026-04-30T23:47:41.602Z"}
+{"level":"info","message":"SIGINT recebido. Encerrando servidor...","timestamp":"2026-04-30T23:47:55.811Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-30T23:48:01.343Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-30T23:48:01.652Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:48:01.663Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:48:01.664Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-30T23:48:01.664Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:48:01.869Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:48:01.869Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:48:02.278Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:48:02.279Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:48:02.884Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-30T23:48:02.885Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:48:02.885Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=14&ano=2026","timestamp":"2026-04-30T23:53:55.937Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=15&ano=2026","timestamp":"2026-04-30T23:53:55.939Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=16&ano=2026","timestamp":"2026-04-30T23:53:55.940Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=17&ano=2026","timestamp":"2026-04-30T23:53:55.941Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=18&ano=2026","timestamp":"2026-04-30T23:53:55.942Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=18&ano=2026","timestamp":"2026-04-30T23:54:04.177Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=19&ano=2026","timestamp":"2026-04-30T23:54:04.179Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=20&ano=2026","timestamp":"2026-04-30T23:54:04.180Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=21&ano=2026","timestamp":"2026-04-30T23:54:04.182Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=22&ano=2026","timestamp":"2026-04-30T23:54:04.184Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=14&ano=2026","timestamp":"2026-04-30T23:56:13.253Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=15&ano=2026","timestamp":"2026-04-30T23:56:13.262Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=16&ano=2026","timestamp":"2026-04-30T23:56:13.264Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=17&ano=2026","timestamp":"2026-04-30T23:56:13.266Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos?criadoPorId=ca874ee7-acbe-4cdb-af1a-fb95463732e7&semana=18&ano=2026","timestamp":"2026-04-30T23:56:13.269Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos/semana?semana=18&ano=2026&unidade=LIMEIRA+II","timestamp":"2026-04-30T23:56:16.640Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos/semana?semana=18&ano=2026&unidade=LIMEIRA+II","timestamp":"2026-04-30T23:56:17.652Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/notificacoes","timestamp":"2026-04-30T23:56:35.884Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/notificacoes","timestamp":"2026-04-30T23:56:36.907Z"}
+{"level":"warn","message":"Rate limit excedido: ::1 -> /api/v1/checklists/equipamentos","timestamp":"2026-04-30T23:57:06.811Z"}
+{"level":"info","message":"SIGINT recebido. Encerrando servidor...","timestamp":"2026-04-30T23:57:14.084Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-04-30T23:57:18.830Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-04-30T23:57:19.151Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:57:19.158Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:57:19.159Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-04-30T23:57:19.160Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:57:19.370Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:57:19.371Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:57:19.779Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:57:19.779Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-04-30T23:57:20.386Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-30T23:57:20.387Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:57:20.387Z"}
+{"level":"info","message":"SIGINT recebido. Encerrando servidor...","timestamp":"2026-04-30T23:59:35.614Z"}

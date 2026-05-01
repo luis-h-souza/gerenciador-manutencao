@@ -6,7 +6,7 @@ const { getAccessFilter, canAccessRegion } = require('../utils/access.utils');
 // ─── Utilitário: semana atual ────────────────────────────────────────────────
 const semanaAtual = () => {
   const now = new Date();
-  return { semana: getWeek(now, { weekStartsOn: 1 }), ano: getYear(now) };
+  return { semana: getWeek(now, { weekStartsOn: 5 }), ano: getYear(now) };
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -20,7 +20,7 @@ const listarEquipamentos = async (req, res, next) => {
     if (semana) where.semana = parseInt(semana);
     if (ano)    where.ano    = parseInt(ano);
     if (criadoPorId) where.criadoPorId = criadoPorId;
-    
+
     // Filtros administrativos (Corporativo)
     if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE'].includes(req.user.role)) {
       if (regiao) {
@@ -126,7 +126,7 @@ const kpiEquipamentos = async (req, res, next) => {
     const totalQuebrados = checklists.reduce(
       (s, c) => s + c.itens.filter(i => !i.operacional).length, 0
     );
-    
+
     res.json({ semana, ano, totalQuebrados, totalChecklists: checklists.length });
   } catch (err) { next(err); }
 };
@@ -161,7 +161,7 @@ const salvarFrota = async (req, res, next) => {
 
     if (!unidade) return res.status(400).json({ error: 'Usuário sem unidade definida' });
 
-    const promises = itens.map(item => 
+    const promises = itens.map(item =>
       prisma.frotaCarrinho.upsert({
         where: { unidade_tipoCarrinho: { unidade, tipoCarrinho: item.tipoCarrinho } },
         create: { unidade, tipoCarrinho: item.tipoCarrinho, total: parseInt(item.total) || 0 },
@@ -181,7 +181,7 @@ const listarCarrinhos = async (req, res, next) => {
     if (semana) where.semana = parseInt(semana);
     if (ano)    where.ano    = parseInt(ano);
     if (criadoPorId) where.criadoPorId = criadoPorId;
-    
+
     if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE',].includes(req.user.role)) {
       if (regiao) {
         if (!canAccessRegion(req.user, regiao)) {
@@ -310,13 +310,17 @@ const kpiMensal = async (req, res, next) => {
     const agora = new Date();
     const qMes = req.query.mes ? parseInt(req.query.mes) : agora.getMonth() + 1;
     const qAno = req.query.ano ? parseInt(req.query.ano) : agora.getFullYear();
+    const weeksToShow = req.query.weeksToShow ? parseInt(req.query.weeksToShow) : 1;
     const { usuarioId } = req.query;
 
     const { getWeek, startOfMonth, endOfMonth } = require('date-fns');
     const inicioMes = startOfMonth(new Date(qAno, qMes - 1));
     const fimMes    = endOfMonth(new Date(qAno, qMes - 1));
-    const semanaInicio = getWeek(inicioMes, { weekStartsOn: 1 });
-    const semanaFim    = getWeek(fimMes,    { weekStartsOn: 1 });
+    const semanaInicio = getWeek(inicioMes, { weekStartsOn: 5 });
+    const semanaFim    = getWeek(fimMes,    { weekStartsOn: 5 });
+
+    // Calcular qual semana começar a buscar baseado em weeksToShow
+    const semanaComeco = Math.max(semanaInicio, semanaFim - weeksToShow + 1);
 
     const baseFilter = getAccessFilter(req.user);
     if (usuarioId) {
@@ -325,7 +329,7 @@ const kpiMensal = async (req, res, next) => {
 
     const whereEquip = {
       ano: qAno,
-      semana: { gte: semanaInicio, lte: semanaFim },
+      semana: { gte: semanaComeco, lte: semanaFim },
       ...baseFilter,
     };
     const whereCarrinho = { ...whereEquip };
@@ -343,20 +347,61 @@ const kpiMensal = async (req, res, next) => {
       }),
     ]);
 
-    const totalEquipParados = checklistsEquip.reduce((s, c) => s + c.itens.length, 0);
+    // Se weeksToShow > 1, deduplicar equipamentos (usar maior valor de quantidadeQuebrada por tipo)
     const equipPorTipo = {};
+    const equipamentosUnicos = new Map();
+
     checklistsEquip.forEach(c => {
       c.itens.forEach(i => {
-        equipPorTipo[i.tipoEquipamento] = (equipPorTipo[i.tipoEquipamento] || 0) + (i.quantidadeQuebrada || 1);
+        const key = i.tipoEquipamento;
+        if (!equipamentosUnicos.has(key)) {
+          equipamentosUnicos.set(key, i);
+        } else {
+          // Manter o item com maior quantidadeQuebrada (mais recente/crítico)
+          const existente = equipamentosUnicos.get(key);
+          if ((i.quantidadeQuebrada || 1) > (existente.quantidadeQuebrada || 1)) {
+            equipamentosUnicos.set(key, i);
+          }
+        }
+        // Para exibição no porTipo: soma se weeksToShow === 1, senão usa o máximo
+        if (weeksToShow === 1) {
+          equipPorTipo[i.tipoEquipamento] = (equipPorTipo[i.tipoEquipamento] || 0) + (i.quantidadeQuebrada || 1);
+        } else {
+          equipPorTipo[i.tipoEquipamento] = Math.max(equipPorTipo[i.tipoEquipamento] || 0, i.quantidadeQuebrada || 1);
+        }
       });
     });
 
-    const totalCarrinhosQuebrados = checklistsCarrinho.reduce(
-      (s, c) => s + c.itens.reduce((si, i) => si + i.quebrados, 0), 0
-    );
-    const totalCarrinhos = checklistsCarrinho.reduce(
-      (s, c) => s + c.itens.reduce((si, i) => si + i.total, 0), 0
-    );
+    const totalEquipParados = equipamentosUnicos.size;
+
+    // Carrinhos: deduplicar por tipo também
+    const carrinhoPorTipo = new Map();
+    let totalCarrinhosQuebrados = 0;
+    let totalCarrinhos = 0;
+
+    checklistsCarrinho.forEach(c => {
+      c.itens.forEach(i => {
+        const key = i.tipoCarrinho;
+        if (!carrinhoPorTipo.has(key)) {
+          carrinhoPorTipo.set(key, { quebrados: i.quebrados, total: i.total });
+        } else {
+          // Se weeksToShow > 1, usar o máximo de quebrados reportados
+          const existente = carrinhoPorTipo.get(key);
+          if (weeksToShow === 1) {
+            existente.quebrados += i.quebrados;
+            existente.total += i.total;
+          } else {
+            existente.quebrados = Math.max(existente.quebrados, i.quebrados);
+            existente.total = Math.max(existente.total, i.total);
+          }
+        }
+      });
+    });
+
+    carrinhoPorTipo.forEach(item => {
+      totalCarrinhosQuebrados += item.quebrados;
+      totalCarrinhos += item.total;
+    });
 
     const semanasPreenchidasEquip    = [...new Set(checklistsEquip.map(c => c.semana))].length;
     const semanasPreenchidasCarrinho = [...new Set(checklistsCarrinho.map(c => c.semana))].length;
@@ -392,14 +437,14 @@ const consolidadoRegional = async (req, res, next) => {
     const { getWeek, startOfMonth, endOfMonth } = require('date-fns');
     const inicioMes = startOfMonth(new Date(qAno, qMes - 1));
     const fimMes    = endOfMonth(new Date(qAno, qMes - 1));
-    const semanaInicio = getWeek(inicioMes, { weekStartsOn: 1 });
-    const semanaFim    = getWeek(fimMes,    { weekStartsOn: 1 });
+    const semanaInicio = getWeek(inicioMes, { weekStartsOn: 5 });
+    const semanaFim    = getWeek(fimMes,    { weekStartsOn: 5 });
 
     const baseFilter = getAccessFilter(req.user);
     if (regiao && ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR'].includes(req.user.role)) {
       const { splitRegions, expandRegionScopes } = require('../utils/access.utils');
       const requestedRegions = expandRegionScopes(splitRegions(regiao));
-      
+
       if (req.user.role === 'GERENTE') {
         const userRegions = require('../utils/access.utils').getUserRegions(req.user);
         const hasAccess = requestedRegions.every(r => userRegions.includes(r));
@@ -407,7 +452,7 @@ const consolidadoRegional = async (req, res, next) => {
           return res.status(403).json({ error: 'Acesso negado: uma ou mais regiões fora da sua abrangência' });
         }
       }
-      
+
       baseFilter.regiao = requestedRegions.length > 1 ? { in: requestedRegions } : requestedRegions[0] || regiao;
     }
 
@@ -531,8 +576,8 @@ const consolidadoLoja = async (req, res, next) => {
     const { getWeek, startOfMonth, endOfMonth } = require('date-fns');
     const inicioMes = startOfMonth(new Date(qAno, qMes - 1));
     const fimMes    = endOfMonth(new Date(qAno, qMes - 1));
-    const semanaInicio = getWeek(inicioMes, { weekStartsOn: 1 });
-    const semanaFim    = getWeek(fimMes,    { weekStartsOn: 1 });
+    const semanaInicio = getWeek(inicioMes, { weekStartsOn: 5 });
+    const semanaFim    = getWeek(fimMes,    { weekStartsOn: 5 });
 
     const where = {
       ano: qAno,
