@@ -13,6 +13,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "node prisma/seed.js",
+    "prisma:seed:fornecedores": "node prisma/seed.js",
     "prisma:seed:chamados:lojas-ativas": "node prisma/seed-chamados-lojas-ativas.js",
     "docs:generate": "npx @redocly/cli build-docs ../docs/openapi.yaml -o public/index.html"
   },
@@ -42,3 +43,4 @@
     "prisma": "^7.0.0"
   }
 }
+

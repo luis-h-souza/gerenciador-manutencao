@@ -10,7 +10,7 @@ import {
 import toast from 'react-hot-toast';
 
 const SEGMENTOS = ['ELETRICA','EMPILHADEIRA','REFRIGERACAO','REFRIGERACAO-PÇS','SERRALHERIA', 'AR-CONDICIONADO', 'SERVIÇOS GERAIS' ,'CIVIL','EQUIPAMENTOS','GERADOR','ELEVADOR','PCI','DIVERSOS','ALUGUEL'];
-const LIMIT = 15;
+const LIMIT = 16;
 
 /* ── Modal criar/editar ─────────────────────────────────────────────────── */
 function FornecedorModal({ fornecedor, onClose }) {

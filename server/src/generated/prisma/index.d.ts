@@ -11073,6 +11073,9 @@ export namespace Prisma {
     email: string | null
     segmento: string | null
     cnpj: string | null
+    regiao: string | null
+    cnae: string | null
+    descricao: string | null
     ativo: boolean | null
     criadoEm: Date | null
     atualizadoEm: Date | null
@@ -11085,6 +11088,9 @@ export namespace Prisma {
     email: string | null
     segmento: string | null
     cnpj: string | null
+    regiao: string | null
+    cnae: string | null
+    descricao: string | null
     ativo: boolean | null
     criadoEm: Date | null
     atualizadoEm: Date | null
@@ -11097,6 +11103,9 @@ export namespace Prisma {
     email: number
     segmento: number
     cnpj: number
+    regiao: number
+    cnae: number
+    descricao: number
     ativo: number
     criadoEm: number
     atualizadoEm: number
@@ -11111,6 +11120,9 @@ export namespace Prisma {
     email?: true
     segmento?: true
     cnpj?: true
+    regiao?: true
+    cnae?: true
+    descricao?: true
     ativo?: true
     criadoEm?: true
     atualizadoEm?: true
@@ -11123,6 +11135,9 @@ export namespace Prisma {
     email?: true
     segmento?: true
     cnpj?: true
+    regiao?: true
+    cnae?: true
+    descricao?: true
     ativo?: true
     criadoEm?: true
     atualizadoEm?: true
@@ -11135,6 +11150,9 @@ export namespace Prisma {
     email?: true
     segmento?: true
     cnpj?: true
+    regiao?: true
+    cnae?: true
+    descricao?: true
     ativo?: true
     criadoEm?: true
     atualizadoEm?: true
@@ -11220,6 +11238,9 @@ export namespace Prisma {
     email: string | null
     segmento: string
     cnpj: string
+    regiao: string | null
+    cnae: string | null
+    descricao: string | null
     ativo: boolean
     criadoEm: Date
     atualizadoEm: Date
@@ -11249,6 +11270,9 @@ export namespace Prisma {
     email?: boolean
     segmento?: boolean
     cnpj?: boolean
+    regiao?: boolean
+    cnae?: boolean
+    descricao?: boolean
     ativo?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
@@ -11261,6 +11285,9 @@ export namespace Prisma {
     email?: boolean
     segmento?: boolean
     cnpj?: boolean
+    regiao?: boolean
+    cnae?: boolean
+    descricao?: boolean
     ativo?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
@@ -11273,6 +11300,9 @@ export namespace Prisma {
     email?: boolean
     segmento?: boolean
     cnpj?: boolean
+    regiao?: boolean
+    cnae?: boolean
+    descricao?: boolean
     ativo?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
@@ -11285,12 +11315,15 @@ export namespace Prisma {
     email?: boolean
     segmento?: boolean
     cnpj?: boolean
+    regiao?: boolean
+    cnae?: boolean
+    descricao?: boolean
     ativo?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
   }
 
-  export type FornecedorOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nome" | "telefone" | "email" | "segmento" | "cnpj" | "ativo" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["fornecedor"]>
+  export type FornecedorOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nome" | "telefone" | "email" | "segmento" | "cnpj" | "regiao" | "cnae" | "descricao" | "ativo" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["fornecedor"]>
 
   export type $FornecedorPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Fornecedor"
@@ -11302,6 +11335,9 @@ export namespace Prisma {
       email: string | null
       segmento: string
       cnpj: string
+      regiao: string | null
+      cnae: string | null
+      descricao: string | null
       ativo: boolean
       criadoEm: Date
       atualizadoEm: Date
@@ -11734,6 +11770,9 @@ export namespace Prisma {
     readonly email: FieldRef<"Fornecedor", 'String'>
     readonly segmento: FieldRef<"Fornecedor", 'String'>
     readonly cnpj: FieldRef<"Fornecedor", 'String'>
+    readonly regiao: FieldRef<"Fornecedor", 'String'>
+    readonly cnae: FieldRef<"Fornecedor", 'String'>
+    readonly descricao: FieldRef<"Fornecedor", 'String'>
     readonly ativo: FieldRef<"Fornecedor", 'Boolean'>
     readonly criadoEm: FieldRef<"Fornecedor", 'DateTime'>
     readonly atualizadoEm: FieldRef<"Fornecedor", 'DateTime'>
@@ -23625,6 +23664,9 @@ export namespace Prisma {
     email: 'email',
     segmento: 'segmento',
     cnpj: 'cnpj',
+    regiao: 'regiao',
+    cnae: 'cnae',
+    descricao: 'descricao',
     ativo: 'ativo',
     criadoEm: 'criadoEm',
     atualizadoEm: 'atualizadoEm'
@@ -24589,6 +24631,9 @@ export namespace Prisma {
     email?: StringNullableFilter<"Fornecedor"> | string | null
     segmento?: StringFilter<"Fornecedor"> | string
     cnpj?: StringFilter<"Fornecedor"> | string
+    regiao?: StringNullableFilter<"Fornecedor"> | string | null
+    cnae?: StringNullableFilter<"Fornecedor"> | string | null
+    descricao?: StringNullableFilter<"Fornecedor"> | string | null
     ativo?: BoolFilter<"Fornecedor"> | boolean
     criadoEm?: DateTimeFilter<"Fornecedor"> | Date | string
     atualizadoEm?: DateTimeFilter<"Fornecedor"> | Date | string
@@ -24601,6 +24646,9 @@ export namespace Prisma {
     email?: SortOrderInput | SortOrder
     segmento?: SortOrder
     cnpj?: SortOrder
+    regiao?: SortOrderInput | SortOrder
+    cnae?: SortOrderInput | SortOrder
+    descricao?: SortOrderInput | SortOrder
     ativo?: SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
@@ -24616,6 +24664,9 @@ export namespace Prisma {
     telefone?: StringNullableFilter<"Fornecedor"> | string | null
     email?: StringNullableFilter<"Fornecedor"> | string | null
     segmento?: StringFilter<"Fornecedor"> | string
+    regiao?: StringNullableFilter<"Fornecedor"> | string | null
+    cnae?: StringNullableFilter<"Fornecedor"> | string | null
+    descricao?: StringNullableFilter<"Fornecedor"> | string | null
     ativo?: BoolFilter<"Fornecedor"> | boolean
     criadoEm?: DateTimeFilter<"Fornecedor"> | Date | string
     atualizadoEm?: DateTimeFilter<"Fornecedor"> | Date | string
@@ -24628,6 +24679,9 @@ export namespace Prisma {
     email?: SortOrderInput | SortOrder
     segmento?: SortOrder
     cnpj?: SortOrder
+    regiao?: SortOrderInput | SortOrder
+    cnae?: SortOrderInput | SortOrder
+    descricao?: SortOrderInput | SortOrder
     ativo?: SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
@@ -24646,6 +24700,9 @@ export namespace Prisma {
     email?: StringNullableWithAggregatesFilter<"Fornecedor"> | string | null
     segmento?: StringWithAggregatesFilter<"Fornecedor"> | string
     cnpj?: StringWithAggregatesFilter<"Fornecedor"> | string
+    regiao?: StringNullableWithAggregatesFilter<"Fornecedor"> | string | null
+    cnae?: StringNullableWithAggregatesFilter<"Fornecedor"> | string | null
+    descricao?: StringNullableWithAggregatesFilter<"Fornecedor"> | string | null
     ativo?: BoolWithAggregatesFilter<"Fornecedor"> | boolean
     criadoEm?: DateTimeWithAggregatesFilter<"Fornecedor"> | Date | string
     atualizadoEm?: DateTimeWithAggregatesFilter<"Fornecedor"> | Date | string
@@ -26042,6 +26099,9 @@ export namespace Prisma {
     email?: string | null
     segmento: string
     cnpj: string
+    regiao?: string | null
+    cnae?: string | null
+    descricao?: string | null
     ativo?: boolean
     criadoEm?: Date | string
     atualizadoEm?: Date | string
@@ -26054,6 +26114,9 @@ export namespace Prisma {
     email?: string | null
     segmento: string
     cnpj: string
+    regiao?: string | null
+    cnae?: string | null
+    descricao?: string | null
     ativo?: boolean
     criadoEm?: Date | string
     atualizadoEm?: Date | string
@@ -26066,6 +26129,9 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     segmento?: StringFieldUpdateOperationsInput | string
     cnpj?: StringFieldUpdateOperationsInput | string
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    cnae?: NullableStringFieldUpdateOperationsInput | string | null
+    descricao?: NullableStringFieldUpdateOperationsInput | string | null
     ativo?: BoolFieldUpdateOperationsInput | boolean
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26078,6 +26144,9 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     segmento?: StringFieldUpdateOperationsInput | string
     cnpj?: StringFieldUpdateOperationsInput | string
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    cnae?: NullableStringFieldUpdateOperationsInput | string | null
+    descricao?: NullableStringFieldUpdateOperationsInput | string | null
     ativo?: BoolFieldUpdateOperationsInput | boolean
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26090,6 +26159,9 @@ export namespace Prisma {
     email?: string | null
     segmento: string
     cnpj: string
+    regiao?: string | null
+    cnae?: string | null
+    descricao?: string | null
     ativo?: boolean
     criadoEm?: Date | string
     atualizadoEm?: Date | string
@@ -26102,6 +26174,9 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     segmento?: StringFieldUpdateOperationsInput | string
     cnpj?: StringFieldUpdateOperationsInput | string
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    cnae?: NullableStringFieldUpdateOperationsInput | string | null
+    descricao?: NullableStringFieldUpdateOperationsInput | string | null
     ativo?: BoolFieldUpdateOperationsInput | boolean
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26114,6 +26189,9 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     segmento?: StringFieldUpdateOperationsInput | string
     cnpj?: StringFieldUpdateOperationsInput | string
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    cnae?: NullableStringFieldUpdateOperationsInput | string | null
+    descricao?: NullableStringFieldUpdateOperationsInput | string | null
     ativo?: BoolFieldUpdateOperationsInput | boolean
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27551,6 +27629,9 @@ export namespace Prisma {
     email?: SortOrder
     segmento?: SortOrder
     cnpj?: SortOrder
+    regiao?: SortOrder
+    cnae?: SortOrder
+    descricao?: SortOrder
     ativo?: SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
@@ -27563,6 +27644,9 @@ export namespace Prisma {
     email?: SortOrder
     segmento?: SortOrder
     cnpj?: SortOrder
+    regiao?: SortOrder
+    cnae?: SortOrder
+    descricao?: SortOrder
     ativo?: SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
@@ -27575,6 +27659,9 @@ export namespace Prisma {
     email?: SortOrder
     segmento?: SortOrder
     cnpj?: SortOrder
+    regiao?: SortOrder
+    cnae?: SortOrder
+    descricao?: SortOrder
     ativo?: SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder

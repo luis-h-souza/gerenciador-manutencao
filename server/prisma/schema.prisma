@@ -134,6 +134,9 @@ model Fornecedor {
   email        String?
   segmento     String
   cnpj         String   @unique
+  regiao       String?
+  cnae         String?
+  descricao    String?
   ativo        Boolean  @default(true)
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt

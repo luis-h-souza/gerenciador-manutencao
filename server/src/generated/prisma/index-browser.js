@@ -217,6 +217,9 @@ exports.Prisma.FornecedorScalarFieldEnum = {
   email: 'email',
   segmento: 'segmento',
   cnpj: 'cnpj',
+  regiao: 'regiao',
+  cnae: 'cnae',
+  descricao: 'descricao',
   ativo: 'ativo',
   criadoEm: 'criadoEm',
   atualizadoEm: 'atualizadoEm'

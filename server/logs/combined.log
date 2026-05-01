@@ -167,3 +167,42 @@
 {"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-04-30T23:57:20.387Z"}
 {"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-04-30T23:57:20.387Z"}
 {"level":"info","message":"SIGINT recebido. Encerrando servidor...","timestamp":"2026-04-30T23:59:35.614Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-05-01T21:57:31.031Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-05-01T21:57:31.728Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-05-01T21:57:31.736Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-05-01T21:57:31.736Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-05-01T21:57:31.737Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-05-01T21:57:31.948Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-05-01T21:57:31.949Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-05-01T21:57:32.355Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-05-01T21:57:32.356Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-05-01T21:57:32.964Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-05-01T21:57:32.964Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-05-01T21:57:32.964Z"}
+{"level":"info","message":"Login: admin@manutencao.com (ADMINISTRADOR) de ::1","timestamp":"2026-05-01T21:58:25.183Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-05-01T22:03:26.373Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-05-01T22:03:26.734Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-05-01T22:03:26.742Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-05-01T22:03:26.743Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-05-01T22:03:26.744Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-05-01T22:03:26.958Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-05-01T22:03:26.959Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-05-01T22:03:27.363Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-05-01T22:03:27.364Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-05-01T22:03:27.973Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-05-01T22:03:27.973Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-05-01T22:03:27.974Z"}
+{"level":"warn","message":"connect-redis indisponível, usando MemoryStore (não recomendado para produção)","timestamp":"2026-05-01T22:03:40.973Z"}
+{"level":"info","message":"🚀 Servidor rodando na porta 3001 [development]","timestamp":"2026-05-01T22:03:41.343Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-05-01T22:03:41.355Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-05-01T22:03:41.356Z"}
+{"level":"warn","message":"Redis indisponível - rate limiting usará memória local","timestamp":"2026-05-01T22:03:41.356Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-05-01T22:03:41.559Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-05-01T22:03:41.560Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-05-01T22:03:41.965Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-05-01T22:03:41.966Z"}
+{"level":"error","message":"Redis error:","timestamp":"2026-05-01T22:03:42.569Z"}
+{"level":"warn","message":"Redis: máximo de tentativas atingido. Usando fallback em memória.","timestamp":"2026-05-01T22:03:42.570Z"}
+{"level":"warn","message":"Redis: conexão fechada","timestamp":"2026-05-01T22:03:42.570Z"}
+{"level":"info","message":"Logout: admin@manutencao.com","timestamp":"2026-05-01T22:08:12.175Z"}
+{"level":"info","message":"SIGINT recebido. Encerrando servidor...","timestamp":"2026-05-01T22:09:24.862Z"}
