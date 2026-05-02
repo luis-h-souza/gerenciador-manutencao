@@ -840,7 +840,6 @@ function CorporativoDashboard({ filtro, setFiltro }) {
             <BarChart3 size={22} style={{ color: "var(--color-brand-500)" }} />
             Visão Macro Global
           </h2>
-          <span className="badge badge-brand">Consolidado Empresa</span>
         </div>
 
         <div className="card" style={{ padding: "16px 18px" }}>
@@ -864,8 +863,8 @@ function CorporativoDashboard({ filtro, setFiltro }) {
                   marginTop: "4px",
                 }}
               >
-                Filtre a regional para detalhar gastos, histórico e composição
-                financeira.
+                Filtre regional e/ou mês para detalhar gastos, histórico e
+                composição financeira.
               </p>
               <p
                 style={{
@@ -874,13 +873,57 @@ function CorporativoDashboard({ filtro, setFiltro }) {
                   marginTop: "8px",
                 }}
               >
-                Exibindo: {periodoAtual} • Escopo: {escopoAtual}
+                Exibindo:{" "}
+                <strong style={{ color: "var(--color-brand-400)" }}>
+                  {periodoAtual}
+                </strong>
+                {" "}• Escopo: {escopoAtual}
+                {filtro.mes !== new Date().getMonth() + 1 || filtro.ano !== new Date().getFullYear() ? (
+                  <span
+                    style={{
+                      marginLeft: "8px",
+                      color: "var(--color-warning)",
+                      fontSize: "0.7rem",
+                    }}
+                  >
+                    ⚠ Histórico de 6 meses não é afetado por este filtro
+                  </span>
+                ) : null}
               </p>
             </div>
-            <div className="flex items-center gap-2">
+
+            {/* Filtros lado a lado */}
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* Filtro Mês */}
               <select
+                id="dashboard-filtro-mes"
                 className="select"
-                style={{ minWidth: "220px" }}
+                style={{ minWidth: "185px" }}
+                value={`${filtro.ano}-${String(filtro.mes).padStart(2, "0")}`}
+                onChange={(e) => {
+                  const opt = OPCOES_MES.find((o) => o.value === e.target.value);
+                  if (opt) setFiltro((prev) => ({ ...prev, mes: opt.mes, ano: opt.ano }));
+                }}
+              >
+                {OPCOES_MES.map((opt) => {
+                  const hoje = new Date();
+                  const isAtual = opt.mes === hoje.getMonth() + 1 && opt.ano === hoje.getFullYear();
+                  return (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}{isAtual ? " (atual)" : ""}
+                    </option>
+                  );
+                })}
+              </select>
+
+              {/* Divisor */}
+              <span style={{ color: "var(--color-border)", fontSize: "1.2rem", lineHeight: 1 }}>|</span>
+
+              {/* Filtro Regional */}
+              <select
+                id="dashboard-filtro-regional"
+                className="select"
+                style={{ minWidth: "185px" }}
                 value={filtro.regiao}
                 onChange={(e) =>
                   setFiltro((prev) => ({ ...prev, regiao: e.target.value }))
@@ -902,18 +945,6 @@ function CorporativoDashboard({ filtro, setFiltro }) {
                 </button>
               )}
             </div>
-            <span
-              style={{
-                fontSize: "0.72rem",
-                color: "var(--color-text-muted)",
-                whiteSpace: "nowrap",
-              }}
-            >
-              Período:{" "}
-              <strong style={{ color: "var(--color-text-secondary)" }}>
-                {periodoAtual}
-              </strong>
-            </span>
           </div>
         </div>
 
@@ -1813,40 +1844,102 @@ function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [] }) {
 
   return (
     <div className="flex flex-col gap-5 animate-fade-in">
-      {/* Cabeçalho do Gestor / Coordenador */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2
-            style={{
-              fontSize: "1.25rem",
-              fontWeight: 700,
-              color: "var(--color-text-primary)",
-            }}
-          >
-            Dashboard Operacional
-          </h2>
-          <p
-            style={{
-              fontSize: "0.875rem",
-              color: "var(--color-text-muted)",
-              display: "flex",
-              alignItems: "center",
-              gap: "4px",
-            }}
-          >
-            <MapPin size={14} /> {usuario?.unidade} {usuario?.regiao}
-          </p>
+      {/* Cabeçalho + Filtros integrados */}
+      <div className="card" style={{ padding: "16px 18px" }}>
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          {/* Texto do lado esquerdo */}
+          <div>
+            <h2
+              style={{
+                fontSize: "1.125rem",
+                fontWeight: 700,
+                color: "var(--color-text-primary)",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+              }}
+            >
+              Dashboard Operacional
+            </h2>
+            <p
+              style={{
+                fontSize: "0.8125rem",
+                color: "var(--color-text-muted)",
+                marginTop: "4px",
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
+              }}
+            >
+              <MapPin size={13} /> {usuario?.unidade} {usuario?.regiao}
+            </p>
+            <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginTop: "6px" }}>
+              Exibindo:{" "}
+              <strong style={{ color: "var(--color-brand-400)" }}>
+                {new Date(filtro.ano, filtro.mes - 1, 1).toLocaleString("pt-BR", { month: "long", year: "numeric" })}
+              </strong>
+              {filtro.mes !== new Date().getMonth() + 1 || filtro.ano !== new Date().getFullYear() ? (
+                <span style={{ marginLeft: "6px", color: "var(--color-warning)", fontSize: "0.68rem" }}>
+                  ⚠ Histórico 6 meses não é afetado
+                </span>
+              ) : null}
+            </p>
+          </div>
+
+          {/* Filtros no lado direito */}
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Filtro Mês */}
+            <select
+              id="dashboard-filtro-mes"
+              className="select"
+              style={{ minWidth: "185px" }}
+              value={`${filtro.ano}-${String(filtro.mes).padStart(2, "0")}`}
+              onChange={(e) => {
+                const opt = OPCOES_MES.find((o) => o.value === e.target.value);
+                if (opt) setFiltro((prev) => ({ ...prev, mes: opt.mes, ano: opt.ano }));
+              }}
+            >
+              {OPCOES_MES.map((opt) => {
+                const hoje = new Date();
+                const isAtual = opt.mes === hoje.getMonth() + 1 && opt.ano === hoje.getFullYear();
+                return (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}{isAtual ? " (atual)" : ""}
+                  </option>
+                );
+              })}
+            </select>
+
+            {/* Filtro Regional — só para Coordenador */}
+            {isCoordenador && (
+              <>
+                <span style={{ color: "var(--color-border)", fontSize: "1.2rem", lineHeight: 1 }}>|</span>
+                <select
+                  id="dashboard-filtro-regional"
+                  className="select"
+                  style={{ minWidth: "185px" }}
+                  value={filtro.regiao || ""}
+                  onChange={(e) => setFiltro((prev) => ({ ...prev, regiao: e.target.value }))}
+                >
+                  <option value="">Todas as regionais</option>
+                  {opcoesRegionais.map((regiao) => (
+                    <option key={regiao} value={regiao}>{regiao}</option>
+                  ))}
+                </select>
+                {filtro.regiao && (
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => setFiltro((prev) => ({ ...prev, regiao: "" }))}
+                    style={{ fontSize: "0.75rem", border: "1px solid var(--color-border)" }}
+                  >
+                    Limpar
+                  </button>
+                )}
+              </>
+            )}
+          </div>
         </div>
       </div>
-
-      {/* ─── FILTROS ─────────────────────────────────────────────────── */}
-      <MonthFilterBar
-        filtro={filtro}
-        setFiltro={setFiltro}
-        showRegional={isCoordenador}
-        opcoesRegionais={opcoesRegionais}
-        compact
-      />
 
       {/* Stat cards */}
       <div className="flex flex-wrap gap-4 items-stretch">
@@ -2552,17 +2645,7 @@ export default function DashboardPage() {
   if (usuario?.role === "TECNICO") return <TecnicoDashboard />;
 
   if (macroRoles.includes(usuario?.role)) {
-    return (
-      <div className="flex flex-col gap-5">
-        {/* Barra de filtros global para roles macro */}
-        <MonthFilterBar
-          filtro={filtro}
-          setFiltro={setFiltro}
-          showRegional={false}
-        />
-        <CorporativoDashboard filtro={filtro} setFiltro={setFiltro} />
-      </div>
-    );
+    return <CorporativoDashboard filtro={filtro} setFiltro={setFiltro} />;
   }
 
   return (
