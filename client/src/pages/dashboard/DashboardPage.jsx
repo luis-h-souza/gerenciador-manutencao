@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -23,6 +23,7 @@ import {
   dashboardService,
   tarefasService,
   checklistService,
+  usuariosService,
 } from "../../services";
 import { useAuth } from "../../contexts/AuthContext";
 import {
@@ -37,8 +38,10 @@ import {
   ShoppingCart,
   MapPin,
   ChevronRight,
+  ChevronUp,
   BarChart3,
   Users,
+  UserRound,
   Trophy,
   CircleHelp,
   Eye,
@@ -730,10 +733,21 @@ function MonthFilterBar({ filtro, setFiltro, showRegional = false, opcoesRegiona
 }
 
 function CorporativoDashboard({ filtro, setFiltro }) {
+  const { usuario } = useAuth();
   const navigate = useNavigate();
   const [showExecutiveSummary, setShowExecutiveSummary] = useState(true);
   const [regionalSelecionada, setRegionalSelecionada] = useState(null);
   const [rankingHelpOpen, setRankingHelpOpen] = useState(false);
+
+  // Controle de Drill-down (Gerentes -> Coordenadores -> Regionais)
+  const roleInicial = (usuario?.role === "DIRETOR" || usuario?.role === "ADMINISTRADOR")
+    ? "gerentes"
+    : (usuario?.role === "GERENTE" ? "coordenadores" : "regionais");
+
+  const [dashboardEtapa, setDashboardEtapa] = useState(roleInicial);
+  const [gerenteDrill, setGerenteDrill] = useState(null);
+  const [coordenadorDrill, setCoordenadorDrill] = useState(null);
+
   // Histórico não muda com o filtro de mês — sempre exibe os últimos 6 meses
   const filtroHistorico = { regiao: filtro.regiao };
 
@@ -763,6 +777,22 @@ function CorporativoDashboard({ filtro, setFiltro }) {
     queryFn: () =>
       dashboardService.rankingCoordenadores(filtro).then((r) => r.data),
   });
+
+  const ranking = rankingCoordenadores?.data || [];
+
+  // Queries para Hierarquia (Gerentes e Coordenadores)
+  const { data: gerentesData, isLoading: lG } = useQuery({
+    queryKey: ["users-gerentes"],
+    queryFn: () => usuariosService.listar({ role: "GERENTE", limit: 100, ativo: true }).then(r => r.data?.data || []),
+    enabled: ["ADMINISTRADOR", "DIRETOR"].includes(usuario?.role),
+  });
+
+  const { data: coordenadoresData, isLoading: lC } = useQuery({
+    queryKey: ["users-coordenadores"],
+    queryFn: () => usuariosService.listar({ role: "COORDENADOR", limit: 100, ativo: true }).then(r => r.data?.data || []),
+    enabled: ["ADMINISTRADOR", "DIRETOR", "GERENTE"].includes(usuario?.role),
+  });
+
   const { data: detalheRegional, isLoading: l6 } = useQuery({
     queryKey: ["dashboard-detalhe-regional", regionalSelecionada, filtro],
     queryFn: () =>
@@ -772,7 +802,93 @@ function CorporativoDashboard({ filtro, setFiltro }) {
     enabled: !!regionalSelecionada,
   });
 
-  const isLoading = l1 || l2 || l3 || l4 || l5;
+  // ─── LÓGICA DE AGREGAÇÃO PARA HIERARQUIA ────────────────────────────────────
+  
+  const splitRegions = (r) => (r ? r.split(',').map(s => s.trim().toUpperCase()).filter(Boolean) : []);
+  
+  // Agrega dados para Gerentes
+  const gerentesAgregados = useMemo(() => {
+    if (!gerentesData || !regionalRes?.data) return [];
+    const regionalData = regionalRes.data;
+    // Filtro explícito por role GERENTE
+    return gerentesData
+      .filter(u => u.role === "GERENTE")
+      .map(g => {
+      const regioesG = splitRegions(g.regiao);
+      const regionaisAtreladas = regionalData.filter(r => regioesG.includes(r.regiao.toUpperCase()));
+      return {
+        ...g,
+        gastosMes: regionaisAtreladas.reduce((sum, r) => sum + (r.gastosMes || 0), 0),
+        totalLojas: regionaisAtreladas.reduce((sum, r) => sum + (r.totalLojas || 0), 0),
+        numRegionais: regionaisAtreladas.length
+      };
+    }).sort((a, b) => b.gastosMes - a.gastosMes);
+  }, [gerentesData, regionalRes?.data]);
+
+  // Agrega dados para Coordenadores
+  const coordenadoresAgregados = useMemo(() => {
+    if (!coordenadoresData || !regionalRes?.data) return [];
+    const regionalData = regionalRes.data;
+    
+    // Se houver um gerente selecionado, filtra apenas os coordenadores que têm interseção de regional
+    let baseCoords = coordenadoresData.filter(c => c.id !== usuario?.id);
+    if (gerenteDrill) {
+      const regioesGerente = splitRegions(gerenteDrill.regiao);
+      baseCoords = baseCoords.filter(c => {
+        const regioesC = splitRegions(c.regiao);
+        return regioesC.some(r => regioesGerente.includes(r));
+      });
+    } else if (usuario?.role === "GERENTE") {
+      // Se for gerente logado, filtra seus coordenadores
+      const regioesG = splitRegions(usuario.regiao);
+      baseCoords = coordenadoresData.filter(c => {
+        if (c.id === usuario?.id) return false;
+        const regioesC = splitRegions(c.regiao);
+        return regioesC.some(r => regioesG.includes(r));
+      });
+    }
+
+    return baseCoords
+      .filter(u => u.role === "COORDENADOR")
+      .map(c => {
+      const regioesC = splitRegions(c.regiao);
+      const regionaisAtreladas = regionalData.filter(r => regioesC.includes(r.regiao.toUpperCase()));
+      return {
+        ...c,
+        gastosMes: regionaisAtreladas.reduce((sum, r) => sum + (r.gastosMes || 0), 0),
+        totalLojas: regionaisAtreladas.reduce((sum, r) => sum + (r.totalLojas || 0), 0),
+        numRegionais: regionaisAtreladas.length
+      };
+    }).sort((a, b) => b.gastosMes - a.gastosMes);
+  }, [coordenadoresData, regionalRes?.data, gerenteDrill, usuario]);
+
+  const regionalOrdenado = useMemo(() => {
+    const data = regionalRes?.data || [];
+    return [...data].sort((a, b) => (b.gastosMes || 0) - (a.gastosMes || 0));
+  }, [regionalRes?.data]);
+
+  // Filtra regionais para a etapa final
+  const regionaisFiltradas = useMemo(() => {
+    if (coordenadorDrill) {
+      const regioesC = splitRegions(coordenadorDrill.regiao);
+      return regionalOrdenado.filter(r => regioesC.includes(r.regiao.toUpperCase()));
+    }
+    return regionalOrdenado;
+  }, [regionalOrdenado, coordenadorDrill]);
+
+  const handleBack = () => {
+    if (dashboardEtapa === "regionais") {
+      setDashboardEtapa("coordenadores");
+      setCoordenadorDrill(null);
+    } else if (dashboardEtapa === "coordenadores") {
+      if (usuario?.role === "DIRETOR" || usuario?.role === "ADMINISTRADOR") {
+        setDashboardEtapa("gerentes");
+        setGerenteDrill(null);
+      }
+    }
+  };
+
+  const isLoading = l1 || l2 || l3 || l4 || l5 || (dashboardEtapa === "gerentes" && lG) || (dashboardEtapa === "coordenadores" && lC);
 
   if (isLoading) {
     return (
@@ -809,11 +925,7 @@ function CorporativoDashboard({ filtro, setFiltro }) {
     macroResumo?.financeiro?.variacaoPercent || 0,
   );
   const regionalData = regionalRes?.data || [];
-  const regionalOrdenado = [...regionalData].sort(
-    (a, b) => (b.gastosMes || 0) - (a.gastosMes || 0),
-  );
   const opcoesRegionais = regionalOrdenado.map((item) => item.regiao);
-  const ranking = rankingCoordenadores?.data || [];
   const periodoAtual = fmtMonthYear(
     macroResumo?.periodo?.mes || filtro.mes,
     macroResumo?.periodo?.ano || filtro.ano,
@@ -1195,19 +1307,44 @@ function CorporativoDashboard({ filtro, setFiltro }) {
         </div>
       </section>
 
-      {/* ─── SEÇÃO 2: VISÃO POR REGIONAL ────────────────────────────────────── */}
+      {/* ─── SEÇÃO 2: HIERARQUIA FINANCEIRA ────────────────────────────────────── */}
       <section className="flex flex-col gap-5">
-        <div className="flex items-center gap-2">
-          <MapPin size={20} style={{ color: "var(--color-brand-500)" }} />
-          <h2
-            style={{
-              fontSize: "1.25rem",
-              fontWeight: 700,
-              color: "var(--color-text-primary)",
-            }}
-          >
-            Status por Regional
-          </h2>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {dashboardEtapa !== roleInicial && (
+              <button 
+                className="btn btn-ghost btn-sm" 
+                onClick={handleBack}
+                style={{ padding: '8px' }}
+              >
+                <ChevronUp className="rotate-270" size={18} />
+              </button>
+            )}
+            <div className="flex items-center gap-2">
+              {dashboardEtapa === "regionais" ? (
+                <MapPin size={20} style={{ color: "var(--color-brand-500)" }} />
+              ) : (
+                <Users size={20} style={{ color: "var(--color-brand-500)" }} />
+              )}
+              <h2
+                style={{
+                  fontSize: "1.25rem",
+                  fontWeight: 700,
+                  color: "var(--color-text-primary)",
+                }}
+              >
+                {dashboardEtapa === "gerentes" && "Status por Gerente Regional"}
+                {dashboardEtapa === "coordenadores" && (gerenteDrill ? `Coordenadores de ${gerenteDrill.nome}` : "Status por Coordenador")}
+                {dashboardEtapa === "regionais" && (coordenadorDrill ? `Regionais de ${coordenadorDrill.nome}` : "Status por Regional")}
+              </h2>
+            </div>
+          </div>
+          
+          <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
+            {dashboardEtapa === "gerentes" && "Clique em um gerente para detalhar coordenadores"}
+            {dashboardEtapa === "coordenadores" && "Clique em um coordenador para detalhar regionais"}
+            {dashboardEtapa === "regionais" && "Visão analítica por regional"}
+          </p>
         </div>
 
         <div
@@ -1216,7 +1353,93 @@ function CorporativoDashboard({ filtro, setFiltro }) {
             gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
           }}
         >
-          {regionalOrdenado.map((reg) => (
+          {/* CARDS DE GERENTES */}
+          {dashboardEtapa === "gerentes" && gerentesAgregados.map((ger) => (
+            <div
+              key={ger.id}
+              className="card hover-scale pointer"
+              onClick={() => {
+                setGerenteDrill(ger);
+                setDashboardEtapa("coordenadores");
+              }}
+              style={{ padding: "20px" }}
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="flex items-center justify-center w-10 h-10 rounded-full"
+                    style={{
+                      background: "var(--color-brand-100)",
+                      color: "var(--color-brand-600)",
+                    }}
+                  >
+                    <UserRound size={20} />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+                      {ger.nome}
+                    </h3>
+                    <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
+                      Gerente Regional • {ger.numRegionais} regionais
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "12px", marginTop: "8px" }}>
+                <div className="flex justify-between items-center">
+                  <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 600 }}>Gastos Gerenciados</span>
+                  <span style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--color-brand-500)" }}>{fmt(ger.gastosMes)}</span>
+                </div>
+                <p style={{ fontSize: "0.7rem", color: "var(--color-text-muted)", marginTop: "4px" }}>
+                  Engloba {ger.totalLojas} lojas ativas
+                </p>
+              </div>
+            </div>
+          ))}
+
+          {/* CARDS DE COORDENADORES */}
+          {dashboardEtapa === "coordenadores" && coordenadoresAgregados.map((coord) => (
+            <div
+              key={coord.id}
+              className="card hover-scale pointer"
+              onClick={() => {
+                setCoordenadorDrill(coord);
+                setDashboardEtapa("regionais");
+              }}
+              style={{ padding: "20px" }}
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="flex items-center justify-center w-10 h-10 rounded-full"
+                    style={{
+                      background: "var(--color-surface-600)",
+                      color: "var(--color-text-primary)",
+                    }}
+                  >
+                    <Users size={20} />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+                      {coord.nome}
+                    </h3>
+                    <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
+                      Coordenador • {coord.numRegionais} regionais
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "12px", marginTop: "8px" }}>
+                <div className="flex justify-between items-center">
+                  <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 600 }}>Gastos Coordenados</span>
+                  <span style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--color-text-primary)" }}>{fmt(coord.gastosMes)}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {/* CARDS DE REGIONAIS (ORIGINAL) */}
+          {dashboardEtapa === "regionais" && regionaisFiltradas.map((reg) => (
             <div
               key={reg.regiao}
               className="card hover-scale"

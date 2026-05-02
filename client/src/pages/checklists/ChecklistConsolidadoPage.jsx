@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../contexts/AuthContext";
 import { checklistService, usuariosService, dashboardService } from "../../services";
-import { ChevronDown, Calendar, ChevronUp, Loader2, MapPin, Store, X, CheckCircle2, AlertCircle, TrendingUp, UserRound, DollarSign } from "lucide-react";
+import { ChevronDown, Calendar, ChevronUp, Loader2, MapPin, Store, X, CheckCircle2, AlertCircle, TrendingUp, UserRound, DollarSign, ClipboardCheck, Building2, AlertTriangle } from "lucide-react";
 
 const fmt = (v) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
@@ -407,11 +407,54 @@ export default function ChecklistConsolidadoPage() {
     return arr1.some(r => arr2.includes(r));
   };
 
+  const getWeekOfYear = (d) => {
+    const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay()||7));
+    const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
+    return Math.ceil((((date - yearStart) / 86400000) + 1)/7);
+  };
+
+  const totalSemanasEsperadas = useMemo(() => {
+    const inicio = new Date(ano, mes - 1, 1);
+    const fim = new Date(ano, mes, 0);
+    return Math.max(1, getWeekOfYear(fim) - getWeekOfYear(inicio) + 1);
+  }, [mes, ano]);
+
   const { data: gerentesData, isLoading: loadingGerentes } = useQuery({
     queryKey: ["gerentes"],
     queryFn: () => usuariosService.listar({ role: "GERENTE", limit: 100, ativo: true }).then(r => r.data?.data || []),
     enabled: ["ADMINISTRADOR", "DIRETOR"].includes(usuario?.role),
   });
+
+  // Agrega dados informativos para Gerentes (Checklist Coverage)
+  const gerentesAgregados = useMemo(() => {
+    if (!gerentesData || !regionaisAgrupadas) return [];
+    return gerentesData
+      .filter(u => u.role === "GERENTE")
+      .map(g => {
+      const regioesG = splitRegions(g.regiao);
+      const regionaisAtreladas = Array.from(regionaisAgrupadas.entries())
+        .filter(([regiao]) => regioesG.includes(regiao.toUpperCase()))
+        .map(([regiao, lojas]) => {
+          const semanasPreenchidas = lojas.reduce(
+            (sum, loja) => sum + Math.min(Object.keys(loja.consolidado || {}).length, totalSemanasEsperadas),
+            0
+          );
+          return {
+            lojas: lojas.length,
+            semanasPreenchidas,
+            esperadas: lojas.length * totalSemanasEsperadas
+          };
+        });
+
+      const totalLojas = regionaisAtreladas.reduce((sum, r) => sum + r.lojas, 0);
+      const totalPreenchidas = regionaisAtreladas.reduce((sum, r) => sum + r.semanasPreenchidas, 0);
+      const totalEsperadas = regionaisAtreladas.reduce((sum, r) => sum + r.esperadas, 0);
+      const cobertura = totalEsperadas > 0 ? (totalPreenchidas / totalEsperadas) * 100 : 0;
+
+      return { ...g, totalLojas, cobertura, numRegionais: regioesG.length };
+    }).sort((a, b) => b.cobertura - a.cobertura);
+  }, [gerentesData, regionaisAgrupadas, totalSemanasEsperadas]);
 
   const { data: coordenadoresData, isLoading: loadingCoordenadores } = useQuery({
     queryKey: ["coordenadores"],
@@ -421,16 +464,26 @@ export default function ChecklistConsolidadoPage() {
 
   const coordenadoresFiltrados = useMemo(() => {
     if (!coordenadoresData) return [];
-    if (usuario?.role === "GERENTE") return coordenadoresData.filter(c => hasOverlap(c.regiao, usuario.regiao));
-    if (gerenteSelecionado) return coordenadoresData.filter(c => hasOverlap(c.regiao, gerenteSelecionado.regiao));
-    return coordenadoresData;
+    // Filtra coordenadores pela regional do contexto e remove o próprio usuário caso apareça
+    let filtrados = coordenadoresData.filter(c => c.id !== usuario?.id && c.role === "COORDENADOR");
+
+    if (usuario?.role === "GERENTE") {
+      filtrados = filtrados.filter(c => hasOverlap(c.regiao, usuario.regiao));
+    } else if (gerenteSelecionado) {
+      filtrados = filtrados.filter(c => hasOverlap(c.regiao, gerenteSelecionado.regiao));
+    }
+    
+    return filtrados;
   }, [coordenadoresData, usuario, gerenteSelecionado]);
 
   const regioesDoContexto = useMemo(() => {
     if (coordenadorSelecionado) return splitRegions(coordenadorSelecionado.regiao);
     if (usuario?.role === "COORDENADOR") return splitRegions(usuario.regiao);
+    // Para Gerente ou quando um Gerente está selecionado (drill-down do Diretor)
+    if (gerenteSelecionado) return splitRegions(gerenteSelecionado.regiao);
+    if (usuario?.role === "GERENTE") return splitRegions(usuario.regiao);
     return null; 
-  }, [coordenadorSelecionado, usuario]);
+  }, [coordenadorSelecionado, gerenteSelecionado, usuario]);
 
   const regionaisAgrupadasFiltradas = useMemo(() => {
     if (!regioesDoContexto) return regionaisAgrupadas;
@@ -473,18 +526,6 @@ export default function ChecklistConsolidadoPage() {
     setEtapa("lojas");
   };
 
-  const getWeekOfYear = (d) => {
-    const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-    date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay()||7));
-    const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
-    return Math.ceil((((date - yearStart) / 86400000) + 1)/7);
-  };
-
-  const totalSemanasEsperadas = useMemo(() => {
-    const inicio = new Date(ano, mes - 1, 1);
-    const fim = new Date(ano, mes, 0);
-    return Math.max(1, getWeekOfYear(fim) - getWeekOfYear(inicio) + 1);
-  }, [mes, ano]);
 
   const regionalFinanceiro = regionalFinanceiroRes?.data || [];
   const coberturaPorRegional = useMemo(() => {
@@ -598,22 +639,27 @@ export default function ChecklistConsolidadoPage() {
 
   return (
     <div className="flex flex-col w-full">
-      <div className="flex items-center justify-between flex-wrap gap-4 mb-6 px-6 pt-6">
-        <div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>Checklists Consolidados</h1>
-          <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
-            Visão gerencial consolidada por regional e lojas &bull; <strong>Semana Atual do Mês: {semanaAtualMes}</strong> 
-            <br></br><strong>Equipamentos</strong> - quinta-feira | <strong>Carrinhos</strong> - terça-feira
-          </p>
-        </div>
-        <div className="flex gap-3">
-          <div className="relative">
-            <select className="input" style={{ paddingLeft: '12px', paddingRight: '36px', minWidth: '120px', appearance: 'none' }} value={mes} onChange={(e) => setMes(parseInt(e.target.value))}>
-              {Array.from({ length: 12 }, (_, i) => (<option key={i + 1} value={i + 1}>{MESES[i]}</option>))}
-            </select>
-            <ChevronDown size={14} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)', pointerEvents: 'none' }} />
+      <div className="card" style={{ padding: "16px 18px", margin: "24px" }}>
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <h1 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>Checklists Consolidados</h1>
+            <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', marginTop: '4px' }}>
+              Visão gerencial consolidada por regional e lojas &bull; <strong>Semana Atual do Mês: {semanaAtualMes}</strong> 
+            </p>
+            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '8px' }}>
+              <strong>Equipamentos</strong> - quinta-feira | <strong>Carrinhos</strong> - terça-feira
+            </p>
           </div>
-          <input type="number" className="input" style={{ width: '100px' }} value={ano} onChange={(e) => setAno(parseInt(e.target.value))} placeholder="Ano" />
+
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="relative">
+              <select className="select" style={{ minWidth: '150px' }} value={mes} onChange={(e) => setMes(parseInt(e.target.value))}>
+                {Array.from({ length: 12 }, (_, i) => (<option key={i + 1} value={i + 1}>{MESES[i]}</option>))}
+              </select>
+            </div>
+            <span style={{ color: "var(--color-border)", fontSize: "1.2rem", lineHeight: 1 }}>|</span>
+            <input type="number" className="input" style={{ width: '100px' }} value={ano} onChange={(e) => setAno(parseInt(e.target.value))} placeholder="Ano" />
+          </div>
         </div>
       </div>
 
@@ -627,9 +673,9 @@ export default function ChecklistConsolidadoPage() {
             </div>
             {loadingGerentes ? (
               <div className="flex justify-center p-12"><Loader2 className="animate-spin" style={{ color: 'var(--color-brand-500)' }} size={32} /></div>
-            ) : gerentesData?.length > 0 ? (
+            ) : gerentesAgregados.length > 0 ? (
               <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
-                {gerentesData.map((gerente) => (
+                {gerentesAgregados.map((gerente) => (
                   <div key={gerente.id} className="card hover-scale pointer" onClick={() => { setGerenteSelecionado(gerente); setEtapa("coordenadores"); }} style={{ padding: '20px' }}>
                     <div className="flex items-center gap-4">
                       <div className="flex items-center justify-center w-12 h-12 rounded-xl" style={{ background: 'var(--color-brand-100)', color: 'var(--color-brand-600)' }}>
@@ -638,10 +684,30 @@ export default function ChecklistConsolidadoPage() {
                       <div style={{ flex: 1 }}>
                         <h3 style={{ fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '4px' }}>{gerente.nome}</h3>
                         <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-                          <strong style={{ color: 'var(--color-brand-400)' }}>{splitRegions(gerente.regiao).length}</strong> regionais atreladas
+                          Gerente Regional • <strong style={{ color: 'var(--color-brand-400)' }}>{gerente.numRegionais}</strong> regionais
                         </p>
                       </div>
                       <ChevronDown size={18} className="rotate-270" style={{ color: 'var(--color-text-muted)' }} />
+                    </div>
+                    
+                    <div className="mt-4 pt-4" style={{ borderTop: '1px solid var(--color-border)' }}>
+                       <div className="flex justify-between items-center mb-2">
+                         <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>COBERTURA</span>
+                         <span style={{ fontSize: '0.875rem', fontWeight: 700, color: gerente.cobertura > 80 ? 'var(--color-success)' : 'var(--color-warning)' }}>
+                           {gerente.cobertura.toFixed(1)}%
+                         </span>
+                       </div>
+                       <div style={{ height: '6px', background: 'var(--color-surface-800)', borderRadius: '3px', overflow: 'hidden' }}>
+                         <div style={{ 
+                           height: '100%', 
+                           width: `${Math.min(100, gerente.cobertura)}%`, 
+                           background: gerente.cobertura > 80 ? 'var(--color-success)' : 'var(--color-warning)',
+                           transition: 'width 0.5s ease' 
+                         }} />
+                       </div>
+                       <p style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginTop: '8px' }}>
+                         Total de {gerente.totalLojas} lojas sob gestão
+                       </p>
                     </div>
                   </div>
                 ))}
@@ -668,6 +734,58 @@ export default function ChecklistConsolidadoPage() {
                 <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)' }}>{gerenteSelecionado ? `Equipe de ${gerenteSelecionado.nome}` : 'Selecione um coordenador'}</p>
               </div>
             </div>
+
+            {/* PAINEL DE INSIGHTS DO GERENTE / DIRETOR */}
+            {(usuario?.role === "GERENTE" || gerenteSelecionado) && (
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
+                <div className="card" style={{ padding: "18px", borderLeft: "4px solid var(--color-brand-500)" }}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg" style={{ background: "var(--color-brand-100)", color: "var(--color-brand-600)" }}>
+                      <ClipboardCheck size={18} />
+                    </div>
+                    <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 700 }}>Adesão no Mês</span>
+                  </div>
+                  <div className="flex items-end gap-2">
+                    <span style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--color-text-primary)" }}>{stats.taxaAdesao}%</span>
+                  </div>
+                  <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginTop: "8px" }}>
+                    <strong>{stats.lojasComPreenchimento}</strong> de <strong>{stats.totalLojas}</strong> lojas iniciaram
+                  </p>
+                </div>
+
+                <div className="card" style={{ padding: "18px", borderLeft: "4px solid var(--color-success)" }}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg" style={{ background: "var(--color-success-100)", color: "var(--color-success-600)" }}>
+                      <Building2 size={18} />
+                    </div>
+                    <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 700 }}>Regionais sob Gestão</span>
+                  </div>
+                  <div className="flex items-end gap-2">
+                    <span style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--color-text-primary)" }}>{coberturaPorRegional.length}</span>
+                  </div>
+                  <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginTop: "8px" }}>
+                    Total de <strong>{stats.totalLojas}</strong> lojas atreladas
+                  </p>
+                </div>
+
+                <div className="card" style={{ padding: "18px", borderLeft: "4px solid var(--color-danger)" }}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg" style={{ background: "var(--color-danger-100)", color: "var(--color-danger-600)" }}>
+                      <AlertTriangle size={18} />
+                    </div>
+                    <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 700 }}>Inadimplência Total</span>
+                  </div>
+                  <div className="flex items-end gap-2">
+                    <span style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--color-danger-600)" }}>{stats.inadimplentes}</span>
+                    <span style={{ fontSize: "0.875rem", color: "var(--color-danger-500)", marginBottom: "4px", fontWeight: 600 }}>lojas</span>
+                  </div>
+                  <p style={{ fontSize: "0.75rem", color: "var(--color-danger-600)", marginTop: "8px" }}>
+                    Zero checklists preenchidos no mês
+                  </p>
+                </div>
+              </div>
+            )}
+
             {loadingCoordenadores ? (
               <div className="flex justify-center p-12"><Loader2 className="animate-spin" style={{ color: 'var(--color-brand-500)' }} size={32} /></div>
             ) : coordenadoresFiltrados.length > 0 ? (

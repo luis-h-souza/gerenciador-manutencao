@@ -954,9 +954,121 @@ function TabCarrinhos({ semana, ano, usuario, canEdit }) {
 
 // ─── Componentes de Visão Corporativa / Regional ───────────────────────────
 
-function CoordenadorList({ onSelect }) {
+function GerenteList({ onSelect }) {
+  const { data: gerentesRes, isLoading } = useQuery({
+    queryKey: ["usuario-gerentes"],
+    queryFn: () =>
+      usuariosService.listar({ role: "GERENTE", limit: 100, ativo: true }).then((r) => r.data),
+  });
+
+  if (isLoading)
+    return (
+      <div
+        className="grid gap-4"
+        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))" }}
+      >
+        {[...Array(3)].map((_, i) => (
+          <div
+            key={i}
+            className="skeleton"
+            style={{ height: "100px", borderRadius: "12px" }}
+          />
+        ))}
+      </div>
+    );
+
+  const todosGerentes = gerentesRes?.data || [];
+  const gerentes = todosGerentes.filter(u => u.role === "GERENTE");
+
+  return (
+    <div className="flex flex-col gap-5 animate-fade-in">
+      <div>
+        <h2
+          style={{
+            fontSize: "1rem",
+            fontWeight: 600,
+            color: "var(--color-text-primary)",
+          }}
+        >
+          Gerentes Regionais
+        </h2>
+        <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
+          Selecione um gerente para visualizar seus coordenadores
+        </p>
+      </div>
+
+      <div
+        className="grid gap-4"
+        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+      >
+        {gerentes.map((g) => (
+          <div
+            key={g.id}
+            className="card hover-scale pointer"
+            onClick={() => onSelect(g)}
+            style={{ padding: "20px" }}
+          >
+            <div className="flex items-center gap-4">
+              <div
+                className="flex items-center justify-center w-12 h-12 rounded-xl"
+                style={{
+                  background: "var(--color-brand-100)",
+                  color: "var(--color-brand-600)",
+                }}
+              >
+                <Users size={24} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <h3
+                  style={{
+                    fontWeight: 700,
+                    color: "var(--color-text-primary)",
+                    marginBottom: "4px",
+                  }}
+                >
+                  {g.nome}
+                </h3>
+                <p
+                  style={{
+                    fontSize: "0.75rem",
+                    color: "var(--color-text-muted)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4px",
+                  }}
+                >
+                  <Building2 size={12} /> Regionais:{" "}
+                  <strong style={{ color: "var(--color-brand-400)" }}>
+                    {g.regiao || "N/A"}
+                  </strong>
+                </p>
+              </div>
+              <ChevronDown
+                size={18}
+                className="rotate-270"
+                style={{ color: "var(--color-text-muted)" }}
+              />
+            </div>
+          </div>
+        ))}
+        {gerentes.length === 0 && (
+          <div
+            className="card text-center p-10 col-span-full"
+            style={{ border: "1px dashed var(--color-border)" }}
+          >
+            <p style={{ color: "var(--color-text-muted)" }}>
+              Nenhum gerente encontrado.
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function CoordenadorList({ onSelect, regiaoFiltro }) {
   const { data: coordenadoresRes, isLoading } = useQuery({
-    queryKey: ["usuario-coordenadores"],
+    queryKey: ["usuario-coordenadores", regiaoFiltro],
     queryFn: () =>
       usuariosService.listar({ role: "COORDENADOR" }).then((r) => r.data),
   });
@@ -977,7 +1089,25 @@ function CoordenadorList({ onSelect }) {
       </div>
     );
 
-  const coordenadores = coordenadoresRes?.data || [];
+  const todosCoords = coordenadoresRes?.data || [];
+  const { usuario } = useAuth();
+
+  // Filtra por regional do gerente selecionado (ou do gerente logado) e remove o próprio usuário
+  const coordenadores = todosCoords.filter((c) => {
+    if (c.id === usuario?.id) return false;
+    if (c.role !== "COORDENADOR") return false;
+    if (!regiaoFiltro) return true;
+
+    const regioesCoordenador = (c.regiao || "")
+      .split(",")
+      .map((r) => r.trim().toUpperCase())
+      .filter(Boolean);
+    const regioesFiltro = regiaoFiltro
+      .split(",")
+      .map((r) => r.trim().toUpperCase())
+      .filter(Boolean);
+    return regioesCoordenador.some((r) => regioesFiltro.includes(r));
+  });
 
   return (
     <div className="flex flex-col gap-5 animate-fade-in">
@@ -1725,13 +1855,20 @@ export default function ChecklistPage() {
   }
 
   const [viewState, setViewState] = useState({
-    mode: ["ADMINISTRADOR", "DIRETOR", "GERENTE"].includes(usuario?.role)
-      ? "COORDENADOR_LIST"
-      : usuario?.role === "COORDENADOR"
-        ? "GESTOR_LIST"
-        : "MONTHS",
+    // DIRETOR -> começa nos gerentes
+    // GERENTE -> começa nos coordenadores (filtrado pelas suas regionais)
+    // COORDENADOR -> começa nos gestores
+    // GESTOR -> começa direto nos meses
+    mode: usuario?.role === "DIRETOR" || usuario?.role === "ADMINISTRADOR"
+      ? "GERENTE_LIST"
+      : ["GERENTE"].includes(usuario?.role)
+        ? "COORDENADOR_LIST"
+        : usuario?.role === "COORDENADOR"
+          ? "GESTOR_LIST"
+          : "MONTHS",
     gestor: usuario?.role === "GESTOR" ? usuario : null,
-    regiaoSelecionada: null,
+    gerenteSelecionado: null,     // guarda o gerente clicado (para filtrar coords)
+    regiaoSelecionada: usuario?.role === "GERENTE" ? (usuario?.regiao || null) : null,
     mes: agora.getMonth() + 1,
     ano: agora.getFullYear(),
     week: null,
@@ -1740,9 +1877,30 @@ export default function ChecklistPage() {
   const [tab, setTab] = useState("equipamentos");
   const canEdit = usuario?.role === "GESTOR";
 
+  // ─── DIRETOR: lista de gerentes ───────────────────────────────────────────
+  if (viewState.mode === "GERENTE_LIST") {
+    return (
+      <GerenteList
+        onSelect={(g) =>
+          setViewState((p) => ({
+            ...p,
+            mode: "COORDENADOR_LIST",
+            gerenteSelecionado: g,
+            // regiaoSelecionada permanece null até selecionar coordenador
+          }))
+        }
+      />
+    );
+  }
+
   if (viewState.mode === "COORDENADOR_LIST") {
     return (
       <CoordenadorList
+        // Filtra por regional do gerente selecionado (DIRETOR) ou do próprio gerente logado
+        regiaoFiltro={
+          viewState.gerenteSelecionado?.regiao || // DIRETOR que selecionou um gerente
+          (usuario?.role === "GERENTE" ? usuario.regiao : null) // GERENTE logado
+        }
         onSelect={(c) =>
           setViewState((p) => ({
             ...p,
@@ -1759,6 +1917,9 @@ export default function ChecklistPage() {
       <GestorList
         regiao={viewState.regiaoSelecionada}
         onBack={
+          // DIRETOR volta para coordenadores (que volta para gerentes)
+          // GERENTE volta para coordenadores
+          // COORDENADOR não tem voltar (é a tela inicial)
           ["ADMINISTRADOR", "DIRETOR", "GERENTE"].includes(usuario?.role)
             ? () =>
                 setViewState((p) => ({

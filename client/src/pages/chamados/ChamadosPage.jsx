@@ -1629,15 +1629,18 @@ export default function ChamadosPage() {
 
   const coordenadoresFiltrados = (() => {
     if (!coordenadoresData) return [];
+    // Filtro estrito: Apenas coordenadores e remove o próprio usuário caso apareça
+    let base = coordenadoresData.filter(u => u.role === "COORDENADOR" && u.id !== usuario?.id);
+
     if (usuario?.role === "GERENTE")
-      return coordenadoresData.filter((c) =>
+      return base.filter((c) =>
         hasOverlap(c.regiao, usuario.regiao),
       );
     if (gerenteSelecionado)
-      return coordenadoresData.filter((c) =>
+      return base.filter((c) =>
         hasOverlap(c.regiao, gerenteSelecionado.regiao),
       );
-    return coordenadoresData;
+    return base;
   })();
 
   const regioesDoContexto = (() => {
@@ -1753,33 +1756,45 @@ export default function ChamadosPage() {
   return (
     <div className="flex flex-col gap-6 animate-fade-in pb-10">
       {/* Cabeçalho de Controle e Seleção de Data */}
-      <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div>
-          <h1
-            style={{
-              fontSize: "1.5rem",
-              fontWeight: 700,
-              color: "var(--color-text-primary)",
-            }}
-          >
-            Controle Financeiro
-          </h1>
-          <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)" }}>
-            Gerenciamento de gastos e chamados por loja
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <input
-            type="month"
-            className="input"
-            style={{
-              width: "auto",
-              fontWeight: 600,
-              color: "var(--color-brand-600)",
-            }}
-            value={periodo}
-            onChange={(e) => setPeriodo(e.target.value)}
-          />
+      <div className="card" style={{ padding: "16px 18px" }}>
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <h1
+              style={{
+                fontSize: "1.25rem",
+                fontWeight: 700,
+                color: "var(--color-text-primary)",
+              }}
+            >
+              Controle Financeiro
+            </h1>
+            <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", marginTop: "4px" }}>
+              Gerenciamento de gastos e chamados por loja
+            </p>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="relative">
+              <select 
+                className="select" 
+                style={{ minWidth: '150px' }} 
+                value={parseInt(mes)} 
+                onChange={(e) => setPeriodo(`${ano}-${String(e.target.value).padStart(2, '0')}`)}
+              >
+                {["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"].map((m, i) => (
+                  <option key={i + 1} value={i + 1}>{m}</option>
+                ))}
+              </select>
+            </div>
+            <span style={{ color: "var(--color-border)", fontSize: "1.2rem", lineHeight: 1 }}>|</span>
+            <input 
+              type="number" 
+              className="input" 
+              style={{ width: '100px' }} 
+              value={parseInt(ano)} 
+              onChange={(e) => setPeriodo(`${e.target.value}-${String(mes).padStart(2, '0')}`)} 
+              placeholder="Ano" 
+            />
+          </div>
         </div>
       </div>
 
@@ -1826,7 +1841,9 @@ export default function ChamadosPage() {
                 gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
               }}
             >
-              {gerentesData.map((gerente) => (
+              {gerentesData
+                .filter(u => u.role === "GERENTE")
+                .map((gerente) => (
                 <div
                   key={gerente.id}
                   className="card hover-scale pointer"

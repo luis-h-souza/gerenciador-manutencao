@@ -51,10 +51,10 @@ export default function LoginPage() {
           >
             <Wrench size={24} color="#fff" />
           </div>
-          <h1 style={{ fontSize: '1.65rem', fontWeight: 700, color: 'var(--color-text)', marginBottom: '4px' }}>
+          <h1 style={{ fontSize: '1.65rem', fontWeight: 700, color: 'rgba(255,255,255)', marginBottom: '4px' }}>
             Gerenciador de Manutenção
           </h1>
-          <p style={{ fontSize: '0.9rem', color: 'var(--color-text)' }}>
+          <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.75)' }}>
             Acesse com suas credenciais
           </p>
         </div>
@@ -127,7 +127,7 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <p className="text-center mt-5" style={{ fontSize: '0.8rem', color: 'var(--color-text)' }}>
+        <p className="text-center mt-5" style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.75)', }}>
           Sistema interno — acesso restrito
         </p>
       </div>

@@ -24,11 +24,12 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          query: ['@tanstack/react-query'],
-          charts: ['recharts'],
+        // Vite 8 (rolldown): manualChunks deve ser uma função
+        manualChunks(id) {
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) return 'vendor';
+          if (id.includes('node_modules/react-router-dom')) return 'router';
+          if (id.includes('node_modules/@tanstack')) return 'query';
+          if (id.includes('node_modules/recharts')) return 'charts';
         },
       },
     },
