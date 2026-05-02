@@ -43,7 +43,25 @@ import {
   CircleHelp,
   Eye,
   X,
+  Calendar,
 } from "lucide-react";
+
+// ─── Utilitário: gera lista de meses disponíveis (últimos 24 meses) ────────────
+function gerarOpcoesMes() {
+  const hoje = new Date();
+  const opcoes = [];
+  for (let i = 0; i < 24; i++) {
+    const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+    opcoes.push({
+      value: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`,
+      label: d.toLocaleString("pt-BR", { month: "long", year: "numeric" }),
+      mes: d.getMonth() + 1,
+      ano: d.getFullYear(),
+    });
+  }
+  return opcoes;
+}
+const OPCOES_MES = gerarOpcoesMes();
 
 const CORES_SEGMENTO = [
   "#0ea5e9",
@@ -611,11 +629,114 @@ function RegionalDrilldown({
   );
 }
 
+function MonthFilterBar({ filtro, setFiltro, showRegional = false, opcoesRegionais = [], compact = false }) {
+  const hoje = new Date();
+  const mesAtual = hoje.getMonth() + 1;
+  const anoAtual = hoje.getFullYear();
+  const isCurrentMonth = filtro.mes === mesAtual && filtro.ano === anoAtual;
+  const valorSelect = `${filtro.ano}-${String(filtro.mes).padStart(2, "0")}`;
+
+  return (
+    <div
+      className="card"
+      style={{
+        padding: compact ? "12px 16px" : "14px 18px",
+        marginBottom: compact ? "0" : "4px",
+      }}
+    >
+      <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-2" style={{ color: "var(--color-brand-500)" }}>
+          <Calendar size={16} />
+          <span style={{ fontSize: "0.78rem", fontWeight: 600, color: "var(--color-text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+            Filtros
+          </span>
+        </div>
+
+        {/* Filtro Mês */}
+        <div className="flex items-center gap-2">
+          <select
+            id="dashboard-filtro-mes"
+            className="select"
+            style={{ minWidth: "200px" }}
+            value={valorSelect}
+            onChange={(e) => {
+              const opt = OPCOES_MES.find((o) => o.value === e.target.value);
+              if (opt) setFiltro((prev) => ({ ...prev, mes: opt.mes, ano: opt.ano }));
+            }}
+          >
+            {OPCOES_MES.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}{opt.value === `${anoAtual}-${String(mesAtual).padStart(2, "00")}` ? " (atual)" : ""}
+              </option>
+            ))}
+          </select>
+          {!isCurrentMonth && (
+            <button
+              className="btn btn-ghost btn-sm"
+              onClick={() => setFiltro((prev) => ({ ...prev, mes: mesAtual, ano: anoAtual }))}
+              title="Voltar ao mês atual"
+              style={{ gap: "4px", fontSize: "0.75rem", border: "1px solid var(--color-border)" }}
+            >
+              Mês atual
+            </button>
+          )}
+        </div>
+
+        {/* Filtro Regional (opcional) */}
+        {showRegional && (
+          <div className="flex items-center gap-2" style={{ marginLeft: "8px" }}>
+            <select
+              id="dashboard-filtro-regional"
+              className="select"
+              style={{ minWidth: "200px" }}
+              value={filtro.regiao || ""}
+              onChange={(e) => setFiltro((prev) => ({ ...prev, regiao: e.target.value }))}
+            >
+              <option value="">Todas as regionais</option>
+              {opcoesRegionais.map((regiao) => (
+                <option key={regiao} value={regiao}>{regiao}</option>
+              ))}
+            </select>
+            {filtro.regiao && (
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={() => setFiltro((prev) => ({ ...prev, regiao: "" }))}
+                style={{ fontSize: "0.75rem", border: "1px solid var(--color-border)" }}
+              >
+                Limpar
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Badge indicativo */}
+        {!isCurrentMonth && (
+          <span
+            className="badge"
+            style={{
+              background: "rgba(245,158,11,0.15)",
+              color: "var(--color-warning)",
+              border: "1px solid rgba(245,158,11,0.3)",
+              fontSize: "0.7rem",
+              marginLeft: "auto",
+            }}
+          >
+            Histórico de 6 meses não muda com este filtro
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function CorporativoDashboard({ filtro, setFiltro }) {
   const navigate = useNavigate();
   const [showExecutiveSummary, setShowExecutiveSummary] = useState(true);
   const [regionalSelecionada, setRegionalSelecionada] = useState(null);
   const [rankingHelpOpen, setRankingHelpOpen] = useState(false);
+  // Histórico não muda com o filtro de mês — sempre exibe os últimos 6 meses
+  const filtroHistorico = { regiao: filtro.regiao };
+
   const { data: regionalRes, isLoading: l1 } = useQuery({
     queryKey: ["dashboard-regional", filtro],
     queryFn: () => dashboardService.regional(filtro).then((r) => r.data),
@@ -627,8 +748,8 @@ function CorporativoDashboard({ filtro, setFiltro }) {
   });
 
   const { data: historicoMacro = [], isLoading: l3 } = useQuery({
-    queryKey: ["dashboard-historico-macro", filtro],
-    queryFn: () => dashboardService.historicoMensal(filtro).then((r) => r.data),
+    queryKey: ["dashboard-historico-macro", filtroHistorico],
+    queryFn: () => dashboardService.historicoMensal(filtroHistorico).then((r) => r.data),
   });
 
   const { data: porSegmentoMacro = [], isLoading: l4 } = useQuery({
@@ -781,6 +902,18 @@ function CorporativoDashboard({ filtro, setFiltro }) {
                 </button>
               )}
             </div>
+            <span
+              style={{
+                fontSize: "0.72rem",
+                color: "var(--color-text-muted)",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Período:{" "}
+              <strong style={{ color: "var(--color-text-secondary)" }}>
+                {periodoAtual}
+              </strong>
+            </span>
           </div>
         </div>
 
@@ -1622,18 +1755,21 @@ function CorporativoDashboard({ filtro, setFiltro }) {
   );
 }
 
-function GestorDashboard({ filtro }) {
+function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [] }) {
   const { usuario } = useAuth();
   const navigate = useNavigate();
   const isGestor = usuario?.role === "GESTOR";
+  const isCoordenador = usuario?.role === "COORDENADOR";
   const [weeksToShow, setWeeksToShow] = useState(1);
   const { data: resumo, isLoading: l1 } = useQuery({
     queryKey: ["dashboard-resumo", filtro],
     queryFn: () => dashboardService.resumo(filtro).then((r) => r.data),
   });
+  // Histórico não muda com o filtro de mês — sempre exibe os últimos 6 meses
+  const filtroHistorico = { regiao: filtro.regiao };
   const { data: historico = [], isLoading: l2 } = useQuery({
-    queryKey: ["dashboard-historico", filtro],
-    queryFn: () => dashboardService.historicoMensal(filtro).then((r) => r.data),
+    queryKey: ["dashboard-historico", filtroHistorico],
+    queryFn: () => dashboardService.historicoMensal(filtroHistorico).then((r) => r.data),
   });
   const { data: porSegmento = [], isLoading: l3 } = useQuery({
     queryKey: ["dashboard-segmento", filtro],
@@ -1677,7 +1813,7 @@ function GestorDashboard({ filtro }) {
 
   return (
     <div className="flex flex-col gap-5 animate-fade-in">
-      {/* Cabeçalho do Gestor */}
+      {/* Cabeçalho do Gestor / Coordenador */}
       <div className="flex items-center justify-between">
         <div>
           <h2
@@ -1702,6 +1838,15 @@ function GestorDashboard({ filtro }) {
           </p>
         </div>
       </div>
+
+      {/* ─── FILTROS ─────────────────────────────────────────────────── */}
+      <MonthFilterBar
+        filtro={filtro}
+        setFiltro={setFiltro}
+        showRegional={isCoordenador}
+        opcoesRegionais={opcoesRegionais}
+        compact
+      />
 
       {/* Stat cards */}
       <div className="flex flex-wrap gap-4 items-stretch">
@@ -2380,18 +2525,51 @@ function TecnicoDashboard() {
 
 export default function DashboardPage() {
   const { usuario } = useAuth();
+  const hoje = new Date();
   const [filtro, setFiltro] = useState({
-    mes: new Date().getMonth() + 1,
-    ano: new Date().getFullYear(),
+    mes: hoje.getMonth() + 1,
+    ano: hoje.getFullYear(),
     regiao: "",
   });
+
+  // Para coordenadores: busca regionais disponíveis
+  const isCoordenador = usuario?.role === "COORDENADOR";
+  const { data: regionalResCoordenador } = useQuery({
+    queryKey: ["dashboard-regional-coordenador"],
+    queryFn: () =>
+      dashboardService
+        .regional({ mes: hoje.getMonth() + 1, ano: hoje.getFullYear(), regiao: "" })
+        .then((r) => r.data),
+    enabled: isCoordenador,
+    staleTime: 5 * 60 * 1000,
+  });
+  const opcoesRegionaisCoordenador = (
+    (regionalResCoordenador?.data || []).map((r) => r.regiao)
+  );
 
   const macroRoles = ["ADMINISTRADOR", "DIRETOR", "GERENTE"];
 
   if (usuario?.role === "TECNICO") return <TecnicoDashboard />;
+
   if (macroRoles.includes(usuario?.role)) {
-    return <CorporativoDashboard filtro={filtro} setFiltro={setFiltro} />;
+    return (
+      <div className="flex flex-col gap-5">
+        {/* Barra de filtros global para roles macro */}
+        <MonthFilterBar
+          filtro={filtro}
+          setFiltro={setFiltro}
+          showRegional={false}
+        />
+        <CorporativoDashboard filtro={filtro} setFiltro={setFiltro} />
+      </div>
+    );
   }
 
-  return <GestorDashboard filtro={filtro} />;
+  return (
+    <GestorDashboard
+      filtro={filtro}
+      setFiltro={setFiltro}
+      opcoesRegionais={opcoesRegionaisCoordenador}
+    />
+  );
 }
