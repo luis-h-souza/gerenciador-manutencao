@@ -2,7 +2,10 @@ import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../contexts/AuthContext";
 import { checklistService, usuariosService, dashboardService } from "../../services";
-import { ChevronDown, Calendar, ChevronUp, Loader2, MapPin, Store, X, CheckCircle2, AlertCircle, TrendingUp, UserRound, DollarSign, ClipboardCheck, Building2, AlertTriangle } from "lucide-react";
+import { ChevronDown, Calendar, ChevronUp, Loader2, MapPin, Store, X, CheckCircle2, AlertCircle, TrendingUp, UserRound, DollarSign, ClipboardCheck, Building2, AlertTriangle, CircleHelp } from "lucide-react";
+import InfoTooltip from "../../components/feedback/InfoTooltip";
+
+
 
 const fmt = (v) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
@@ -74,8 +77,8 @@ const SemanaSelect = ({ semanas, semanaAtual, onMudar }) => {
 };
 
 // ─── Modal de Detalhes do Card ───────────────────────────────────────────────
-const ChecklistCardModal = ({ item, tipo, semanas, onClose }) => {
-  const [semanaAtual, setSemanaAtual] = useState(semanas[0]?.numero || 1);
+const ChecklistCardModal = ({ item, tipo, semanas, semanaInicial, onClose }) => {
+  const [semanaAtual, setSemanaAtual] = useState(semanaInicial || semanas[0]?.numero || 1);
 
   const semanadados = semanas.find((s) => s.numero === semanaAtual);
   const isEquipamento = tipo === "equipamento";
@@ -84,11 +87,20 @@ const ChecklistCardModal = ({ item, tipo, semanas, onClose }) => {
       ? semanadados.equipamentos
       : semanadados.carrinhos
     : [];
-  const itemAtual = items.find((i) =>
-    isEquipamento
-      ? i.tipoEquipamento === item.tipo
-      : i.tipoCarrinho === item.tipo,
-  );
+  const itemAtual = items.find((i) => {
+    const idModal = (item.tipoEquipamento || item.tipoCarrinho || item.tipo || "").toString().trim();
+    const labelModal = (item.tipoLabel || "").toString().trim();
+    
+    if (isEquipamento) {
+      const idItem = (i.tipoEquipamento || "").toString().trim();
+      const labelItem = (i.tipoLabel || "").toString().trim();
+      return idItem === idModal || (labelModal && labelItem === labelModal);
+    } else {
+      const idItem = (i.tipoCarrinho || "").toString().trim();
+      const labelItem = (i.tipoLabel || "").toString().trim();
+      return idItem === idModal || (labelModal && labelItem === labelModal);
+    }
+  });
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 animate-fade-in" style={{ background: 'rgba(0,0,0,0.6)', padding: '20px' }}>
@@ -180,7 +192,7 @@ const ChecklistCardModal = ({ item, tipo, semanas, onClose }) => {
         </div>
 
         <div style={{ padding: '16px 20px', borderTop: '1px solid var(--color-border)', background: 'var(--color-surface-800)' }}>
-          <button onClick={onClose} className="btn btn-neutral w-full justify-center">
+          <button onClick={onClose} className="btn btn-ghost w-full justify-center">
             Fechar Detalhes
           </button>
         </div>
@@ -220,21 +232,21 @@ const LojasStatusModal = ({ isOpen, onClose, tipo, lojas }) => {
         </div>
         <div style={{ padding: '20px', overflowY: 'auto', flex: 1 }}>
           {sortedRegioes.length === 0 ? (
-             <p style={{ color: 'var(--color-text-muted)', textAlign: 'center', padding: '20px' }}>Nenhuma loja encontrada.</p>
+            <p style={{ color: 'var(--color-text-muted)', textAlign: 'center', padding: '20px' }}>Nenhuma loja encontrada.</p>
           ) : (
-             sortedRegioes.map((regiao, idx) => (
-               <div key={regiao} style={{ marginBottom: idx === sortedRegioes.length - 1 ? 0 : '24px' }}>
-                 <h4 style={{ fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '12px', borderBottom: '2px solid var(--color-border)', paddingBottom: '4px' }}>Regional {regiao}</h4>
-                 <ul className="flex flex-col gap-2">
-                   {agrupadas.get(regiao).sort((a,b)=>a.nome.localeCompare(b.nome)).map(loja => (
-                      <li key={loja.unidade} className="flex items-center gap-2" style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>
-                         <Store size={14} style={{ color: 'var(--color-text-muted)' }} /> 
-                         <strong>{loja.nome}</strong> {loja.numero && <span style={{ color: 'var(--color-text-muted)' }}>(Und: {loja.numero})</span>}
-                      </li>
-                   ))}
-                 </ul>
-               </div>
-             ))
+            sortedRegioes.map((regiao, idx) => (
+              <div key={regiao} style={{ marginBottom: idx === sortedRegioes.length - 1 ? 0 : '24px' }}>
+                <h4 style={{ fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '12px', borderBottom: '2px solid var(--color-border)', paddingBottom: '4px' }}>Regional {regiao}</h4>
+                <ul className="flex flex-col gap-2">
+                  {agrupadas.get(regiao).sort((a, b) => a.nome.localeCompare(b.nome)).map(loja => (
+                    <li key={loja.unidade} className="flex items-center gap-2" style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>
+                      <Store size={14} style={{ color: 'var(--color-text-muted)' }} />
+                      <strong>{loja.nome}</strong> {loja.numero && <span style={{ color: 'var(--color-text-muted)' }}>(loja {loja.numero})</span>}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
           )}
         </div>
       </div>
@@ -292,7 +304,7 @@ const ChecklistLojaConsolidado = ({ loja, semanas, onVoltar }) => {
                     key={equip.tipoEquipamento}
                     item={equip}
                     tipo="equipamento"
-                    onClick={() => setCardSelecionado({ ...equip, tipo: "equipamento" })}
+                    onClick={() => setCardSelecionado({ ...equip, categoria: "equipamento" })}
                   />
                 ))}
               </div>
@@ -310,7 +322,7 @@ const ChecklistLojaConsolidado = ({ loja, semanas, onVoltar }) => {
                     key={carrinho.tipoCarrinho}
                     item={carrinho}
                     tipo="carrinho"
-                    onClick={() => setCardSelecionado({ ...carrinho, tipo: "carrinho" })}
+                    onClick={() => setCardSelecionado({ ...carrinho, categoria: "carrinho" })}
                   />
                 ))}
               </div>
@@ -333,8 +345,9 @@ const ChecklistLojaConsolidado = ({ loja, semanas, onVoltar }) => {
       {cardSelecionado && (
         <ChecklistCardModal
           item={cardSelecionado}
-          tipo={cardSelecionado.tipo}
+          tipo={cardSelecionado.categoria}
           semanas={semanas}
+          semanaInicial={semanaAtual}
           onClose={() => setCardSelecionado(null)}
         />
       )}
@@ -365,7 +378,7 @@ export default function ChecklistConsolidadoPage() {
   const [lojasDaRegional, setLojasDaRegional] = useState([]);
   const [lojaSelecionada, setLojaSelecionada] = useState(null);
   const [semanas, setSemanas] = useState([]);
-  
+
   const [modalLojasAberto, setModalLojasAberto] = useState(false);
   const [tipoModalLojas, setTipoModalLojas] = useState("pendentes"); // 'pendentes' ou 'preenchidas'
 
@@ -395,7 +408,7 @@ export default function ChecklistConsolidadoPage() {
       }
       mapa.get(regiao).push(loja);
     });
-    
+
     const sortedMapa = new Map([...mapa.entries()].sort());
     return sortedMapa;
   }, [data?.lojas]);
@@ -409,9 +422,9 @@ export default function ChecklistConsolidadoPage() {
 
   const getWeekOfYear = (d) => {
     const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-    date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay()||7));
-    const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
-    return Math.ceil((((date - yearStart) / 86400000) + 1)/7);
+    date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7));
+    const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+    return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
   };
 
   const totalSemanasEsperadas = useMemo(() => {
@@ -432,28 +445,28 @@ export default function ChecklistConsolidadoPage() {
     return gerentesData
       .filter(u => u.role === "GERENTE")
       .map(g => {
-      const regioesG = splitRegions(g.regiao);
-      const regionaisAtreladas = Array.from(regionaisAgrupadas.entries())
-        .filter(([regiao]) => regioesG.includes(regiao.toUpperCase()))
-        .map(([regiao, lojas]) => {
-          const semanasPreenchidas = lojas.reduce(
-            (sum, loja) => sum + Math.min(Object.keys(loja.consolidado || {}).length, totalSemanasEsperadas),
-            0
-          );
-          return {
-            lojas: lojas.length,
-            semanasPreenchidas,
-            esperadas: lojas.length * totalSemanasEsperadas
-          };
-        });
+        const regioesG = splitRegions(g.regiao);
+        const regionaisAtreladas = Array.from(regionaisAgrupadas.entries())
+          .filter(([regiao]) => regioesG.includes(regiao.toUpperCase()))
+          .map(([regiao, lojas]) => {
+            const semanasPreenchidas = lojas.reduce(
+              (sum, loja) => sum + Math.min(Object.keys(loja.consolidado || {}).length, totalSemanasEsperadas),
+              0
+            );
+            return {
+              lojas: lojas.length,
+              semanasPreenchidas,
+              esperadas: lojas.length * totalSemanasEsperadas
+            };
+          });
 
-      const totalLojas = regionaisAtreladas.reduce((sum, r) => sum + r.lojas, 0);
-      const totalPreenchidas = regionaisAtreladas.reduce((sum, r) => sum + r.semanasPreenchidas, 0);
-      const totalEsperadas = regionaisAtreladas.reduce((sum, r) => sum + r.esperadas, 0);
-      const cobertura = totalEsperadas > 0 ? (totalPreenchidas / totalEsperadas) * 100 : 0;
+        const totalLojas = regionaisAtreladas.reduce((sum, r) => sum + r.lojas, 0);
+        const totalPreenchidas = regionaisAtreladas.reduce((sum, r) => sum + r.semanasPreenchidas, 0);
+        const totalEsperadas = regionaisAtreladas.reduce((sum, r) => sum + r.esperadas, 0);
+        const cobertura = totalEsperadas > 0 ? (totalPreenchidas / totalEsperadas) * 100 : 0;
 
-      return { ...g, totalLojas, cobertura, numRegionais: regioesG.length };
-    }).sort((a, b) => b.cobertura - a.cobertura);
+        return { ...g, totalLojas, cobertura, numRegionais: regioesG.length };
+      }).sort((a, b) => b.cobertura - a.cobertura);
   }, [gerentesData, regionaisAgrupadas, totalSemanasEsperadas]);
 
   const { data: coordenadoresData, isLoading: loadingCoordenadores } = useQuery({
@@ -472,7 +485,7 @@ export default function ChecklistConsolidadoPage() {
     } else if (gerenteSelecionado) {
       filtrados = filtrados.filter(c => hasOverlap(c.regiao, gerenteSelecionado.regiao));
     }
-    
+
     return filtrados;
   }, [coordenadoresData, usuario, gerenteSelecionado]);
 
@@ -482,7 +495,7 @@ export default function ChecklistConsolidadoPage() {
     // Para Gerente ou quando um Gerente está selecionado (drill-down do Diretor)
     if (gerenteSelecionado) return splitRegions(gerenteSelecionado.regiao);
     if (usuario?.role === "GERENTE") return splitRegions(usuario.regiao);
-    return null; 
+    return null;
   }, [coordenadorSelecionado, gerenteSelecionado, usuario]);
 
   const regionaisAgrupadasFiltradas = useMemo(() => {
@@ -503,7 +516,7 @@ export default function ChecklistConsolidadoPage() {
   const stats = useMemo(() => {
     let totalLojas = 0;
     let lojasComPreenchimento = 0;
-    
+
     for (const lojas of regionaisAgrupadasFiltradas.values()) {
       totalLojas += lojas.length;
       lojas.forEach(loja => {
@@ -558,15 +571,15 @@ export default function ChecklistConsolidadoPage() {
   )[0];
   const insightRegionalCritica =
     liderGastosRegional &&
-    piorCoberturaRegional &&
-    liderGastosRegional.regiao === piorCoberturaRegional.regiao &&
-    piorCoberturaRegional.coberturaPct < 100
+      piorCoberturaRegional &&
+      liderGastosRegional.regiao === piorCoberturaRegional.regiao &&
+      piorCoberturaRegional.coberturaPct < 100
       ? {
-          regiao: liderGastosRegional.regiao,
-          gastosMes: Number(liderGastosRegional.gastosMes || 0),
-          coberturaPct: Number(piorCoberturaRegional.coberturaPct || 0),
-          lojasSemChecklist: piorCoberturaRegional.lojasSemChecklist,
-        }
+        regiao: liderGastosRegional.regiao,
+        gastosMes: Number(liderGastosRegional.gastosMes || 0),
+        coberturaPct: Number(piorCoberturaRegional.coberturaPct || 0),
+        lojasSemChecklist: piorCoberturaRegional.lojasSemChecklist,
+      }
       : null;
 
   const regionaisBaixaCobertura = coberturaPorRegional
@@ -575,10 +588,10 @@ export default function ChecklistConsolidadoPage() {
 
   const handleSelecionarLoja = (loja) => {
     setLojaSelecionada(loja);
-    
+
     // Descobrir qual a semana 1 do mês selecionado
     const semanaInicioSelecionado = getWeekOfYear(new Date(ano, mes - 1, 1));
-    
+
     // Converte os dados do consolidado da loja em um array de semanas
     const semanas_array = Object.entries(loja.consolidado || {})
       .map(([key, consolidadoData]) => {
@@ -644,7 +657,10 @@ export default function ChecklistConsolidadoPage() {
           <div>
             <h1 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>Checklists Consolidados</h1>
             <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', marginTop: '4px' }}>
-              Visão gerencial consolidada por regional e lojas &bull; <strong>Semana Atual do Mês: {semanaAtualMes}</strong> 
+              Visão gerencial consolidada por regional e lojas
+            </p>
+            <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', marginTop: '4px' }}>
+              Semana <span style={{ fontWeight: 600, color: 'var(--color-brand-600)' }}>{semanaAtualMes}</span> (atual) de <span style={{ fontWeight: 600, color: 'var(--color-brand-600)' }}>{MESES[mes - 1]}</span>
             </p>
             <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '8px' }}>
               <strong>Equipamentos</strong> - quinta-feira | <strong>Carrinhos</strong> - terça-feira
@@ -684,30 +700,30 @@ export default function ChecklistConsolidadoPage() {
                       <div style={{ flex: 1 }}>
                         <h3 style={{ fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '4px' }}>{gerente.nome}</h3>
                         <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-                          Gerente Regional • <strong style={{ color: 'var(--color-brand-400)' }}>{gerente.numRegionais}</strong> regionais
+                          Gerente Regional <strong style={{ color: 'var(--color-brand-400)' }}>{gerente.numRegionais}</strong> regionais
                         </p>
                       </div>
                       <ChevronDown size={18} className="rotate-270" style={{ color: 'var(--color-text-muted)' }} />
                     </div>
-                    
+
                     <div className="mt-4 pt-4" style={{ borderTop: '1px solid var(--color-border)' }}>
-                       <div className="flex justify-between items-center mb-2">
-                         <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>COBERTURA</span>
-                         <span style={{ fontSize: '0.875rem', fontWeight: 700, color: gerente.cobertura > 80 ? 'var(--color-success)' : 'var(--color-warning)' }}>
-                           {gerente.cobertura.toFixed(1)}%
-                         </span>
-                       </div>
-                       <div style={{ height: '6px', background: 'var(--color-surface-800)', borderRadius: '3px', overflow: 'hidden' }}>
-                         <div style={{ 
-                           height: '100%', 
-                           width: `${Math.min(100, gerente.cobertura)}%`, 
-                           background: gerente.cobertura > 80 ? 'var(--color-success)' : 'var(--color-warning)',
-                           transition: 'width 0.5s ease' 
-                         }} />
-                       </div>
-                       <p style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginTop: '8px' }}>
-                         Total de {gerente.totalLojas} lojas sob gestão
-                       </p>
+                      <div className="flex justify-between items-center mb-2">
+                        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>COBERTURA</span>
+                        <span style={{ fontSize: '0.875rem', fontWeight: 700, color: gerente.cobertura > 80 ? 'var(--color-success)' : 'var(--color-warning)' }}>
+                          {gerente.cobertura.toFixed(1)}%
+                        </span>
+                      </div>
+                      <div style={{ height: '6px', background: 'var(--color-surface-800)', borderRadius: '3px', overflow: 'hidden' }}>
+                        <div style={{
+                          height: '100%',
+                          width: `${Math.min(100, gerente.cobertura)}%`,
+                          background: gerente.cobertura > 80 ? 'var(--color-success)' : 'var(--color-warning)',
+                          transition: 'width 0.5s ease'
+                        }} />
+                      </div>
+                      <p style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginTop: '8px' }}>
+                        Total de {gerente.totalLojas} lojas sob gestão
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -740,10 +756,14 @@ export default function ChecklistConsolidadoPage() {
               <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
                 <div className="card" style={{ padding: "18px", borderLeft: "4px solid var(--color-brand-500)" }}>
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-lg" style={{ background: "var(--color-brand-100)", color: "var(--color-brand-600)" }}>
-                      <ClipboardCheck size={18} />
+                    <div className="p-2 rounded-lg" style={{ background: "var(--color-brand-100)", color: "var(--color-brand-600)" }}>
+                      <TrendingUp size={20} />
                     </div>
                     <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 700 }}>Adesão no Mês</span>
+                    <InfoTooltip 
+                      title="Adesão Mensal"
+                      text="Mede o percentual de lojas que iniciaram ao menos um checklist preventivo no mês atual, cruzando dados de todas as regionais sob sua gestão." 
+                    />
                   </div>
                   <div className="flex items-end gap-2">
                     <span style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--color-text-primary)" }}>{stats.taxaAdesao}%</span>
@@ -755,8 +775,8 @@ export default function ChecklistConsolidadoPage() {
 
                 <div className="card" style={{ padding: "18px", borderLeft: "4px solid var(--color-success)" }}>
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-lg" style={{ background: "var(--color-success-100)", color: "var(--color-success-600)" }}>
-                      <Building2 size={18} />
+                    <div className="p-2 rounded-lg bg-green-100 text-green-600">
+                      <CheckCircle2 size={20} />
                     </div>
                     <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 700 }}>Regionais sob Gestão</span>
                   </div>
@@ -770,16 +790,20 @@ export default function ChecklistConsolidadoPage() {
 
                 <div className="card" style={{ padding: "18px", borderLeft: "4px solid var(--color-danger)" }}>
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-lg" style={{ background: "var(--color-danger-100)", color: "var(--color-danger-600)" }}>
-                      <AlertTriangle size={18} />
+                    <div className="p-2 rounded-lg bg-red-100 text-red-600">
+                      <AlertCircle size={20} />
                     </div>
                     <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 700 }}>Inadimplência Total</span>
+                    <InfoTooltip 
+                      title="Lojas Críticas"
+                      text="Identifica lojas com zero preenchimento. Correlacionado com gastos financeiros, indica onde a manutenção pode estar sendo apenas reativa." 
+                    />
                   </div>
                   <div className="flex items-end gap-2">
-                    <span style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--color-danger-600)" }}>{stats.inadimplentes}</span>
-                    <span style={{ fontSize: "0.875rem", color: "var(--color-danger-500)", marginBottom: "4px", fontWeight: 600 }}>lojas</span>
+                    <span style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--color-text-primary)" }}>{stats.inadimplentes}</span>
+                    <span style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", marginBottom: "4px", fontWeight: 600 }}>lojas</span>
                   </div>
-                  <p style={{ fontSize: "0.75rem", color: "var(--color-danger-600)", marginTop: "8px" }}>
+                  <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginTop: "8px" }}>
                     Zero checklists preenchidos no mês
                   </p>
                 </div>
@@ -879,8 +903,13 @@ export default function ChecklistConsolidadoPage() {
                   <DollarSign size={20} />
                 </div>
                 <div>
-                  <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>
+                  <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center' }}>
                     Insights Correlacionados
+                    <InfoTooltip 
+                      balloonStyle={{ right: 'auto', left: -180 }}
+                      title="Inteligência Operacional"
+                      text="Algoritmo que cruza o volume financeiro com a adesão aos checklists. Prioriza alertas onde o gasto é alto e a prevenção é baixa." 
+                    />
                   </h3>
                   <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)' }}>
                     Cruzamento entre gasto regional e adesão mensal aos checklists.
@@ -972,31 +1001,31 @@ export default function ChecklistConsolidadoPage() {
                 </div>
               </div>
 
-            {isLoading ? (
-              <div className="flex justify-center p-12"><Loader2 className="animate-spin" style={{ color: 'var(--color-brand-500)' }} size={32} /></div>
-            ) : regionaisAgrupadasFiltradas.size > 0 ? (
-              <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
-                {Array.from(regionaisAgrupadasFiltradas.entries()).map(([regiao, lojas]) => (
-                  <div key={regiao} className="card hover-scale pointer" onClick={() => handleSelecionarRegional(regiao, lojas)} style={{ padding: '20px' }}>
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center justify-center w-12 h-12 rounded-xl" style={{ background: 'var(--color-brand-100)', color: 'var(--color-brand-600)' }}>
-                        <MapPin size={24} />
+              {isLoading ? (
+                <div className="flex justify-center p-12"><Loader2 className="animate-spin" style={{ color: 'var(--color-brand-500)' }} size={32} /></div>
+              ) : regionaisAgrupadasFiltradas.size > 0 ? (
+                <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
+                  {Array.from(regionaisAgrupadasFiltradas.entries()).map(([regiao, lojas]) => (
+                    <div key={regiao} className="card hover-scale pointer" onClick={() => handleSelecionarRegional(regiao, lojas)} style={{ padding: '20px' }}>
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center justify-center w-12 h-12 rounded-xl" style={{ background: 'var(--color-brand-100)', color: 'var(--color-brand-600)' }}>
+                          <MapPin size={24} />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <h3 style={{ fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '4px' }}>Regional {regiao}</h3>
+                          <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+                            <strong style={{ color: 'var(--color-brand-400)' }}>{lojas.length}</strong> {lojas.length === 1 ? 'loja' : 'lojas'}
+                          </p>
+                        </div>
+                        <ChevronDown size={18} className="rotate-270" style={{ color: 'var(--color-text-muted)' }} />
                       </div>
-                      <div style={{ flex: 1 }}>
-                        <h3 style={{ fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '4px' }}>Regional {regiao}</h3>
-                        <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-                          <strong style={{ color: 'var(--color-brand-400)' }}>{lojas.length}</strong> {lojas.length === 1 ? 'loja' : 'lojas'}
-                        </p>
-                      </div>
-                      <ChevronDown size={18} className="rotate-270" style={{ color: 'var(--color-text-muted)' }} />
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="card text-center p-12" style={{ border: '1px dashed var(--color-border)' }}>
-                <p style={{ color: 'var(--color-text-muted)' }}>Nenhuma regional com lojas ativas no seu perfil.</p>
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="card text-center p-12" style={{ border: '1px dashed var(--color-border)' }}>
+                  <p style={{ color: 'var(--color-text-muted)' }}>Nenhuma regional com lojas ativas no seu perfil.</p>
+                </div>
               )}
             </div>
           </div>
@@ -1032,9 +1061,9 @@ export default function ChecklistConsolidadoPage() {
                           Unidade: <strong style={{ color: 'var(--color-text-secondary)' }}>{loja.numero || loja.unidade}</strong>
                         </p>
                         {totalChecklists > 0 && (
-                           <div className="mt-2 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-800">
-                             {totalChecklists} {totalChecklists === 1 ? 'semana com dados' : 'semanas com dados'}
-                           </div>
+                          <div className="mt-2 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-800">
+                            {totalChecklists} {totalChecklists === 1 ? 'semana com dados' : 'semanas com dados'}
+                          </div>
                         )}
                       </div>
                       <ChevronDown size={18} className="rotate-270" style={{ color: 'var(--color-text-muted)' }} />
@@ -1048,20 +1077,20 @@ export default function ChecklistConsolidadoPage() {
 
         {/* ─── Etapa 3: Checklist Consolidado da Loja ─── */}
         {etapa === "checklist" && lojaSelecionada && (
-          <ChecklistLojaConsolidado 
-            key={lojaSelecionada.unidade} 
-            loja={lojaSelecionada} 
-            semanas={semanas} 
-            onVoltar={handleVoltar} 
+          <ChecklistLojaConsolidado
+            key={lojaSelecionada.unidade}
+            loja={lojaSelecionada}
+            semanas={semanas}
+            onVoltar={handleVoltar}
           />
         )}
       </div>
 
-      <LojasStatusModal 
-        isOpen={modalLojasAberto} 
-        onClose={() => setModalLojasAberto(false)} 
-        tipo={tipoModalLojas} 
-        lojas={lojasVisiveis} 
+      <LojasStatusModal
+        isOpen={modalLojasAberto}
+        onClose={() => setModalLojasAberto(false)}
+        tipo={tipoModalLojas}
+        lojas={lojasVisiveis}
       />
     </div>
   );

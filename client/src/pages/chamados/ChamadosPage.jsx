@@ -28,7 +28,9 @@ import {
   Activity,
   AlertTriangle,
   CircleHelp,
+  Trophy,
 } from "lucide-react";
+import InfoTooltip from "../../components/feedback/InfoTooltip";
 import {
   ResponsiveContainer,
   BarChart,
@@ -153,7 +155,7 @@ const TooltipCustom = ({ active, payload, label }) => {
       {payload.map((p, i) => {
         const isCurrency = p.name?.toLowerCase().includes("custo") || p.name?.toLowerCase().includes("valor") || p.name?.includes("R$") || p.dataKey === "valor" || p.dataKey === "total";
         const isPercent = p.name?.toLowerCase().includes("%") || p.name?.toLowerCase().includes("acumulada") || p.dataKey === "acumulado";
-        
+
         // Cores fixas: Azul para custo, Vermelho para acumulado
         const itemColor = isCurrency ? "var(--color-brand-500)" : isPercent ? "var(--color-danger)" : p.color;
 
@@ -503,7 +505,7 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
             }}
           >
             Referente a{" "}
-            <strong>{detalhe.financeiro?.totalChamados} chamados</strong>{" "}
+            <strong style={{ color: "var(--color-brand-400)", fontSize: "0.875rem" }}>{detalhe.financeiro?.totalChamados} chamados</strong>{" "}
             abertos.
           </p>
         </div>
@@ -517,11 +519,7 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
         >
           <div className="flex items-center gap-3 mb-4">
             <div
-              className="flex items-center justify-center w-10 h-10 rounded-lg"
-              style={{
-                background: "var(--color-danger-100)",
-                color: "var(--color-danger-600)",
-              }}
+              className="flex items-center justify-center w-10 h-10 rounded-lg bg-red-100 text-red-600"
             >
               <AlertTriangle size={20} />
             </div>
@@ -549,7 +547,7 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
             <span
               style={{
                 fontSize: "0.875rem",
-                color: "var(--color-danger-600)",
+                color: "var(--color-text-muted)",
                 marginBottom: "6px",
                 fontWeight: 600,
               }}
@@ -560,12 +558,12 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
           <p
             style={{
               fontSize: "0.75rem",
-              color: "var(--color-danger-600)",
+              color: "var(--color-text-muted)",
               marginTop: "8px",
             }}
           >
             Prejuízo estimado:{" "}
-            <strong>{fmt(detalhe.financeiro?.mauUso?.valor)}</strong>
+            <strong style={{ color: "var(--color-danger)", fontSize: "0.875rem", fontWeight: 700 }}>{fmt(detalhe.financeiro?.mauUso?.valor)}</strong>
           </p>
         </div>
       </div>
@@ -611,38 +609,11 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
                 <h3 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
                   Concentração por Fornecedor (Risco)
                 </h3>
-                <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
-                  <button 
-                    type="button"
-                    className="btn btn-ghost btn-sm" 
-                    style={{ padding: 0, minWidth: 'auto', width: '20px', height: '20px', borderRadius: '50%', color: 'var(--color-warning)' }}
-                    onMouseEnter={() => setParetoHelpOpen('concentracao')}
-                    onMouseLeave={() => setParetoHelpOpen(false)}
-                  >
-                    <CircleHelp size={14} />
-                  </button>
-                  {paretoHelpOpen === 'concentracao' && (
-                    <div style={{
-                      position: "absolute",
-                      bottom: "calc(100% + 8px)",
-                      left: 0,
-                      width: "260px",
-                      padding: "10px 12px",
-                      borderRadius: "10px",
-                      background: "var(--color-surface-700)",
-                      border: "1px solid var(--color-border)",
-                      color: "var(--color-text-secondary)",
-                      boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-                      lineHeight: 1.4,
-                      zIndex: 50,
-                      fontSize: '0.75rem'
-                    }}>
-                      <p style={{ fontWeight: 700, color: 'var(--color-brand-400)', marginBottom: '4px' }}>Concentração de Budget</p>
-                      Mostra quanto do budget da regional está concentrado em cada fornecedor. 
-                      Se algum passar de 40%, o painel sinaliza risco de dependência.
-                    </div>
-                  )}
-                </div>
+                <InfoTooltip 
+                  title="Concentração de Budget"
+                  text="Mostra quanto do budget da regional está concentrado em cada fornecedor. Se algum passar de 40%, o painel sinaliza risco de dependência." 
+                  balloonStyle={{ left: '70%', transform: 'translateX(-70%)', bottom: 'calc(100% + 8px)', top: 'auto' }}
+                />
               </div>
             </div>
             <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
@@ -774,8 +745,6 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
 
 function PainelExecutivo({ mes, ano }) {
   const [paretoTipo, setParetoTipo] = useState("segmentos"); // 'segmentos' ou 'empresas'
-  const [fornecedorHelpOpen, setFornecedorHelpOpen] = useState(false);
-  const [paretoHelpOpen, setParetoHelpOpen] = useState(false);
 
   const { data: res, isLoading } = useQuery({
     queryKey: ["dashboard-executivo", mes, ano],
@@ -963,7 +932,7 @@ function PainelExecutivo({ mes, ano }) {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        
+
         {/* Top 5 Lojas */}
         <div className="card p-6">
           <div className="flex items-center gap-2 mb-4">
@@ -1026,57 +995,11 @@ function PainelExecutivo({ mes, ano }) {
                 >
                   Concentração por Fornecedor
                 </h3>
-                <div
-                  style={{
-                    position: "relative",
-                    display: "inline-flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <button
-                    type="button"
-                    className="btn btn-ghost btn-sm"
-                    onMouseEnter={() => setFornecedorHelpOpen(true)}
-                    onMouseLeave={() => setFornecedorHelpOpen(false)}
-                    style={{
-                      padding: 0,
-                      minWidth: "20px",
-                      width: "20px",
-                      height: "20px",
-                      borderRadius: "50%",
-                      color: "var(--color-warning)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <CircleHelp size={14} />
-                  </button>
-                  {fornecedorHelpOpen && (
-                    <div
-                      style={{
-                        position: "absolute",
-                        bottom: "calc(100% + 8px)",
-                        left: 0,
-                        width: "260px",
-                        padding: "10px 12px",
-                        borderRadius: "10px",
-                        background: "var(--color-surface-700)",
-                        border: "1px solid var(--color-border)",
-                        color: "var(--color-text-secondary)",
-                        boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-                        lineHeight: 1.4,
-                        zIndex: 50,
-                        fontSize: '0.75rem'
-                      }}
-                    >
-                      <p style={{ fontWeight: 700, color: 'var(--color-brand-400)', marginBottom: '4px' }}>Concentração de Budget</p>
-                      Mostra quanto do budget do mês está concentrado em cada
-                      fornecedor. Se algum passar de 40%, o painel sinaliza risco
-                      de dependência.
-                    </div>
-                  )}
-                </div>
+                <InfoTooltip 
+                  title="Concentração de Budget"
+                  text="Mostra quanto do budget do mês está concentrado em cada fornecedor. Se algum passar de 40%, o painel sinaliza risco de dependência." 
+                  balloonStyle={{ left: '80%', transform: 'translateX(-80%)', bottom: 'calc(100% + 8px)', top: 'auto' }}
+                />
               </div>
               <p
                 style={{
@@ -1099,8 +1022,8 @@ function PainelExecutivo({ mes, ano }) {
                   ? "rgba(239,68,68,0.08)"
                   : "rgba(16,185,129,0.08)",
               border: `1px solid ${fornecedoresCriticos.length > 0
-                  ? "rgba(239,68,68,0.22)"
-                  : "rgba(16,185,129,0.22)"
+                ? "rgba(239,68,68,0.22)"
+                : "rgba(16,185,129,0.22)"
                 }`,
             }}
           >
@@ -1251,48 +1174,11 @@ function PainelExecutivo({ mes, ano }) {
               >
                 {paretoTitle}
               </h3>
-                <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
-                  <button
-                    type="button"
-                    className="btn btn-ghost btn-sm"
-                    onMouseEnter={() => setParetoHelpOpen(true)}
-                    onMouseLeave={() => setParetoHelpOpen(false)}
-                    style={{
-                      padding: 0,
-                      minWidth: "auto",
-                      width: "20px",
-                      height: "20px",
-                      borderRadius: "50%",
-                      color: "var(--color-warning)",
-                    }}
-                  >
-                    <CircleHelp size={14} />
-                  </button>
-                  {paretoHelpOpen && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      bottom: "calc(100% + 8px)",
-                      left: 0,
-                      width: "260px",
-                      padding: "10px 12px",
-                      borderRadius: "10px",
-                      background: "var(--color-surface-700)",
-                      border: "1px solid var(--color-border)",
-                      color: "var(--color-text-secondary)",
-                      boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-                      lineHeight: 1.4,
-                      zIndex: 50,
-                      fontSize: '0.75rem'
-                    }}
-                  >
-                    <p style={{ fontWeight: 700, color: 'var(--color-brand-400)', marginBottom: '4px' }}>Análise de Pareto (ABC)</p>
-                    As barras mostram os maiores custos e a linha mostra a
-                    porcentagem acumulada. Use para ver quais poucos itens
-                    concentram a maior parte do gasto.
-                  </div>
-                )}
-              </div>
+              <InfoTooltip 
+                title="Análise de Pareto (ABC)"
+                text="As barras mostram os maiores custos e a linha mostra a porcentagem acumulada. Use para ver quais poucos itens concentram a maior parte do gasto." 
+                balloonStyle={{ left: '50%', transform: 'translateX(-50%)', bottom: 'calc(100% + 8px)', top: 'auto' }}
+              />
             </div>
           </div>
           <select
@@ -1774,10 +1660,10 @@ export default function ChamadosPage() {
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <div className="relative">
-              <select 
-                className="select" 
-                style={{ minWidth: '150px' }} 
-                value={parseInt(mes)} 
+              <select
+                className="select"
+                style={{ minWidth: '150px' }}
+                value={parseInt(mes)}
                 onChange={(e) => setPeriodo(`${ano}-${String(e.target.value).padStart(2, '0')}`)}
               >
                 {["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"].map((m, i) => (
@@ -1786,13 +1672,13 @@ export default function ChamadosPage() {
               </select>
             </div>
             <span style={{ color: "var(--color-border)", fontSize: "1.2rem", lineHeight: 1 }}>|</span>
-            <input 
-              type="number" 
-              className="input" 
-              style={{ width: '100px' }} 
-              value={parseInt(ano)} 
-              onChange={(e) => setPeriodo(`${e.target.value}-${String(mes).padStart(2, '0')}`)} 
-              placeholder="Ano" 
+            <input
+              type="number"
+              className="input"
+              style={{ width: '100px' }}
+              value={parseInt(ano)}
+              onChange={(e) => setPeriodo(`${e.target.value}-${String(mes).padStart(2, '0')}`)}
+              placeholder="Ano"
             />
           </div>
         </div>
@@ -1844,55 +1730,55 @@ export default function ChamadosPage() {
               {gerentesData
                 .filter(u => u.role === "GERENTE")
                 .map((gerente) => (
-                <div
-                  key={gerente.id}
-                  className="card hover-scale pointer"
-                  onClick={() => {
-                    setGerenteSelecionado(gerente);
-                    setEtapa("coordenadores");
-                  }}
-                  style={{ padding: "20px" }}
-                >
-                  <div className="flex items-center gap-4">
-                    <div
-                      className="flex items-center justify-center w-12 h-12 rounded-xl"
-                      style={{
-                        background: "var(--color-brand-100)",
-                        color: "var(--color-brand-600)",
-                      }}
-                    >
-                      <UserRound size={24} />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <h3
+                  <div
+                    key={gerente.id}
+                    className="card hover-scale pointer"
+                    onClick={() => {
+                      setGerenteSelecionado(gerente);
+                      setEtapa("coordenadores");
+                    }}
+                    style={{ padding: "20px" }}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div
+                        className="flex items-center justify-center w-12 h-12 rounded-xl"
                         style={{
-                          fontWeight: 700,
-                          color: "var(--color-text-primary)",
-                          marginBottom: "4px",
+                          background: "var(--color-brand-100)",
+                          color: "var(--color-brand-600)",
                         }}
                       >
-                        {gerente.nome}
-                      </h3>
-                      <p
-                        style={{
-                          fontSize: "0.75rem",
-                          color: "var(--color-text-muted)",
-                        }}
-                      >
-                        <strong style={{ color: "var(--color-brand-400)" }}>
-                          {splitRegions(gerente.regiao).length}
-                        </strong>{" "}
-                        regionais atreladas
-                      </p>
+                        <UserRound size={24} />
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <h3
+                          style={{
+                            fontWeight: 700,
+                            color: "var(--color-text-primary)",
+                            marginBottom: "4px",
+                          }}
+                        >
+                          {gerente.nome}
+                        </h3>
+                        <p
+                          style={{
+                            fontSize: "0.75rem",
+                            color: "var(--color-text-muted)",
+                          }}
+                        >
+                          <strong style={{ color: "var(--color-brand-400)" }}>
+                            {splitRegions(gerente.regiao).length}
+                          </strong>{" "}
+                          regionais atreladas
+                        </p>
+                      </div>
+                      <ChevronDown
+                        size={18}
+                        className="rotate-270"
+                        style={{ color: "var(--color-text-muted)" }}
+                      />
                     </div>
-                    <ChevronDown
-                      size={18}
-                      className="rotate-270"
-                      style={{ color: "var(--color-text-muted)" }}
-                    />
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           ) : (
             <div
@@ -2237,12 +2123,12 @@ export default function ChamadosPage() {
           )}
 
           {/* ——— Barra de Ferramentas (Filtros e Ações) ——— */}
-          <div 
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'space-between', 
-              gap: '20px', 
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '20px',
               flexWrap: 'wrap',
               padding: '16px 20px',
               background: 'var(--color-surface-800)',
@@ -2272,7 +2158,7 @@ export default function ChamadosPage() {
                   onChange={(e) => setBusca(e.target.value)}
                 />
               </div>
-              
+
               <div className="flex items-center gap-2">
                 <select
                   className="select"
@@ -2323,10 +2209,10 @@ export default function ChamadosPage() {
 
               <button
                 className="btn btn-primary"
-                style={{ 
-                  height: '42px', 
-                  padding: '0 20px', 
-                  boxShadow: '0 4px 12px rgba(14, 165, 233, 0.2)' 
+                style={{
+                  height: '42px',
+                  padding: '0 20px',
+                  boxShadow: '0 4px 12px rgba(14, 165, 233, 0.2)'
                 }}
                 onClick={() => setModal("novo")}
               >
@@ -2487,37 +2373,38 @@ export default function ChamadosPage() {
 
           <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
             {/* Evolução Mensal */}
-            <AnaliseLojaHistorico 
-              regiao={regionalSelecionada} 
-              unidade={lojaSelecionada?.nome} 
-              height={260} 
+            <AnaliseLojaHistorico
+              regiao={regionalSelecionada}
+              unidade={lojaSelecionada?.nome}
+              height={260}
             />
 
             {/* Top Empresas */}
             <div className="card">
-              <h3 style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text-primary)", marginBottom: "16px" }}>
+              <h3 style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text-primary)", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
+                <Trophy size={16} style={{ color: "var(--color-brand-500)" }} />
                 Top 10 Empresas (Fornecedores)
               </h3>
               <div style={{ height: "320px" }}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart 
-                    data={chamadosPorEmpresa} 
+                  <BarChart
+                    data={chamadosPorEmpresa}
                     layout="vertical"
                     margin={{ left: 10, right: 30 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--color-border)" />
                     <XAxis type="number" hide />
-                    <YAxis 
-                      dataKey="empresa" 
-                      type="category" 
-                      width={110} 
-                      tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} 
+                    <YAxis
+                      dataKey="empresa"
+                      type="category"
+                      width={110}
+                      tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
                     />
                     <Tooltip content={<TooltipCustom />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
-                    <Bar 
-                      dataKey="valor" 
-                      fill="var(--color-brand-600)" 
-                      radius={[0, 4, 4, 0]} 
+                    <Bar
+                      dataKey="valor"
+                      fill="var(--color-brand-600)"
+                      radius={[0, 4, 4, 0]}
                       barSize={18}
                       name="Gasto"
                     >
@@ -2542,20 +2429,21 @@ export default function ChamadosPage() {
                       Análise de Pareto: {paretoTipo === "segmentos" ? "Segmentos" : "Empresas"}
                     </h3>
                     <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
-                      <button 
+                      <button
                         type="button"
-                        className="btn btn-ghost btn-sm" 
+                        className="btn btn-ghost btn-sm"
                         style={{ padding: 0, minWidth: 'auto', width: '20px', height: '20px', borderRadius: '50%', color: 'var(--color-text-muted)' }}
                         onMouseEnter={() => setParetoHelpOpen(true)}
                         onMouseLeave={() => setParetoHelpOpen(false)}
                       >
-                        <CircleHelp size={14} style={{ color: "var(--color-warning)" }}/>
+                        <CircleHelp size={14} style={{ color: "var(--color-warning)" }} />
                       </button>
                       {paretoHelpOpen && (
                         <div style={{
                           position: "absolute",
                           bottom: "calc(100% + 8px)",
-                          left: 0,
+                          left: "65%",
+                          transform: "translateX(-65%)",
                           width: "260px",
                           padding: "10px 12px",
                           borderRadius: "10px",
@@ -2568,16 +2456,16 @@ export default function ChamadosPage() {
                           fontSize: '0.75rem'
                         }}>
                           <p style={{ fontWeight: 700, color: 'var(--color-brand-400)', marginBottom: '4px' }}>O que é a Análise de Pareto?</p>
-                          Indica que aproximadamente 80% dos custos costumam vir de apenas 20% das causas ({paretoTipo === "segmentos" ? "Segmentos" : "Empresas"}). 
+                          Indica que aproximadamente 80% dos custos costumam vir de apenas 20% das causas ({paretoTipo === "segmentos" ? "Segmentos" : "Empresas"}).
                           As barras mostram o valor individual e a linha vermelha o impacto acumulado.
                         </div>
                       )}
                     </div>
                   </div>
                 </div>
-                
-                <select 
-                  className="select" 
+
+                <select
+                  className="select"
                   style={{ width: 'auto', height: '32px', padding: '0 10px', fontSize: '0.75rem' }}
                   value={paretoTipo}
                   onChange={(e) => setParetoTipo(e.target.value)}
@@ -2590,21 +2478,21 @@ export default function ChamadosPage() {
               <ResponsiveContainer width="100%" height={280}>
                 <ComposedChart data={paretoData} margin={{ top: 20, right: 30, bottom: 55, left: 10 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
-                  <XAxis 
-                    dataKey="label" 
-                    tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} 
-                    angle={-40} 
-                    height={70} 
-                    interval={0} 
-                    textAnchor="end" 
+                  <XAxis
+                    dataKey="label"
+                    tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
+                    angle={-40}
+                    height={70}
+                    interval={0}
+                    textAnchor="end"
                   />
                   <YAxis yAxisId="left" tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} />
                   <YAxis yAxisId="right" orientation="right" tickFormatter={(v) => `${v}%`} tick={{ fontSize: 11, fill: "var(--color-danger)" }} domain={[0, 100]} />
                   <Tooltip content={<TooltipCustom />} />
-                  <Bar 
-                    yAxisId="left" 
-                    dataKey="valor" 
-                    radius={[4, 4, 0, 0]} 
+                  <Bar
+                    yAxisId="left"
+                    dataKey="valor"
+                    radius={[4, 4, 0, 0]}
                     name="Custo"
                     barSize={40}
                   >
@@ -2612,15 +2500,15 @@ export default function ChamadosPage() {
                       <Cell key={i} fill={CORES[i % CORES.length]} />
                     ))}
                   </Bar>
-                  <Line 
-                    yAxisId="right" 
-                    type="monotone" 
-                    dataKey="acumulado" 
-                    stroke="var(--color-danger)" 
-                    strokeWidth={3} 
-                    dot={{ r: 3, fill: "var(--color-danger)", strokeWidth: 2 }} 
+                  <Line
+                    yAxisId="right"
+                    type="monotone"
+                    dataKey="acumulado"
+                    stroke="var(--color-danger)"
+                    strokeWidth={3}
+                    dot={{ r: 3, fill: "var(--color-danger)", strokeWidth: 2 }}
                     activeDot={{ r: 5 }}
-                    name="% Acumulada" 
+                    name="% Acumulada"
                   />
                 </ComposedChart>
               </ResponsiveContainer>

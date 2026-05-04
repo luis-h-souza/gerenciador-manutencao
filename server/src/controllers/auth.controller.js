@@ -46,9 +46,17 @@ const login = async (req, res, next) => {
     });
     const refreshToken = await gerarRefreshToken(usuario.id);
 
-    // Registrar sessão
-    await prisma.sessao.create({
-      data: {
+    // Registrar ou atualizar sessão
+    await prisma.sessao.upsert({
+      where: { sessionId: req.sessionID },
+      update: {
+        usuarioId: usuario.id,
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent']?.substring(0, 255),
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        ativo: true,
+      },
+      create: {
         sessionId: req.sessionID,
         usuarioId: usuario.id,
         ipAddress: req.ip,

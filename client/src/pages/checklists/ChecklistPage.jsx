@@ -614,8 +614,8 @@ function SetupFrota({ onSaved }) {
       <div
         className="card"
         style={{
-          border: "2px dashed var(--color-brand-300)",
-          background: "var(--color-brand-50)",
+          border: "1px solid var(--color-border)",
+          background: "var(--color-surface-700)",
           padding: "30px",
           textAlign: "center",
         }}
@@ -624,8 +624,8 @@ function SetupFrota({ onSaved }) {
           <div
             className="flex items-center justify-center w-16 h-16 rounded-full"
             style={{
-              background: "var(--color-brand-100)",
-              color: "var(--color-brand-600)",
+              background: "rgba(14, 165, 233, 0.15)",
+              color: "var(--color-brand-500)",
             }}
           >
             <ShoppingCart size={32} />
@@ -801,7 +801,7 @@ function TabCarrinhos({ semana, ano, usuario, canEdit }) {
           }}
         >
           <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
-            Móveis de Loja (Total)
+            Ativos da Loja (Total)
           </p>
           <p
             style={{
@@ -949,8 +949,6 @@ function TabCarrinhos({ semana, ano, usuario, canEdit }) {
     </div>
   );
 }
-
-// ─── Página Principal ────────────────────────────────────────────────────────
 
 // ─── Componentes de Visão Corporativa / Regional ───────────────────────────
 
@@ -1422,7 +1420,7 @@ function MonthCard({ mesNome, mesIdx, ano, gestorId, onClick }) {
           : equipSemanas > 0 || carrinhoSemanas > 0
             ? "rgba(59,130,246,0.04)"
             : "rgba(0,0,0,0.02)",
-        border: tudoCompleto ? "1px solid rgba(16,185,129,0.2)" : "none",
+        border: tudoCompleto ? "1px solid rgba(16,185,129,0.2)" : "1px solid var(--color-border)",
         transition: "all 0.2s ease",
       }}
     >
@@ -1922,11 +1920,11 @@ export default function ChecklistPage() {
           // COORDENADOR não tem voltar (é a tela inicial)
           ["ADMINISTRADOR", "DIRETOR", "GERENTE"].includes(usuario?.role)
             ? () =>
-                setViewState((p) => ({
-                  ...p,
-                  mode: "COORDENADOR_LIST",
-                  regiaoSelecionada: null,
-                }))
+              setViewState((p) => ({
+                ...p,
+                mode: "COORDENADOR_LIST",
+                regiaoSelecionada: null,
+              }))
             : null
         }
         onSelect={(g) =>
