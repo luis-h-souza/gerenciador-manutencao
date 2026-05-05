@@ -779,6 +779,21 @@ function CorporativoDashboard({ filtro, setFiltro }) {
   });
 
   const ranking = rankingCoordenadores?.data || [];
+  
+  // Dados de Checklist para o card de Adesão
+  const { data: checklistData } = useQuery({
+    queryKey: ["checklist-consolidado-regional-all", filtro.mes, filtro.ano],
+    queryFn: () => checklistService.consolidadoRegional({ mes: filtro.mes, ano: filtro.ano }).then((res) => res.data),
+  });
+
+  const checklistStats = useMemo(() => {
+    if (!checklistData?.lojas) return { taxaAdesao: 0, lojasComPreenchimento: 0, totalLojas: 0 };
+    const lojas = checklistData.lojas;
+    const totalLojas = lojas.length;
+    const lojasComPreenchimento = lojas.filter(l => Object.keys(l.consolidado || {}).length > 0).length;
+    const taxaAdesao = totalLojas > 0 ? Math.round((lojasComPreenchimento / totalLojas) * 100) : 0;
+    return { taxaAdesao, lojasComPreenchimento, totalLojas };
+  }, [checklistData]);
 
   // Queries para Hierarquia (Gerentes e Coordenadores)
   const { data: gerentesData, isLoading: lG } = useQuery({
@@ -1061,7 +1076,7 @@ function CorporativoDashboard({ filtro, setFiltro }) {
         </div>
 
         <div className="flex flex-wrap gap-4 items-stretch">
-          <div style={{ flex: "1 1 300px", maxWidth: "400px" }}>
+          <div style={{ flex: "1 1 300px" }}>
             <StatCard
               label="Gastos Globais"
               value={fmt(macroResumo?.financeiro?.gastosMes)}
@@ -1071,13 +1086,25 @@ function CorporativoDashboard({ filtro, setFiltro }) {
               trend={variacaoMacro}
             />
           </div>
-          <div style={{ flex: "1 1 300px", maxWidth: "400px" }}>
+          <div style={{ flex: "1 1 300px" }}>
             <StatCard
               label="Chamados / Mau Uso Total"
               value={macroResumo?.financeiro?.chamadosMes ?? "—"}
               sub={`${macroResumo?.financeiro?.mauUso ?? 0} alertas de mau uso`}
               icon={AlertTriangle}
               accent="var(--color-warning)"
+            />
+          </div>
+          <div 
+            style={{ flex: "1 1 300px", cursor: 'pointer' }}
+            onClick={() => navigate('/checklists-consolidado')}
+          >
+            <StatCard
+              label="Adesão Checklists"
+              value={`${checklistStats.taxaAdesao}%`}
+              sub={`${checklistStats.lojasComPreenchimento} de ${checklistStats.totalLojas} lojas preencheram`}
+              icon={ClipboardCheck}
+              accent="var(--color-brand-400)"
             />
           </div>
         </div>

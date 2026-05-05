@@ -397,48 +397,75 @@ const ResumoMacroRegional = ({ lojas }) => {
     return Array.from(resumo.values()).sort((a, b) => b.total - a.total);
   }, [lojas]);
 
-  if (totais.length === 0) return null;
-
   return (
     <div className="card" style={{ padding: '20px', marginBottom: '20px' }}>
       <div className="flex items-center gap-2 mb-4">
-        <AlertTriangle size={18} style={{ color: 'var(--color-warning)' }} />
+        {totais.length > 0 ? (
+          <AlertTriangle size={18} style={{ color: 'var(--color-warning)' }} />
+        ) : (
+          <ClipboardCheck size={18} style={{ color: 'var(--color-success)' }} />
+        )}
         <h3 style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--color-text-primary)', textTransform: 'uppercase' }}>
           Consolidado Regional <span style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', textTransform: 'capitalize' }}>(última semana)</span>
         </h3>
       </div>
 
       <div className="flex flex-wrap gap-3">
-        {totais.map((item, idx) => (
-          <div
-            key={idx}
-            className="flex items-center gap-3 p-3 rounded-xl shadow-sm"
-            style={{
-              background: 'var(--color-surface-700)',
-              border: '1px solid var(--color-border)',
-              minWidth: '180px',
-              flex: '1 1 200px'
-            }}
-          >
+        {totais.length > 0 ? (
+          totais.map((item, idx) => (
             <div
-              className="flex items-center justify-center w-10 h-10 rounded-lg"
+              key={idx}
+              className="flex items-center gap-3 p-3 rounded-xl shadow-sm"
               style={{
-                background: 'rgba(239, 68, 68, 0.1)',
-                color: 'var(--color-danger)'
+                background: 'var(--color-surface-700)',
+                border: '1px solid var(--color-border)',
+                minWidth: '180px',
+                flex: '1 1 200px'
               }}
             >
-              {item.icone === 'equipamento' ? <ClipboardCheck size={20} /> : <Store size={20} />}
+              <div
+                className="flex items-center justify-center w-10 h-10 rounded-lg"
+                style={{
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  color: 'var(--color-danger)'
+                }}
+              >
+                {item.icone === 'equipamento' ? <ClipboardCheck size={20} /> : <Store size={20} />}
+              </div>
+              <div>
+                <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
+                  {item.label}
+                </p>
+                <p style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
+                  {item.total} <span style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--color-danger)' }}>quebrados</span>
+                </p>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div 
+            className="flex items-center gap-3 p-4 rounded-xl w-full" 
+            style={{ 
+              background: 'rgba(16, 185, 129, 0.05)', 
+              border: '1px dashed rgba(16, 185, 129, 0.3)' 
+            }}
+          >
+            <div 
+              className="flex items-center justify-center w-10 h-10 rounded-full"
+              style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--color-success)' }}
+            >
+              <ClipboardCheck size={20} />
             </div>
             <div>
-              <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
-                {item.label}
+              <p style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>
+                Tudo operacional na regional
               </p>
-              <p style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
-                {item.total} <span style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--color-danger)' }}>quebrados</span>
+              <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+                Nenhum item com defeito reportado nos últimos checklists.
               </p>
             </div>
           </div>
-        ))}
+        )}
       </div>
       <p style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginTop: '12px' }}>
         * Números baseados no último checklist reportado.

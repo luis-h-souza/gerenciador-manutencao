@@ -193,6 +193,10 @@ O sistema tambem possui gestao administrativa para estruturar o acesso.
 
 "As colunas mostram onde estao os maiores custos. A linha mostra quanto do total ja foi acumulado. Assim fica facil ver quais poucos itens concentram a maior parte do gasto."
 
+### Consolidado Regional (Visão Macro)
+
+"Ao selecionar uma Regional ou Coordenador, o sistema exibe automaticamente um card de resumo no topo. Ele soma todos os equipamentos e carrinhos que foram reportados com defeito na semana mais atual de cada loja. Isso permite ao gestor saber, por exemplo, que a Regional X tem 50 carrinhos quebrados no total, sem precisar entrar em cada loja individualmente."
+
 ### Concentracao por Fornecedor
 
 "Esse grafico mostra quanto do valor do periodo esta concentrado em cada fornecedor. Se um fornecedor ultrapassa 40%, o sistema sinaliza um risco de dependencia."

@@ -245,8 +245,9 @@ O sistema já está operando com os módulos abaixo:
 
 ### Checklists
 - Preenchimento semanal de equipamentos e carrinhos pelo `GESTOR`
-- Consulta consolidada para perfis gerenciais
-- Navegação por camadas até a loja com botão de voltar até a raiz do perfil
+- Consulta consolidada para perfis gerenciais (Diretor, Gerente e Coordenador)
+- **Resumo Macro Regional (Estado Atual)**: Painel executivo que consolida pendências de todas as lojas da regional/supervisão em uma única visão, facilitando a identificação de itens críticos (Ex: "80 carrinhos quebrados na regional").
+- **Filtros Reativos**: Navegação inteligente onde a troca de mês/ano atualiza o conteúdo de todos os níveis de drill-down instantaneamente sem perder o contexto.
 - Insights correlacionados entre:
   - gasto regional no financeiro
   - cobertura mensal de checklist
