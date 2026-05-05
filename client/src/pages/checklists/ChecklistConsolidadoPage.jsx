@@ -90,7 +90,7 @@ const ChecklistCardModal = ({ item, tipo, semanas, semanaInicial, onClose }) => 
   const itemAtual = items.find((i) => {
     const idModal = (item.tipoEquipamento || item.tipoCarrinho || item.tipo || "").toString().trim();
     const labelModal = (item.tipoLabel || "").toString().trim();
-    
+
     if (isEquipamento) {
       const idItem = (i.tipoEquipamento || "").toString().trim();
       const labelItem = (i.tipoLabel || "").toString().trim();
@@ -355,6 +355,98 @@ const ChecklistLojaConsolidado = ({ loja, semanas, onVoltar }) => {
   );
 };
 
+// ─── Resumo Macro da Regional (Visão Executiva) ─────────────────────────────
+const ResumoMacroRegional = ({ lojas }) => {
+  const totais = useMemo(() => {
+    const resumo = new Map();
+
+    lojas.forEach(loja => {
+      const weeks = Object.keys(loja.consolidado || {});
+      if (weeks.length === 0) return;
+
+      // Pega a semana mais recente reportada por esta loja
+      const latestWeekKey = weeks.sort((a, b) => {
+        const numA = parseInt(a.replace("semana", ""));
+        const numB = parseInt(b.replace("semana", ""));
+        return numB - numA;
+      })[0];
+
+      const data = loja.consolidado[latestWeekKey];
+
+      // Soma equipamentos quebrados
+      (data.equipamentos || []).forEach(e => {
+        if (e.quantidadeQuebrada > 0) {
+          const key = e.tipoLabel || e.tipoEquipamento;
+          const current = resumo.get(key) || { label: key, total: 0, icone: 'equipamento' };
+          current.total += e.quantidadeQuebrada;
+          resumo.set(key, current);
+        }
+      });
+
+      // Soma carrinhos quebrados
+      (data.carrinhos || []).forEach(c => {
+        if (c.quebrados > 0) {
+          const key = c.tipoLabel || c.tipoCarrinho;
+          const current = resumo.get(key) || { label: key, total: 0, icone: 'carrinho' };
+          current.total += c.quebrados;
+          resumo.set(key, current);
+        }
+      });
+    });
+
+    return Array.from(resumo.values()).sort((a, b) => b.total - a.total);
+  }, [lojas]);
+
+  if (totais.length === 0) return null;
+
+  return (
+    <div className="card" style={{ padding: '20px', marginBottom: '20px' }}>
+      <div className="flex items-center gap-2 mb-4">
+        <AlertTriangle size={18} style={{ color: 'var(--color-warning)' }} />
+        <h3 style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--color-text-primary)', textTransform: 'uppercase' }}>
+          Consolidado Regional <span style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', textTransform: 'capitalize' }}>(última semana)</span>
+        </h3>
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        {totais.map((item, idx) => (
+          <div
+            key={idx}
+            className="flex items-center gap-3 p-3 rounded-xl shadow-sm"
+            style={{
+              background: 'var(--color-surface-700)',
+              border: '1px solid var(--color-border)',
+              minWidth: '180px',
+              flex: '1 1 200px'
+            }}
+          >
+            <div
+              className="flex items-center justify-center w-10 h-10 rounded-lg"
+              style={{
+                background: 'rgba(239, 68, 68, 0.1)',
+                color: 'var(--color-danger)'
+              }}
+            >
+              {item.icone === 'equipamento' ? <ClipboardCheck size={20} /> : <Store size={20} />}
+            </div>
+            <div>
+              <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
+                {item.label}
+              </p>
+              <p style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
+                {item.total} <span style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--color-danger)' }}>quebrados</span>
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+      <p style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginTop: '12px' }}>
+        * Números baseados no último checklist reportado.
+      </p>
+    </div>
+  );
+};
+
 // ─── Página Principal ────────────────────────────────────────────────────────
 export default function ChecklistConsolidadoPage() {
   const { usuario } = useAuth();
@@ -375,9 +467,7 @@ export default function ChecklistConsolidadoPage() {
   const [gerenteSelecionado, setGerenteSelecionado] = useState(null);
   const [coordenadorSelecionado, setCoordenadorSelecionado] = useState(null);
   const [regionalSelecionada, setRegionalSelecionada] = useState(null);
-  const [lojasDaRegional, setLojasDaRegional] = useState([]);
-  const [lojaSelecionada, setLojaSelecionada] = useState(null);
-  const [semanas, setSemanas] = useState([]);
+  const [lojaIdSelecionada, setLojaIdSelecionada] = useState(null);
 
   const [modalLojasAberto, setModalLojasAberto] = useState(false);
   const [tipoModalLojas, setTipoModalLojas] = useState("pendentes"); // 'pendentes' ou 'preenchidas'
@@ -531,13 +621,16 @@ export default function ChecklistConsolidadoPage() {
     return { totalLojas, lojasComPreenchimento, inadimplentes, taxaAdesao };
   }, [regionaisAgrupadasFiltradas]);
 
-  const handleSelecionarRegional = (regiao, lojas) => {
+  const handleSelecionarRegional = (regiao) => {
     setRegionalSelecionada(regiao);
-    // Ordenar lojas pelo nome
-    const lojasOrdenadas = [...lojas].sort((a, b) => a.nome.localeCompare(b.nome));
-    setLojasDaRegional(lojasOrdenadas);
     setEtapa("lojas");
   };
+
+  const lojasDaRegional = useMemo(() => {
+    if (!regionalSelecionada) return [];
+    const lojas = regionaisAgrupadasFiltradas.get(regionalSelecionada) || [];
+    return [...lojas].sort((a, b) => a.nome.localeCompare(b.nome));
+  }, [regionalSelecionada, regionaisAgrupadasFiltradas]);
 
 
   const regionalFinanceiro = regionalFinanceiroRes?.data || [];
@@ -587,13 +680,23 @@ export default function ChecklistConsolidadoPage() {
     .sort((a, b) => a.coberturaPct - b.coberturaPct);
 
   const handleSelecionarLoja = (loja) => {
-    setLojaSelecionada(loja);
+    setLojaIdSelecionada(loja.unidade);
+    setEtapa("checklist");
+  };
+
+  const lojaSelecionada = useMemo(() => {
+    if (!lojaIdSelecionada) return null;
+    return lojasVisiveis.find(l => l.unidade === lojaIdSelecionada);
+  }, [lojaIdSelecionada, lojasVisiveis]);
+
+  const semanas = useMemo(() => {
+    if (!lojaSelecionada) return [];
 
     // Descobrir qual a semana 1 do mês selecionado
     const semanaInicioSelecionado = getWeekOfYear(new Date(ano, mes - 1, 1));
 
     // Converte os dados do consolidado da loja em um array de semanas
-    const semanas_array = Object.entries(loja.consolidado || {})
+    return Object.entries(lojaSelecionada.consolidado || {})
       .map(([key, consolidadoData]) => {
         const num = parseInt(key.replace("semana", ""), 10);
         const semanaDoMes = num - semanaInicioSelecionado + 1;
@@ -605,10 +708,7 @@ export default function ChecklistConsolidadoPage() {
         };
       })
       .sort((a, b) => a.numero - b.numero);
-
-    setSemanas(semanas_array);
-    setEtapa("checklist");
-  };
+  }, [lojaSelecionada, ano, mes]);
 
   const handleVoltar = () => {
     if (etapa === "checklist") {
@@ -760,9 +860,9 @@ export default function ChecklistConsolidadoPage() {
                       <TrendingUp size={20} />
                     </div>
                     <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 700 }}>Adesão no Mês</span>
-                    <InfoTooltip 
+                    <InfoTooltip
                       title="Adesão Mensal"
-                      text="Mede o percentual de lojas que iniciaram ao menos um checklist preventivo no mês atual, cruzando dados de todas as regionais sob sua gestão." 
+                      text="Mede o percentual de lojas que iniciaram ao menos um checklist preventivo no mês atual, cruzando dados de todas as regionais sob sua gestão."
                     />
                   </div>
                   <div className="flex items-end gap-2">
@@ -794,9 +894,9 @@ export default function ChecklistConsolidadoPage() {
                       <AlertCircle size={20} />
                     </div>
                     <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 700 }}>Inadimplência Total</span>
-                    <InfoTooltip 
+                    <InfoTooltip
                       title="Lojas Críticas"
-                      text="Identifica lojas com zero preenchimento. Correlacionado com gastos financeiros, indica onde a manutenção pode estar sendo apenas reativa." 
+                      text="Identifica lojas com zero preenchimento. Correlacionado com gastos financeiros, indica onde a manutenção pode estar sendo apenas reativa."
                     />
                   </div>
                   <div className="flex items-end gap-2">
@@ -809,6 +909,8 @@ export default function ChecklistConsolidadoPage() {
                 </div>
               </div>
             )}
+
+            <ResumoMacroRegional lojas={lojasVisiveis} />
 
             {loadingCoordenadores ? (
               <div className="flex justify-center p-12"><Loader2 className="animate-spin" style={{ color: 'var(--color-brand-500)' }} size={32} /></div>
@@ -905,10 +1007,10 @@ export default function ChecklistConsolidadoPage() {
                 <div>
                   <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center' }}>
                     Insights Correlacionados
-                    <InfoTooltip 
+                    <InfoTooltip
                       balloonStyle={{ right: 'auto', left: -180 }}
                       title="Inteligência Operacional"
-                      text="Algoritmo que cruza o volume financeiro com a adesão aos checklists. Prioriza alertas onde o gasto é alto e a prevenção é baixa." 
+                      text="Algoritmo que cruza o volume financeiro com a adesão aos checklists. Prioriza alertas onde o gasto é alto e a prevenção é baixa."
                     />
                   </h3>
                   <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)' }}>
@@ -1001,12 +1103,14 @@ export default function ChecklistConsolidadoPage() {
                 </div>
               </div>
 
+              <ResumoMacroRegional lojas={lojasVisiveis} />
+
               {isLoading ? (
                 <div className="flex justify-center p-12"><Loader2 className="animate-spin" style={{ color: 'var(--color-brand-500)' }} size={32} /></div>
               ) : regionaisAgrupadasFiltradas.size > 0 ? (
                 <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
                   {Array.from(regionaisAgrupadasFiltradas.entries()).map(([regiao, lojas]) => (
-                    <div key={regiao} className="card hover-scale pointer" onClick={() => handleSelecionarRegional(regiao, lojas)} style={{ padding: '20px' }}>
+                    <div key={regiao} className="card hover-scale pointer" onClick={() => handleSelecionarRegional(regiao)} style={{ padding: '20px' }}>
                       <div className="flex items-center gap-4">
                         <div className="flex items-center justify-center w-12 h-12 rounded-xl" style={{ background: 'var(--color-brand-100)', color: 'var(--color-brand-600)' }}>
                           <MapPin size={24} />
@@ -1045,6 +1149,8 @@ export default function ChecklistConsolidadoPage() {
                 <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)' }}>Selecione a loja para visualizar os checklists consolidados</p>
               </div>
             </div>
+
+            <ResumoMacroRegional lojas={lojasDaRegional} />
 
             <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
               {lojasDaRegional.map((loja) => {
