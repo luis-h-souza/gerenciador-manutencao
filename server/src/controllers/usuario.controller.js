@@ -42,11 +42,7 @@ const listar = async (req, res, next) => {
 
     // Nenhuma role (exceto ADMINISTRADOR) pode ver dados de administradores
     if (req.user.role !== 'ADMINISTRADOR') {
-      if (where.AND) {
-        where.AND.push({ role: { not: 'ADMINISTRADOR' } });
-      } else {
-        where.role = { not: 'ADMINISTRADOR' };
-      }
+      and.push({ role: { not: 'ADMINISTRADOR' } });
     }
 
     if (and.length) where.AND = and;

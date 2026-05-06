@@ -16,6 +16,8 @@ router.post('/', autorizar(Roles.GESTOR), [
   body('categoria').notEmpty().withMessage('Categoria é obrigatória'),
   body('quantidade').optional().isInt({ min: 1 }).withMessage('Quantidade deve ser maior que zero'),
   body('status').optional().isIn(['ATIVO', 'EM_MANUTENCAO', 'INATIVO']).withMessage('Status inválido'),
+  body('regiao').not().exists().withMessage('A região é atribuída automaticamente pelo sistema'),
+  body('unidade').not().exists().withMessage('A unidade é atribuída automaticamente pelo sistema'),
 ], validate, ctrl.criar);
 
 router.put('/:id', autorizar(Roles.GESTOR), [
