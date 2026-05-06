@@ -9,6 +9,55 @@ const semanaAtual = () => {
   return { semana: getWeek(now, { weekStartsOn: 5 }), ano: getYear(now) };
 };
 
+const normalizarTexto = (valor) => String(valor || '')
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/[^a-z0-9]+/gi, '_')
+  .replace(/^_+|_+$/g, '')
+  .toUpperCase();
+
+const resolverTipoCarrinhoAtivo = (ativo) => {
+  const aliases = {
+    MARIA_GORDA: 'MARIA_GORDA',
+    SUPERCAR: 'SUPERCAR',
+    DOIS_ANDARES: 'DOIS_ANDARES',
+    CARRINHO_DOIS_ANDARES: 'DOIS_ANDARES',
+    PRANCHA: 'PRANCHA',
+    PRANCHA_PERECIVEIS: 'PRANCHA_PERECIVEIS',
+    PRANCHA_PERECIVEL: 'PRANCHA_PERECIVEIS',
+    CARRINHO_ABASTECIMENTO: 'CARRINHO_ABASTECIMENTO',
+    ABASTECIMENTO: 'CARRINHO_ABASTECIMENTO',
+    ESCADA: 'ESCADA',
+  };
+
+  const candidatos = [ativo.tipo, ativo.nome].map(normalizarTexto);
+  for (const candidato of candidatos) {
+    if (aliases[candidato]) return aliases[candidato];
+  }
+
+  return null;
+};
+
+const buscarFrotaCarrinhosPorAtivos = async (unidade) => {
+  const ativos = await prisma.ativoLoja.findMany({
+    where: {
+      unidade,
+      ativo: true,
+      status: 'ATIVO',
+      categoria: { contains: 'Carrinho', mode: 'insensitive' },
+    },
+  });
+
+  const porTipo = {};
+  ativos.forEach((ativo) => {
+    const tipoCarrinho = resolverTipoCarrinhoAtivo(ativo);
+    if (!tipoCarrinho) return;
+    porTipo[tipoCarrinho] = (porTipo[tipoCarrinho] || 0) + (parseInt(ativo.quantidade) || 0);
+  });
+
+  return Object.entries(porTipo).map(([tipoCarrinho, total]) => ({ tipoCarrinho, total }));
+};
+
 // ═══════════════════════════════════════════════════════════════════════════════
 //  EQUIPAMENTO
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -147,9 +196,7 @@ const buscarFrota = async (req, res, next) => {
       }
     }
 
-    const frota = await prisma.frotaCarrinho.findMany({
-      where: { unidade }
-    });
+    const frota = await buscarFrotaCarrinhosPorAtivos(unidade);
     res.json(frota);
   } catch (err) { next(err); }
 };
@@ -237,8 +284,7 @@ const salvarCarrinho = async (req, res, next) => {
 
     if (!unidade) return res.status(400).json({ error: 'Usuário sem unidade definida' });
 
-    // Buscar a frota atual para garantir que os totais estejam corretos
-    const frota = await prisma.frotaCarrinho.findMany({ where: { unidade } });
+    const frota = await buscarFrotaCarrinhosPorAtivos(unidade);
 
     const itensComTotal = itens.map(item => {
       const frotaItem = frota.find(f => f.tipoCarrinho === item.tipoCarrinho);

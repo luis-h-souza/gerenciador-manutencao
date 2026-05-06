@@ -35,6 +35,23 @@ const CATEGORIAS = [
   "Segurança",
   "Outros",
 ];
+const TIPOS_ATIVOS = [
+  "Maria Gorda",
+  "Supercar",
+  "Dois Andares",
+  "Prancha",
+  "Prancha Perecíveis",
+  "Carrinho de Abastecimento",
+  "Escada",
+  "Chiller",
+  "Split",
+  "Self",
+  "Forno",
+  "Fatiadora",
+  "Serra Fita",
+  "Empilhadeira Elétrica",
+  "Transpaleteira",
+];
 
 function Paginacao({ paginaAtual, totalPaginas, onMudar }) {
   if (totalPaginas <= 1) return null;
@@ -110,7 +127,10 @@ function AtivoModal({ ativo, onClose }) {
           <div className="grid gap-4" style={{ gridTemplateColumns: "1fr 1fr 100px" }}>
             <div>
               <label className="label">Tipo</label>
-              <input className="input" placeholder="Ex: Split, forno, prancha" {...register("tipo")} />
+              <input className="input" list="tipos-ativos" placeholder="Ex: Split, forno, prancha" {...register("tipo")} />
+              <datalist id="tipos-ativos">
+                {TIPOS_ATIVOS.map((t) => <option key={t} value={t} />)}
+              </datalist>
             </div>
             <div>
               <label className="label">Status</label>

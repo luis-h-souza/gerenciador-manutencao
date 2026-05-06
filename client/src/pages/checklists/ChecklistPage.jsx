@@ -1,9 +1,10 @@
 // src/pages/checklists/ChecklistPage.jsx
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../contexts/AuthContext";
 import api from "../../services/api";
-import { usuariosService, checklistService } from "../../services";
+import { usuariosService, checklistService, ativosService } from "../../services";
 import {
   getWeek,
   getYear,
@@ -63,6 +64,49 @@ const CARRINHOS = [
   { key: "CARRINHO_ABASTECIMENTO", label: "Carrinho de Abastecimento" },
   { key: "ESCADA", label: "Escada" },
 ];
+
+const normalizarTexto = (valor) =>
+  String(valor || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/gi, "_")
+    .replace(/^_+|_+$/g, "")
+    .toUpperCase();
+
+const resolverTipoCarrinhoAtivo = (ativo) => {
+  const candidatos = [ativo.tipo, ativo.nome].map(normalizarTexto);
+  const aliases = {
+    MARIA_GORDA: "MARIA_GORDA",
+    SUPERCAR: "SUPERCAR",
+    DOIS_ANDARES: "DOIS_ANDARES",
+    CARRINHO_DOIS_ANDARES: "DOIS_ANDARES",
+    PRANCHA: "PRANCHA",
+    PRANCHA_PERECIVEIS: "PRANCHA_PERECIVEIS",
+    PRANCHA_PERECIVEL: "PRANCHA_PERECIVEIS",
+    CARRINHO_ABASTECIMENTO: "CARRINHO_ABASTECIMENTO",
+    ABASTECIMENTO: "CARRINHO_ABASTECIMENTO",
+    ESCADA: "ESCADA",
+  };
+
+  for (const candidato of candidatos) {
+    if (aliases[candidato]) return aliases[candidato];
+    const encontrado = CARRINHOS.find((c) => normalizarTexto(c.label) === candidato || c.key === candidato);
+    if (encontrado) return encontrado.key;
+  }
+
+  return null;
+};
+
+const montarFrotaCarrinhosPorAtivos = (ativos) =>
+  Object.values(
+    ativos.reduce((acc, ativo) => {
+      const tipoCarrinho = resolverTipoCarrinhoAtivo(ativo);
+      if (!tipoCarrinho) return acc;
+      if (!acc[tipoCarrinho]) acc[tipoCarrinho] = { tipoCarrinho, total: 0 };
+      acc[tipoCarrinho].total += parseInt(ativo.quantidade) || 0;
+      return acc;
+    }, {}),
+  );
 
 // ─── Componente de linha do equipamento ─────────────────────────────────────
 
@@ -696,12 +740,12 @@ function SetupFrota({ onSaved }) {
 function TabCarrinhos({ semana, ano, usuario, canEdit }) {
   const qc = useQueryClient();
 
-  const { data: frota = [], isLoading: loadingFrota } = useQuery({
-    queryKey: ["frota-carrinho", usuario.unidade],
+  const { data: ativosCarrinhos = [], isLoading: loadingAtivos } = useQuery({
+    queryKey: ["ativos-carrinhos-checklist", usuario.unidade],
     queryFn: () =>
-      checklistService
-        .buscarFrota({ unidade: usuario.unidade })
-        .then((r) => r.data),
+      ativosService
+        .listar({ categoria: "Carrinhos", unidade: usuario.unidade, status: "ATIVO", limit: 500 })
+        .then((r) => r.data.data || []),
     enabled: !!usuario.unidade,
   });
 
@@ -713,43 +757,40 @@ function TabCarrinhos({ semana, ano, usuario, canEdit }) {
         .then((r) => r.data),
   });
 
-  const hasFrota = frota && frota.length > 0 && frota.some((f) => f.total > 0);
+  const frota = montarFrotaCarrinhosPorAtivos(ativosCarrinhos);
+  const hasAtivosCarrinhos = frota.length > 0 && frota.some((f) => f.total > 0);
 
   const [itens, setItens] = useState([]);
   const [observacoes, setObservacoes] = useState("");
 
   useEffect(() => {
-    if (loadingFrota || loadingChecklist) return;
+    if (loadingAtivos || loadingChecklist) return;
 
     if (checklistExistente?.itens?.length) {
       setItens(
-        CARRINHOS.map((c) => {
+        frota.map((base) => {
           const found = checklistExistente.itens.find(
-            (i) => i.tipoCarrinho === c.key,
+            (i) => i.tipoCarrinho === base.tipoCarrinho,
           );
-          const f = frota.find((f) => f.tipoCarrinho === c.key);
           return (
-            found || { tipoCarrinho: c.key, total: f?.total || 0, quebrados: 0 }
+            found ? { ...found, total: base.total } : { tipoCarrinho: base.tipoCarrinho, total: base.total, quebrados: 0 }
           );
         }),
       );
       setObservacoes(checklistExistente.observacoes || "");
     } else {
       setItens(
-        CARRINHOS.map((c) => {
-          const f = frota.find((f) => f.tipoCarrinho === c.key);
-          return {
-            tipoCarrinho: c.key,
-            total: f?.total || 0,
-            quebrados: 0,
-            numeroChamado: "",
-            descricaoProblema: "",
-          };
-        }),
+        frota.map((base) => ({
+          tipoCarrinho: base.tipoCarrinho,
+          total: base.total,
+          quebrados: 0,
+          numeroChamado: "",
+          descricaoProblema: "",
+        })),
       );
       setObservacoes("");
     }
-  }, [checklistExistente, frota, loadingFrota, loadingChecklist]);
+  }, [checklistExistente, ativosCarrinhos, loadingAtivos, loadingChecklist]);
 
   const mutation = useMutation({
     mutationFn: () =>
@@ -769,7 +810,7 @@ function TabCarrinhos({ semana, ano, usuario, canEdit }) {
   );
   const totalGeral = itens.reduce((s, i) => s + (parseInt(i.total) || 0), 0);
 
-  if (loadingFrota || loadingChecklist)
+  if (loadingAtivos || loadingChecklist)
     return (
       <div className="flex justify-center py-12">
         <Loader2
@@ -780,11 +821,20 @@ function TabCarrinhos({ semana, ano, usuario, canEdit }) {
       </div>
     );
 
-  if (!hasFrota && canEdit) {
+  if (!hasAtivosCarrinhos && canEdit) {
     return (
-      <SetupFrota
-        onSaved={() => qc.invalidateQueries({ queryKey: ["frota-carrinho"] })}
-      />
+      <div className="card animate-fade-in" style={{ padding: "28px", textAlign: "center" }}>
+        <ShoppingCart size={34} style={{ color: "var(--color-brand-500)", margin: "0 auto 12px" }} />
+        <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--color-text-primary)", marginBottom: "8px" }}>
+          Cadastre os carrinhos em Ativos da Loja
+        </h3>
+        <p style={{ fontSize: "0.875rem", color: "var(--color-text-secondary)", maxWidth: "520px", margin: "0 auto 18px" }}>
+          O checklist usa os ativos cadastrados na categoria Carrinhos para montar a frota semanal da loja.
+        </p>
+        <Link className="btn btn-primary" to="/ativos">
+          Abrir Ativos da Loja
+        </Link>
+      </div>
     );
   }
 
@@ -885,17 +935,6 @@ function TabCarrinhos({ semana, ano, usuario, canEdit }) {
               mesDoChecklist(semana, ano).slice(1)}
             /{ano}
           </span>
-          {canEdit && (
-            <button
-              className="btn btn-ghost btn-xs"
-              onClick={() =>
-                qc.setQueryData(["frota-carrinho", usuario.unidade], [])
-              }
-              style={{ fontSize: "0.7rem" }}
-            >
-              Redefinir Frota
-            </button>
-          )}
         </div>
         {itens.map((item) => {
           const carrinho = CARRINHOS.find((c) => c.key === item.tipoCarrinho);
