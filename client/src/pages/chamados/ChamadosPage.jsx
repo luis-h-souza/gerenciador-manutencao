@@ -135,6 +135,22 @@ const CORES = [
   "#eab308",
   "#a78bfa",
 ];
+const PARETO_SEGMENTO_GRUPOS = {
+  AR_CONDICIONADO: "Refrigeração",
+  REFRIGERACAO: "Refrigeração",
+  REFRIGERACAO_PECAS: "Refrigeração",
+  TRANSPALETEIRA: "Empilhadeira",
+  EMPILHADEIRA: "Empilhadeira",
+  HIDRAULICA: "Civil",
+  PINTURA: "Civil",
+  LIMPEZA_ESGOTO: "Civil",
+  TELHADO: "Civil",
+  CIVIL: "Civil",
+};
+const formatarSegmento = (segmento) =>
+  segmento?.split("_").map((word) => word.charAt(0) + word.slice(1).toLowerCase()).join(" ") || "Diversos";
+const agruparSegmentoPareto = (segmento) =>
+  PARETO_SEGMENTO_GRUPOS[segmento] || formatarSegmento(segmento);
 
 const TooltipCustom = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
@@ -1596,7 +1612,7 @@ export default function ChamadosPage() {
   // ———————————————————————————————————————————————— Dados para Análise Gráfica da Loja ————————————————————————————————————————
   const chamadosPorSegmento = Object.values(
     chamados.reduce((acc, c) => {
-      const seg = c.segmento || "DIVERSOS";
+      const seg = agruparSegmentoPareto(c.segmento || "DIVERSOS");
       if (!acc[seg]) acc[seg] = { segmento: seg, valor: 0, count: 0 };
       acc[seg].valor += parseFloat(c.valor || 0);
       acc[seg].count += 1;

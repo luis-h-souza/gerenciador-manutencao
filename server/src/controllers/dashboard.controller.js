@@ -9,11 +9,33 @@ const formatarSegmento = (segmento) => {
   const conversoes = {
     'AR_CONDICIONADO': 'AR-CONDICIONADO',
     'REFRIGERACAO_PCS': 'REFRIGERACAO-PÇS',
-    'SERVICOS_GERAIS': 'SERVIÇOS GERAIS'
+    'SERVICOS_GERAIS': 'SERVIÇOS GERAIS',
+    'REFRIGERACAO': 'Refrigeração',
+    'EMPILHADEIRA': 'Empilhadeira',
+    'CIVIL': 'Civil'
   };
 
   // Se houver conversão mapeada, usa; senão retorna como está
   return conversoes[segmento] || segmento;
+};
+
+const agruparSegmentoPareto = (segmento) => {
+  const segmentoNormalizado = (segmento || '').trim() || 'Diversos';
+  const grupos = {
+    AR_CONDICIONADO: 'REFRIGERACAO',
+    REFRIGERACAO: 'REFRIGERACAO',
+    REFRIGERACAO_PECAS: 'REFRIGERACAO',
+    REFRIGERACAO_PCS: 'REFRIGERACAO',
+    TRANSPALETEIRA: 'EMPILHADEIRA',
+    EMPILHADEIRA: 'EMPILHADEIRA',
+    HIDRAULICA: 'CIVIL',
+    PINTURA: 'CIVIL',
+    LIMPEZA_ESGOTO: 'CIVIL',
+    TELHADO: 'CIVIL',
+    CIVIL: 'CIVIL'
+  };
+
+  return grupos[segmentoNormalizado] || segmentoNormalizado;
 };
 const { getWeek, startOfMonth, endOfMonth } = require('date-fns');
 
@@ -560,7 +582,7 @@ const executivo = async (req, res, next) => {
     // Normaliza segmentos: agrupa NULL, '', undefined como 'Diversos'
     const segmentosNormalizados = {};
     segmentosGasto.forEach(s => {
-      const segmento = (s.segmento || '').trim() || 'Diversos';
+      const segmento = agruparSegmentoPareto(s.segmento);
       const valor = parseFloat(s._sum.valor || 0);
       if (!segmentosNormalizados[segmento]) {
         segmentosNormalizados[segmento] = { valor: 0, count: 0 };

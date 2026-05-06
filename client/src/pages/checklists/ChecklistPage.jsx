@@ -1389,11 +1389,17 @@ function GestorMonthlyView({ gestor, onSelectMonth, onBack }) {
 }
 
 function MonthCard({ mesNome, mesIdx, ano, gestorId, onClick }) {
+  const inicioMes = startOfMonth(new Date(ano, mesIdx - 1));
+  const fimMes = endOfMonth(new Date(ano, mesIdx - 1));
+  const semanaInicio = getWeek(inicioMes, { weekStartsOn: 5 });
+  const semanaFim = getWeek(fimMes, { weekStartsOn: 5 });
+  const semanasNoMes = Math.max(semanaFim - semanaInicio + 1, 1);
+
   const { data: kpi, isLoading } = useQuery({
-    queryKey: ["kpi-mensal-gestor", gestorId, mesIdx, ano],
+    queryKey: ["kpi-mensal-gestor", gestorId, mesIdx, ano, semanasNoMes],
     queryFn: () =>
       checklistService
-        .kpiMensal({ usuarioId: gestorId, mes: mesIdx, ano })
+        .kpiMensal({ usuarioId: gestorId, mes: mesIdx, ano, weeksToShow: semanasNoMes })
         .then((r) => r.data),
     enabled: !!gestorId,
   });
