@@ -362,8 +362,14 @@ const kpiMensal = async (req, res, next) => {
     const { getWeek, startOfMonth, endOfMonth } = require('date-fns');
     const inicioMes = startOfMonth(new Date(qAno, qMes - 1));
     const fimMes    = endOfMonth(new Date(qAno, qMes - 1));
+    
+    // Se for o mês atual, a referência de fim é HOJE. Se for mês passado, é o fim do mês.
+    const isMesAtual = qMes === agora.getMonth() + 1 && qAno === agora.getFullYear();
+    
     const semanaInicio = getWeek(inicioMes, { weekStartsOn: 5 });
-    const semanaFim    = getWeek(fimMes,    { weekStartsOn: 5 });
+    const semanaFim    = isMesAtual 
+      ? getWeek(agora, { weekStartsOn: 5 })
+      : getWeek(fimMes, { weekStartsOn: 5 });
 
     // Calcular qual semana começar a buscar baseado em weeksToShow
     const semanaComeco = Math.max(semanaInicio, semanaFim - weeksToShow + 1);
@@ -393,60 +399,40 @@ const kpiMensal = async (req, res, next) => {
       }),
     ]);
 
-    // Se weeksToShow > 1, deduplicar equipamentos (usar maior valor de quantidadeQuebrada por tipo)
+    // Processar Equipamentos
+    const equipamentosUnicos = new Map(); // Chave: unidade + tipoEquipamento
     const equipPorTipo = {};
-    const equipamentosUnicos = new Map();
 
     checklistsEquip.forEach(c => {
       c.itens.forEach(i => {
-        const key = i.tipoEquipamento;
+        const key = `${c.unidade}-${i.tipoEquipamento}`;
+        // Como checklistsEquip está ordenado por semana DESC, o primeiro que encontramos é o mais recente de cada unidade/tipo
         if (!equipamentosUnicos.has(key)) {
-          equipamentosUnicos.set(key, i);
-        } else {
-          // Manter o item com maior quantidadeQuebrada (mais recente/crítico)
-          const existente = equipamentosUnicos.get(key);
-          if ((i.quantidadeQuebrada || 1) > (existente.quantidadeQuebrada || 1)) {
-            equipamentosUnicos.set(key, i);
-          }
-        }
-        // Para exibição no porTipo: soma se weeksToShow === 1, senão usa o máximo
-        if (weeksToShow === 1) {
-          equipPorTipo[i.tipoEquipamento] = (equipPorTipo[i.tipoEquipamento] || 0) + (i.quantidadeQuebrada || 1);
-        } else {
-          equipPorTipo[i.tipoEquipamento] = Math.max(equipPorTipo[i.tipoEquipamento] || 0, i.quantidadeQuebrada || 1);
+          const qtd = i.quantidadeQuebrada || 1;
+          equipamentosUnicos.set(key, qtd);
+          
+          // Acumular no resumo por tipo
+          equipPorTipo[i.tipoEquipamento] = (equipPorTipo[i.tipoEquipamento] || 0) + qtd;
         }
       });
     });
 
-    const totalEquipParados = equipamentosUnicos.size;
+    const totalEquipParados = Array.from(equipamentosUnicos.values()).reduce((a, b) => a + b, 0);
 
-    // Carrinhos: deduplicar por tipo também
-    const carrinhoPorTipo = new Map();
+    // Processar Carrinhos
+    const carrinhosUnicos = new Map(); // Chave: unidade + tipoCarrinho
     let totalCarrinhosQuebrados = 0;
     let totalCarrinhos = 0;
 
     checklistsCarrinho.forEach(c => {
       c.itens.forEach(i => {
-        const key = i.tipoCarrinho;
-        if (!carrinhoPorTipo.has(key)) {
-          carrinhoPorTipo.set(key, { quebrados: i.quebrados, total: i.total });
-        } else {
-          // Se weeksToShow > 1, usar o máximo de quebrados reportados
-          const existente = carrinhoPorTipo.get(key);
-          if (weeksToShow === 1) {
-            existente.quebrados += i.quebrados;
-            existente.total += i.total;
-          } else {
-            existente.quebrados = Math.max(existente.quebrados, i.quebrados);
-            existente.total = Math.max(existente.total, i.total);
-          }
+        const key = `${c.unidade}-${i.tipoCarrinho}`;
+        if (!carrinhosUnicos.has(key)) {
+          carrinhosUnicos.set(key, { quebrados: i.quebrados, total: i.total });
+          totalCarrinhosQuebrados += i.quebrados;
+          totalCarrinhos += i.total;
         }
       });
-    });
-
-    carrinhoPorTipo.forEach(item => {
-      totalCarrinhosQuebrados += item.quebrados;
-      totalCarrinhos += item.total;
     });
 
     const semanasPreenchidasEquip    = [...new Set(checklistsEquip.map(c => c.semana))].length;
