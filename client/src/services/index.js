@@ -53,6 +53,15 @@ export const fornecedoresService = {
   remover:   (id)     => api.delete(`/fornecedores/${id}`),
 };
 
+// ─── Ativos da Loja ───────────────────────────────────────────────────────
+export const ativosService = {
+  listar:    (params) => api.get('/ativos', { params }),
+  buscar:    (id)     => api.get(`/ativos/${id}`),
+  criar:     (data)   => api.post('/ativos', data),
+  atualizar: (id, data) => api.put(`/ativos/${id}`, data),
+  remover:   (id)     => api.delete(`/ativos/${id}`),
+};
+
 // ─── Estoque ──────────────────────────────────────────────────────────────
 export const estoqueService = {
   listarPecas:         (params) => api.get('/estoque/pecas', { params }),

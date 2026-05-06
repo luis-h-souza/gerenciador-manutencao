@@ -2155,7 +2155,7 @@ export default function ChamadosPage() {
           >
             {/* Bloco de Filtros */}
             <div className="flex items-center gap-3 flex-1 min-w-[320px]">
-              <div className="relative flex-1 max-w-[300px]">
+              <div className="relative flex-1 max-w-75">
                 <Search
                   size={15}
                   style={{

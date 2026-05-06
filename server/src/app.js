@@ -24,6 +24,7 @@ const notificacaoRoutes = require('./routes/notificacao.routes');
 const dashboardRoutes = require('./routes/dashboard.routes');
 const checklistRoutes = require('./routes/checklist.routes');
 const lojaRoutes      = require('./routes/loja.routes');
+const ativoRoutes     = require('./routes/ativo.routes');
 
 const path = require('path');
 
@@ -162,6 +163,7 @@ app.use(`${API}/notificacoes`, notificacaoRoutes);
 app.use(`${API}/dashboard`, dashboardRoutes);
 app.use(`${API}/checklists`, checklistRoutes);
 app.use(`${API}/lojas`,     lojaRoutes);
+app.use(`${API}/ativos`,    ativoRoutes);
 
 // ─── 404 ──────────────────────────────────────────────────────────────────────
 app.use((req, res) => {

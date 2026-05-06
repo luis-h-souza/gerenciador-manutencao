@@ -334,6 +334,27 @@ exports.Prisma.FrotaCarrinhoScalarFieldEnum = {
   atualizadoEm: 'atualizadoEm'
 };
 
+exports.Prisma.AtivoLojaScalarFieldEnum = {
+  id: 'id',
+  nome: 'nome',
+  categoria: 'categoria',
+  tipo: 'tipo',
+  fabricante: 'fabricante',
+  modelo: 'modelo',
+  numeroSerie: 'numeroSerie',
+  patrimonio: 'patrimonio',
+  quantidade: 'quantidade',
+  status: 'status',
+  localizacao: 'localizacao',
+  observacoes: 'observacoes',
+  regiao: 'regiao',
+  unidade: 'unidade',
+  criadoPorId: 'criadoPorId',
+  ativo: 'ativo',
+  criadoEm: 'criadoEm',
+  atualizadoEm: 'atualizadoEm'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -471,7 +492,8 @@ exports.Prisma.ModelName = {
   ChecklistEquipamentoItem: 'ChecklistEquipamentoItem',
   ChecklistCarrinho: 'ChecklistCarrinho',
   ChecklistCarrinhoItem: 'ChecklistCarrinhoItem',
-  FrotaCarrinho: 'FrotaCarrinho'
+  FrotaCarrinho: 'FrotaCarrinho',
+  AtivoLoja: 'AtivoLoja'
 };
 
 /**

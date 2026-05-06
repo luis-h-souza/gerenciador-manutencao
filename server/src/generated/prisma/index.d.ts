@@ -103,6 +103,11 @@ export type ChecklistCarrinhoItem = $Result.DefaultSelection<Prisma.$ChecklistCa
  * 
  */
 export type FrotaCarrinho = $Result.DefaultSelection<Prisma.$FrotaCarrinhoPayload>
+/**
+ * Model AtivoLoja
+ * 
+ */
+export type AtivoLoja = $Result.DefaultSelection<Prisma.$AtivoLojaPayload>
 
 /**
  * Enums
@@ -570,6 +575,16 @@ export class PrismaClient<
     * ```
     */
   get frotaCarrinho(): Prisma.FrotaCarrinhoDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.ativoLoja`: Exposes CRUD operations for the **AtivoLoja** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AtivoLojas
+    * const ativoLojas = await prisma.ativoLoja.findMany()
+    * ```
+    */
+  get ativoLoja(): Prisma.AtivoLojaDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1021,7 +1036,8 @@ export namespace Prisma {
     ChecklistEquipamentoItem: 'ChecklistEquipamentoItem',
     ChecklistCarrinho: 'ChecklistCarrinho',
     ChecklistCarrinhoItem: 'ChecklistCarrinhoItem',
-    FrotaCarrinho: 'FrotaCarrinho'
+    FrotaCarrinho: 'FrotaCarrinho',
+    AtivoLoja: 'AtivoLoja'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1037,7 +1053,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "loja" | "usuario" | "refreshToken" | "sessao" | "tarefa" | "notificacao" | "controleChamado" | "fornecedor" | "metaOrcamentaria" | "peca" | "entradaPeca" | "movimentacaoPeca" | "saidaPeca" | "checklistEquipamento" | "checklistEquipamentoItem" | "checklistCarrinho" | "checklistCarrinhoItem" | "frotaCarrinho"
+      modelProps: "loja" | "usuario" | "refreshToken" | "sessao" | "tarefa" | "notificacao" | "controleChamado" | "fornecedor" | "metaOrcamentaria" | "peca" | "entradaPeca" | "movimentacaoPeca" | "saidaPeca" | "checklistEquipamento" | "checklistEquipamentoItem" | "checklistCarrinho" | "checklistCarrinhoItem" | "frotaCarrinho" | "ativoLoja"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2373,6 +2389,80 @@ export namespace Prisma {
           }
         }
       }
+      AtivoLoja: {
+        payload: Prisma.$AtivoLojaPayload<ExtArgs>
+        fields: Prisma.AtivoLojaFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AtivoLojaFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AtivoLojaPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AtivoLojaFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AtivoLojaPayload>
+          }
+          findFirst: {
+            args: Prisma.AtivoLojaFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AtivoLojaPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AtivoLojaFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AtivoLojaPayload>
+          }
+          findMany: {
+            args: Prisma.AtivoLojaFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AtivoLojaPayload>[]
+          }
+          create: {
+            args: Prisma.AtivoLojaCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AtivoLojaPayload>
+          }
+          createMany: {
+            args: Prisma.AtivoLojaCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AtivoLojaCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AtivoLojaPayload>[]
+          }
+          delete: {
+            args: Prisma.AtivoLojaDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AtivoLojaPayload>
+          }
+          update: {
+            args: Prisma.AtivoLojaUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AtivoLojaPayload>
+          }
+          deleteMany: {
+            args: Prisma.AtivoLojaDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AtivoLojaUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AtivoLojaUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AtivoLojaPayload>[]
+          }
+          upsert: {
+            args: Prisma.AtivoLojaUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AtivoLojaPayload>
+          }
+          aggregate: {
+            args: Prisma.AtivoLojaAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAtivoLoja>
+          }
+          groupBy: {
+            args: Prisma.AtivoLojaGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AtivoLojaGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AtivoLojaCountArgs<ExtArgs>
+            result: $Utils.Optional<AtivoLojaCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2499,6 +2589,7 @@ export namespace Prisma {
     checklistCarrinho?: ChecklistCarrinhoOmit
     checklistCarrinhoItem?: ChecklistCarrinhoItemOmit
     frotaCarrinho?: FrotaCarrinhoOmit
+    ativoLoja?: AtivoLojaOmit
   }
 
   /* Types for Logging */
@@ -2612,6 +2703,7 @@ export namespace Prisma {
   export type UsuarioCountOutputType = {
     checklistsCarrinho: number
     checklistsEquipamento: number
+    ativosLoja: number
     notificacoes: number
     refreshTokens: number
     sessoes: number
@@ -2622,6 +2714,7 @@ export namespace Prisma {
   export type UsuarioCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     checklistsCarrinho?: boolean | UsuarioCountOutputTypeCountChecklistsCarrinhoArgs
     checklistsEquipamento?: boolean | UsuarioCountOutputTypeCountChecklistsEquipamentoArgs
+    ativosLoja?: boolean | UsuarioCountOutputTypeCountAtivosLojaArgs
     notificacoes?: boolean | UsuarioCountOutputTypeCountNotificacoesArgs
     refreshTokens?: boolean | UsuarioCountOutputTypeCountRefreshTokensArgs
     sessoes?: boolean | UsuarioCountOutputTypeCountSessoesArgs
@@ -2652,6 +2745,13 @@ export namespace Prisma {
    */
   export type UsuarioCountOutputTypeCountChecklistsEquipamentoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ChecklistEquipamentoWhereInput
+  }
+
+  /**
+   * UsuarioCountOutputType without action
+   */
+  export type UsuarioCountOutputTypeCountAtivosLojaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AtivoLojaWhereInput
   }
 
   /**
@@ -4204,6 +4304,7 @@ export namespace Prisma {
     loja?: boolean | Usuario$lojaArgs<ExtArgs>
     checklistsCarrinho?: boolean | Usuario$checklistsCarrinhoArgs<ExtArgs>
     checklistsEquipamento?: boolean | Usuario$checklistsEquipamentoArgs<ExtArgs>
+    ativosLoja?: boolean | Usuario$ativosLojaArgs<ExtArgs>
     notificacoes?: boolean | Usuario$notificacoesArgs<ExtArgs>
     refreshTokens?: boolean | Usuario$refreshTokensArgs<ExtArgs>
     sessoes?: boolean | Usuario$sessoesArgs<ExtArgs>
@@ -4258,6 +4359,7 @@ export namespace Prisma {
     loja?: boolean | Usuario$lojaArgs<ExtArgs>
     checklistsCarrinho?: boolean | Usuario$checklistsCarrinhoArgs<ExtArgs>
     checklistsEquipamento?: boolean | Usuario$checklistsEquipamentoArgs<ExtArgs>
+    ativosLoja?: boolean | Usuario$ativosLojaArgs<ExtArgs>
     notificacoes?: boolean | Usuario$notificacoesArgs<ExtArgs>
     refreshTokens?: boolean | Usuario$refreshTokensArgs<ExtArgs>
     sessoes?: boolean | Usuario$sessoesArgs<ExtArgs>
@@ -4278,6 +4380,7 @@ export namespace Prisma {
       loja: Prisma.$LojaPayload<ExtArgs> | null
       checklistsCarrinho: Prisma.$ChecklistCarrinhoPayload<ExtArgs>[]
       checklistsEquipamento: Prisma.$ChecklistEquipamentoPayload<ExtArgs>[]
+      ativosLoja: Prisma.$AtivoLojaPayload<ExtArgs>[]
       notificacoes: Prisma.$NotificacaoPayload<ExtArgs>[]
       refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
       sessoes: Prisma.$SessaoPayload<ExtArgs>[]
@@ -4692,6 +4795,7 @@ export namespace Prisma {
     loja<T extends Usuario$lojaArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$lojaArgs<ExtArgs>>): Prisma__LojaClient<$Result.GetResult<Prisma.$LojaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     checklistsCarrinho<T extends Usuario$checklistsCarrinhoArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$checklistsCarrinhoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChecklistCarrinhoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     checklistsEquipamento<T extends Usuario$checklistsEquipamentoArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$checklistsEquipamentoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChecklistEquipamentoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    ativosLoja<T extends Usuario$ativosLojaArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$ativosLojaArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AtivoLojaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     notificacoes<T extends Usuario$notificacoesArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$notificacoesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificacaoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     refreshTokens<T extends Usuario$refreshTokensArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessoes<T extends Usuario$sessoesArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$sessoesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessaoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -5201,6 +5305,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ChecklistEquipamentoScalarFieldEnum | ChecklistEquipamentoScalarFieldEnum[]
+  }
+
+  /**
+   * Usuario.ativosLoja
+   */
+  export type Usuario$ativosLojaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AtivoLoja
+     */
+    select?: AtivoLojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AtivoLoja
+     */
+    omit?: AtivoLojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AtivoLojaInclude<ExtArgs> | null
+    where?: AtivoLojaWhereInput
+    orderBy?: AtivoLojaOrderByWithRelationInput | AtivoLojaOrderByWithRelationInput[]
+    cursor?: AtivoLojaWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AtivoLojaScalarFieldEnum | AtivoLojaScalarFieldEnum[]
   }
 
   /**
@@ -23533,6 +23661,1272 @@ export namespace Prisma {
 
 
   /**
+   * Model AtivoLoja
+   */
+
+  export type AggregateAtivoLoja = {
+    _count: AtivoLojaCountAggregateOutputType | null
+    _avg: AtivoLojaAvgAggregateOutputType | null
+    _sum: AtivoLojaSumAggregateOutputType | null
+    _min: AtivoLojaMinAggregateOutputType | null
+    _max: AtivoLojaMaxAggregateOutputType | null
+  }
+
+  export type AtivoLojaAvgAggregateOutputType = {
+    quantidade: number | null
+  }
+
+  export type AtivoLojaSumAggregateOutputType = {
+    quantidade: number | null
+  }
+
+  export type AtivoLojaMinAggregateOutputType = {
+    id: string | null
+    nome: string | null
+    categoria: string | null
+    tipo: string | null
+    fabricante: string | null
+    modelo: string | null
+    numeroSerie: string | null
+    patrimonio: string | null
+    quantidade: number | null
+    status: string | null
+    localizacao: string | null
+    observacoes: string | null
+    regiao: string | null
+    unidade: string | null
+    criadoPorId: string | null
+    ativo: boolean | null
+    criadoEm: Date | null
+    atualizadoEm: Date | null
+  }
+
+  export type AtivoLojaMaxAggregateOutputType = {
+    id: string | null
+    nome: string | null
+    categoria: string | null
+    tipo: string | null
+    fabricante: string | null
+    modelo: string | null
+    numeroSerie: string | null
+    patrimonio: string | null
+    quantidade: number | null
+    status: string | null
+    localizacao: string | null
+    observacoes: string | null
+    regiao: string | null
+    unidade: string | null
+    criadoPorId: string | null
+    ativo: boolean | null
+    criadoEm: Date | null
+    atualizadoEm: Date | null
+  }
+
+  export type AtivoLojaCountAggregateOutputType = {
+    id: number
+    nome: number
+    categoria: number
+    tipo: number
+    fabricante: number
+    modelo: number
+    numeroSerie: number
+    patrimonio: number
+    quantidade: number
+    status: number
+    localizacao: number
+    observacoes: number
+    regiao: number
+    unidade: number
+    criadoPorId: number
+    ativo: number
+    criadoEm: number
+    atualizadoEm: number
+    _all: number
+  }
+
+
+  export type AtivoLojaAvgAggregateInputType = {
+    quantidade?: true
+  }
+
+  export type AtivoLojaSumAggregateInputType = {
+    quantidade?: true
+  }
+
+  export type AtivoLojaMinAggregateInputType = {
+    id?: true
+    nome?: true
+    categoria?: true
+    tipo?: true
+    fabricante?: true
+    modelo?: true
+    numeroSerie?: true
+    patrimonio?: true
+    quantidade?: true
+    status?: true
+    localizacao?: true
+    observacoes?: true
+    regiao?: true
+    unidade?: true
+    criadoPorId?: true
+    ativo?: true
+    criadoEm?: true
+    atualizadoEm?: true
+  }
+
+  export type AtivoLojaMaxAggregateInputType = {
+    id?: true
+    nome?: true
+    categoria?: true
+    tipo?: true
+    fabricante?: true
+    modelo?: true
+    numeroSerie?: true
+    patrimonio?: true
+    quantidade?: true
+    status?: true
+    localizacao?: true
+    observacoes?: true
+    regiao?: true
+    unidade?: true
+    criadoPorId?: true
+    ativo?: true
+    criadoEm?: true
+    atualizadoEm?: true
+  }
+
+  export type AtivoLojaCountAggregateInputType = {
+    id?: true
+    nome?: true
+    categoria?: true
+    tipo?: true
+    fabricante?: true
+    modelo?: true
+    numeroSerie?: true
+    patrimonio?: true
+    quantidade?: true
+    status?: true
+    localizacao?: true
+    observacoes?: true
+    regiao?: true
+    unidade?: true
+    criadoPorId?: true
+    ativo?: true
+    criadoEm?: true
+    atualizadoEm?: true
+    _all?: true
+  }
+
+  export type AtivoLojaAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AtivoLoja to aggregate.
+     */
+    where?: AtivoLojaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AtivoLojas to fetch.
+     */
+    orderBy?: AtivoLojaOrderByWithRelationInput | AtivoLojaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AtivoLojaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AtivoLojas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AtivoLojas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AtivoLojas
+    **/
+    _count?: true | AtivoLojaCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: AtivoLojaAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AtivoLojaSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AtivoLojaMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AtivoLojaMaxAggregateInputType
+  }
+
+  export type GetAtivoLojaAggregateType<T extends AtivoLojaAggregateArgs> = {
+        [P in keyof T & keyof AggregateAtivoLoja]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAtivoLoja[P]>
+      : GetScalarType<T[P], AggregateAtivoLoja[P]>
+  }
+
+
+
+
+  export type AtivoLojaGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AtivoLojaWhereInput
+    orderBy?: AtivoLojaOrderByWithAggregationInput | AtivoLojaOrderByWithAggregationInput[]
+    by: AtivoLojaScalarFieldEnum[] | AtivoLojaScalarFieldEnum
+    having?: AtivoLojaScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AtivoLojaCountAggregateInputType | true
+    _avg?: AtivoLojaAvgAggregateInputType
+    _sum?: AtivoLojaSumAggregateInputType
+    _min?: AtivoLojaMinAggregateInputType
+    _max?: AtivoLojaMaxAggregateInputType
+  }
+
+  export type AtivoLojaGroupByOutputType = {
+    id: string
+    nome: string
+    categoria: string
+    tipo: string | null
+    fabricante: string | null
+    modelo: string | null
+    numeroSerie: string | null
+    patrimonio: string | null
+    quantidade: number
+    status: string
+    localizacao: string | null
+    observacoes: string | null
+    regiao: string
+    unidade: string
+    criadoPorId: string
+    ativo: boolean
+    criadoEm: Date
+    atualizadoEm: Date
+    _count: AtivoLojaCountAggregateOutputType | null
+    _avg: AtivoLojaAvgAggregateOutputType | null
+    _sum: AtivoLojaSumAggregateOutputType | null
+    _min: AtivoLojaMinAggregateOutputType | null
+    _max: AtivoLojaMaxAggregateOutputType | null
+  }
+
+  type GetAtivoLojaGroupByPayload<T extends AtivoLojaGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AtivoLojaGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AtivoLojaGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AtivoLojaGroupByOutputType[P]>
+            : GetScalarType<T[P], AtivoLojaGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AtivoLojaSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    nome?: boolean
+    categoria?: boolean
+    tipo?: boolean
+    fabricante?: boolean
+    modelo?: boolean
+    numeroSerie?: boolean
+    patrimonio?: boolean
+    quantidade?: boolean
+    status?: boolean
+    localizacao?: boolean
+    observacoes?: boolean
+    regiao?: boolean
+    unidade?: boolean
+    criadoPorId?: boolean
+    ativo?: boolean
+    criadoEm?: boolean
+    atualizadoEm?: boolean
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["ativoLoja"]>
+
+  export type AtivoLojaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    nome?: boolean
+    categoria?: boolean
+    tipo?: boolean
+    fabricante?: boolean
+    modelo?: boolean
+    numeroSerie?: boolean
+    patrimonio?: boolean
+    quantidade?: boolean
+    status?: boolean
+    localizacao?: boolean
+    observacoes?: boolean
+    regiao?: boolean
+    unidade?: boolean
+    criadoPorId?: boolean
+    ativo?: boolean
+    criadoEm?: boolean
+    atualizadoEm?: boolean
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["ativoLoja"]>
+
+  export type AtivoLojaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    nome?: boolean
+    categoria?: boolean
+    tipo?: boolean
+    fabricante?: boolean
+    modelo?: boolean
+    numeroSerie?: boolean
+    patrimonio?: boolean
+    quantidade?: boolean
+    status?: boolean
+    localizacao?: boolean
+    observacoes?: boolean
+    regiao?: boolean
+    unidade?: boolean
+    criadoPorId?: boolean
+    ativo?: boolean
+    criadoEm?: boolean
+    atualizadoEm?: boolean
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["ativoLoja"]>
+
+  export type AtivoLojaSelectScalar = {
+    id?: boolean
+    nome?: boolean
+    categoria?: boolean
+    tipo?: boolean
+    fabricante?: boolean
+    modelo?: boolean
+    numeroSerie?: boolean
+    patrimonio?: boolean
+    quantidade?: boolean
+    status?: boolean
+    localizacao?: boolean
+    observacoes?: boolean
+    regiao?: boolean
+    unidade?: boolean
+    criadoPorId?: boolean
+    ativo?: boolean
+    criadoEm?: boolean
+    atualizadoEm?: boolean
+  }
+
+  export type AtivoLojaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nome" | "categoria" | "tipo" | "fabricante" | "modelo" | "numeroSerie" | "patrimonio" | "quantidade" | "status" | "localizacao" | "observacoes" | "regiao" | "unidade" | "criadoPorId" | "ativo" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["ativoLoja"]>
+  export type AtivoLojaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
+  }
+  export type AtivoLojaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
+  }
+  export type AtivoLojaIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
+  }
+
+  export type $AtivoLojaPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AtivoLoja"
+    objects: {
+      criadoPor: Prisma.$UsuarioPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      nome: string
+      categoria: string
+      tipo: string | null
+      fabricante: string | null
+      modelo: string | null
+      numeroSerie: string | null
+      patrimonio: string | null
+      quantidade: number
+      status: string
+      localizacao: string | null
+      observacoes: string | null
+      regiao: string
+      unidade: string
+      criadoPorId: string
+      ativo: boolean
+      criadoEm: Date
+      atualizadoEm: Date
+    }, ExtArgs["result"]["ativoLoja"]>
+    composites: {}
+  }
+
+  type AtivoLojaGetPayload<S extends boolean | null | undefined | AtivoLojaDefaultArgs> = $Result.GetResult<Prisma.$AtivoLojaPayload, S>
+
+  type AtivoLojaCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AtivoLojaFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AtivoLojaCountAggregateInputType | true
+    }
+
+  export interface AtivoLojaDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AtivoLoja'], meta: { name: 'AtivoLoja' } }
+    /**
+     * Find zero or one AtivoLoja that matches the filter.
+     * @param {AtivoLojaFindUniqueArgs} args - Arguments to find a AtivoLoja
+     * @example
+     * // Get one AtivoLoja
+     * const ativoLoja = await prisma.ativoLoja.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AtivoLojaFindUniqueArgs>(args: SelectSubset<T, AtivoLojaFindUniqueArgs<ExtArgs>>): Prisma__AtivoLojaClient<$Result.GetResult<Prisma.$AtivoLojaPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AtivoLoja that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AtivoLojaFindUniqueOrThrowArgs} args - Arguments to find a AtivoLoja
+     * @example
+     * // Get one AtivoLoja
+     * const ativoLoja = await prisma.ativoLoja.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AtivoLojaFindUniqueOrThrowArgs>(args: SelectSubset<T, AtivoLojaFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AtivoLojaClient<$Result.GetResult<Prisma.$AtivoLojaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AtivoLoja that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AtivoLojaFindFirstArgs} args - Arguments to find a AtivoLoja
+     * @example
+     * // Get one AtivoLoja
+     * const ativoLoja = await prisma.ativoLoja.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AtivoLojaFindFirstArgs>(args?: SelectSubset<T, AtivoLojaFindFirstArgs<ExtArgs>>): Prisma__AtivoLojaClient<$Result.GetResult<Prisma.$AtivoLojaPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AtivoLoja that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AtivoLojaFindFirstOrThrowArgs} args - Arguments to find a AtivoLoja
+     * @example
+     * // Get one AtivoLoja
+     * const ativoLoja = await prisma.ativoLoja.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AtivoLojaFindFirstOrThrowArgs>(args?: SelectSubset<T, AtivoLojaFindFirstOrThrowArgs<ExtArgs>>): Prisma__AtivoLojaClient<$Result.GetResult<Prisma.$AtivoLojaPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AtivoLojas that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AtivoLojaFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AtivoLojas
+     * const ativoLojas = await prisma.ativoLoja.findMany()
+     * 
+     * // Get first 10 AtivoLojas
+     * const ativoLojas = await prisma.ativoLoja.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const ativoLojaWithIdOnly = await prisma.ativoLoja.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AtivoLojaFindManyArgs>(args?: SelectSubset<T, AtivoLojaFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AtivoLojaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AtivoLoja.
+     * @param {AtivoLojaCreateArgs} args - Arguments to create a AtivoLoja.
+     * @example
+     * // Create one AtivoLoja
+     * const AtivoLoja = await prisma.ativoLoja.create({
+     *   data: {
+     *     // ... data to create a AtivoLoja
+     *   }
+     * })
+     * 
+     */
+    create<T extends AtivoLojaCreateArgs>(args: SelectSubset<T, AtivoLojaCreateArgs<ExtArgs>>): Prisma__AtivoLojaClient<$Result.GetResult<Prisma.$AtivoLojaPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AtivoLojas.
+     * @param {AtivoLojaCreateManyArgs} args - Arguments to create many AtivoLojas.
+     * @example
+     * // Create many AtivoLojas
+     * const ativoLoja = await prisma.ativoLoja.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AtivoLojaCreateManyArgs>(args?: SelectSubset<T, AtivoLojaCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AtivoLojas and returns the data saved in the database.
+     * @param {AtivoLojaCreateManyAndReturnArgs} args - Arguments to create many AtivoLojas.
+     * @example
+     * // Create many AtivoLojas
+     * const ativoLoja = await prisma.ativoLoja.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AtivoLojas and only return the `id`
+     * const ativoLojaWithIdOnly = await prisma.ativoLoja.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AtivoLojaCreateManyAndReturnArgs>(args?: SelectSubset<T, AtivoLojaCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AtivoLojaPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AtivoLoja.
+     * @param {AtivoLojaDeleteArgs} args - Arguments to delete one AtivoLoja.
+     * @example
+     * // Delete one AtivoLoja
+     * const AtivoLoja = await prisma.ativoLoja.delete({
+     *   where: {
+     *     // ... filter to delete one AtivoLoja
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AtivoLojaDeleteArgs>(args: SelectSubset<T, AtivoLojaDeleteArgs<ExtArgs>>): Prisma__AtivoLojaClient<$Result.GetResult<Prisma.$AtivoLojaPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AtivoLoja.
+     * @param {AtivoLojaUpdateArgs} args - Arguments to update one AtivoLoja.
+     * @example
+     * // Update one AtivoLoja
+     * const ativoLoja = await prisma.ativoLoja.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AtivoLojaUpdateArgs>(args: SelectSubset<T, AtivoLojaUpdateArgs<ExtArgs>>): Prisma__AtivoLojaClient<$Result.GetResult<Prisma.$AtivoLojaPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AtivoLojas.
+     * @param {AtivoLojaDeleteManyArgs} args - Arguments to filter AtivoLojas to delete.
+     * @example
+     * // Delete a few AtivoLojas
+     * const { count } = await prisma.ativoLoja.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AtivoLojaDeleteManyArgs>(args?: SelectSubset<T, AtivoLojaDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AtivoLojas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AtivoLojaUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AtivoLojas
+     * const ativoLoja = await prisma.ativoLoja.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AtivoLojaUpdateManyArgs>(args: SelectSubset<T, AtivoLojaUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AtivoLojas and returns the data updated in the database.
+     * @param {AtivoLojaUpdateManyAndReturnArgs} args - Arguments to update many AtivoLojas.
+     * @example
+     * // Update many AtivoLojas
+     * const ativoLoja = await prisma.ativoLoja.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AtivoLojas and only return the `id`
+     * const ativoLojaWithIdOnly = await prisma.ativoLoja.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AtivoLojaUpdateManyAndReturnArgs>(args: SelectSubset<T, AtivoLojaUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AtivoLojaPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AtivoLoja.
+     * @param {AtivoLojaUpsertArgs} args - Arguments to update or create a AtivoLoja.
+     * @example
+     * // Update or create a AtivoLoja
+     * const ativoLoja = await prisma.ativoLoja.upsert({
+     *   create: {
+     *     // ... data to create a AtivoLoja
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AtivoLoja we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AtivoLojaUpsertArgs>(args: SelectSubset<T, AtivoLojaUpsertArgs<ExtArgs>>): Prisma__AtivoLojaClient<$Result.GetResult<Prisma.$AtivoLojaPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AtivoLojas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AtivoLojaCountArgs} args - Arguments to filter AtivoLojas to count.
+     * @example
+     * // Count the number of AtivoLojas
+     * const count = await prisma.ativoLoja.count({
+     *   where: {
+     *     // ... the filter for the AtivoLojas we want to count
+     *   }
+     * })
+    **/
+    count<T extends AtivoLojaCountArgs>(
+      args?: Subset<T, AtivoLojaCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AtivoLojaCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AtivoLoja.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AtivoLojaAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AtivoLojaAggregateArgs>(args: Subset<T, AtivoLojaAggregateArgs>): Prisma.PrismaPromise<GetAtivoLojaAggregateType<T>>
+
+    /**
+     * Group by AtivoLoja.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AtivoLojaGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AtivoLojaGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AtivoLojaGroupByArgs['orderBy'] }
+        : { orderBy?: AtivoLojaGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AtivoLojaGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAtivoLojaGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AtivoLoja model
+   */
+  readonly fields: AtivoLojaFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AtivoLoja.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AtivoLojaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    criadoPor<T extends UsuarioDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UsuarioDefaultArgs<ExtArgs>>): Prisma__UsuarioClient<$Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AtivoLoja model
+   */
+  interface AtivoLojaFieldRefs {
+    readonly id: FieldRef<"AtivoLoja", 'String'>
+    readonly nome: FieldRef<"AtivoLoja", 'String'>
+    readonly categoria: FieldRef<"AtivoLoja", 'String'>
+    readonly tipo: FieldRef<"AtivoLoja", 'String'>
+    readonly fabricante: FieldRef<"AtivoLoja", 'String'>
+    readonly modelo: FieldRef<"AtivoLoja", 'String'>
+    readonly numeroSerie: FieldRef<"AtivoLoja", 'String'>
+    readonly patrimonio: FieldRef<"AtivoLoja", 'String'>
+    readonly quantidade: FieldRef<"AtivoLoja", 'Int'>
+    readonly status: FieldRef<"AtivoLoja", 'String'>
+    readonly localizacao: FieldRef<"AtivoLoja", 'String'>
+    readonly observacoes: FieldRef<"AtivoLoja", 'String'>
+    readonly regiao: FieldRef<"AtivoLoja", 'String'>
+    readonly unidade: FieldRef<"AtivoLoja", 'String'>
+    readonly criadoPorId: FieldRef<"AtivoLoja", 'String'>
+    readonly ativo: FieldRef<"AtivoLoja", 'Boolean'>
+    readonly criadoEm: FieldRef<"AtivoLoja", 'DateTime'>
+    readonly atualizadoEm: FieldRef<"AtivoLoja", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AtivoLoja findUnique
+   */
+  export type AtivoLojaFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AtivoLoja
+     */
+    select?: AtivoLojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AtivoLoja
+     */
+    omit?: AtivoLojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AtivoLojaInclude<ExtArgs> | null
+    /**
+     * Filter, which AtivoLoja to fetch.
+     */
+    where: AtivoLojaWhereUniqueInput
+  }
+
+  /**
+   * AtivoLoja findUniqueOrThrow
+   */
+  export type AtivoLojaFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AtivoLoja
+     */
+    select?: AtivoLojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AtivoLoja
+     */
+    omit?: AtivoLojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AtivoLojaInclude<ExtArgs> | null
+    /**
+     * Filter, which AtivoLoja to fetch.
+     */
+    where: AtivoLojaWhereUniqueInput
+  }
+
+  /**
+   * AtivoLoja findFirst
+   */
+  export type AtivoLojaFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AtivoLoja
+     */
+    select?: AtivoLojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AtivoLoja
+     */
+    omit?: AtivoLojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AtivoLojaInclude<ExtArgs> | null
+    /**
+     * Filter, which AtivoLoja to fetch.
+     */
+    where?: AtivoLojaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AtivoLojas to fetch.
+     */
+    orderBy?: AtivoLojaOrderByWithRelationInput | AtivoLojaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AtivoLojas.
+     */
+    cursor?: AtivoLojaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AtivoLojas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AtivoLojas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AtivoLojas.
+     */
+    distinct?: AtivoLojaScalarFieldEnum | AtivoLojaScalarFieldEnum[]
+  }
+
+  /**
+   * AtivoLoja findFirstOrThrow
+   */
+  export type AtivoLojaFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AtivoLoja
+     */
+    select?: AtivoLojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AtivoLoja
+     */
+    omit?: AtivoLojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AtivoLojaInclude<ExtArgs> | null
+    /**
+     * Filter, which AtivoLoja to fetch.
+     */
+    where?: AtivoLojaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AtivoLojas to fetch.
+     */
+    orderBy?: AtivoLojaOrderByWithRelationInput | AtivoLojaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AtivoLojas.
+     */
+    cursor?: AtivoLojaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AtivoLojas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AtivoLojas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AtivoLojas.
+     */
+    distinct?: AtivoLojaScalarFieldEnum | AtivoLojaScalarFieldEnum[]
+  }
+
+  /**
+   * AtivoLoja findMany
+   */
+  export type AtivoLojaFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AtivoLoja
+     */
+    select?: AtivoLojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AtivoLoja
+     */
+    omit?: AtivoLojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AtivoLojaInclude<ExtArgs> | null
+    /**
+     * Filter, which AtivoLojas to fetch.
+     */
+    where?: AtivoLojaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AtivoLojas to fetch.
+     */
+    orderBy?: AtivoLojaOrderByWithRelationInput | AtivoLojaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AtivoLojas.
+     */
+    cursor?: AtivoLojaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AtivoLojas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AtivoLojas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AtivoLojas.
+     */
+    distinct?: AtivoLojaScalarFieldEnum | AtivoLojaScalarFieldEnum[]
+  }
+
+  /**
+   * AtivoLoja create
+   */
+  export type AtivoLojaCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AtivoLoja
+     */
+    select?: AtivoLojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AtivoLoja
+     */
+    omit?: AtivoLojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AtivoLojaInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AtivoLoja.
+     */
+    data: XOR<AtivoLojaCreateInput, AtivoLojaUncheckedCreateInput>
+  }
+
+  /**
+   * AtivoLoja createMany
+   */
+  export type AtivoLojaCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AtivoLojas.
+     */
+    data: AtivoLojaCreateManyInput | AtivoLojaCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AtivoLoja createManyAndReturn
+   */
+  export type AtivoLojaCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AtivoLoja
+     */
+    select?: AtivoLojaSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AtivoLoja
+     */
+    omit?: AtivoLojaOmit<ExtArgs> | null
+    /**
+     * The data used to create many AtivoLojas.
+     */
+    data: AtivoLojaCreateManyInput | AtivoLojaCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AtivoLojaIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AtivoLoja update
+   */
+  export type AtivoLojaUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AtivoLoja
+     */
+    select?: AtivoLojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AtivoLoja
+     */
+    omit?: AtivoLojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AtivoLojaInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AtivoLoja.
+     */
+    data: XOR<AtivoLojaUpdateInput, AtivoLojaUncheckedUpdateInput>
+    /**
+     * Choose, which AtivoLoja to update.
+     */
+    where: AtivoLojaWhereUniqueInput
+  }
+
+  /**
+   * AtivoLoja updateMany
+   */
+  export type AtivoLojaUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AtivoLojas.
+     */
+    data: XOR<AtivoLojaUpdateManyMutationInput, AtivoLojaUncheckedUpdateManyInput>
+    /**
+     * Filter which AtivoLojas to update
+     */
+    where?: AtivoLojaWhereInput
+    /**
+     * Limit how many AtivoLojas to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AtivoLoja updateManyAndReturn
+   */
+  export type AtivoLojaUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AtivoLoja
+     */
+    select?: AtivoLojaSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AtivoLoja
+     */
+    omit?: AtivoLojaOmit<ExtArgs> | null
+    /**
+     * The data used to update AtivoLojas.
+     */
+    data: XOR<AtivoLojaUpdateManyMutationInput, AtivoLojaUncheckedUpdateManyInput>
+    /**
+     * Filter which AtivoLojas to update
+     */
+    where?: AtivoLojaWhereInput
+    /**
+     * Limit how many AtivoLojas to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AtivoLojaIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AtivoLoja upsert
+   */
+  export type AtivoLojaUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AtivoLoja
+     */
+    select?: AtivoLojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AtivoLoja
+     */
+    omit?: AtivoLojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AtivoLojaInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AtivoLoja to update in case it exists.
+     */
+    where: AtivoLojaWhereUniqueInput
+    /**
+     * In case the AtivoLoja found by the `where` argument doesn't exist, create a new AtivoLoja with this data.
+     */
+    create: XOR<AtivoLojaCreateInput, AtivoLojaUncheckedCreateInput>
+    /**
+     * In case the AtivoLoja was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AtivoLojaUpdateInput, AtivoLojaUncheckedUpdateInput>
+  }
+
+  /**
+   * AtivoLoja delete
+   */
+  export type AtivoLojaDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AtivoLoja
+     */
+    select?: AtivoLojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AtivoLoja
+     */
+    omit?: AtivoLojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AtivoLojaInclude<ExtArgs> | null
+    /**
+     * Filter which AtivoLoja to delete.
+     */
+    where: AtivoLojaWhereUniqueInput
+  }
+
+  /**
+   * AtivoLoja deleteMany
+   */
+  export type AtivoLojaDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AtivoLojas to delete
+     */
+    where?: AtivoLojaWhereInput
+    /**
+     * Limit how many AtivoLojas to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AtivoLoja without action
+   */
+  export type AtivoLojaDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AtivoLoja
+     */
+    select?: AtivoLojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AtivoLoja
+     */
+    omit?: AtivoLojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AtivoLojaInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -23812,6 +25206,30 @@ export namespace Prisma {
   };
 
   export type FrotaCarrinhoScalarFieldEnum = (typeof FrotaCarrinhoScalarFieldEnum)[keyof typeof FrotaCarrinhoScalarFieldEnum]
+
+
+  export const AtivoLojaScalarFieldEnum: {
+    id: 'id',
+    nome: 'nome',
+    categoria: 'categoria',
+    tipo: 'tipo',
+    fabricante: 'fabricante',
+    modelo: 'modelo',
+    numeroSerie: 'numeroSerie',
+    patrimonio: 'patrimonio',
+    quantidade: 'quantidade',
+    status: 'status',
+    localizacao: 'localizacao',
+    observacoes: 'observacoes',
+    regiao: 'regiao',
+    unidade: 'unidade',
+    criadoPorId: 'criadoPorId',
+    ativo: 'ativo',
+    criadoEm: 'criadoEm',
+    atualizadoEm: 'atualizadoEm'
+  };
+
+  export type AtivoLojaScalarFieldEnum = (typeof AtivoLojaScalarFieldEnum)[keyof typeof AtivoLojaScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -24129,6 +25547,7 @@ export namespace Prisma {
     loja?: XOR<LojaNullableScalarRelationFilter, LojaWhereInput> | null
     checklistsCarrinho?: ChecklistCarrinhoListRelationFilter
     checklistsEquipamento?: ChecklistEquipamentoListRelationFilter
+    ativosLoja?: AtivoLojaListRelationFilter
     notificacoes?: NotificacaoListRelationFilter
     refreshTokens?: RefreshTokenListRelationFilter
     sessoes?: SessaoListRelationFilter
@@ -24150,6 +25569,7 @@ export namespace Prisma {
     loja?: LojaOrderByWithRelationInput
     checklistsCarrinho?: ChecklistCarrinhoOrderByRelationAggregateInput
     checklistsEquipamento?: ChecklistEquipamentoOrderByRelationAggregateInput
+    ativosLoja?: AtivoLojaOrderByRelationAggregateInput
     notificacoes?: NotificacaoOrderByRelationAggregateInput
     refreshTokens?: RefreshTokenOrderByRelationAggregateInput
     sessoes?: SessaoOrderByRelationAggregateInput
@@ -24174,6 +25594,7 @@ export namespace Prisma {
     loja?: XOR<LojaNullableScalarRelationFilter, LojaWhereInput> | null
     checklistsCarrinho?: ChecklistCarrinhoListRelationFilter
     checklistsEquipamento?: ChecklistEquipamentoListRelationFilter
+    ativosLoja?: AtivoLojaListRelationFilter
     notificacoes?: NotificacaoListRelationFilter
     refreshTokens?: RefreshTokenListRelationFilter
     sessoes?: SessaoListRelationFilter
@@ -25433,6 +26854,128 @@ export namespace Prisma {
     atualizadoEm?: DateTimeWithAggregatesFilter<"FrotaCarrinho"> | Date | string
   }
 
+  export type AtivoLojaWhereInput = {
+    AND?: AtivoLojaWhereInput | AtivoLojaWhereInput[]
+    OR?: AtivoLojaWhereInput[]
+    NOT?: AtivoLojaWhereInput | AtivoLojaWhereInput[]
+    id?: StringFilter<"AtivoLoja"> | string
+    nome?: StringFilter<"AtivoLoja"> | string
+    categoria?: StringFilter<"AtivoLoja"> | string
+    tipo?: StringNullableFilter<"AtivoLoja"> | string | null
+    fabricante?: StringNullableFilter<"AtivoLoja"> | string | null
+    modelo?: StringNullableFilter<"AtivoLoja"> | string | null
+    numeroSerie?: StringNullableFilter<"AtivoLoja"> | string | null
+    patrimonio?: StringNullableFilter<"AtivoLoja"> | string | null
+    quantidade?: IntFilter<"AtivoLoja"> | number
+    status?: StringFilter<"AtivoLoja"> | string
+    localizacao?: StringNullableFilter<"AtivoLoja"> | string | null
+    observacoes?: StringNullableFilter<"AtivoLoja"> | string | null
+    regiao?: StringFilter<"AtivoLoja"> | string
+    unidade?: StringFilter<"AtivoLoja"> | string
+    criadoPorId?: StringFilter<"AtivoLoja"> | string
+    ativo?: BoolFilter<"AtivoLoja"> | boolean
+    criadoEm?: DateTimeFilter<"AtivoLoja"> | Date | string
+    atualizadoEm?: DateTimeFilter<"AtivoLoja"> | Date | string
+    criadoPor?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
+  }
+
+  export type AtivoLojaOrderByWithRelationInput = {
+    id?: SortOrder
+    nome?: SortOrder
+    categoria?: SortOrder
+    tipo?: SortOrderInput | SortOrder
+    fabricante?: SortOrderInput | SortOrder
+    modelo?: SortOrderInput | SortOrder
+    numeroSerie?: SortOrderInput | SortOrder
+    patrimonio?: SortOrderInput | SortOrder
+    quantidade?: SortOrder
+    status?: SortOrder
+    localizacao?: SortOrderInput | SortOrder
+    observacoes?: SortOrderInput | SortOrder
+    regiao?: SortOrder
+    unidade?: SortOrder
+    criadoPorId?: SortOrder
+    ativo?: SortOrder
+    criadoEm?: SortOrder
+    atualizadoEm?: SortOrder
+    criadoPor?: UsuarioOrderByWithRelationInput
+  }
+
+  export type AtivoLojaWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AtivoLojaWhereInput | AtivoLojaWhereInput[]
+    OR?: AtivoLojaWhereInput[]
+    NOT?: AtivoLojaWhereInput | AtivoLojaWhereInput[]
+    nome?: StringFilter<"AtivoLoja"> | string
+    categoria?: StringFilter<"AtivoLoja"> | string
+    tipo?: StringNullableFilter<"AtivoLoja"> | string | null
+    fabricante?: StringNullableFilter<"AtivoLoja"> | string | null
+    modelo?: StringNullableFilter<"AtivoLoja"> | string | null
+    numeroSerie?: StringNullableFilter<"AtivoLoja"> | string | null
+    patrimonio?: StringNullableFilter<"AtivoLoja"> | string | null
+    quantidade?: IntFilter<"AtivoLoja"> | number
+    status?: StringFilter<"AtivoLoja"> | string
+    localizacao?: StringNullableFilter<"AtivoLoja"> | string | null
+    observacoes?: StringNullableFilter<"AtivoLoja"> | string | null
+    regiao?: StringFilter<"AtivoLoja"> | string
+    unidade?: StringFilter<"AtivoLoja"> | string
+    criadoPorId?: StringFilter<"AtivoLoja"> | string
+    ativo?: BoolFilter<"AtivoLoja"> | boolean
+    criadoEm?: DateTimeFilter<"AtivoLoja"> | Date | string
+    atualizadoEm?: DateTimeFilter<"AtivoLoja"> | Date | string
+    criadoPor?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
+  }, "id">
+
+  export type AtivoLojaOrderByWithAggregationInput = {
+    id?: SortOrder
+    nome?: SortOrder
+    categoria?: SortOrder
+    tipo?: SortOrderInput | SortOrder
+    fabricante?: SortOrderInput | SortOrder
+    modelo?: SortOrderInput | SortOrder
+    numeroSerie?: SortOrderInput | SortOrder
+    patrimonio?: SortOrderInput | SortOrder
+    quantidade?: SortOrder
+    status?: SortOrder
+    localizacao?: SortOrderInput | SortOrder
+    observacoes?: SortOrderInput | SortOrder
+    regiao?: SortOrder
+    unidade?: SortOrder
+    criadoPorId?: SortOrder
+    ativo?: SortOrder
+    criadoEm?: SortOrder
+    atualizadoEm?: SortOrder
+    _count?: AtivoLojaCountOrderByAggregateInput
+    _avg?: AtivoLojaAvgOrderByAggregateInput
+    _max?: AtivoLojaMaxOrderByAggregateInput
+    _min?: AtivoLojaMinOrderByAggregateInput
+    _sum?: AtivoLojaSumOrderByAggregateInput
+  }
+
+  export type AtivoLojaScalarWhereWithAggregatesInput = {
+    AND?: AtivoLojaScalarWhereWithAggregatesInput | AtivoLojaScalarWhereWithAggregatesInput[]
+    OR?: AtivoLojaScalarWhereWithAggregatesInput[]
+    NOT?: AtivoLojaScalarWhereWithAggregatesInput | AtivoLojaScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AtivoLoja"> | string
+    nome?: StringWithAggregatesFilter<"AtivoLoja"> | string
+    categoria?: StringWithAggregatesFilter<"AtivoLoja"> | string
+    tipo?: StringNullableWithAggregatesFilter<"AtivoLoja"> | string | null
+    fabricante?: StringNullableWithAggregatesFilter<"AtivoLoja"> | string | null
+    modelo?: StringNullableWithAggregatesFilter<"AtivoLoja"> | string | null
+    numeroSerie?: StringNullableWithAggregatesFilter<"AtivoLoja"> | string | null
+    patrimonio?: StringNullableWithAggregatesFilter<"AtivoLoja"> | string | null
+    quantidade?: IntWithAggregatesFilter<"AtivoLoja"> | number
+    status?: StringWithAggregatesFilter<"AtivoLoja"> | string
+    localizacao?: StringNullableWithAggregatesFilter<"AtivoLoja"> | string | null
+    observacoes?: StringNullableWithAggregatesFilter<"AtivoLoja"> | string | null
+    regiao?: StringWithAggregatesFilter<"AtivoLoja"> | string
+    unidade?: StringWithAggregatesFilter<"AtivoLoja"> | string
+    criadoPorId?: StringWithAggregatesFilter<"AtivoLoja"> | string
+    ativo?: BoolWithAggregatesFilter<"AtivoLoja"> | boolean
+    criadoEm?: DateTimeWithAggregatesFilter<"AtivoLoja"> | Date | string
+    atualizadoEm?: DateTimeWithAggregatesFilter<"AtivoLoja"> | Date | string
+  }
+
   export type LojaCreateInput = {
     id?: string
     numero: number
@@ -25534,6 +27077,7 @@ export namespace Prisma {
     loja?: LojaCreateNestedOneWithoutUsuariosInput
     checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
     checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
@@ -25554,6 +27098,7 @@ export namespace Prisma {
     atualizadoEm?: Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
     checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaUncheckedCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -25574,6 +27119,7 @@ export namespace Prisma {
     loja?: LojaUpdateOneWithoutUsuariosNestedInput
     checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
@@ -25594,6 +27140,7 @@ export namespace Prisma {
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUncheckedUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -26973,6 +28520,152 @@ export namespace Prisma {
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type AtivoLojaCreateInput = {
+    id?: string
+    nome: string
+    categoria: string
+    tipo?: string | null
+    fabricante?: string | null
+    modelo?: string | null
+    numeroSerie?: string | null
+    patrimonio?: string | null
+    quantidade?: number
+    status?: string
+    localizacao?: string | null
+    observacoes?: string | null
+    regiao: string
+    unidade: string
+    ativo?: boolean
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    criadoPor: UsuarioCreateNestedOneWithoutAtivosLojaInput
+  }
+
+  export type AtivoLojaUncheckedCreateInput = {
+    id?: string
+    nome: string
+    categoria: string
+    tipo?: string | null
+    fabricante?: string | null
+    modelo?: string | null
+    numeroSerie?: string | null
+    patrimonio?: string | null
+    quantidade?: number
+    status?: string
+    localizacao?: string | null
+    observacoes?: string | null
+    regiao: string
+    unidade: string
+    criadoPorId: string
+    ativo?: boolean
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+  }
+
+  export type AtivoLojaUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    categoria?: StringFieldUpdateOperationsInput | string
+    tipo?: NullableStringFieldUpdateOperationsInput | string | null
+    fabricante?: NullableStringFieldUpdateOperationsInput | string | null
+    modelo?: NullableStringFieldUpdateOperationsInput | string | null
+    numeroSerie?: NullableStringFieldUpdateOperationsInput | string | null
+    patrimonio?: NullableStringFieldUpdateOperationsInput | string | null
+    quantidade?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    localizacao?: NullableStringFieldUpdateOperationsInput | string | null
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    criadoPor?: UsuarioUpdateOneRequiredWithoutAtivosLojaNestedInput
+  }
+
+  export type AtivoLojaUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    categoria?: StringFieldUpdateOperationsInput | string
+    tipo?: NullableStringFieldUpdateOperationsInput | string | null
+    fabricante?: NullableStringFieldUpdateOperationsInput | string | null
+    modelo?: NullableStringFieldUpdateOperationsInput | string | null
+    numeroSerie?: NullableStringFieldUpdateOperationsInput | string | null
+    patrimonio?: NullableStringFieldUpdateOperationsInput | string | null
+    quantidade?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    localizacao?: NullableStringFieldUpdateOperationsInput | string | null
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    criadoPorId?: StringFieldUpdateOperationsInput | string
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AtivoLojaCreateManyInput = {
+    id?: string
+    nome: string
+    categoria: string
+    tipo?: string | null
+    fabricante?: string | null
+    modelo?: string | null
+    numeroSerie?: string | null
+    patrimonio?: string | null
+    quantidade?: number
+    status?: string
+    localizacao?: string | null
+    observacoes?: string | null
+    regiao: string
+    unidade: string
+    criadoPorId: string
+    ativo?: boolean
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+  }
+
+  export type AtivoLojaUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    categoria?: StringFieldUpdateOperationsInput | string
+    tipo?: NullableStringFieldUpdateOperationsInput | string | null
+    fabricante?: NullableStringFieldUpdateOperationsInput | string | null
+    modelo?: NullableStringFieldUpdateOperationsInput | string | null
+    numeroSerie?: NullableStringFieldUpdateOperationsInput | string | null
+    patrimonio?: NullableStringFieldUpdateOperationsInput | string | null
+    quantidade?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    localizacao?: NullableStringFieldUpdateOperationsInput | string | null
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AtivoLojaUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    categoria?: StringFieldUpdateOperationsInput | string
+    tipo?: NullableStringFieldUpdateOperationsInput | string | null
+    fabricante?: NullableStringFieldUpdateOperationsInput | string | null
+    modelo?: NullableStringFieldUpdateOperationsInput | string | null
+    numeroSerie?: NullableStringFieldUpdateOperationsInput | string | null
+    patrimonio?: NullableStringFieldUpdateOperationsInput | string | null
+    quantidade?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    localizacao?: NullableStringFieldUpdateOperationsInput | string | null
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    criadoPorId?: StringFieldUpdateOperationsInput | string
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -27187,6 +28880,12 @@ export namespace Prisma {
     none?: ChecklistEquipamentoWhereInput
   }
 
+  export type AtivoLojaListRelationFilter = {
+    every?: AtivoLojaWhereInput
+    some?: AtivoLojaWhereInput
+    none?: AtivoLojaWhereInput
+  }
+
   export type NotificacaoListRelationFilter = {
     every?: NotificacaoWhereInput
     some?: NotificacaoWhereInput
@@ -27216,6 +28915,10 @@ export namespace Prisma {
   }
 
   export type ChecklistEquipamentoOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AtivoLojaOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -28259,6 +29962,77 @@ export namespace Prisma {
     total?: SortOrder
   }
 
+  export type AtivoLojaCountOrderByAggregateInput = {
+    id?: SortOrder
+    nome?: SortOrder
+    categoria?: SortOrder
+    tipo?: SortOrder
+    fabricante?: SortOrder
+    modelo?: SortOrder
+    numeroSerie?: SortOrder
+    patrimonio?: SortOrder
+    quantidade?: SortOrder
+    status?: SortOrder
+    localizacao?: SortOrder
+    observacoes?: SortOrder
+    regiao?: SortOrder
+    unidade?: SortOrder
+    criadoPorId?: SortOrder
+    ativo?: SortOrder
+    criadoEm?: SortOrder
+    atualizadoEm?: SortOrder
+  }
+
+  export type AtivoLojaAvgOrderByAggregateInput = {
+    quantidade?: SortOrder
+  }
+
+  export type AtivoLojaMaxOrderByAggregateInput = {
+    id?: SortOrder
+    nome?: SortOrder
+    categoria?: SortOrder
+    tipo?: SortOrder
+    fabricante?: SortOrder
+    modelo?: SortOrder
+    numeroSerie?: SortOrder
+    patrimonio?: SortOrder
+    quantidade?: SortOrder
+    status?: SortOrder
+    localizacao?: SortOrder
+    observacoes?: SortOrder
+    regiao?: SortOrder
+    unidade?: SortOrder
+    criadoPorId?: SortOrder
+    ativo?: SortOrder
+    criadoEm?: SortOrder
+    atualizadoEm?: SortOrder
+  }
+
+  export type AtivoLojaMinOrderByAggregateInput = {
+    id?: SortOrder
+    nome?: SortOrder
+    categoria?: SortOrder
+    tipo?: SortOrder
+    fabricante?: SortOrder
+    modelo?: SortOrder
+    numeroSerie?: SortOrder
+    patrimonio?: SortOrder
+    quantidade?: SortOrder
+    status?: SortOrder
+    localizacao?: SortOrder
+    observacoes?: SortOrder
+    regiao?: SortOrder
+    unidade?: SortOrder
+    criadoPorId?: SortOrder
+    ativo?: SortOrder
+    criadoEm?: SortOrder
+    atualizadoEm?: SortOrder
+  }
+
+  export type AtivoLojaSumOrderByAggregateInput = {
+    quantidade?: SortOrder
+  }
+
   export type UsuarioCreateNestedManyWithoutLojaInput = {
     create?: XOR<UsuarioCreateWithoutLojaInput, UsuarioUncheckedCreateWithoutLojaInput> | UsuarioCreateWithoutLojaInput[] | UsuarioUncheckedCreateWithoutLojaInput[]
     connectOrCreate?: UsuarioCreateOrConnectWithoutLojaInput | UsuarioCreateOrConnectWithoutLojaInput[]
@@ -28345,6 +30119,13 @@ export namespace Prisma {
     connect?: ChecklistEquipamentoWhereUniqueInput | ChecklistEquipamentoWhereUniqueInput[]
   }
 
+  export type AtivoLojaCreateNestedManyWithoutCriadoPorInput = {
+    create?: XOR<AtivoLojaCreateWithoutCriadoPorInput, AtivoLojaUncheckedCreateWithoutCriadoPorInput> | AtivoLojaCreateWithoutCriadoPorInput[] | AtivoLojaUncheckedCreateWithoutCriadoPorInput[]
+    connectOrCreate?: AtivoLojaCreateOrConnectWithoutCriadoPorInput | AtivoLojaCreateOrConnectWithoutCriadoPorInput[]
+    createMany?: AtivoLojaCreateManyCriadoPorInputEnvelope
+    connect?: AtivoLojaWhereUniqueInput | AtivoLojaWhereUniqueInput[]
+  }
+
   export type NotificacaoCreateNestedManyWithoutUsuarioInput = {
     create?: XOR<NotificacaoCreateWithoutUsuarioInput, NotificacaoUncheckedCreateWithoutUsuarioInput> | NotificacaoCreateWithoutUsuarioInput[] | NotificacaoUncheckedCreateWithoutUsuarioInput[]
     connectOrCreate?: NotificacaoCreateOrConnectWithoutUsuarioInput | NotificacaoCreateOrConnectWithoutUsuarioInput[]
@@ -28392,6 +30173,13 @@ export namespace Prisma {
     connectOrCreate?: ChecklistEquipamentoCreateOrConnectWithoutCriadoPorInput | ChecklistEquipamentoCreateOrConnectWithoutCriadoPorInput[]
     createMany?: ChecklistEquipamentoCreateManyCriadoPorInputEnvelope
     connect?: ChecklistEquipamentoWhereUniqueInput | ChecklistEquipamentoWhereUniqueInput[]
+  }
+
+  export type AtivoLojaUncheckedCreateNestedManyWithoutCriadoPorInput = {
+    create?: XOR<AtivoLojaCreateWithoutCriadoPorInput, AtivoLojaUncheckedCreateWithoutCriadoPorInput> | AtivoLojaCreateWithoutCriadoPorInput[] | AtivoLojaUncheckedCreateWithoutCriadoPorInput[]
+    connectOrCreate?: AtivoLojaCreateOrConnectWithoutCriadoPorInput | AtivoLojaCreateOrConnectWithoutCriadoPorInput[]
+    createMany?: AtivoLojaCreateManyCriadoPorInputEnvelope
+    connect?: AtivoLojaWhereUniqueInput | AtivoLojaWhereUniqueInput[]
   }
 
   export type NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput = {
@@ -28469,6 +30257,20 @@ export namespace Prisma {
     update?: ChecklistEquipamentoUpdateWithWhereUniqueWithoutCriadoPorInput | ChecklistEquipamentoUpdateWithWhereUniqueWithoutCriadoPorInput[]
     updateMany?: ChecklistEquipamentoUpdateManyWithWhereWithoutCriadoPorInput | ChecklistEquipamentoUpdateManyWithWhereWithoutCriadoPorInput[]
     deleteMany?: ChecklistEquipamentoScalarWhereInput | ChecklistEquipamentoScalarWhereInput[]
+  }
+
+  export type AtivoLojaUpdateManyWithoutCriadoPorNestedInput = {
+    create?: XOR<AtivoLojaCreateWithoutCriadoPorInput, AtivoLojaUncheckedCreateWithoutCriadoPorInput> | AtivoLojaCreateWithoutCriadoPorInput[] | AtivoLojaUncheckedCreateWithoutCriadoPorInput[]
+    connectOrCreate?: AtivoLojaCreateOrConnectWithoutCriadoPorInput | AtivoLojaCreateOrConnectWithoutCriadoPorInput[]
+    upsert?: AtivoLojaUpsertWithWhereUniqueWithoutCriadoPorInput | AtivoLojaUpsertWithWhereUniqueWithoutCriadoPorInput[]
+    createMany?: AtivoLojaCreateManyCriadoPorInputEnvelope
+    set?: AtivoLojaWhereUniqueInput | AtivoLojaWhereUniqueInput[]
+    disconnect?: AtivoLojaWhereUniqueInput | AtivoLojaWhereUniqueInput[]
+    delete?: AtivoLojaWhereUniqueInput | AtivoLojaWhereUniqueInput[]
+    connect?: AtivoLojaWhereUniqueInput | AtivoLojaWhereUniqueInput[]
+    update?: AtivoLojaUpdateWithWhereUniqueWithoutCriadoPorInput | AtivoLojaUpdateWithWhereUniqueWithoutCriadoPorInput[]
+    updateMany?: AtivoLojaUpdateManyWithWhereWithoutCriadoPorInput | AtivoLojaUpdateManyWithWhereWithoutCriadoPorInput[]
+    deleteMany?: AtivoLojaScalarWhereInput | AtivoLojaScalarWhereInput[]
   }
 
   export type NotificacaoUpdateManyWithoutUsuarioNestedInput = {
@@ -28567,6 +30369,20 @@ export namespace Prisma {
     update?: ChecklistEquipamentoUpdateWithWhereUniqueWithoutCriadoPorInput | ChecklistEquipamentoUpdateWithWhereUniqueWithoutCriadoPorInput[]
     updateMany?: ChecklistEquipamentoUpdateManyWithWhereWithoutCriadoPorInput | ChecklistEquipamentoUpdateManyWithWhereWithoutCriadoPorInput[]
     deleteMany?: ChecklistEquipamentoScalarWhereInput | ChecklistEquipamentoScalarWhereInput[]
+  }
+
+  export type AtivoLojaUncheckedUpdateManyWithoutCriadoPorNestedInput = {
+    create?: XOR<AtivoLojaCreateWithoutCriadoPorInput, AtivoLojaUncheckedCreateWithoutCriadoPorInput> | AtivoLojaCreateWithoutCriadoPorInput[] | AtivoLojaUncheckedCreateWithoutCriadoPorInput[]
+    connectOrCreate?: AtivoLojaCreateOrConnectWithoutCriadoPorInput | AtivoLojaCreateOrConnectWithoutCriadoPorInput[]
+    upsert?: AtivoLojaUpsertWithWhereUniqueWithoutCriadoPorInput | AtivoLojaUpsertWithWhereUniqueWithoutCriadoPorInput[]
+    createMany?: AtivoLojaCreateManyCriadoPorInputEnvelope
+    set?: AtivoLojaWhereUniqueInput | AtivoLojaWhereUniqueInput[]
+    disconnect?: AtivoLojaWhereUniqueInput | AtivoLojaWhereUniqueInput[]
+    delete?: AtivoLojaWhereUniqueInput | AtivoLojaWhereUniqueInput[]
+    connect?: AtivoLojaWhereUniqueInput | AtivoLojaWhereUniqueInput[]
+    update?: AtivoLojaUpdateWithWhereUniqueWithoutCriadoPorInput | AtivoLojaUpdateWithWhereUniqueWithoutCriadoPorInput[]
+    updateMany?: AtivoLojaUpdateManyWithWhereWithoutCriadoPorInput | AtivoLojaUpdateManyWithWhereWithoutCriadoPorInput[]
+    deleteMany?: AtivoLojaScalarWhereInput | AtivoLojaScalarWhereInput[]
   }
 
   export type NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput = {
@@ -29127,6 +30943,20 @@ export namespace Prisma {
     update?: XOR<XOR<ChecklistCarrinhoUpdateToOneWithWhereWithoutItensInput, ChecklistCarrinhoUpdateWithoutItensInput>, ChecklistCarrinhoUncheckedUpdateWithoutItensInput>
   }
 
+  export type UsuarioCreateNestedOneWithoutAtivosLojaInput = {
+    create?: XOR<UsuarioCreateWithoutAtivosLojaInput, UsuarioUncheckedCreateWithoutAtivosLojaInput>
+    connectOrCreate?: UsuarioCreateOrConnectWithoutAtivosLojaInput
+    connect?: UsuarioWhereUniqueInput
+  }
+
+  export type UsuarioUpdateOneRequiredWithoutAtivosLojaNestedInput = {
+    create?: XOR<UsuarioCreateWithoutAtivosLojaInput, UsuarioUncheckedCreateWithoutAtivosLojaInput>
+    connectOrCreate?: UsuarioCreateOrConnectWithoutAtivosLojaInput
+    upsert?: UsuarioUpsertWithoutAtivosLojaInput
+    connect?: UsuarioWhereUniqueInput
+    update?: XOR<XOR<UsuarioUpdateToOneWithWhereWithoutAtivosLojaInput, UsuarioUpdateWithoutAtivosLojaInput>, UsuarioUncheckedUpdateWithoutAtivosLojaInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -29503,6 +31333,7 @@ export namespace Prisma {
     atualizadoEm?: Date | string
     checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
     checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
@@ -29522,6 +31353,7 @@ export namespace Prisma {
     atualizadoEm?: Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
     checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaUncheckedCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -29665,6 +31497,56 @@ export namespace Prisma {
 
   export type ChecklistEquipamentoCreateManyCriadoPorInputEnvelope = {
     data: ChecklistEquipamentoCreateManyCriadoPorInput | ChecklistEquipamentoCreateManyCriadoPorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AtivoLojaCreateWithoutCriadoPorInput = {
+    id?: string
+    nome: string
+    categoria: string
+    tipo?: string | null
+    fabricante?: string | null
+    modelo?: string | null
+    numeroSerie?: string | null
+    patrimonio?: string | null
+    quantidade?: number
+    status?: string
+    localizacao?: string | null
+    observacoes?: string | null
+    regiao: string
+    unidade: string
+    ativo?: boolean
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+  }
+
+  export type AtivoLojaUncheckedCreateWithoutCriadoPorInput = {
+    id?: string
+    nome: string
+    categoria: string
+    tipo?: string | null
+    fabricante?: string | null
+    modelo?: string | null
+    numeroSerie?: string | null
+    patrimonio?: string | null
+    quantidade?: number
+    status?: string
+    localizacao?: string | null
+    observacoes?: string | null
+    regiao: string
+    unidade: string
+    ativo?: boolean
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+  }
+
+  export type AtivoLojaCreateOrConnectWithoutCriadoPorInput = {
+    where: AtivoLojaWhereUniqueInput
+    create: XOR<AtivoLojaCreateWithoutCriadoPorInput, AtivoLojaUncheckedCreateWithoutCriadoPorInput>
+  }
+
+  export type AtivoLojaCreateManyCriadoPorInputEnvelope = {
+    data: AtivoLojaCreateManyCriadoPorInput | AtivoLojaCreateManyCriadoPorInput[]
     skipDuplicates?: boolean
   }
 
@@ -29929,6 +31811,46 @@ export namespace Prisma {
     atualizadoEm?: DateTimeFilter<"ChecklistEquipamento"> | Date | string
   }
 
+  export type AtivoLojaUpsertWithWhereUniqueWithoutCriadoPorInput = {
+    where: AtivoLojaWhereUniqueInput
+    update: XOR<AtivoLojaUpdateWithoutCriadoPorInput, AtivoLojaUncheckedUpdateWithoutCriadoPorInput>
+    create: XOR<AtivoLojaCreateWithoutCriadoPorInput, AtivoLojaUncheckedCreateWithoutCriadoPorInput>
+  }
+
+  export type AtivoLojaUpdateWithWhereUniqueWithoutCriadoPorInput = {
+    where: AtivoLojaWhereUniqueInput
+    data: XOR<AtivoLojaUpdateWithoutCriadoPorInput, AtivoLojaUncheckedUpdateWithoutCriadoPorInput>
+  }
+
+  export type AtivoLojaUpdateManyWithWhereWithoutCriadoPorInput = {
+    where: AtivoLojaScalarWhereInput
+    data: XOR<AtivoLojaUpdateManyMutationInput, AtivoLojaUncheckedUpdateManyWithoutCriadoPorInput>
+  }
+
+  export type AtivoLojaScalarWhereInput = {
+    AND?: AtivoLojaScalarWhereInput | AtivoLojaScalarWhereInput[]
+    OR?: AtivoLojaScalarWhereInput[]
+    NOT?: AtivoLojaScalarWhereInput | AtivoLojaScalarWhereInput[]
+    id?: StringFilter<"AtivoLoja"> | string
+    nome?: StringFilter<"AtivoLoja"> | string
+    categoria?: StringFilter<"AtivoLoja"> | string
+    tipo?: StringNullableFilter<"AtivoLoja"> | string | null
+    fabricante?: StringNullableFilter<"AtivoLoja"> | string | null
+    modelo?: StringNullableFilter<"AtivoLoja"> | string | null
+    numeroSerie?: StringNullableFilter<"AtivoLoja"> | string | null
+    patrimonio?: StringNullableFilter<"AtivoLoja"> | string | null
+    quantidade?: IntFilter<"AtivoLoja"> | number
+    status?: StringFilter<"AtivoLoja"> | string
+    localizacao?: StringNullableFilter<"AtivoLoja"> | string | null
+    observacoes?: StringNullableFilter<"AtivoLoja"> | string | null
+    regiao?: StringFilter<"AtivoLoja"> | string
+    unidade?: StringFilter<"AtivoLoja"> | string
+    criadoPorId?: StringFilter<"AtivoLoja"> | string
+    ativo?: BoolFilter<"AtivoLoja"> | boolean
+    criadoEm?: DateTimeFilter<"AtivoLoja"> | Date | string
+    atualizadoEm?: DateTimeFilter<"AtivoLoja"> | Date | string
+  }
+
   export type NotificacaoUpsertWithWhereUniqueWithoutUsuarioInput = {
     where: NotificacaoWhereUniqueInput
     update: XOR<NotificacaoUpdateWithoutUsuarioInput, NotificacaoUncheckedUpdateWithoutUsuarioInput>
@@ -30079,6 +32001,7 @@ export namespace Prisma {
     loja?: LojaCreateNestedOneWithoutUsuariosInput
     checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
     checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
@@ -30098,6 +32021,7 @@ export namespace Prisma {
     atualizadoEm?: Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
     checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaUncheckedCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
@@ -30133,6 +32057,7 @@ export namespace Prisma {
     loja?: LojaUpdateOneWithoutUsuariosNestedInput
     checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
@@ -30152,6 +32077,7 @@ export namespace Prisma {
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUncheckedUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
@@ -30171,6 +32097,7 @@ export namespace Prisma {
     loja?: LojaCreateNestedOneWithoutUsuariosInput
     checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
     checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
@@ -30190,6 +32117,7 @@ export namespace Prisma {
     atualizadoEm?: Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
     checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaUncheckedCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
@@ -30225,6 +32153,7 @@ export namespace Prisma {
     loja?: LojaUpdateOneWithoutUsuariosNestedInput
     checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
@@ -30244,6 +32173,7 @@ export namespace Prisma {
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUncheckedUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
@@ -30291,6 +32221,7 @@ export namespace Prisma {
     loja?: LojaCreateNestedOneWithoutUsuariosInput
     checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
     checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
@@ -30310,6 +32241,7 @@ export namespace Prisma {
     atualizadoEm?: Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
     checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaUncheckedCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -30334,6 +32266,7 @@ export namespace Prisma {
     loja?: LojaCreateNestedOneWithoutUsuariosInput
     checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
     checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
@@ -30353,6 +32286,7 @@ export namespace Prisma {
     atualizadoEm?: Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
     checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaUncheckedCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -30404,6 +32338,7 @@ export namespace Prisma {
     loja?: LojaUpdateOneWithoutUsuariosNestedInput
     checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
@@ -30423,6 +32358,7 @@ export namespace Prisma {
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUncheckedUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -30453,6 +32389,7 @@ export namespace Prisma {
     loja?: LojaUpdateOneWithoutUsuariosNestedInput
     checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
@@ -30472,6 +32409,7 @@ export namespace Prisma {
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUncheckedUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -30526,6 +32464,7 @@ export namespace Prisma {
     loja?: LojaCreateNestedOneWithoutUsuariosInput
     checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
     checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaCreateNestedManyWithoutCriadoPorInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
@@ -30545,6 +32484,7 @@ export namespace Prisma {
     atualizadoEm?: Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
     checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaUncheckedCreateNestedManyWithoutCriadoPorInput
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
@@ -30621,6 +32561,7 @@ export namespace Prisma {
     loja?: LojaUpdateOneWithoutUsuariosNestedInput
     checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUpdateManyWithoutCriadoPorNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
@@ -30640,6 +32581,7 @@ export namespace Prisma {
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUncheckedUpdateManyWithoutCriadoPorNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
@@ -31055,6 +32997,7 @@ export namespace Prisma {
     atualizadoEm?: Date | string
     loja?: LojaCreateNestedOneWithoutUsuariosInput
     checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
@@ -31074,6 +33017,7 @@ export namespace Prisma {
     criadoEm?: Date | string
     atualizadoEm?: Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaUncheckedCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -31141,6 +33085,7 @@ export namespace Prisma {
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     loja?: LojaUpdateOneWithoutUsuariosNestedInput
     checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
@@ -31160,6 +33105,7 @@ export namespace Prisma {
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUncheckedUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -31271,6 +33217,7 @@ export namespace Prisma {
     atualizadoEm?: Date | string
     loja?: LojaCreateNestedOneWithoutUsuariosInput
     checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
@@ -31290,6 +33237,7 @@ export namespace Prisma {
     criadoEm?: Date | string
     atualizadoEm?: Date | string
     checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaUncheckedCreateNestedManyWithoutCriadoPorInput
     notificacoes?: NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -31354,6 +33302,7 @@ export namespace Prisma {
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     loja?: LojaUpdateOneWithoutUsuariosNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
@@ -31373,6 +33322,7 @@ export namespace Prisma {
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUncheckedUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -31444,6 +33394,102 @@ export namespace Prisma {
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type UsuarioCreateWithoutAtivosLojaInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    loja?: LojaCreateNestedOneWithoutUsuariosInput
+    checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
+    sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
+    tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
+    tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
+  }
+
+  export type UsuarioUncheckedCreateWithoutAtivosLojaInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    lojaId?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
+    sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
+    tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
+    tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
+  }
+
+  export type UsuarioCreateOrConnectWithoutAtivosLojaInput = {
+    where: UsuarioWhereUniqueInput
+    create: XOR<UsuarioCreateWithoutAtivosLojaInput, UsuarioUncheckedCreateWithoutAtivosLojaInput>
+  }
+
+  export type UsuarioUpsertWithoutAtivosLojaInput = {
+    update: XOR<UsuarioUpdateWithoutAtivosLojaInput, UsuarioUncheckedUpdateWithoutAtivosLojaInput>
+    create: XOR<UsuarioCreateWithoutAtivosLojaInput, UsuarioUncheckedCreateWithoutAtivosLojaInput>
+    where?: UsuarioWhereInput
+  }
+
+  export type UsuarioUpdateToOneWithWhereWithoutAtivosLojaInput = {
+    where?: UsuarioWhereInput
+    data: XOR<UsuarioUpdateWithoutAtivosLojaInput, UsuarioUncheckedUpdateWithoutAtivosLojaInput>
+  }
+
+  export type UsuarioUpdateWithoutAtivosLojaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    loja?: LojaUpdateOneWithoutUsuariosNestedInput
+    checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
+    refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
+    sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
+    tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
+    tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
+  }
+
+  export type UsuarioUncheckedUpdateWithoutAtivosLojaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    lojaId?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
+    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
+    sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
+    tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
+    tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
+  }
+
   export type UsuarioCreateManyLojaInput = {
     id?: string
     nome: string
@@ -31468,6 +33514,7 @@ export namespace Prisma {
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
@@ -31487,6 +33534,7 @@ export namespace Prisma {
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
     checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUncheckedUpdateManyWithoutCriadoPorNestedInput
     notificacoes?: NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -31524,6 +33572,26 @@ export namespace Prisma {
     regiao: string
     unidade: string
     observacoes?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+  }
+
+  export type AtivoLojaCreateManyCriadoPorInput = {
+    id?: string
+    nome: string
+    categoria: string
+    tipo?: string | null
+    fabricante?: string | null
+    modelo?: string | null
+    numeroSerie?: string | null
+    patrimonio?: string | null
+    quantidade?: number
+    status?: string
+    localizacao?: string | null
+    observacoes?: string | null
+    regiao: string
+    unidade: string
+    ativo?: boolean
     criadoEm?: Date | string
     atualizadoEm?: Date | string
   }
@@ -31649,6 +33717,66 @@ export namespace Prisma {
     regiao?: StringFieldUpdateOperationsInput | string
     unidade?: StringFieldUpdateOperationsInput | string
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AtivoLojaUpdateWithoutCriadoPorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    categoria?: StringFieldUpdateOperationsInput | string
+    tipo?: NullableStringFieldUpdateOperationsInput | string | null
+    fabricante?: NullableStringFieldUpdateOperationsInput | string | null
+    modelo?: NullableStringFieldUpdateOperationsInput | string | null
+    numeroSerie?: NullableStringFieldUpdateOperationsInput | string | null
+    patrimonio?: NullableStringFieldUpdateOperationsInput | string | null
+    quantidade?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    localizacao?: NullableStringFieldUpdateOperationsInput | string | null
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AtivoLojaUncheckedUpdateWithoutCriadoPorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    categoria?: StringFieldUpdateOperationsInput | string
+    tipo?: NullableStringFieldUpdateOperationsInput | string | null
+    fabricante?: NullableStringFieldUpdateOperationsInput | string | null
+    modelo?: NullableStringFieldUpdateOperationsInput | string | null
+    numeroSerie?: NullableStringFieldUpdateOperationsInput | string | null
+    patrimonio?: NullableStringFieldUpdateOperationsInput | string | null
+    quantidade?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    localizacao?: NullableStringFieldUpdateOperationsInput | string | null
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AtivoLojaUncheckedUpdateManyWithoutCriadoPorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    categoria?: StringFieldUpdateOperationsInput | string
+    tipo?: NullableStringFieldUpdateOperationsInput | string | null
+    fabricante?: NullableStringFieldUpdateOperationsInput | string | null
+    modelo?: NullableStringFieldUpdateOperationsInput | string | null
+    numeroSerie?: NullableStringFieldUpdateOperationsInput | string | null
+    patrimonio?: NullableStringFieldUpdateOperationsInput | string | null
+    quantidade?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    localizacao?: NullableStringFieldUpdateOperationsInput | string | null
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    ativo?: BoolFieldUpdateOperationsInput | boolean
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }

@@ -13,6 +13,7 @@ import {
   ClipboardCheck,
   Settings,
   Store,
+  Boxes,
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -65,6 +66,12 @@ const NAV = [
     to: "/estoque",
     icon: Package,
     label: "Estoque",
+    roles: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR"],
+  },
+  {
+    to: "/ativos",
+    icon: Boxes,
+    label: "Ativos da Loja",
     roles: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR"],
   },
   {

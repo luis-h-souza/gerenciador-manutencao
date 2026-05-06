@@ -36,6 +36,7 @@ model Usuario {
   loja                  Loja?                  @relation(fields: [lojaId], references: [id])
   checklistsCarrinho    ChecklistCarrinho[]
   checklistsEquipamento ChecklistEquipamento[]
+  ativosLoja            AtivoLoja[]
   notificacoes          Notificacao[]
   refreshTokens         RefreshToken[]
   sessoes               Sessao[]
@@ -287,6 +288,34 @@ model FrotaCarrinho {
 
   @@unique([unidade, tipoCarrinho])
   @@map("frota_carrinhos")
+}
+
+model AtivoLoja {
+  id             String   @id @default(uuid())
+  nome           String
+  categoria      String
+  tipo           String?
+  fabricante     String?
+  modelo         String?
+  numeroSerie    String?
+  patrimonio     String?
+  quantidade     Int      @default(1)
+  status         String   @default("ATIVO")
+  localizacao    String?
+  observacoes    String?
+  regiao         String
+  unidade        String
+  criadoPorId    String
+  ativo          Boolean  @default(true)
+  criadoEm       DateTime @default(now())
+  atualizadoEm   DateTime @updatedAt
+  criadoPor      Usuario  @relation(fields: [criadoPorId], references: [id])
+
+  @@index([regiao])
+  @@index([unidade])
+  @@index([categoria])
+  @@index([status])
+  @@map("ativos_loja")
 }
 
 enum Role {
