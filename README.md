@@ -148,7 +148,7 @@ manutencao/
 │   │   ├── schema.prisma        # 14 modelos + enums
 │   │   └── seed.js
 │   ├── src/
-│   │   ├── controllers/
+│   │   ├── controllers/         # Lean controllers (apenas roteamento HTTP)
 │   │   │   ├── auth.controller.js
 │   │   │   ├── tarefa.controller.js
 │   │   │   ├── chamado.controller.js
@@ -157,6 +157,15 @@ manutencao/
 │   │   │   ├── fornecedor.controller.js
 │   │   │   ├── checklist.controller.js
 │   │   │   └── dashboard.controller.js
+│   │   ├── services/            # Camada de Regras de Negócio (Fat services)
+│   │   │   ├── auth.service.js
+│   │   │   ├── tarefa.service.js
+│   │   │   ├── chamado.service.js
+│   │   │   ├── usuario.service.js
+│   │   │   ├── estoque.service.js
+│   │   │   ├── fornecedor.service.js
+│   │   │   ├── checklist.service.js
+│   │   │   └── dashboard.service.js
 │   │   ├── middlewares/
 │   │   │   ├── auth.middleware.js
 │   │   │   ├── rateLimiter.js
@@ -174,6 +183,8 @@ manutencao/
 │   │   │   └── checklist.routes.js
 │   │   ├── utils/
 │   │   │   ├── access.utils.js  # getAccessFilter + getCreationContext
+│   │   │   ├── retornoHttp.js   # Padronizador de respostas de API
+│   │   │   ├── generica.js      # Funções auxiliares (date-fns, etc)
 │   │   │   ├── jwt.js
 │   │   │   ├── redis.js
 │   │   │   ├── logger.js

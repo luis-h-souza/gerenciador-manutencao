@@ -31,19 +31,22 @@ components:
     SuccessResponse:
       type: object
       properties:
-        success:
+        sucesso:
           type: boolean
           example: true
+        mensagem:
+          type: string
+          example: Operação realizada com sucesso
     
     ErrorResponse:
       type: object
       properties:
-        success:
+        sucesso:
           type: boolean
           example: false
-        error:
+        mensagem:
           type: string
-          example: ERROR_CODE
+          example: Mensagem descritiva do erro
         message:
           type: string
           example: Mensagem descritiva do erro
@@ -522,7 +525,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: object
                         properties:
                           user:
@@ -565,7 +568,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: object
                         properties:
                           accessToken:
@@ -618,7 +621,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/Usuario'
 
   /tarefas:
@@ -663,7 +666,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: array
                         items:
                           $ref: '#/components/schemas/Tarefa'
@@ -707,7 +710,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/Tarefa'
                       notification:
                         type: object
@@ -740,7 +743,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/Tarefa'
     put:
       tags: [Tarefas]
@@ -782,7 +785,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/Tarefa'
                       notification:
                         type: object
@@ -861,7 +864,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: array
                         items:
                           $ref: '#/components/schemas/Chamado'
@@ -907,7 +910,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/Chamado'
 
   /chamados/{id}:
@@ -946,7 +949,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/Chamado'
     delete:
       tags: [Chamados]
@@ -996,7 +999,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: object
                         properties:
                           mes:
@@ -1056,7 +1059,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: array
                         items:
                           $ref: '#/components/schemas/Peca'
@@ -1091,7 +1094,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/Peca'
 
   /estoque/entradas:
@@ -1124,7 +1127,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: array
                         items:
                           $ref: '#/components/schemas/EntradaPeca'
@@ -1166,7 +1169,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/EntradaPeca'
 
   /estoque/movimentacoes:
@@ -1183,7 +1186,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: array
                         items:
                           $ref: '#/components/schemas/MovimentacaoPeca'
@@ -1221,7 +1224,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/MovimentacaoPeca'
 
   /estoque/saidas:
@@ -1238,7 +1241,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: array
                         items:
                           $ref: '#/components/schemas/SaidaPeca'
@@ -1277,7 +1280,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/SaidaPeca'
 
   /dashboard/resumo:
@@ -1294,7 +1297,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: object
                         properties:
                           kpis:
@@ -1318,7 +1321,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: array
                         items:
                           type: object
@@ -1346,7 +1349,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: object
                         properties:
                           segmentos:
@@ -1373,7 +1376,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: object
 
   /checklists/equipamentos:
@@ -1408,7 +1411,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: array
                         items:
                           $ref: '#/components/schemas/ChecklistEquipamento'
@@ -1448,7 +1451,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/ChecklistEquipamento'
 
   /checklists/equipamentos/semana:
@@ -1465,7 +1468,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/ChecklistEquipamento'
 
   /checklists/equipamentos/kpi:
@@ -1482,7 +1485,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: object
 
   /checklists/carrinhos:
@@ -1499,7 +1502,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: array
                         items:
                           $ref: '#/components/schemas/ChecklistCarrinho'
@@ -1539,7 +1542,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/ChecklistCarrinho'
 
   /checklists/carrinhos/kpi:
@@ -1556,7 +1559,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: object
 
   /checklists/kpi-mensal:
@@ -1573,7 +1576,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: object
 
   /notificacoes:
@@ -1603,7 +1606,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: array
                         items:
                           $ref: '#/components/schemas/Notificacao'
@@ -1631,7 +1634,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/Notificacao'
 
   /notificacoes/marcar-todas-lidas:
@@ -1648,7 +1651,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: object
 
   /usuarios:
@@ -1688,7 +1691,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: array
                         items:
                           $ref: '#/components/schemas/Usuario'
@@ -1731,7 +1734,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/Usuario'
 
   /usuarios/{id}:
@@ -1757,7 +1760,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/Usuario'
     put:
       tags: [Usuários]
@@ -1799,7 +1802,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/Usuario'
     delete:
       tags: [Usuários]
@@ -1847,7 +1850,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: array
                         items:
                           $ref: '#/components/schemas/Loja'
@@ -1884,7 +1887,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/Loja'
 
   /lojas/regioes:
@@ -1901,7 +1904,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: array
                         items:
                           type: object
@@ -1927,7 +1930,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/Loja'
     put:
       tags: [Lojas]
@@ -1963,7 +1966,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/Loja'
     delete:
       tags: [Lojas]
@@ -2011,7 +2014,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         type: array
                         items:
                           $ref: '#/components/schemas/Fornecedor'
@@ -2050,7 +2053,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/Fornecedor'
 
   /fornecedores/{id}:
@@ -2074,7 +2077,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/Fornecedor'
     put:
       tags: [Fornecedores]
@@ -2114,7 +2117,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      data:
+                      dados:
                         $ref: '#/components/schemas/Fornecedor'
     delete:
       tags: [Fornecedores]
