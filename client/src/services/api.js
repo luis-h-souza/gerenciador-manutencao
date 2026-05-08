@@ -19,8 +19,20 @@ let renovando = false;
 let filaEspera = [];
 
 api.interceptors.response.use(
-  (res) => res,
+  (res) => {
+    // Desempacota o padrão retornoHttp do backend para não quebrar o frontend
+    if (res.data && res.data.sucesso === true && res.data.dados !== undefined) {
+      res.data = res.data.dados;
+    }
+    return res;
+  },
   async (error) => {
+    // Desempacota as mensagens de erro do padrão retornoHttp para retrocompatibilidade
+    if (error.response?.data && error.response.data.sucesso === false) {
+      if (!error.response.data.message) error.response.data.message = error.response.data.mensagem;
+      if (!error.response.data.error) error.response.data.error = error.response.data.mensagem;
+    }
+
     const original = error.config;
 
     if (
