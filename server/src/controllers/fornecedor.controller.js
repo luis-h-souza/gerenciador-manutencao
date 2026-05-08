@@ -1,26 +1,16 @@
 // src/controllers/fornecedor.controller.js
-const prisma = require('../utils/prisma');
+const fornecedorService = require('../services/fornecedor.service');
 
 const listar = async (req, res, next) => {
   try {
-    const { nome, segmento, cnpj, page = 1, limit = 20 } = req.query;
-    const skip = (parseInt(page) - 1) * parseInt(limit);
-    const where = { ativo: true };
-    if (nome) where.nome = { contains: nome, mode: 'insensitive' };
-    if (segmento) where.segmento = { contains: segmento, mode: 'insensitive' };
-    if (cnpj) where.cnpj = { contains: cnpj };
-
-    const [fornecedores, total] = await Promise.all([
-      prisma.fornecedor.findMany({ where, orderBy: { nome: 'asc' }, skip, take: parseInt(limit) }),
-      prisma.fornecedor.count({ where }),
-    ]);
-    res.json({ data: fornecedores, meta: { total, page: parseInt(page), limit: parseInt(limit) } });
+    const resultado = await fornecedorService.listar(req.query);
+    res.json(resultado);
   } catch (err) { next(err); }
 };
 
 const buscarPorId = async (req, res, next) => {
   try {
-    const f = await prisma.fornecedor.findUnique({ where: { id: req.params.id } });
+    const f = await fornecedorService.buscarPorId(req.params.id);
     if (!f) return res.status(404).json({ error: 'Fornecedor não encontrado' });
     res.json(f);
   } catch (err) { next(err); }
@@ -28,32 +18,21 @@ const buscarPorId = async (req, res, next) => {
 
 const criar = async (req, res, next) => {
   try {
-    const { nome, telefone, email, segmento, cnpj } = req.body;
-    const f = await prisma.fornecedor.create({ data: { nome, telefone, email, segmento, cnpj } });
+    const f = await fornecedorService.criar(req.body);
     res.status(201).json(f);
   } catch (err) { next(err); }
 };
 
 const atualizar = async (req, res, next) => {
   try {
-    const { nome, telefone, email, segmento, cnpj } = req.body;
-    const f = await prisma.fornecedor.update({
-      where: { id: req.params.id },
-      data: {
-        ...(nome !== undefined && { nome }),
-        ...(telefone !== undefined && { telefone }),
-        ...(email !== undefined && { email }),
-        ...(segmento !== undefined && { segmento }),
-        ...(cnpj !== undefined && { cnpj }),
-      },
-    });
+    const f = await fornecedorService.atualizar(req.params.id, req.body);
     res.json(f);
   } catch (err) { next(err); }
 };
 
 const remover = async (req, res, next) => {
   try {
-    await prisma.fornecedor.update({ where: { id: req.params.id }, data: { ativo: false } });
+    await fornecedorService.remover(req.params.id);
     res.json({ message: 'Fornecedor removido' });
   } catch (err) { next(err); }
 };
