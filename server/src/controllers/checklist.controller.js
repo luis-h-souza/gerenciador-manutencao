@@ -1,708 +1,131 @@
 // src/controllers/checklist.controller.js
-const prisma = require('../utils/prisma');
-const { getWeek, getYear } = require('date-fns');
-const { getAccessFilter, canAccessRegion } = require('../utils/access.utils');
-
-// ─── Utilitário: semana atual ────────────────────────────────────────────────
-const semanaAtual = () => {
-  const now = new Date();
-  return { semana: getWeek(now, { weekStartsOn: 5 }), ano: getYear(now) };
-};
-
-const normalizarTexto = (valor) => String(valor || '')
-  .normalize('NFD')
-  .replace(/[\u0300-\u036f]/g, '')
-  .replace(/[^a-z0-9]+/gi, '_')
-  .replace(/^_+|_+$/g, '')
-  .toUpperCase();
-
-const resolverTipoCarrinhoAtivo = (ativo) => {
-  const aliases = {
-    MARIA_GORDA: 'MARIA_GORDA',
-    SUPERCAR: 'SUPERCAR',
-    DOIS_ANDARES: 'DOIS_ANDARES',
-    CARRINHO_DOIS_ANDARES: 'DOIS_ANDARES',
-    PRANCHA: 'PRANCHA',
-    PRANCHA_PERECIVEIS: 'PRANCHA_PERECIVEIS',
-    PRANCHA_PERECIVEL: 'PRANCHA_PERECIVEIS',
-    CARRINHO_ABASTECIMENTO: 'CARRINHO_ABASTECIMENTO',
-    ABASTECIMENTO: 'CARRINHO_ABASTECIMENTO',
-    ESCADA: 'ESCADA',
-  };
-
-  const candidatos = [ativo.tipo, ativo.nome].map(normalizarTexto);
-  for (const candidato of candidatos) {
-    if (aliases[candidato]) return aliases[candidato];
-  }
-
-  return null;
-};
-
-const buscarFrotaCarrinhosPorAtivos = async (unidade) => {
-  const ativos = await prisma.ativoLoja.findMany({
-    where: {
-      unidade,
-      ativo: true,
-      status: 'ATIVO',
-      categoria: { contains: 'Carrinho', mode: 'insensitive' },
-    },
-  });
-
-  const porTipo = {};
-  ativos.forEach((ativo) => {
-    const tipoCarrinho = resolverTipoCarrinhoAtivo(ativo);
-    if (!tipoCarrinho) return;
-    porTipo[tipoCarrinho] = (porTipo[tipoCarrinho] || 0) + (parseInt(ativo.quantidade) || 0);
-  });
-
-  return Object.entries(porTipo).map(([tipoCarrinho, total]) => ({ tipoCarrinho, total }));
-};
-
-// ═══════════════════════════════════════════════════════════════════════════════
-//  EQUIPAMENTO
-// ═══════════════════════════════════════════════════════════════════════════════
+const checklistService = require('../services/checklist.service');
 
 const listarEquipamentos = async (req, res, next) => {
   try {
-    const { semana, ano, regiao, unidade, criadoPorId } = req.query;
-    const where = { ...getAccessFilter(req.user) };
-    if (semana) where.semana = parseInt(semana);
-    if (ano)    where.ano    = parseInt(ano);
-    if (criadoPorId) where.criadoPorId = criadoPorId;
-
-    // Filtros administrativos (Corporativo)
-    if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE'].includes(req.user.role)) {
-      if (regiao) {
-        if (!canAccessRegion(req.user, regiao)) {
-          return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
-        }
-        where.regiao = regiao;
-      }
-      if (unidade) where.unidade = unidade;
-    }
-
-    const checklists = await prisma.checklistEquipamento.findMany({
-      where,
-      include: {
-        itens: { orderBy: { tipoEquipamento: 'asc' } },
-        criadoPor: { select: { id: true, nome: true, regiao: true, loja: { select: { nome: true } } } },
-      },
-      orderBy: [{ ano: 'desc' }, { semana: 'desc' }],
-      take: 50,
-    });
-    res.json(checklists);
-  } catch (err) { next(err); }
+    const data = await checklistService.listarEquipamentos(req.user, req.query);
+    res.json(data);
+  } catch (err) {
+    if (err.status) return res.status(err.status).json({ error: err.error });
+    next(err);
+  }
 };
 
 const buscarEquipamentoPorSemana = async (req, res, next) => {
   try {
-    const { semana, ano, regiao, unidade, criadoPorId } = req.query;
-    const s = parseInt(semana) || semanaAtual().semana;
-    const a = parseInt(ano)    || semanaAtual().ano;
-    const where = { semana: s, ano: a, ...getAccessFilter(req.user) };
-
-    if (regiao && ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR'].includes(req.user.role)) {
-      if (!canAccessRegion(req.user, regiao)) {
-        return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
-      }
-      where.regiao = regiao;
-    }
-    if (unidade) where.unidade = unidade;
-    if (!unidade && req.user.role === 'GESTOR') where.unidade = req.user.loja?.nome;
-    if (criadoPorId) where.criadoPorId = criadoPorId;
-
-    const checklist = await prisma.checklistEquipamento.findFirst({
-      where,
-      include: { itens: true, criadoPor: { select: { id: true, nome: true } } },
-    });
-    res.json(checklist || null);
-  } catch (err) { next(err); }
+    const data = await checklistService.buscarEquipamentoPorSemana(req.user, req.query);
+    res.json(data || null);
+  } catch (err) {
+    if (err.status) return res.status(err.status).json({ error: err.error });
+    next(err);
+  }
 };
 
 const salvarEquipamento = async (req, res, next) => {
   try {
-    const { semana, ano, itens, observacoes } = req.body;
-    const { regiao, unidade } = req.user;
-
-    if (!unidade) return res.status(400).json({ error: 'Usuário sem unidade (loja) definida' });
-
-    const checklist = await prisma.checklistEquipamento.upsert({
-      where: { semana_ano_unidade: { semana: parseInt(semana), ano: parseInt(ano), unidade } },
-      create: {
-        semana: parseInt(semana),
-        ano: parseInt(ano),
-        regiao,
-        unidade,
-        observacoes,
-        criadoPorId: req.user.id,
-        itens: { create: itens.map(mapItemEquipamento) },
-      },
-      update: {
-        observacoes,
-        criadoPorId: req.user.id,
-        itens: {
-          deleteMany: {},
-          create: itens.map(mapItemEquipamento),
-        },
-      },
-      include: { itens: true },
-    });
-    res.json(checklist);
-  } catch (err) { next(err); }
+    const data = await checklistService.salvarEquipamento(req.user, req.body);
+    res.json(data);
+  } catch (err) {
+    if (err.status) return res.status(err.status).json({ error: err.error });
+    next(err);
+  }
 };
-
-const mapItemEquipamento = (item) => ({
-  tipoEquipamento: item.tipoEquipamento,
-  operacional:     item.operacional ?? true,
-  quantidade:      parseInt(item.quantidade) || 1,
-  quantidadeQuebrada: parseInt(item.quantidadeQuebrada) || 0,
-  numeroSerie:     item.numeroSerie || null,
-  numeroChamado:   item.numeroChamado || null,
-  descricaoProblema: item.descricaoProblema || null,
-  valor:           item.valor ? parseFloat(item.valor) : null,
-});
 
 const kpiEquipamentos = async (req, res, next) => {
   try {
-    const { semana, ano } = semanaAtual();
-    const where = { semana, ano, ...getAccessFilter(req.user) };
-
-    const checklists = await prisma.checklistEquipamento.findMany({
-      where,
-      include: { itens: true },
-    });
-
-    const totalQuebrados = checklists.reduce(
-      (s, c) => s + c.itens.filter(i => !i.operacional).length, 0
-    );
-
-    res.json({ semana, ano, totalQuebrados, totalChecklists: checklists.length });
-  } catch (err) { next(err); }
+    const data = await checklistService.kpiEquipamentos(req.user);
+    res.json(data);
+  } catch (err) {
+    next(err);
+  }
 };
-
-// ═══════════════════════════════════════════════════════════════════════════════
-//  CARRINHO & FROTA
-// ═══════════════════════════════════════════════════════════════════════════════
 
 const buscarFrota = async (req, res, next) => {
   try {
-    const unidade = req.user.role === 'GESTOR' ? req.user.loja?.nome : req.query.unidade;
-    if (!unidade) return res.status(400).json({ error: 'Unidade não especificada' });
-
-    if (['COORDENADOR', 'GERENTE', 'TECNICO'].includes(req.user.role)) {
-      const loja = await prisma.loja.findFirst({ where: { nome: unidade, ativo: true } });
-      if (!loja || !canAccessRegion(req.user, loja.regiao)) {
-        return res.status(403).json({ error: 'Acesso negado: unidade fora da sua abrangência' });
-      }
-    }
-
-    const frota = await buscarFrotaCarrinhosPorAtivos(unidade);
-    res.json(frota);
-  } catch (err) { next(err); }
+    const data = await checklistService.buscarFrota(req.user, req.query);
+    res.json(data);
+  } catch (err) {
+    if (err.status) return res.status(err.status).json({ error: err.error });
+    next(err);
+  }
 };
 
 const salvarFrota = async (req, res, next) => {
   try {
-    const { itens } = req.body; // Array de { tipoCarrinho, total }
-    const { unidade } = req.user;
-
-    if (!unidade) return res.status(400).json({ error: 'Usuário sem unidade definida' });
-
-    const promises = itens.map(item =>
-      prisma.frotaCarrinho.upsert({
-        where: { unidade_tipoCarrinho: { unidade, tipoCarrinho: item.tipoCarrinho } },
-        create: { unidade, tipoCarrinho: item.tipoCarrinho, total: parseInt(item.total) || 0 },
-        update: { total: parseInt(item.total) || 0 }
-      })
-    );
-
-    await Promise.all(promises);
+    await checklistService.salvarFrota(req.user, req.body.itens);
     res.json({ message: 'Frota atualizada com sucesso' });
-  } catch (err) { next(err); }
+  } catch (err) {
+    if (err.status) return res.status(err.status).json({ error: err.error });
+    next(err);
+  }
 };
 
 const listarCarrinhos = async (req, res, next) => {
   try {
-    const { semana, ano, regiao, unidade, criadoPorId } = req.query;
-    const where = { ...getAccessFilter(req.user) };
-    if (semana) where.semana = parseInt(semana);
-    if (ano)    where.ano    = parseInt(ano);
-    if (criadoPorId) where.criadoPorId = criadoPorId;
-
-    if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE',].includes(req.user.role)) {
-      if (regiao) {
-        if (!canAccessRegion(req.user, regiao)) {
-          return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
-        }
-        where.regiao = regiao;
-      }
-      if (unidade) where.unidade = unidade;
-    }
-
-    const checklists = await prisma.checklistCarrinho.findMany({
-      where,
-      include: {
-        itens: { orderBy: { tipoCarrinho: 'asc' } },
-        criadoPor: { select: { id: true, nome: true, regiao: true, loja: { select: { nome: true } } } },
-      },
-      orderBy: [{ ano: 'desc' }, { semana: 'desc' }],
-      take: 50,
-    });
-    res.json(checklists);
-  } catch (err) { next(err); }
+    const data = await checklistService.listarCarrinhos(req.user, req.query);
+    res.json(data);
+  } catch (err) {
+    if (err.status) return res.status(err.status).json({ error: err.error });
+    next(err);
+  }
 };
 
 const buscarCarrinhoPorSemana = async (req, res, next) => {
   try {
-    const { semana, ano, regiao, unidade, criadoPorId } = req.query;
-    const s = parseInt(semana) || semanaAtual().semana;
-    const a = parseInt(ano)    || semanaAtual().ano;
-    const where = { semana: s, ano: a, ...getAccessFilter(req.user) };
-
-    if (regiao && ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR'].includes(req.user.role)) {
-      if (!canAccessRegion(req.user, regiao)) {
-        return res.status(403).json({ error: 'Acesso negado: região fora da sua abrangência' });
-      }
-      where.regiao = regiao;
-    }
-    if (unidade) where.unidade = unidade;
-    if (!unidade && req.user.role === 'GESTOR') where.unidade = req.user.loja?.nome;
-    if (criadoPorId) where.criadoPorId = criadoPorId;
-
-    const checklist = await prisma.checklistCarrinho.findFirst({
-      where,
-      include: { itens: true, criadoPor: { select: { id: true, nome: true } } },
-    });
-    res.json(checklist || null);
-  } catch (err) { next(err); }
+    const data = await checklistService.buscarCarrinhoPorSemana(req.user, req.query);
+    res.json(data || null);
+  } catch (err) {
+    if (err.status) return res.status(err.status).json({ error: err.error });
+    next(err);
+  }
 };
 
 const salvarCarrinho = async (req, res, next) => {
   try {
-    const { semana, ano, itens, observacoes } = req.body;
-    const { regiao, unidade } = req.user;
-
-    if (!unidade) return res.status(400).json({ error: 'Usuário sem unidade definida' });
-
-    const frota = await buscarFrotaCarrinhosPorAtivos(unidade);
-
-    const itensComTotal = itens.map(item => {
-      const frotaItem = frota.find(f => f.tipoCarrinho === item.tipoCarrinho);
-      return {
-        ...item,
-        total: frotaItem ? frotaItem.total : (parseInt(item.total) || 0)
-      };
-    });
-
-    const checklist = await prisma.checklistCarrinho.upsert({
-      where: { semana_ano_unidade: { semana: parseInt(semana), ano: parseInt(ano), unidade } },
-      create: {
-        semana: parseInt(semana),
-        ano: parseInt(ano),
-        regiao,
-        unidade,
-        observacoes,
-        criadoPorId: req.user.id,
-        itens: { create: itensComTotal.map(mapItemCarrinho) },
-      },
-      update: {
-        observacoes,
-        criadoPorId: req.user.id,
-        itens: {
-          deleteMany: {},
-          create: itensComTotal.map(mapItemCarrinho),
-        },
-      },
-      include: { itens: true },
-    });
-    res.json(checklist);
-  } catch (err) { next(err); }
+    const data = await checklistService.salvarCarrinho(req.user, req.body);
+    res.json(data);
+  } catch (err) {
+    if (err.status) return res.status(err.status).json({ error: err.error });
+    next(err);
+  }
 };
-
-const mapItemCarrinho = (item) => ({
-  tipoCarrinho:     item.tipoCarrinho,
-  total:            parseInt(item.total) || 0,
-  quebrados:        parseInt(item.quebrados) || 0,
-  numeroChamado:    item.numeroChamado || null,
-  descricaoProblema: item.descricaoProblema || null,
-});
 
 const kpiCarrinhos = async (req, res, next) => {
   try {
-    const { semana, ano } = semanaAtual();
-    const where = { semana, ano, ...getAccessFilter(req.user) };
-
-    const checklists = await prisma.checklistCarrinho.findMany({
-      where,
-      include: { itens: true },
-    });
-
-    const totalQuebrados = checklists.reduce(
-      (s, c) => s + c.itens.reduce((si, i) => si + i.quebrados, 0), 0
-    );
-    const porUnidade = checklists.map(c => ({
-      unidade: c.unidade,
-      totalCarrinhos: c.itens.reduce((s, i) => s + i.total, 0),
-      carrinhoQuebrados: c.itens.reduce((s, i) => s + i.quebrados, 0),
-    }));
-
-    res.json({ semana, ano, totalQuebrados, porUnidade });
-  } catch (err) { next(err); }
+    const data = await checklistService.kpiCarrinhos(req.user);
+    res.json(data);
+  } catch (err) {
+    next(err);
+  }
 };
 
-// ─── KPI Mensal (Dashboard) ─────────────────────────────────────────────────
 const kpiMensal = async (req, res, next) => {
   try {
-    const agora = new Date();
-    const qMes = req.query.mes ? parseInt(req.query.mes) : agora.getMonth() + 1;
-    const qAno = req.query.ano ? parseInt(req.query.ano) : agora.getFullYear();
-    const weeksToShow = req.query.weeksToShow ? parseInt(req.query.weeksToShow) : 1;
-    const { usuarioId } = req.query;
-
-    const { getWeek, startOfMonth, endOfMonth } = require('date-fns');
-    const inicioMes = startOfMonth(new Date(qAno, qMes - 1));
-    const fimMes    = endOfMonth(new Date(qAno, qMes - 1));
-    
-    // Se for o mês atual, a referência de fim é HOJE. Se for mês passado, é o fim do mês.
-    const isMesAtual = qMes === agora.getMonth() + 1 && qAno === agora.getFullYear();
-    
-    const semanaInicio = getWeek(inicioMes, { weekStartsOn: 5 });
-    const semanaFim    = isMesAtual 
-      ? getWeek(agora, { weekStartsOn: 5 })
-      : getWeek(fimMes, { weekStartsOn: 5 });
-
-    // Calcular qual semana começar a buscar baseado em weeksToShow
-    const semanaComeco = Math.max(semanaInicio, semanaFim - weeksToShow + 1);
-
-    const baseFilter = getAccessFilter(req.user);
-    if (usuarioId) {
-      baseFilter.criadoPorId = usuarioId;
-    }
-
-    const whereEquip = {
-      ano: qAno,
-      semana: { gte: semanaComeco, lte: semanaFim },
-      ...baseFilter,
-    };
-    const whereCarrinho = { ...whereEquip };
-
-    const [checklistsEquip, checklistsCarrinho] = await Promise.all([
-      prisma.checklistEquipamento.findMany({
-        where: whereEquip,
-        include: { itens: { where: { operacional: false } } },
-        orderBy: { semana: 'desc' },
-      }),
-      prisma.checklistCarrinho.findMany({
-        where: whereCarrinho,
-        include: { itens: true },
-        orderBy: { semana: 'desc' },
-      }),
-    ]);
-
-    // Processar Equipamentos
-    const equipamentosUnicos = new Map(); // Chave: unidade + tipoEquipamento
-    const equipPorTipo = {};
-
-    checklistsEquip.forEach(c => {
-      c.itens.forEach(i => {
-        const key = `${c.unidade}-${i.tipoEquipamento}`;
-        // Como checklistsEquip está ordenado por semana DESC, o primeiro que encontramos é o mais recente de cada unidade/tipo
-        if (!equipamentosUnicos.has(key)) {
-          const qtd = i.quantidadeQuebrada || 1;
-          equipamentosUnicos.set(key, qtd);
-          
-          // Acumular no resumo por tipo
-          equipPorTipo[i.tipoEquipamento] = (equipPorTipo[i.tipoEquipamento] || 0) + qtd;
-        }
-      });
-    });
-
-    const totalEquipParados = Array.from(equipamentosUnicos.values()).reduce((a, b) => a + b, 0);
-
-    // Processar Carrinhos
-    const carrinhosUnicos = new Map(); // Chave: unidade + tipoCarrinho
-    let totalCarrinhosQuebrados = 0;
-    let totalCarrinhos = 0;
-
-    checklistsCarrinho.forEach(c => {
-      c.itens.forEach(i => {
-        const key = `${c.unidade}-${i.tipoCarrinho}`;
-        if (!carrinhosUnicos.has(key)) {
-          carrinhosUnicos.set(key, { quebrados: i.quebrados, total: i.total });
-          totalCarrinhosQuebrados += i.quebrados;
-          totalCarrinhos += i.total;
-        }
-      });
-    });
-
-    const semanasPreenchidasEquip    = [...new Set(checklistsEquip.map(c => c.semana))].length;
-    const semanasPreenchidasCarrinho = [...new Set(checklistsCarrinho.map(c => c.semana))].length;
-    const totalSemanasNoMes = semanaFim - semanaInicio + 1;
-
-    res.json({
-      mes: qMes, ano: qAno,
-      equipamentos: {
-        totalParados: totalEquipParados,
-        porTipo: equipPorTipo,
-        semanasPrenchidas: semanasPreenchidasEquip,
-        totalSemanasNoMes,
-      },
-      carrinhos: {
-        totalQuebrados: totalCarrinhosQuebrados,
-        totalGeral: totalCarrinhos,
-        taxaQuebra: totalCarrinhos > 0 ? ((totalCarrinhosQuebrados / totalCarrinhos) * 100).toFixed(1) : 0,
-        semanasPrenchidas: semanasPreenchidasCarrinho,
-        totalSemanasNoMes,
-      },
-    });
-  } catch (err) { next(err); }
+    const data = await checklistService.kpiMensal(req.user, req.query);
+    res.json(data);
+  } catch (err) {
+    next(err);
+  }
 };
 
-// ─── Consolidado Regional (Visão em Camadas) ────────────────────────────────
 const consolidadoRegional = async (req, res, next) => {
   try {
-    const agora = new Date();
-    const qMes = req.query.mes ? parseInt(req.query.mes) : agora.getMonth() + 1;
-    const qAno = req.query.ano ? parseInt(req.query.ano) : agora.getFullYear();
-    const { regiao } = req.query;
-
-    const { getWeek, startOfMonth, endOfMonth } = require('date-fns');
-    const inicioMes = startOfMonth(new Date(qAno, qMes - 1));
-    const fimMes    = endOfMonth(new Date(qAno, qMes - 1));
-    const semanaInicio = getWeek(inicioMes, { weekStartsOn: 5 });
-    const semanaFim    = getWeek(fimMes,    { weekStartsOn: 5 });
-
-    const baseFilter = getAccessFilter(req.user);
-    if (regiao && ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR'].includes(req.user.role)) {
-      const { splitRegions, expandRegionScopes } = require('../utils/access.utils');
-      const requestedRegions = expandRegionScopes(splitRegions(regiao));
-
-      if (req.user.role === 'GERENTE') {
-        const userRegions = require('../utils/access.utils').getUserRegions(req.user);
-        const hasAccess = requestedRegions.every(r => userRegions.includes(r));
-        if (!hasAccess) {
-          return res.status(403).json({ error: 'Acesso negado: uma ou mais regiões fora da sua abrangência' });
-        }
-      }
-
-      baseFilter.regiao = requestedRegions.length > 1 ? { in: requestedRegions } : requestedRegions[0] || regiao;
-    }
-
-    const whereEquip = {
-      ano: qAno,
-      semana: { gte: semanaInicio, lte: semanaFim },
-      ...baseFilter,
-    };
-
-    const [checklistsEquip, checklistsCarrinho, lojas] = await Promise.all([
-      prisma.checklistEquipamento.findMany({
-        where: whereEquip,
-        include: { itens: true },
-      }),
-      prisma.checklistCarrinho.findMany({
-        where: whereEquip,
-        include: { itens: true },
-      }),
-      prisma.loja.findMany({
-        where: { ...baseFilter, ativo: true },
-      }),
-    ]);
-
-    // Agrupar por unidade
-    const lojasPorUnidade = new Map();
-    lojas.forEach(loja => {
-      lojasPorUnidade.set(loja.nome, {
-        unidade: loja.nome,
-        numero: loja.numero,
-        nome: loja.nome,
-        regiao: loja.regiao,
-        consolidado: {},
-      });
-    });
-
-    // Processar equipamentos
-    checklistsEquip.forEach(c => {
-      const loja = lojasPorUnidade.get(c.unidade);
-      if (!loja) return;
-
-      if (!loja.consolidado[`semana${c.semana}`]) {
-        loja.consolidado[`semana${c.semana}`] = {
-          equipamentos: [],
-          carrinhos: [],
-        };
-      }
-
-      const equipMap = new Map();
-      c.itens.forEach(item => {
-        if (!equipMap.has(item.tipoEquipamento)) {
-          equipMap.set(item.tipoEquipamento, {
-            tipo: item.tipoEquipamento,
-            tipoLabel: getTipoEquipamentoLabel(item.tipoEquipamento),
-            defeito: 0,
-            total: 0,
-          });
-        }
-        const equip = equipMap.get(item.tipoEquipamento);
-        equip.total += item.quantidade || 1;
-        equip.defeito += item.quantidadeQuebrada || 0;
-      });
-
-      loja.consolidado[`semana${c.semana}`].equipamentos = Array.from(equipMap.values()).map(e => ({
-        ...e,
-        percentual: e.total > 0 ? ((e.defeito / e.total) * 100).toFixed(1) : 0,
-      }));
-    });
-
-    // Processar carrinhos
-    checklistsCarrinho.forEach(c => {
-      const loja = lojasPorUnidade.get(c.unidade);
-      if (!loja) return;
-
-      if (!loja.consolidado[`semana${c.semana}`]) {
-        loja.consolidado[`semana${c.semana}`] = {
-          equipamentos: [],
-          carrinhos: [],
-        };
-      }
-
-      const carriMap = new Map();
-      c.itens.forEach(item => {
-        if (!carriMap.has(item.tipoCarrinho)) {
-          carriMap.set(item.tipoCarrinho, {
-            tipo: item.tipoCarrinho,
-            tipoLabel: getTipoCarrinhoLabel(item.tipoCarrinho),
-            quebrados: 0,
-            total: 0,
-          });
-        }
-        const carri = carriMap.get(item.tipoCarrinho);
-        carri.total += item.total || 0;
-        carri.quebrados += item.quebrados || 0;
-      });
-
-      loja.consolidado[`semana${c.semana}`].carrinhos = Array.from(carriMap.values()).map(c => ({
-        ...c,
-        percentual: c.total > 0 ? ((c.quebrados / c.total) * 100).toFixed(1) : 0,
-      }));
-    });
-
-    res.json({
-      mes: qMes,
-      ano: qAno,
-      regiao: baseFilter.regiao || 'Todas',
-      lojas: Array.from(lojasPorUnidade.values()),
-    });
-  } catch (err) { next(err); }
+    const data = await checklistService.consolidadoRegional(req.user, req.query);
+    res.json(data);
+  } catch (err) {
+    if (err.status) return res.status(err.status).json({ error: err.error });
+    next(err);
+  }
 };
 
-// ─── Consolidado Loja (Detalhes) ────────────────────────────────────────────
 const consolidadoLoja = async (req, res, next) => {
   try {
-    const agora = new Date();
-    const qMes = req.query.mes ? parseInt(req.query.mes) : agora.getMonth() + 1;
-    const qAno = req.query.ano ? parseInt(req.query.ano) : agora.getFullYear();
-    const { unidade, semana } = req.query;
-
-    if (!unidade) return res.status(400).json({ error: 'Unidade não especificada' });
-
-    const { getWeek, startOfMonth, endOfMonth } = require('date-fns');
-    const inicioMes = startOfMonth(new Date(qAno, qMes - 1));
-    const fimMes    = endOfMonth(new Date(qAno, qMes - 1));
-    const semanaInicio = getWeek(inicioMes, { weekStartsOn: 5 });
-    const semanaFim    = getWeek(fimMes,    { weekStartsOn: 5 });
-
-    const where = {
-      ano: qAno,
-      semana: semana ? { equals: parseInt(semana) } : { gte: semanaInicio, lte: semanaFim },
-      unidade,
-      ...getAccessFilter(req.user),
-    };
-
-    const [checklistsEquip, checklistsCarrinho, loja] = await Promise.all([
-      prisma.checklistEquipamento.findMany({
-        where,
-        include: { itens: true },
-        orderBy: { semana: 'asc' },
-      }),
-      prisma.checklistCarrinho.findMany({
-        where,
-        include: { itens: true },
-        orderBy: { semana: 'asc' },
-      }),
-      prisma.loja.findFirst({ where: { nome: unidade } }),
-    ]);
-
-    // Agrupar por semana
-    const semanasMap = new Map();
-
-    checklistsEquip.forEach(c => {
-      if (!semanasMap.has(c.semana)) {
-        semanasMap.set(c.semana, {
-          numero: c.semana,
-          label: `Semana ${c.semana}`,
-          equipamentos: [],
-          carrinhos: [],
-          observacoes: c.observacoes,
-        });
-      }
-
-      semanasMap.get(c.semana).equipamentos = c.itens;
-    });
-
-    checklistsCarrinho.forEach(c => {
-      if (!semanasMap.has(c.semana)) {
-        semanasMap.set(c.semana, {
-          numero: c.semana,
-          label: `Semana ${c.semana}`,
-          equipamentos: [],
-          carrinhos: [],
-          observacoes: c.observacoes,
-        });
-      }
-
-      semanasMap.get(c.semana).carrinhos = c.itens;
-      semanasMap.get(c.semana).observacoes = c.observacoes;
-    });
-
-    res.json({
-      mes: qMes,
-      ano: qAno,
-      unidade,
-      nomeLoja: loja?.nome || unidade,
-      semanas: Array.from(semanasMap.values()),
-    });
-  } catch (err) { next(err); }
-};
-
-// ─── Labels para Tipos ──────────────────────────────────────────────────────
-const getTipoEquipamentoLabel = (tipo) => {
-  const labels = {
-    'GELADEIRA_ELETRICA': 'Geladeira Elétrica',
-    'GELADEIRA_CONVENCIONAL': 'Geladeira Convencional',
-    'FREEZER_HORIZONTAL': 'Freezer Horizontal',
-    'FREEZER_VERTICAL': 'Freezer Vertical',
-    'BALCAO_FRIO': 'Balcão Frio',
-    'TEMPERATURA_AMBIENTE': 'Temperatura Ambiente',
-    'ACESSORIO_AMOSTRA': 'Acessório Amostra',
-    'ACESSORIO_BALCAO': 'Acessório Balcão',
-    'ACESSORIO_GELO': 'Acessório Gelo',
-    'ACESSORIO_RODAS': 'Acessório Rodas',
-    'GERADOR_FRIO': 'Gerador Frio',
-  };
-  return labels[tipo] || tipo;
-};
-
-const getTipoCarrinhoLabel = (tipo) => {
-  const labels = {
-    'MARIA_GORDA': 'Maria Gorda',
-    'MARIA_PEQUENA': 'Maria Pequena',
-    'CARRINHO_3_ANDARES': 'Carrinho 3 Andares',
-    'CARRINHO_2_ANDARES': 'Carrinho 2 Andares',
-    'CARRINHO_FECHADO': 'Carrinho Fechado',
-    'CARRINHO_ABERTO': 'Carrinho Aberto',
-    'ETIQUETADORA': 'Etiquetadora',
-  };
-  return labels[tipo] || tipo;
+    const data = await checklistService.consolidadoLoja(req.user, req.query);
+    res.json(data);
+  } catch (err) {
+    if (err.status) return res.status(err.status).json({ error: err.error });
+    next(err);
+  }
 };
 
 module.exports = {
