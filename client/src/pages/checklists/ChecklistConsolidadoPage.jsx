@@ -299,9 +299,9 @@ const ChecklistLojaConsolidado = ({ loja, semanas, onVoltar }) => {
                 Indicadores de Equipamentos
               </h3>
               <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
-                {semanadados.equipamentos.map((equip) => (
+                {semanadados.equipamentos.map((equip, idx) => (
                   <ChecklistCard
-                    key={equip.tipoEquipamento}
+                    key={equip.tipo || equip.tipoEquipamento || `equip-${idx}`}
                     item={equip}
                     tipo="equipamento"
                     onClick={() => setCardSelecionado({ ...equip, categoria: "equipamento" })}
@@ -317,9 +317,9 @@ const ChecklistLojaConsolidado = ({ loja, semanas, onVoltar }) => {
                 Indicadores de Carrinhos
               </h3>
               <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
-                {semanadados.carrinhos.map((carrinho) => (
+                {semanadados.carrinhos.map((carrinho, idx) => (
                   <ChecklistCard
-                    key={carrinho.tipoCarrinho}
+                    key={carrinho.tipo || carrinho.tipoCarrinho || `car-${idx}`}
                     item={carrinho}
                     tipo="carrinho"
                     onClick={() => setCardSelecionado({ ...carrinho, categoria: "carrinho" })}
@@ -740,18 +740,16 @@ export default function ChecklistConsolidadoPage() {
   const handleVoltar = () => {
     if (etapa === "checklist") {
       setEtapa("lojas");
-      setLojaSelecionada(null);
+      setLojaIdSelecionada(null);
     }
     else if (etapa === "lojas") {
       if (etapaInicial === "lojas") {
         setRegionalSelecionada(null);
-        setLojasDaRegional([]);
-        setLojaSelecionada(null);
+        setLojaIdSelecionada(null);
       } else {
         setEtapa("regionais");
         setRegionalSelecionada(null);
-        setLojasDaRegional([]);
-        setLojaSelecionada(null);
+        setLojaIdSelecionada(null);
       }
     }
     else if (etapa === "regionais") {
