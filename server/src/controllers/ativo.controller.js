@@ -1,9 +1,10 @@
+const { resSucesso, resErroClient, resErroPermissao, resNaoEncontrado, resErroValidacao } = require('../utils/retornoHttp');
 const ativoService = require('../services/ativo.service');
 
 const listar = async (req, res, next) => {
   try {
     const resultado = await ativoService.listar(req.user, req.query);
-    res.json(resultado);
+    resSucesso(res, 'Operação realizada com sucesso', 200, resultado);
   } catch (err) {
     if (err.message.includes('Acesso negado')) return res.status(403).json({ error: err.message });
     next(err);
@@ -14,14 +15,14 @@ const buscarPorId = async (req, res, next) => {
   try {
     const ativo = await ativoService.buscarPorId(req.user, req.params.id);
     if (!ativo) return res.status(404).json({ error: 'Ativo não encontrado ou acesso negado' });
-    res.json(ativo);
+    resSucesso(res, 'Operação realizada com sucesso', 200, ativo);
   } catch (err) { next(err); }
 };
 
 const criar = async (req, res, next) => {
   try {
     const ativo = await ativoService.criar(req.user, req.body);
-    res.status(201).json(ativo);
+    resSucesso(res, 'Operação realizada com sucesso', 201, ativo);
   } catch (err) {
     if (err.message === 'Usuário sem loja/região definida' || err.message === 'Status inválido') {
       return res.status(400).json({ error: err.message });
@@ -33,7 +34,7 @@ const criar = async (req, res, next) => {
 const atualizar = async (req, res, next) => {
   try {
     const ativo = await ativoService.atualizar(req.user, req.params.id, req.body);
-    res.json(ativo);
+    resSucesso(res, 'Operação realizada com sucesso', 200, ativo);
   } catch (err) {
     if (err.message === 'Ativo não encontrado ou acesso negado') return res.status(404).json({ error: err.message });
     if (err.message === 'Status inválido') return res.status(400).json({ error: err.message });
@@ -44,7 +45,7 @@ const atualizar = async (req, res, next) => {
 const remover = async (req, res, next) => {
   try {
     await ativoService.remover(req.user, req.params.id);
-    res.json({ message: 'Ativo inativado' });
+    resSucesso(res, 'Ativo inativado');
   } catch (err) {
     if (err.message === 'Ativo não encontrado ou acesso negado') return res.status(404).json({ error: err.message });
     next(err);

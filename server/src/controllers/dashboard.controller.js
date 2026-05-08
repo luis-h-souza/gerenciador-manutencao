@@ -1,12 +1,19 @@
+const { resSucesso, resErroClient, resErroPermissao, resNaoEncontrado, resErroValidacao } = require('../utils/retornoHttp');
 // src/controllers/dashboard.controller.js
 const dashboardService = require('../services/dashboard.service');
 
 const resumo = async (req, res, next) => {
   try {
     const data = await dashboardService.resumo(req.user, req.query);
-    res.json(data);
+    resSucesso(res, 'Operação realizada com sucesso', 200, data);
   } catch (err) {
-    if (err.status) return res.status(err.status).json({ error: err.error });
+    if (err.status) {
+      if (err.status === 400) return resErroClient(res, err.error);
+      if (err.status === 401 || err.status === 403) return resErroPermissao(res, err.error, err.status);
+      if (err.status === 404) return resNaoEncontrado(res, err.error);
+      if (err.status === 422) return resErroValidacao(res, err.error);
+      return res.status(err.status).json({ sucesso: false, mensagem: err.error });
+    }
     next(err);
   }
 };
@@ -14,9 +21,15 @@ const resumo = async (req, res, next) => {
 const gastosPorSegmento = async (req, res, next) => {
   try {
     const data = await dashboardService.gastosPorSegmento(req.user, req.query);
-    res.json(data);
+    resSucesso(res, 'Operação realizada com sucesso', 200, data);
   } catch (err) {
-    if (err.status) return res.status(err.status).json({ error: err.error });
+    if (err.status) {
+      if (err.status === 400) return resErroClient(res, err.error);
+      if (err.status === 401 || err.status === 403) return resErroPermissao(res, err.error, err.status);
+      if (err.status === 404) return resNaoEncontrado(res, err.error);
+      if (err.status === 422) return resErroValidacao(res, err.error);
+      return res.status(err.status).json({ sucesso: false, mensagem: err.error });
+    }
     next(err);
   }
 };
@@ -24,9 +37,15 @@ const gastosPorSegmento = async (req, res, next) => {
 const historicoMensal = async (req, res, next) => {
   try {
     const data = await dashboardService.historicoMensal(req.user, req.query);
-    res.json(data);
+    resSucesso(res, 'Operação realizada com sucesso', 200, data);
   } catch (err) {
-    if (err.status) return res.status(err.status).json({ error: err.error });
+    if (err.status) {
+      if (err.status === 400) return resErroClient(res, err.error);
+      if (err.status === 401 || err.status === 403) return resErroPermissao(res, err.error, err.status);
+      if (err.status === 404) return resNaoEncontrado(res, err.error);
+      if (err.status === 422) return resErroValidacao(res, err.error);
+      return res.status(err.status).json({ sucesso: false, mensagem: err.error });
+    }
     next(err);
   }
 };
@@ -34,7 +53,7 @@ const historicoMensal = async (req, res, next) => {
 const resumoRegional = async (req, res, next) => {
   try {
     const data = await dashboardService.resumoRegional(req.user, req.query);
-    res.json(data);
+    resSucesso(res, 'Operação realizada com sucesso', 200, data);
   } catch (err) {
     next(err);
   }
@@ -43,9 +62,15 @@ const resumoRegional = async (req, res, next) => {
 const detalheRegional = async (req, res, next) => {
   try {
     const data = await dashboardService.detalheRegional(req.user, req.params.regiao, req.query);
-    res.json(data);
+    resSucesso(res, 'Operação realizada com sucesso', 200, data);
   } catch (err) {
-    if (err.status) return res.status(err.status).json({ error: err.error });
+    if (err.status) {
+      if (err.status === 400) return resErroClient(res, err.error);
+      if (err.status === 401 || err.status === 403) return resErroPermissao(res, err.error, err.status);
+      if (err.status === 404) return resNaoEncontrado(res, err.error);
+      if (err.status === 422) return resErroValidacao(res, err.error);
+      return res.status(err.status).json({ sucesso: false, mensagem: err.error });
+    }
     next(err);
   }
 };
@@ -53,7 +78,7 @@ const detalheRegional = async (req, res, next) => {
 const rankingCoordenadores = async (req, res, next) => {
   try {
     const data = await dashboardService.rankingCoordenadores(req.user, req.query);
-    res.json(data);
+    resSucesso(res, 'Operação realizada com sucesso', 200, data);
   } catch (err) {
     next(err);
   }
@@ -62,7 +87,7 @@ const rankingCoordenadores = async (req, res, next) => {
 const executivo = async (req, res, next) => {
   try {
     const data = await dashboardService.executivo(req.user, req.query);
-    res.json(data);
+    resSucesso(res, 'Operação realizada com sucesso', 200, data);
   } catch(err) {
     next(err);
   }

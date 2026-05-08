@@ -1,24 +1,25 @@
+const { resSucesso, resErroClient, resErroPermissao, resNaoEncontrado, resErroValidacao } = require('../utils/retornoHttp');
 // src/controllers/loja.controller.js
 const lojaService = require('../services/loja.service');
 
 const listar = async (req, res, next) => {
   try {
     const resultado = await lojaService.listar(req.user, req.query);
-    res.json(resultado);
+    resSucesso(res, 'Operação realizada com sucesso', 200, resultado);
   } catch (err) { next(err); }
 };
 
 const listarRegioes = async (req, res, next) => {
   try {
     const regioes = await lojaService.listarRegioes(req.user);
-    res.json(regioes);
+    resSucesso(res, 'Operação realizada com sucesso', 200, regioes);
   } catch (err) { next(err); }
 };
 
 const buscarPorId = async (req, res, next) => {
   try {
     const loja = await lojaService.buscarPorId(req.user, req.params.id);
-    res.json(loja);
+    resSucesso(res, 'Operação realizada com sucesso', 200, loja);
   } catch (err) {
     if (err.message === 'Loja não encontrada') return res.status(404).json({ error: err.message });
     if (err.message === 'Acesso negado: loja de outra região') return res.status(403).json({ error: err.message });
@@ -45,14 +46,14 @@ const criar = async (req, res, next) => {
 const atualizar = async (req, res, next) => {
   try {
     const loja = await lojaService.atualizar(req.params.id, req.body);
-    res.json(loja);
+    resSucesso(res, 'Operação realizada com sucesso', 200, loja);
   } catch (err) { next(err); }
 };
 
 const remover = async (req, res, next) => {
   try {
     await lojaService.remover(req.params.id);
-    res.json({ message: 'Loja desativada' });
+    resSucesso(res, 'Loja desativada');
   } catch (err) { next(err); }
 };
 
