@@ -1,6 +1,6 @@
 // src/controllers/log.controller.js
 const logService = require('../services/log.service');
-const { resSucesso, resErroInterno } = require('../utils/retornoHttp');
+const { resSucesso, resErroServer } = require('../utils/retornoHttp');
 
 class LogController {
   async listar(req, res, next) {
@@ -9,7 +9,7 @@ class LogController {
       const logs = await logService.listar(req.query);
       return resSucesso(res, 'Logs carregados com sucesso', 200, logs);
     } catch (error) {
-      return resErroInterno(res, error);
+      return resErroServer(res, error);
     }
   }
 }

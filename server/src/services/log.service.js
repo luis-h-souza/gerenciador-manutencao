@@ -37,8 +37,11 @@ class LogService {
    * Lista logs para o painel administrativo
    */
   async listar(filtros = {}) {
-    const { modulo, usuarioId, dataInicio, dataFim, page = 1, limit = 50 } = filtros;
-    const skip = (page - 1) * limit;
+    const p = parseInt(filtros.page) || 1;
+    const l = parseInt(filtros.limit) || 50;
+    const { modulo, usuarioId, dataInicio, dataFim } = filtros;
+    
+    const skip = (p - 1) * l;
 
     const where = {};
     if (modulo) where.modulo = modulo;
@@ -54,7 +57,7 @@ class LogService {
       prisma.logAuditoria.findMany({
         where,
         skip,
-        take: limit,
+        take: l,
         orderBy: { criadoEm: 'desc' },
         include: {
           usuario: {
@@ -68,9 +71,9 @@ class LogService {
       data: logs,
       meta: {
         total,
-        page: parseInt(page),
-        limit: parseInt(limit),
-        totalPages: Math.ceil(total / limit)
+        page: p,
+        limit: l,
+        totalPages: Math.ceil(total / l)
       }
     };
   }
