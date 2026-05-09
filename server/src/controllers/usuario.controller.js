@@ -35,7 +35,7 @@ const buscarPorId = async (req, res, next) => {
 
 const criar = async (req, res, next) => {
   try {
-    const data = await usuarioService.criar(req.body);
+    const data = await usuarioService.criar(req.user, req.body);
     resSucesso(res, 'Operação realizada com sucesso', 201, data);
   } catch (err) {
     if (err.status) {

@@ -1,6 +1,7 @@
 const prisma = require('../utils/prisma');
 const bcrypt = require('bcryptjs');
 const { splitRegions, getUserRegions, canAccessRegion } = require('../utils/access.utils');
+const logService = require('./log.service');
 
 const listar = async (user, query) => {
   const { role, ativo, regiao, page = 1, limit = 20 } = query;
@@ -93,11 +94,11 @@ const buscarPorId = async (user, id) => {
   return usuario;
 };
 
-const criar = async (body) => {
+const criar = async (user, body) => {
   const { nome, email, senha, role, regiao, lojaId } = body;
   const senhaHash = await bcrypt.hash(senha, 12);
 
-  return prisma.usuario.create({
+  const novoUsuario = await prisma.usuario.create({
     data: {
       nome,
       email: email.toLowerCase().trim(),
@@ -111,6 +112,18 @@ const criar = async (body) => {
       loja: { select: { id: true, numero: true, nome: true, regiao: true } } 
     },
   });
+
+  // Auditoria: Registro de Criação de Usuário
+  if (user) {
+    await logService.registrar({
+      usuarioId: user.id,
+      acao: 'CRIAR_USUARIO',
+      modulo: 'USUARIO',
+      detalhes: { novoUsuarioId: novoUsuario.id, email: novoUsuario.email, role: novoUsuario.role }
+    });
+  }
+
+  return novoUsuario;
 };
 
 const atualizar = async (user, id, body) => {
@@ -133,7 +146,7 @@ const atualizar = async (user, id, body) => {
   if (regiao !== undefined) data.regiao = regiao || null;
   if (lojaId !== undefined) data.lojaId = lojaId || null;
 
-  return prisma.usuario.update({
+  const updated = await prisma.usuario.update({
     where: { id },
     data,
     select: { 
@@ -141,6 +154,16 @@ const atualizar = async (user, id, body) => {
       loja: { select: { id: true, numero: true, nome: true, regiao: true } } 
     },
   });
+
+  // Auditoria: Registro de Atualização de Usuário
+  await logService.registrar({
+    usuarioId: user.id,
+    acao: 'EDITAR_USUARIO',
+    modulo: 'USUARIO',
+    detalhes: { usuarioEditadoId: id, camposAlterados: Object.keys(data) }
+  });
+
+  return updated;
 };
 
 const remover = async (user, id) => {
@@ -155,6 +178,14 @@ const remover = async (user, id) => {
 
   // Soft delete
   await prisma.usuario.update({ where: { id }, data: { ativo: false } });
+
+  // Auditoria: Registro de Remoção (Desativação) de Usuário
+  await logService.registrar({
+    usuarioId: user.id,
+    acao: 'REMOVER_USUARIO',
+    modulo: 'USUARIO',
+    detalhes: { usuarioRemovidoId: id, email: existingUser.email }
+  });
 };
 
 module.exports = { listar, buscarPorId, criar, atualizar, remover };

@@ -1,5 +1,6 @@
 const prisma = require('../utils/prisma');
 const bcrypt = require('bcryptjs');
+const logService = require('./log.service');
 const {
   gerarAccessToken,
   gerarRefreshToken,
@@ -47,6 +48,16 @@ const login = async (email, senha, sessionData) => {
       userAgent: sessionData.userAgent,
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     },
+  });
+  
+  // Auditoria: Registro de Login
+  await logService.registrar({
+    usuarioId: usuario.id,
+    acao: 'LOGIN',
+    modulo: 'AUTH',
+    detalhes: { email: usuario.email, role: usuario.role },
+    ip: sessionData.ip,
+    userAgent: sessionData.userAgent
   });
 
   return { accessToken, refreshToken, usuario };

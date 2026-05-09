@@ -1,6 +1,7 @@
 const prisma = require('../utils/prisma');
 const { getWeek, getYear } = require('date-fns');
 const { getAccessFilter, canAccessRegion } = require('../utils/access.utils');
+const logService = require('./log.service');
 
 const semanaAtual = () => {
   const now = new Date();
@@ -123,7 +124,7 @@ const salvarEquipamento = async (user, body) => {
 
   if (!unidade) throw { status: 400, error: 'Usuário sem unidade (loja) definida' };
 
-  return prisma.checklistEquipamento.upsert({
+  const saved = await prisma.checklistEquipamento.upsert({
     where: { semana_ano_unidade: { semana: parseInt(semana), ano: parseInt(ano), unidade } },
     create: {
       semana: parseInt(semana),
@@ -144,6 +145,16 @@ const salvarEquipamento = async (user, body) => {
     },
     include: { itens: true },
   });
+
+  // Auditoria: Registro de Checklist de Equipamento
+  await logService.registrar({
+    usuarioId: user.id,
+    acao: 'SALVAR_CHECKLIST_EQUIPAMENTO',
+    modulo: 'CHECKLIST',
+    detalhes: { semana: parseInt(semana), ano: parseInt(ano), unidade }
+  });
+
+  return saved;
 };
 
 const kpiEquipamentos = async (user) => {
@@ -189,6 +200,14 @@ const salvarFrota = async (user, itens) => {
   );
 
   await Promise.all(promises);
+
+  // Auditoria: Registro de Atualização de Frota
+  await logService.registrar({
+    usuarioId: user.id,
+    acao: 'SALVAR_FROTA',
+    modulo: 'CHECKLIST',
+    detalhes: { unidade }
+  });
 };
 
 const listarCarrinhos = async (user, query) => {
@@ -265,7 +284,7 @@ const salvarCarrinho = async (user, body) => {
     };
   });
 
-  return prisma.checklistCarrinho.upsert({
+  const saved = await prisma.checklistCarrinho.upsert({
     where: { semana_ano_unidade: { semana: parseInt(semana), ano: parseInt(ano), unidade } },
     create: {
       semana: parseInt(semana),
@@ -286,6 +305,16 @@ const salvarCarrinho = async (user, body) => {
     },
     include: { itens: true },
   });
+
+  // Auditoria: Registro de Checklist de Carrinho
+  await logService.registrar({
+    usuarioId: user.id,
+    acao: 'SALVAR_CHECKLIST_CARRINHO',
+    modulo: 'CHECKLIST',
+    detalhes: { semana: parseInt(semana), ano: parseInt(ano), unidade }
+  });
+
+  return saved;
 };
 
 const kpiCarrinhos = async (user) => {

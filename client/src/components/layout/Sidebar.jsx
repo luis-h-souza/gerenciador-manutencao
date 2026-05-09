@@ -14,6 +14,7 @@ import {
   Settings,
   Store,
   Boxes,
+  History,
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -91,6 +92,12 @@ const NAV = [
     icon: Store,
     label: "Lojas",
     roles: ["ADMINISTRADOR", "DIRETOR"],
+  },
+  {
+    to: "/admin/logs",
+    icon: History,
+    label: "Auditoria (Logs)",
+    roles: ["ADMINISTRADOR"],
   },
 ];
 

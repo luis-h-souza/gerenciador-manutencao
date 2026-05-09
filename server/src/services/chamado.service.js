@@ -1,5 +1,6 @@
 const prisma = require('../utils/prisma');
 const { getAccessFilter, getCreationContext } = require('../utils/access.utils');
+const logService = require('./log.service');
 
 const CAMPOS_CHAMADO = [
   'dataAbertura',
@@ -141,13 +142,23 @@ const buscarPorId = async (user, id) => {
 
 const criar = async (user, body) => {
   const context = getCreationContext(user);
-  return prisma.controleChamado.create({
+  const novoChamado = await prisma.controleChamado.create({
     data: {
       ...montarDadosChamado(body),
       regiao: context.regiao,
       unidade: context.unidade,
     },
   });
+
+  // Auditoria: Registro de Criação de Chamado
+  await logService.registrar({
+    usuarioId: user.id,
+    acao: 'CRIAR_CHAMADO',
+    modulo: 'CHAMADO',
+    detalhes: { chamadoId: novoChamado.id, numero: novoChamado.numeroChamado, valor: novoChamado.valor }
+  });
+
+  return novoChamado;
 };
 
 const atualizar = async (user, id, body) => {
@@ -160,7 +171,17 @@ const atualizar = async (user, id, body) => {
 
   const data = montarDadosChamado(body);
 
-  return prisma.controleChamado.update({ where: { id }, data });
+  const updated = await prisma.controleChamado.update({ where: { id }, data });
+
+  // Auditoria: Registro de Atualização de Chamado
+  await logService.registrar({
+    usuarioId: user.id,
+    acao: 'EDITAR_CHAMADO',
+    modulo: 'CHAMADO',
+    detalhes: { chamadoId: id, camposAlterados: Object.keys(data) }
+  });
+
+  return updated;
 };
 
 const remover = async (user, id) => {
@@ -172,6 +193,14 @@ const remover = async (user, id) => {
   if (!existe) throw { status: 404, error: 'Chamado não encontrado ou acesso negado' };
 
   await prisma.controleChamado.delete({ where: { id } });
+
+  // Auditoria: Registro de Remoção de Chamado
+  await logService.registrar({
+    usuarioId: user.id,
+    acao: 'REMOVER_CHAMADO',
+    modulo: 'CHAMADO',
+    detalhes: { chamadoId: id, numero: existe.numeroChamado }
+  });
 };
 
 const resumoMensal = async (user, query) => {

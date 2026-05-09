@@ -18,6 +18,8 @@ import UsuariosPage from "./pages/usuarios/UsuariosPage";
 import ChecklistPage from "./pages/checklists/ChecklistPage";
 import ChecklistConsolidadoPage from "./pages/checklists/ChecklistConsolidadoPage";
 import LojasPage from "./pages/lojas/LojasPage";
+import LogsPage from "./pages/admin/LogsPage";
+
 
 // Rota protegida
 const ProtectedRoute = ({ children, roles }) => {
@@ -188,6 +190,15 @@ function AppRoutes() {
           element={
             <ProtectedRoute roles={["ADMINISTRADOR", "DIRETOR"]}>
               <LojasPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="admin/logs"
+          element={
+            <ProtectedRoute roles={["ADMINISTRADOR"]}>
+              <LogsPage />
             </ProtectedRoute>
           }
         />

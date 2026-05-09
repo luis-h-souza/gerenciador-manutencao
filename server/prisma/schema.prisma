@@ -42,6 +42,7 @@ model Usuario {
   sessoes               Sessao[]
   tarefasAtribuidas     Tarefa[]               @relation("TarefaAtribuida")
   tarefasCriadas        Tarefa[]               @relation("TarefaCriada")
+  logsAuditoria         LogAuditoria[]
 
   @@map("usuarios")
 }
@@ -104,6 +105,22 @@ model Notificacao {
   usuario   Usuario? @relation(fields: [usuarioId], references: [id])
 
   @@map("notificacoes")
+}
+
+model LogAuditoria {
+  id        String   @id @default(uuid())
+  usuarioId String
+  acao      String
+  modulo    String
+  detalhes  Json?
+  ip        String?
+  userAgent String?
+  criadoEm  DateTime @default(now())
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id])
+
+  @@index([modulo])
+  @@index([criadoEm])
+  @@map("logs_auditoria")
 }
 
 model ControleChamado {
