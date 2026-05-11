@@ -77,7 +77,23 @@ Utilizamos **Prisma Migration** para versionamento do esquema. O `seed.js` é fu
 
 ---
 
-## 6. Manutenção e Escalabilidade
+## 7. Manutenção Automática e Auditoria
+
+### Ciclo de Vida de Dados (Cleanup)
+Para gerenciar o crescimento do banco de dados em ambientes serverless (Vercel) e persistentes (Railway), o sistema implementa uma estratégia híbrida de limpeza:
+- **Jobs Centralizados:** Localizados em `src/jobs/limpeza.job.js`, centralizam a lógica de deleção de sessões expiradas, tokens revogados e logs antigos.
+- **Trigger Híbrido:**
+    - Em servidores persistentes, utiliza `node-cron` para agendamento interno.
+    - Em ambiente Vercel, expõe um endpoint `POST /api/v1/jobs/limpar` protegido por um segredo (`CRON_SECRET`) para ser acionado por serviços externos de cron.
+
+### Trilha de Auditoria
+Toda ação crítica no sistema (Criação, Edição, Deleção) é registrada no modelo `LogAuditoria`.
+- **Captura Automática:** Services invocam o `LogService` para registrar o `antes` e `depois` de cada alteração.
+- **Retenção Diferenciada:** Logs de autenticação são mantidos por 90 dias, enquanto logs de negócio (Checklists, Chamados) são mantidos por 2 anos.
+
+---
+
+## 8. Guia de Expansão
 Para adicionar novas funcionalidades:
 1.  **Modelo**: Atualizar `schema.prisma`.
 2.  **Controller**: Implementar lógica respeitando o `getAccessFilter`.

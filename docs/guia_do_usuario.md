@@ -181,13 +181,24 @@ O modulo de Fornecedores centraliza os parceiros de manutencao.
 
 ---
 
-## 8. Usuarios e lojas
+## 9. Painel de Auditoria (Apenas Administradores)
 
-O sistema tambem possui gestao administrativa para estruturar o acesso.
+O sistema mantém um registro completo de todas as alterações importantes realizadas pelos usuários para garantir segurança e rastreabilidade.
+
+### O que é registrado?
+- **Login e Logout:** Registros de acessos e tentativas falhas.
+- **Alterações de Dados:** Quem criou, editou ou excluiu registros em modulos como Checklists, Chamados, Estoque e Usuarios.
+- **Valores Alterados:** O sistema salva o estado do registro antes e depois da alteração, permitindo saber exatamente o que foi mudado.
+
+### Como consultar?
+Acesse o menu **Admin -> Logs de Auditoria**. Você pode filtrar por:
+- **Modulo:** (Ex: Checklists, Financeiro, Usuarios)
+- **Periodo:** Data inicial e final.
+- **Tipo de Ação:** (Criação, Edição, Exclusão).
 
 ---
 
-## 9. Como explicar os principais graficos ao usuario final
+## 10. Como explicar os principais graficos ao usuario final
 
 ### Pareto
 
@@ -207,7 +218,7 @@ O sistema tambem possui gestao administrativa para estruturar o acesso.
 
 ---
 
-## 10. Observacoes de uso
+## 11. Observacoes de uso
 
 - use os filtros de mes e ano para comparar periodos
 - sempre que possivel, navegue pelos botoes de drill-down para ja cair no contexto correto
@@ -216,7 +227,7 @@ O sistema tambem possui gestao administrativa para estruturar o acesso.
 
 ---
 
-## 11. Proximo passo recomendado
+## 12. Proximo passo recomendado
 
 Conforme novas funcionalidades entrarem no sistema, este guia deve ser atualizado junto com o `README`, para manter alinhados:
 

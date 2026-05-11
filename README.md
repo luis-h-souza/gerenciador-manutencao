@@ -100,8 +100,24 @@ npm run dev
 | `SESSION_SECRET` | Segredo para as sessões do Express |
 | `CORS_ORIGIN` | URL(s) permitida(s) para acessar a API |
 | `PORT` | Porta do servidor Express (padrão: 3001) |
+| `CRON_SECRET` | Chave secreta para autenticação de jobs externos (ex: cron-job.org) |
 
 > Nunca versione o arquivo `.env` real. Use o `.env.example` para compartilhar a estrutura.
+
+---
+
+## Manutenção Automática (Data Lifecycle)
+
+O sistema possui uma rotina de limpeza automática para evitar o crescimento descontrolado do banco de dados (especialmente útil para instâncias gratuitas do Neon/PostgreSQL).
+
+### O que é limpo?
+- **Sessões:** Removidas após 24h de inatividade ou expiração.
+- **Refresh Tokens:** Removidos após 90 dias ou se estiverem revogados.
+- **Logs de Auditoria:** Removidos após períodos específicos (Logs de Auth: 90 dias, Logs de Negócio: 2 anos).
+
+### Estratégia de Execução
+- **Servidores Persistentes (Local/Railway):** O job roda internamente via `node-cron` todo domingo às 03:00.
+- **Serverless (Vercel):** Como processos em background não são mantidos, a limpeza é acionada via endpoint HTTP protegido (`POST /api/v1/jobs/limpar`) por um serviço externo (como [cron-job.org](https://cron-job.org)).
 
 ---
 
@@ -355,6 +371,11 @@ O sistema já está operando com os módulos abaixo:
 | POST/PUT/DELETE | `/api/v1/lojas` | Gestão de lojas por `ADMINISTRADOR` e `DIRETOR` |
 | GET/POST | `/api/v1/fornecedores` | Gestão de fornecedores (global) |
 | PUT | `/api/v1/fornecedores/:id` | Editar fornecedor |
+
+### Manutenção (Jobs)
+| Método | Endpoint | Proteção | Descrição |
+|---|---|---|---|
+| POST | `/api/v1/jobs/limpar` | `CRON_SECRET` | Executa limpeza de logs, sessões e tokens expirados |
 
 ---
 

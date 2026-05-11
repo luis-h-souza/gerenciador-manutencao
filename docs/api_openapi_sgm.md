@@ -24,8 +24,9 @@
 12. [Endpoints - Usuários](#endpoints---usuários)
 13. [Endpoints - Lojas](#endpoints---lojas)
 14. [Endpoints - Fornecedores](#endpoints---fornecedores)
-15. [Códigos de Erro](#códigos-de-erro)
-16. [Exemplos de Uso](#exemplos-de-uso)
+15. [Endpoints - Manutenção](#endpoints---manutencao)
+16. [Códigos de Erro](#códigos-de-erro)
+17. [Exemplos de Uso](#exemplos-de-uso)
 
 ---
 
@@ -2665,6 +2666,57 @@ Remove um fornecedor.
   "success": true,
   "message": "Fornecedor deletado com sucesso"
 }
+```
+
+---
+
+## 🛠️ Endpoints - Manutenção
+
+### 1. Executar Limpeza de Dados
+
+**POST** `/jobs/limpar`
+
+Aciona manualmente a limpeza de sessões expiradas, refresh tokens revogados e logs de auditoria antigos. Este endpoint é utilizado por serviços de cron externos (ex: cron-job.org) para manter a saúde do banco de dados em ambientes serverless.
+
+#### Headers Obrigatórios
+
+| Header | Valor | Obrigatório | Descrição |
+|--------|-------|-------------|-----------|
+| `x-cron-secret` | string | Sim | Chave secreta configurada no servidor (`CRON_SECRET`) |
+
+#### Response (200 OK)
+
+```json
+{
+  "sucesso": true,
+  "mensagem": "Limpeza executada com sucesso.",
+  "duracao": "1.23s"
+}
+```
+
+#### Response (401 Unauthorized)
+
+```json
+{
+  "sucesso": false,
+  "error": "Não autorizado."
+}
+```
+
+#### Response (503 Service Unavailable)
+
+```json
+{
+  "sucesso": false,
+  "error": "Endpoint de manutenção não configurado."
+}
+```
+
+#### cURL
+
+```bash
+curl -X POST http://localhost:3001/api/v1/jobs/limpar \
+  -H "x-cron-secret: SUA_CHAVE_AQUI"
 ```
 
 ---

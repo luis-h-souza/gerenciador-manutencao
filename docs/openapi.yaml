@@ -2141,3 +2141,44 @@ paths:
                     properties:
                       message:
                         type: string
+
+  /jobs/limpar:
+    post:
+      tags: [Manutenção]
+      summary: Executa limpeza automática de dados
+      description: |
+        Aciona a limpeza de sessões expiradas, tokens revogados e logs de auditoria antigos.
+        Este endpoint é protegido pelo header `x-cron-secret`.
+      security: []
+      parameters:
+        - name: x-cron-secret
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Chave secreta configurada no servidor (CRON_SECRET)
+      responses:
+        '200':
+          description: Limpeza executada com sucesso
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      duracao:
+                        type: string
+                        example: "1.23s"
+        '401':
+          description: Chave secreta inválida ou ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Servidor não configurado para manutenção externa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
