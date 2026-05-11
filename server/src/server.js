@@ -2,13 +2,15 @@
 require('dotenv').config();
 const app = require('./app');
 const logger = require('./utils/logger');
+const { iniciarJobs } = require('./jobs/limpeza.job');
 
 const PORT = process.env.PORT || 3001;
 
-// Para rodar localmente
+// Para rodar localmente ou em servidor persistente (não Vercel)
 if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
   const server = app.listen(PORT, () => {
     logger.info(`🚀 Servidor rodando na porta ${PORT} [${process.env.NODE_ENV}]`);
+    iniciarJobs();
   });
 
   // Graceful shutdown (apenas em ambiente com processo persistente)
@@ -37,5 +39,4 @@ process.on('uncaughtException', (error) => {
   if (process.env.NODE_ENV !== 'production') process.exit(1);
 });
 
-// Exporta o app para a Vercel (Serverless)
 module.exports = app;
