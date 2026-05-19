@@ -14,6 +14,7 @@ import ChamadosPage from "./pages/chamados/ChamadosPage";
 import EstoquePage from "./pages/estoque/EstoquePage";
 import FornecedoresPage from "./pages/fornecedores/FornecedoresPage";
 import AtivosPage from "./pages/ativos/AtivosPage";
+import RotinasGestorPage from "./pages/infraestrutura/RotinasGestorPage";
 import UsuariosPage from "./pages/usuarios/UsuariosPage";
 import ChecklistPage from "./pages/checklists/ChecklistPage";
 import ChecklistConsolidadoPage from "./pages/checklists/ChecklistConsolidadoPage";
@@ -154,6 +155,15 @@ function AppRoutes() {
           element={
             <ProtectedRoute roles={ROLES.GESTORES}>
               <AtivosPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="infraestrutura/rotinas"
+          element={
+            <ProtectedRoute roles={ROLES.GESTORES}>
+              <RotinasGestorPage />
             </ProtectedRoute>
           }
         />

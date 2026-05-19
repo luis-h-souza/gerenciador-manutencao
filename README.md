@@ -254,6 +254,7 @@ O sistema já está operando com os módulos abaixo:
   - abrir chamados da regional
   - ver chamados de uma loja específica
   - abrir o BI regional diretamente na visão de gráficos
+- **Agrupamento Regional Escalável**: Visualizações executivas ("Matriz de Conformidade" e "Inteligência de Ativos Buy vs. Maintain") agrupadas dinamicamente em formato *Accordion* (sanfona) por Regional, otimizando a leitura para gestores de grandes carteiras.
 
 ### Controle Financeiro (Chamados)
 - Navegação por camadas: regionais -> lojas -> chamados
@@ -270,8 +271,9 @@ O sistema já está operando com os módulos abaixo:
   - linha de percentual acumulado
   - tooltip explicativo para o usuário
 
-### Checklists
+### Checklists e Rotinas de Infraestrutura
 - Preenchimento semanal de equipamentos e carrinhos pelo `GESTOR`
+- **Filtro em Cascata por Regional**: Nas Rotinas de Infraestrutura, seleção intuitiva em dois passos (Regional -> Loja) para coordenadores, substituindo listas longas e cansativas.
 - Consulta consolidada para perfis gerenciais (Diretor, Gerente e Coordenador)
 - **Resumo Macro Regional (Estado Atual)**: Painel executivo que consolida pendências de todas as lojas da regional/supervisão em uma única visão, facilitando a identificação de itens críticos (Ex: "80 carrinhos quebrados na regional").
 - **Filtros Reativos**: Navegação inteligente onde a troca de mês/ano atualiza o conteúdo de todos os níveis de drill-down instantaneamente sem perder o contexto.

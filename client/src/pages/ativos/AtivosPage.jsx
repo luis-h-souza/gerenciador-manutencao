@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { ativosService, lojasService, usuariosService } from "../../services";
@@ -19,6 +19,10 @@ import {
   ArrowLeft,
   ChevronDown,
   ChevronUp,
+  Eye,
+  Activity,
+  Clock,
+  CheckCircle2,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -106,9 +110,33 @@ function Paginacao({ paginaAtual, totalPaginas, onMudar }) {
 function AtivoModal({ ativo, onClose }) {
   const qc = useQueryClient();
   const isEdit = !!ativo;
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    defaultValues: ativo || { quantidade: 1, status: "ATIVO" },
+
+  const formatForInputDate = (isoString) => {
+    if (!isoString) return "";
+    return new Date(isoString).toISOString().split("T")[0];
+  };
+
+  const formattedDefaultValues = useMemo(() => {
+    if (!ativo) return { quantidade: 1, status: "ATIVO" };
+    return {
+      ...ativo,
+      ultimaPreventiva: formatForInputDate(ativo.ultimaPreventiva),
+      proximaPreventiva: formatForInputDate(ativo.proximaPreventiva),
+      ultimaTrocaBateria: formatForInputDate(ativo.ultimaTrocaBateria),
+      proximaTrocaBateria: formatForInputDate(ativo.proximaTrocaBateria),
+      dadosTecnicosText: ativo.dadosTecnicos ? (typeof ativo.dadosTecnicos === "object" ? JSON.stringify(ativo.dadosTecnicos) : String(ativo.dadosTecnicos)) : "",
+    };
+  }, [ativo]);
+
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({
+    defaultValues: formattedDefaultValues,
   });
+
+  const categoriaWatch = watch("categoria") || "";
+  const isGerador = categoriaWatch.toLowerCase().includes("gerador");
+  const isNobreak = categoriaWatch.toLowerCase().includes("nobreak");
+  const isCabine = categoriaWatch.toLowerCase().includes("cabine");
+  const isInfra = isGerador || isNobreak || isCabine;
 
   const mutation = useMutation({
     mutationFn: (data) => isEdit ? ativosService.atualizar(ativo.id, data) : ativosService.criar(data),
@@ -120,6 +148,30 @@ function AtivoModal({ ativo, onClose }) {
     onError: (err) => toast.error(err.response?.data?.message || err.response?.data?.error || "Erro ao salvar ativo"),
   });
 
+  const onSubmit = (d) => {
+    const data = { ...d };
+    if (data.dadosTecnicosText) {
+      try {
+        data.dadosTecnicos = JSON.parse(data.dadosTecnicosText);
+      } catch (e) {
+        data.dadosTecnicos = data.dadosTecnicosText;
+      }
+    } else {
+      data.dadosTecnicos = null;
+    }
+    delete data.dadosTecnicosText;
+
+    // Limpa strings vazias de datas para nulo
+    for (const f of ['ultimaPreventiva', 'proximaPreventiva', 'ultimaTrocaBateria', 'proximaTrocaBateria']) {
+      if (data[f] === "") data[f] = null;
+    }
+    if (data.intervaloPreventiva === "" || isNaN(data.intervaloPreventiva)) {
+      data.intervaloPreventiva = null;
+    }
+
+    mutation.mutate(data);
+  };
+
   return (
     <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="modal-content animate-fade-in" style={{ maxWidth: "720px" }}>
@@ -127,7 +179,7 @@ function AtivoModal({ ativo, onClose }) {
           <h2 style={{ fontSize: "1rem", fontWeight: 700 }}>{isEdit ? "Editar Ativo" : "Novo Ativo"}</h2>
           <button className="btn btn-ghost btn-sm" onClick={onClose} style={{ padding: "4px" }}><X size={18} /></button>
         </div>
-        <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <div className="grid gap-4" style={{ gridTemplateColumns: "1.5fr 1fr" }}>
             <div>
               <label className="label">Nome *</label>
@@ -196,6 +248,54 @@ function AtivoModal({ ativo, onClose }) {
             <textarea className="input" rows={3} style={{ resize: "vertical" }} {...register("observacoes")} />
           </div>
 
+          {isInfra && (
+            <div className="card" style={{ padding: "16px", background: "rgba(var(--color-brand-rgb), 0.02)", border: "1px dashed var(--color-border)", display: "flex", flexDirection: "column", gap: "16px", marginTop: "8px" }}>
+              <h3 style={{ fontSize: "0.875rem", fontWeight: 700, display: "flex", alignItems: "center", gap: "8px", color: "var(--color-brand-500)" }}>
+                <Activity size={16} />
+                Parâmetros e Validades de Infraestrutura
+              </h3>
+              
+              {(isGerador || isNobreak) && (
+                <div className="grid gap-4" style={{ gridTemplateColumns: "1fr 1fr" }}>
+                  <div>
+                    <label className="label">Última Troca de Bateria</label>
+                    <input className="input" type="date" {...register("ultimaTrocaBateria")} />
+                  </div>
+                  <div>
+                    <label className="label">Próxima Troca de Bateria *</label>
+                    <input className="input" type="date" {...register("proximaTrocaBateria", { required: "Obrigatório para monitoramento" })} />
+                    {errors.proximaTrocaBateria && <p className="field-error">{errors.proximaTrocaBateria.message}</p>}
+                  </div>
+                </div>
+              )}
+
+              {isCabine && (
+                <div className="grid gap-4" style={{ gridTemplateColumns: "1fr 1fr" }}>
+                  <div>
+                    <label className="label">Última Preventiva (Emissão Laudo)</label>
+                    <input className="input" type="date" {...register("ultimaPreventiva")} />
+                  </div>
+                  <div>
+                    <label className="label">Próxima Preventiva (Validade Laudo) *</label>
+                    <input className="input" type="date" {...register("proximaPreventiva", { required: "Obrigatório para monitoramento" })} />
+                    {errors.proximaPreventiva && <p className="field-error">{errors.proximaPreventiva.message}</p>}
+                  </div>
+                </div>
+              )}
+
+              <div className="grid gap-4" style={{ gridTemplateColumns: "1fr 1fr" }}>
+                <div>
+                  <label className="label">Intervalo de Manutenção (Dias)</label>
+                  <input className="input" type="number" placeholder="Ex: 365 para anual" {...register("intervaloPreventiva", { valueAsNumber: true })} />
+                </div>
+                <div>
+                  <label className="label">Tensão/Capacidade (Dados Técnicos)</label>
+                  <input className="input" placeholder="Ex: 15kV, 10kVA, 250kVA" {...register("dadosTecnicosText")} />
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="flex justify-end gap-2 pt-2">
             <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
             <button type="submit" className="btn btn-primary" disabled={mutation.isPending}>
@@ -208,6 +308,175 @@ function AtivoModal({ ativo, onClose }) {
     </div>
   );
 }
+
+function DetalhesAtivoModal({ ativo, onClose }) {
+  const { data: kpis, isLoading: loadingKpis } = useQuery({
+    queryKey: ["ativo-confiabilidade", ativo.id],
+    queryFn: () => {
+      // Import needed from the top implicitly or explicitly, but it's available via falhaAtivoService
+      const { falhaAtivoService } = require("../../services");
+      return falhaAtivoService.calcularConfiabilidade(ativo.id).then(r => r.data.data);
+    }
+  });
+
+  const { data: falhasData, isLoading: loadingFalhas } = useQuery({
+    queryKey: ["ativo-falhas", ativo.id],
+    queryFn: () => {
+      const { falhaAtivoService } = require("../../services");
+      return falhaAtivoService.listarPorAtivo(ativo.id, { limit: 10 }).then(r => r.data.data);
+    }
+  });
+
+  return (
+    <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="modal-content animate-fade-in" style={{ maxWidth: "800px", padding: "24px" }}>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 style={{ fontSize: "1.25rem", fontWeight: 700, display: "flex", alignItems: "center", gap: "8px" }}>
+              <Activity size={20} style={{ color: "var(--color-brand-500)" }} />
+              Confiabilidade do Ativo
+            </h2>
+            <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)" }}>
+              {ativo.nome} {ativo.patrimonio ? `(${ativo.patrimonio})` : ""}
+            </p>
+          </div>
+          <button className="btn btn-ghost btn-sm" onClick={onClose} style={{ padding: "4px" }}><X size={18} /></button>
+        </div>
+
+        {loadingKpis ? (
+          <div className="flex justify-center p-8"><Loader2 className="animate-spin" size={24} style={{ color: "var(--color-brand-500)" }} /></div>
+        ) : kpis && (
+          <div className="grid gap-4 mb-8" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
+            <div className="card" style={{ padding: "16px", borderLeft: "4px solid var(--color-success)" }}>
+              <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", fontWeight: 600 }}>MTBF (Média entre falhas)</p>
+              <p style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--color-text-primary)" }}>{kpis.mtbfHoras}h</p>
+            </div>
+            <div className="card" style={{ padding: "16px", borderLeft: "4px solid var(--color-danger)" }}>
+              <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", fontWeight: 600 }}>MTTR (Tempo médio de reparo)</p>
+              <p style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--color-text-primary)" }}>{kpis.mttrHoras}h</p>
+            </div>
+            <div className="card" style={{ padding: "16px", borderLeft: "4px solid var(--color-brand-500)" }}>
+              <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", fontWeight: 600 }}>Uptime</p>
+              <p style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--color-text-primary)" }}>{kpis.uptimePercentual}%</p>
+            </div>
+            <div className="card" style={{ padding: "16px", borderLeft: "4px solid var(--color-warning)" }}>
+              <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", fontWeight: 600 }}>Total de Falhas</p>
+              <p style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--color-text-primary)" }}>{kpis.totalFalhas}</p>
+            </div>
+          </div>
+        )}
+
+        {(() => {
+          const catLower = (ativo.categoria || "").toLowerCase();
+          const isGerador = catLower.includes("gerador");
+          const isNobreak = catLower.includes("nobreak");
+          const isCabine = catLower.includes("cabine");
+          const isInfra = isGerador || isNobreak || isCabine;
+
+          if (!isInfra) return null;
+
+          return (
+            <div className="card animate-fade-in" style={{ padding: "16px", background: "var(--color-surface-600)", border: "1px dashed var(--color-border)", display: "flex", flexDirection: "column", gap: "12px", marginBottom: "24px" }}>
+              <h4 style={{ fontSize: "0.875rem", fontWeight: 700, display: "flex", alignItems: "center", gap: "8px", color: "var(--color-brand-400)", margin: 0 }}>
+                <Activity size={14} />
+                Especificações Técnicas e Validades
+              </h4>
+              
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
+                {(isGerador || isNobreak) && (
+                  <>
+                    <div>
+                      <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", display: "block" }}>Última Troca de Bateria</span>
+                      <span style={{ fontWeight: 600, fontSize: "0.875rem" }}>
+                        {ativo.ultimaTrocaBateria ? new Date(ativo.ultimaTrocaBateria).toLocaleDateString() : "Não informada"}
+                      </span>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", display: "block" }}>Próxima Troca de Bateria</span>
+                      <span style={{ fontWeight: 700, fontSize: "0.875rem", color: "var(--color-brand-400)" }}>
+                        {ativo.proximaTrocaBateria ? new Date(ativo.proximaTrocaBateria).toLocaleDateString() : "Não cadastrada"}
+                      </span>
+                    </div>
+                  </>
+                )}
+
+                {isCabine && (
+                  <>
+                    <div>
+                      <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", display: "block" }}>Última Preventiva (Laudo)</span>
+                      <span style={{ fontWeight: 600, fontSize: "0.875rem" }}>
+                        {ativo.ultimaPreventiva ? new Date(ativo.ultimaPreventiva).toLocaleDateString() : "Não informada"}
+                      </span>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", display: "block" }}>Próxima Preventiva (Validade)</span>
+                      <span style={{ fontWeight: 700, fontSize: "0.875rem", color: "var(--color-brand-400)" }}>
+                        {ativo.proximaPreventiva ? new Date(ativo.proximaPreventiva).toLocaleDateString() : "Não cadastrada"}
+                      </span>
+                    </div>
+                  </>
+                )}
+
+                {ativo.intervaloPreventiva && (
+                  <div>
+                    <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", display: "block" }}>Frequência Preventiva</span>
+                    <span style={{ fontWeight: 600, fontSize: "0.875rem" }}>{ativo.intervaloPreventiva} dias</span>
+                  </div>
+                )}
+
+                {ativo.dadosTecnicos && (
+                  <div>
+                    <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", display: "block" }}>Especificação / Capacidade</span>
+                    <span style={{ fontWeight: 600, fontSize: "0.875rem", color: "var(--color-text-primary)" }}>
+                      {typeof ativo.dadosTecnicos === "object" ? JSON.stringify(ativo.dadosTecnicos) : String(ativo.dadosTecnicos)}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })()}
+
+        <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "16px", borderBottom: "1px solid var(--color-border)", paddingBottom: "8px" }}>Histórico de Falhas</h3>
+        
+        {loadingFalhas ? (
+           <div className="flex justify-center p-8"><Loader2 className="animate-spin" size={24} style={{ color: "var(--color-brand-500)" }} /></div>
+        ) : falhasData && falhasData.length > 0 ? (
+          <div className="flex flex-col gap-3 max-h-[300px] overflow-y-auto pr-2">
+            {falhasData.map(f => (
+              <div key={f.id} className="card" style={{ padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <p style={{ fontSize: "0.875rem", fontWeight: 600 }}>{f.descricao}</p>
+                  <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", display: "flex", alignItems: "center", gap: "4px", marginTop: "4px" }}>
+                    <Clock size={12} /> {new Date(f.dataDeteccao).toLocaleDateString()}
+                    {f.dataResolucao && (
+                      <>
+                        <span style={{ margin: "0 4px" }}>→</span>
+                        <CheckCircle2 size={12} style={{ color: "var(--color-success)" }} /> {new Date(f.dataResolucao).toLocaleDateString()}
+                      </>
+                    )}
+                  </p>
+                </div>
+                <div>
+                  {!f.dataResolucao ? (
+                    <span className="badge badge-danger">Aberta</span>
+                  ) : (
+                    <span className="badge badge-success">Resolvida</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", textAlign: "center", padding: "32px 0" }}>
+            Nenhum registro de falha encontrado para este ativo.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 
 export default function AtivosPage() {
   const { usuario } = useAuth();
@@ -236,6 +505,7 @@ export default function AtivosPage() {
   const [lojaSelecionada, setLojaSelecionada] = useState(null);
 
   const [modal, setModal] = useState(null);
+  const [modalDetalhes, setModalDetalhes] = useState(null);
   const [page, setPage] = useState(1);
   const [filtros, setFiltros] = useState({ nome: "", categoria: "", status: "" });
 
@@ -476,7 +746,7 @@ export default function AtivosPage() {
                   <th>Qtd.</th>
                   <th>Identificação</th>
                   <th>Localização</th>
-                  {canEdit && <th style={{ width: "86px" }}>Ações</th>}
+                  <th style={{ width: "120px" }}>Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -503,14 +773,17 @@ export default function AtivosPage() {
                     <td>{a.quantidade}</td>
                     <td style={{ fontSize: "0.8125rem", color: "var(--color-text-secondary)" }}>{a.patrimonio || a.numeroSerie || "-"}</td>
                     <td style={{ fontSize: "0.8125rem", color: "var(--color-text-secondary)" }}>{a.localizacao || "-"}</td>
-                    {canEdit && (
-                      <td>
-                        <div className="flex gap-1">
-                          <button className="btn btn-ghost btn-sm" onClick={() => setModal(a)} style={{ padding: "4px 6px" }}><Pencil size={13} /></button>
-                          <button className="btn btn-ghost btn-sm" onClick={() => remover.mutate(a.id)} style={{ padding: "4px 6px", color: "var(--color-danger)" }}><Trash2 size={13} /></button>
-                        </div>
-                      </td>
-                    )}
+                    <td>
+                      <div className="flex gap-1">
+                        <button className="btn btn-ghost btn-sm" title="Detalhes e KPIs" onClick={() => setModalDetalhes(a)} style={{ padding: "4px 6px" }}><Eye size={13} /></button>
+                        {canEdit && (
+                          <>
+                            <button className="btn btn-ghost btn-sm" title="Editar" onClick={() => setModal(a)} style={{ padding: "4px 6px" }}><Pencil size={13} /></button>
+                            <button className="btn btn-ghost btn-sm" title="Remover" onClick={() => remover.mutate(a.id)} style={{ padding: "4px 6px", color: "var(--color-danger)" }}><Trash2 size={13} /></button>
+                          </>
+                        )}
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -522,6 +795,7 @@ export default function AtivosPage() {
       )}
 
       {modal && <AtivoModal ativo={modal === "novo" ? null : modal} onClose={() => setModal(null)} />}
+      {modalDetalhes && <DetalhesAtivoModal ativo={modalDetalhes} onClose={() => setModalDetalhes(null)} />}
     </div>
   );
 }

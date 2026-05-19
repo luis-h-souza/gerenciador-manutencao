@@ -1379,6 +1379,53 @@ paths:
                       dados:
                         type: object
 
+  /dashboard/conformidade:
+    get:
+      tags: [Dashboard]
+      summary: Matriz de conformidade por unidade
+      parameters:
+        - name: mes
+          in: query
+          schema:
+            type: integer
+        - name: ano
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Matriz de conformidade detalhada por unidade
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      dados:
+                        type: array
+                        items:
+                          type: object
+
+  /dashboard/buy-vs-maintain:
+    get:
+      tags: [Dashboard]
+      summary: Inteligência de ciclo de vida de ativos (Buy vs Maintain)
+      responses:
+        '200':
+          description: Recomendação analítica financeira e operacional de ativos
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      dados:
+                        type: array
+                        items:
+                          type: object
+
   /checklists/equipamentos:
     get:
       tags: [Checklists]

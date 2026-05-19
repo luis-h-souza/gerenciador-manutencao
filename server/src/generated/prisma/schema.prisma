@@ -42,6 +42,9 @@ model Usuario {
   sessoes               Sessao[]
   tarefasAtribuidas     Tarefa[]               @relation("TarefaAtribuida")
   tarefasCriadas        Tarefa[]               @relation("TarefaCriada")
+  logsAuditoria         LogAuditoria[]
+  falhasResolvidas      RegistroFalhaAtivo[]   @relation("FalhaResolvidaPor")
+  rotinasInfra          ChecklistRotinaInfra[] @relation("RotinaInfraCriadaPor")
 
   @@map("usuarios")
 }
@@ -104,6 +107,22 @@ model Notificacao {
   usuario   Usuario? @relation(fields: [usuarioId], references: [id])
 
   @@map("notificacoes")
+}
+
+model LogAuditoria {
+  id        String   @id @default(uuid())
+  usuarioId String
+  acao      String
+  modulo    String
+  detalhes  Json?
+  ip        String?
+  userAgent String?
+  criadoEm  DateTime @default(now())
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id])
+
+  @@index([modulo])
+  @@index([criadoEm])
+  @@map("logs_auditoria")
 }
 
 model ControleChamado {
@@ -244,7 +263,9 @@ model ChecklistEquipamentoItem {
   numeroChamado      String?
   descricaoProblema  String?
   valor              Decimal?             @db.Decimal(12, 2)
+  ativoId            String? // Vínculo opcional com AtivoLoja
   checklist          ChecklistEquipamento @relation(fields: [checklistId], references: [id], onDelete: Cascade)
+  ativo              AtivoLoja?           @relation(fields: [ativoId], references: [id])
 
   @@map("checklist_equipamento_itens")
 }
@@ -309,13 +330,72 @@ model AtivoLoja {
   ativo        Boolean  @default(true)
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
-  criadoPor    Usuario  @relation(fields: [criadoPorId], references: [id])
+
+  // Campos de infraestrutura (preventiva e baterias)
+  ultimaPreventiva    DateTime?
+  proximaPreventiva   DateTime?
+  ultimaTrocaBateria  DateTime?
+  proximaTrocaBateria DateTime?
+  intervaloPreventiva Int? // em dias (ex: 180 = semestral; null = sem preventiva)
+
+  // Dados técnicos flexíveis por categoria (Json)
+  dadosTecnicos Json?
+
+  criadoPor      Usuario                    @relation(fields: [criadoPorId], references: [id])
+  falhas         RegistroFalhaAtivo[]
+  checklistItens ChecklistEquipamentoItem[]
 
   @@index([regiao])
   @@index([unidade])
   @@index([categoria])
   @@index([status])
   @@map("ativos_loja")
+}
+
+model RegistroFalhaAtivo {
+  id              String    @id @default(uuid())
+  ativoId         String
+  dataDeteccao    DateTime // Data do checklist que detectou a falha
+  dataResolucao   DateTime? // Preenchido via checklist (auto) ou "Marcar Resolvido" (manual)
+  origemResolucao String? // "CHECKLIST" ou "MANUAL"
+  descricao       String // Descrição do problema observado
+  reincidencia    Boolean   @default(false) // True se mesmo tipo de problema em < 90 dias
+  chamadoId       String? // Vínculo com ControleChamado (rastreabilidade financeira)
+  resolvidoPorId  String? // Quem marcou como resolvido (se manual)
+  criadoEm        DateTime  @default(now())
+  ativo           AtivoLoja @relation(fields: [ativoId], references: [id])
+  resolvidoPor    Usuario?  @relation("FalhaResolvidaPor", fields: [resolvidoPorId], references: [id])
+
+  @@index([ativoId, dataDeteccao])
+  @@map("registros_falha_ativos")
+}
+
+model ChecklistRotinaInfra {
+  id                  String          @id @default(uuid())
+  tipo                TipoRotinaInfra
+  regiao              String
+  unidade             String
+  semana              Int? // Semana ISO — apenas para GERADOR_SEMANAL
+  mes                 Int
+  ano                 Int
+  conforme            Boolean
+  descricao           String? // Obrigatório se conforme = false
+  preenchidoEm        DateTime        @default(now())
+  preenchidoComAtraso Boolean         @default(false)
+  dataLimite          DateTime // Calculada automaticamente pelo backend
+  criadoPorId         String
+  ativoId             String? // Gerador ou sistema de incêndio relacionado
+  criadoPor           Usuario         @relation("RotinaInfraCriadaPor", fields: [criadoPorId], references: [id])
+
+  @@unique([tipo, unidade, semana, mes, ano], name: "rotina_unica")
+  @@index([unidade, mes, ano])
+  @@map("checklists_rotina_infra")
+}
+
+enum TipoRotinaInfra {
+  GERADOR_SEMANAL
+  INCENDIO_MENSAL_VISUAL
+  INCENDIO_BIMESTRAL_BOMBA
 }
 
 enum Role {

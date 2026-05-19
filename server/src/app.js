@@ -27,6 +27,8 @@ const lojaRoutes      = require('./routes/loja.routes');
 const ativoRoutes     = require('./routes/ativo.routes');
 const logRoutes       = require('./routes/log.routes');
 const jobRoutes       = require('./routes/job.routes');
+const falhaAtivoRoutes = require('./routes/falhaAtivo.routes');
+const rotinaInfraRoutes = require('./routes/rotinaInfra.routes');
 
 const path = require('path');
 
@@ -168,6 +170,8 @@ app.use(`${API}/lojas`,     lojaRoutes);
 app.use(`${API}/ativos`,    ativoRoutes);
 app.use(`${API}/logs`,      logRoutes);
 app.use(`${API}/jobs`,      jobRoutes);
+app.use(`${API}/falhas-ativo`, falhaAtivoRoutes);
+app.use(`${API}/rotinas-infra`, rotinaInfraRoutes);
 
 // ─── 404 ──────────────────────────────────────────────────────────────────────
 app.use((req, res) => {

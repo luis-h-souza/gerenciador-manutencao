@@ -110,7 +110,7 @@ const montarFrotaCarrinhosPorAtivos = (ativos) =>
 
 // ─── Componente de linha do equipamento ─────────────────────────────────────
 
-function LinhaEquipamento({ equip, value, onChange, readOnly }) {
+function LinhaEquipamento({ equip, value, onChange, readOnly, ativosUnidade = [] }) {
   const [expanded, setExpanded] = useState(!value.operacional);
 
   const set = (field, val) => onChange({ ...value, [field]: val });
@@ -275,6 +275,22 @@ function LinhaEquipamento({ equip, value, onChange, readOnly }) {
             />
           </div>
           <div style={{ gridColumn: "1 / -1" }}>
+            <label className="label">Vincular Ativo (Opcional)</label>
+            <select
+              className="input"
+              value={value.ativoId || ""}
+              onChange={(e) => set("ativoId", e.target.value)}
+              disabled={readOnly}
+            >
+              <option value="">Selecione um ativo...</option>
+              {ativosUnidade.map(a => (
+                <option key={a.id} value={a.id}>
+                  {a.nome} {a.patrimonio ? `(${a.patrimonio})` : ''} - {a.categoria}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div style={{ gridColumn: "1 / -1" }}>
             <label className="label">Descrição do Problema</label>
             <textarea
               className="input"
@@ -432,10 +448,20 @@ function TabEquipamentos({ semana, ano, usuario, canEdit }) {
       numeroChamado: "",
       descricaoProblema: "",
       valor: "",
+      ativoId: "",
     }));
 
   const [itens, setItens] = useState(defaultItens());
   const [observacoes, setObservacoes] = useState("");
+
+  const { data: ativosUnidade } = useQuery({
+    queryKey: ["ativos-equipamentos-checklist", usuario.unidade],
+    queryFn: () =>
+      ativosService
+        .listar({ unidade: usuario.unidade, status: "ATIVO", limit: 500 })
+        .then((r) => r.data.data || []),
+    enabled: !!usuario.unidade,
+  });
 
   useEffect(() => {
     if (checklistExistente?.itens?.length) {
@@ -587,6 +613,7 @@ function TabEquipamentos({ semana, ano, usuario, canEdit }) {
               value={item}
               onChange={(val) => setItem(item.tipoEquipamento, val)}
               readOnly={!canEdit}
+              ativosUnidade={ativosUnidade || []}
             />
           );
         })}

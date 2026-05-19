@@ -90,6 +90,8 @@ export const dashboardService = {
   detalheRegional: (regiao, params = {}) => api.get(`/dashboard/regional/${regiao}`, { params }),
   rankingCoordenadores: (params) => api.get('/dashboard/ranking-coordenadores', { params }),
   executivo:       (params) => api.get('/dashboard/executivo', { params }),
+  conformidade:    (params) => api.get('/dashboard/conformidade', { params }),
+  buyVsMaintain:   (params) => api.get('/dashboard/buy-vs-maintain', { params }),
 };
 
 // ─── Checklists ───────────────────────────────────────────────────────────
@@ -111,4 +113,18 @@ export const checklistService = {
   // Consolidado (Visão em Camadas)
   consolidadoRegional:      (params) => api.get('/checklists/consolidado/regional', { params }),
   consolidadoLoja:          (params) => api.get('/checklists/consolidado/loja', { params }),
+};
+
+// ─── Infraestrutura ───────────────────────────────────────────────────────
+export const rotinasInfraService = {
+  listar:               (params) => api.get('/rotinas-infra', { params }),
+  criar:                (data)   => api.post('/rotinas-infra', data),
+  conformidadeIncendio: (params) => api.get('/rotinas-infra/conformidade', { params }),
+  pendenciasGerador:    (params) => api.get('/rotinas-infra/gerador/pendencias', { params }),
+};
+
+export const falhaAtivoService = {
+  listarPorAtivo:  (ativoId, params) => api.get(`/falhas-ativo/ativo/${ativoId}`, { params }),
+  marcarResolvido: (id, data)        => api.patch(`/falhas-ativo/${id}/resolver`, data),
+  calcularConfiabilidade: (ativoId)  => api.get(`/falhas-ativo/ativo/${ativoId}/confiabilidade`),
 };

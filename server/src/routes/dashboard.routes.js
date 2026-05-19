@@ -14,5 +14,7 @@ router.get('/regional', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERE
 router.get('/regional/:regiao', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR, ), ctrl.detalheRegional);
 router.get('/ranking-coordenadores', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE), ctrl.rankingCoordenadores);
 router.get('/executivo', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR, Roles.GESTOR), ctrl.executivo);
+router.get('/conformidade', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR), ctrl.conformidadeMatrix);
+router.get('/buy-vs-maintain', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR), ctrl.buyVsMaintain);
 
 module.exports = router;

@@ -116,6 +116,7 @@ const mapItemEquipamento = (item) => ({
   numeroChamado:   item.numeroChamado || null,
   descricaoProblema: item.descricaoProblema || null,
   valor:           item.valor ? parseFloat(item.valor) : null,
+  ativoId:         item.ativoId || null,
 });
 
 const salvarEquipamento = async (user, body) => {
@@ -145,6 +146,43 @@ const salvarEquipamento = async (user, body) => {
     },
     include: { itens: true },
   });
+
+  // Integração com RegistroFalhaAtivo (Fase 3)
+  for (const item of saved.itens) {
+    if (item.ativoId) {
+      if (!item.operacional) {
+        // Verifica se já tem uma falha aberta para este ativo
+        const falhaAberta = await prisma.registroFalhaAtivo.findFirst({
+          where: { ativoId: item.ativoId, dataResolucao: null },
+        });
+        if (!falhaAberta) {
+          // Cria nova falha
+          await prisma.registroFalhaAtivo.create({
+            data: {
+              ativoId: item.ativoId,
+              dataDeteccao: new Date(),
+              descricao: item.descricaoProblema || 'Falha detectada via checklist',
+              chamadoId: null, // Pode ser vinculado futuramente se houver chamado aberto
+            },
+          });
+        }
+      } else {
+        // Se voltou a ficar operacional, fecha a falha em aberto
+        const falhasAbertas = await prisma.registroFalhaAtivo.findMany({
+          where: { ativoId: item.ativoId, dataResolucao: null },
+        });
+        for (const falha of falhasAbertas) {
+          await prisma.registroFalhaAtivo.update({
+            where: { id: falha.id },
+            data: {
+              dataResolucao: new Date(),
+              origemResolucao: 'CHECKLIST',
+            },
+          });
+        }
+      }
+    }
+  }
 
   // Auditoria: Registro de Checklist de Equipamento
   await logService.registrar({

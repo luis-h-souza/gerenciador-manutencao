@@ -190,6 +190,17 @@ exports.Prisma.NotificacaoScalarFieldEnum = {
   criadoEm: 'criadoEm'
 };
 
+exports.Prisma.LogAuditoriaScalarFieldEnum = {
+  id: 'id',
+  usuarioId: 'usuarioId',
+  acao: 'acao',
+  modulo: 'modulo',
+  detalhes: 'detalhes',
+  ip: 'ip',
+  userAgent: 'userAgent',
+  criadoEm: 'criadoEm'
+};
+
 exports.Prisma.ControleChamadoScalarFieldEnum = {
   id: 'id',
   dataAbertura: 'dataAbertura',
@@ -301,7 +312,8 @@ exports.Prisma.ChecklistEquipamentoItemScalarFieldEnum = {
   numeroSerie: 'numeroSerie',
   numeroChamado: 'numeroChamado',
   descricaoProblema: 'descricaoProblema',
-  valor: 'valor'
+  valor: 'valor',
+  ativoId: 'ativoId'
 };
 
 exports.Prisma.ChecklistCarrinhoScalarFieldEnum = {
@@ -352,12 +364,53 @@ exports.Prisma.AtivoLojaScalarFieldEnum = {
   criadoPorId: 'criadoPorId',
   ativo: 'ativo',
   criadoEm: 'criadoEm',
-  atualizadoEm: 'atualizadoEm'
+  atualizadoEm: 'atualizadoEm',
+  ultimaPreventiva: 'ultimaPreventiva',
+  proximaPreventiva: 'proximaPreventiva',
+  ultimaTrocaBateria: 'ultimaTrocaBateria',
+  proximaTrocaBateria: 'proximaTrocaBateria',
+  intervaloPreventiva: 'intervaloPreventiva',
+  dadosTecnicos: 'dadosTecnicos'
+};
+
+exports.Prisma.RegistroFalhaAtivoScalarFieldEnum = {
+  id: 'id',
+  ativoId: 'ativoId',
+  dataDeteccao: 'dataDeteccao',
+  dataResolucao: 'dataResolucao',
+  origemResolucao: 'origemResolucao',
+  descricao: 'descricao',
+  reincidencia: 'reincidencia',
+  chamadoId: 'chamadoId',
+  resolvidoPorId: 'resolvidoPorId',
+  criadoEm: 'criadoEm'
+};
+
+exports.Prisma.ChecklistRotinaInfraScalarFieldEnum = {
+  id: 'id',
+  tipo: 'tipo',
+  regiao: 'regiao',
+  unidade: 'unidade',
+  semana: 'semana',
+  mes: 'mes',
+  ano: 'ano',
+  conforme: 'conforme',
+  descricao: 'descricao',
+  preenchidoEm: 'preenchidoEm',
+  preenchidoComAtraso: 'preenchidoComAtraso',
+  dataLimite: 'dataLimite',
+  criadoPorId: 'criadoPorId',
+  ativoId: 'ativoId'
 };
 
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -368,6 +421,12 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 exports.Role = exports.$Enums.Role = {
   ADMINISTRADOR: 'ADMINISTRADOR',
@@ -474,6 +533,12 @@ exports.TipoCarrinho = exports.$Enums.TipoCarrinho = {
   ESCADA: 'ESCADA'
 };
 
+exports.TipoRotinaInfra = exports.$Enums.TipoRotinaInfra = {
+  GERADOR_SEMANAL: 'GERADOR_SEMANAL',
+  INCENDIO_MENSAL_VISUAL: 'INCENDIO_MENSAL_VISUAL',
+  INCENDIO_BIMESTRAL_BOMBA: 'INCENDIO_BIMESTRAL_BOMBA'
+};
+
 exports.Prisma.ModelName = {
   Loja: 'Loja',
   Usuario: 'Usuario',
@@ -481,6 +546,7 @@ exports.Prisma.ModelName = {
   Sessao: 'Sessao',
   Tarefa: 'Tarefa',
   Notificacao: 'Notificacao',
+  LogAuditoria: 'LogAuditoria',
   ControleChamado: 'ControleChamado',
   Fornecedor: 'Fornecedor',
   MetaOrcamentaria: 'MetaOrcamentaria',
@@ -493,7 +559,9 @@ exports.Prisma.ModelName = {
   ChecklistCarrinho: 'ChecklistCarrinho',
   ChecklistCarrinhoItem: 'ChecklistCarrinhoItem',
   FrotaCarrinho: 'FrotaCarrinho',
-  AtivoLoja: 'AtivoLoja'
+  AtivoLoja: 'AtivoLoja',
+  RegistroFalhaAtivo: 'RegistroFalhaAtivo',
+  ChecklistRotinaInfra: 'ChecklistRotinaInfra'
 };
 
 /**

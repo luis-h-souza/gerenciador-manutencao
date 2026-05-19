@@ -25,6 +25,7 @@
     "connect-redis": "^8.0.1",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
+    "dayjs": "^1.11.20",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "express-rate-limit": "^7.5.0",

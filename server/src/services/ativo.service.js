@@ -14,6 +14,12 @@ const CAMPOS_ATIVO = [
   'status',
   'localizacao',
   'observacoes',
+  'ultimaPreventiva',
+  'proximaPreventiva',
+  'ultimaTrocaBateria',
+  'proximaTrocaBateria',
+  'intervaloPreventiva',
+  'dadosTecnicos',
 ];
 
 const montarDadosAtivo = (body) => {
@@ -25,8 +31,15 @@ const montarDadosAtivo = (body) => {
 
   if (data.quantidade !== undefined) data.quantidade = parseInt(data.quantidade) || 1;
   if (data.status !== undefined) data.status = String(data.status || 'ATIVO').toUpperCase();
-  for (const campo of ['tipo', 'fabricante', 'modelo', 'numeroSerie', 'patrimonio', 'localizacao', 'observacoes']) {
+  for (const campo of ['tipo', 'fabricante', 'modelo', 'numeroSerie', 'patrimonio', 'localizacao', 'observacoes', 'dadosTecnicos']) {
     if (data[campo] !== undefined) data[campo] = data[campo] || null;
+  }
+  
+  for (const dateField of ['ultimaPreventiva', 'proximaPreventiva', 'ultimaTrocaBateria', 'proximaTrocaBateria']) {
+    if (data[dateField]) data[dateField] = new Date(data[dateField]);
+  }
+  if (data.intervaloPreventiva !== undefined) {
+    data.intervaloPreventiva = data.intervaloPreventiva ? parseInt(data.intervaloPreventiva) : null;
   }
 
   return data;

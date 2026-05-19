@@ -15,6 +15,7 @@ import {
   Store,
   Boxes,
   History,
+  Activity,
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -73,6 +74,12 @@ const NAV = [
     to: "/ativos",
     icon: Boxes,
     label: "Ativos da Loja",
+    roles: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR"],
+  },
+  {
+    to: "/infraestrutura/rotinas",
+    icon: Activity,
+    label: "Rotinas de Infra.",
     roles: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR"],
   },
   {

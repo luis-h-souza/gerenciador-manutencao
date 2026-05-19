@@ -99,3 +99,30 @@ Para adicionar novas funcionalidades:
 2.  **Controller**: Implementar lógica respeitando o `getAccessFilter`.
 3.  **Frontend Service**: Adicionar chamada em `services/index.js`.
 4.  **UI**: Utilizar componentes do design system em `src/components/`.
+
+---
+
+## 9. Visão Executiva e Inteligência de Ativos (Fase 5)
+
+A **Fase 5** introduziu análises estratégicas de alto nível para Coordenadores, Gerentes, Diretores e Administradores, unindo engenharia de confiabilidade e tomada de decisão financeira.
+
+### Matriz de Conformidade Consolidada
+*   **Agregação por Regional e Unidade**: Calcula a média percentual de preenchimento dos checklists (`checklistCoverage`) e preventivas em dia (`preventivaAdherence`) das lojas de forma integrada no período de referência.
+*   **Semáforos de Infraestrutura Crítica**:
+    *   **Laudos de Cabine Primária**: Monitorados diretamente a partir da data em `proximaPreventiva` dos ativos da categoria correspondente. Status "VENCIDO" se a data for anterior à data atual.
+    *   **Controle de Baterias**: Monitoramento da data limite em `proximaTrocaBateria` nos nobreaks e geradores. Status "VENCIDO" se a data já expirou.
+
+### Inteligência Analítica "Buy vs. Maintain" (Comprar ou Manter)
+O sistema calcula automaticamente se um ativo crítico de infraestrutura (Geradores, Nobreaks, Cabines Primárias ou Ilhas de Congelados) deve ser mantido ou substituído por um novo.
+*   **Indicadores de Confiabilidade**:
+    *   **MTBF (Mean Time Between Failures)**: Intervalo médio de dias entre falhas consecutivas registradas em `RegistroFalhaAtivo`.
+    *   **MTTR (Mean Time To Repair)**: Tempo médio (em horas) para resolução das falhas operacionais.
+    *   **Uptime %**: Percentual de tempo em que o equipamento esteve disponível no período selecionado (descontando o tempo de parada registrado em `RegistroFalhaAtivo`).
+*   **Fórmulas de Decisão**:
+    *   **Regra Geral**: Se o custo acumulado de manutenções/reparos (`custoAcumulado`) ultrapassar **40%** do valor de aquisição ou substituição (`custoSubstituicao`) do ativo, ou se o Uptime for inferior a **90%**, o sistema recomenda **SUBSTITUIR (BUY)**.
+    *   **Regra de Altíssima Criticidade (Ilhas de Congelados)**: Por ter impacto imediato no faturamento ("sem ilha = sem venda"), a recomendação de substituição é mais severa. O sistema recomenda **SUBSTITUIR (BUY)** se o MTBF for menor que **180 dias** ou houver mais de **2 reincidências** de falhas históricas.
+*   **Valores de Substituição Padrão**: Na ausência de valor cadastrado em `dadosTecnicos.custoSubstituicao`, são aplicados os fallbacks automáticos:
+    *   Cabine Primária: R$ 120.000,00
+    *   Gerador: R$ 80.000,00
+    *   Nobreak: R$ 35.000,00
+    *   Ilha Self (Ilha de Congelados): R$ 25.000,00

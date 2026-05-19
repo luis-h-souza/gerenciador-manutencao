@@ -636,6 +636,294 @@ const executivo = async (user, query) => {
   };
 };
 
+const conformidadeMatrix = async (user, query) => {
+  const { mes, ano } = query;
+  const mesNum = mes ? parseInt(mes) : new Date().getMonth() + 1;
+  const anoNum = ano ? parseInt(ano) : new Date().getFullYear();
+
+  const { getWeek, startOfMonth, endOfMonth } = require('date-fns');
+  const inicioMes = startOfMonth(new Date(anoNum, mesNum - 1));
+  const fimMes    = endOfMonth(new Date(anoNum, mesNum - 1));
+  const semanaInicio = getWeek(inicioMes, { weekStartsOn: 5 });
+  const semanaFim    = getWeek(fimMes,    { weekStartsOn: 5 });
+  const totalSemanasNoMes = Math.max(1, semanaFim - semanaInicio + 1);
+
+  const filter = getAccessFilter(user);
+  
+  // Buscar todas as lojas do escopo
+  const lojas = await prisma.loja.findMany({
+    where: { ...filter, ativo: true },
+    orderBy: { nome: 'asc' }
+  });
+
+  const lojasNomes = lojas.map(l => l.nome);
+
+  // Buscar checklists e ativos
+  const [checklistsEquip, checklistsCarrinho, checklistsRotina, ativos] = await Promise.all([
+    prisma.checklistEquipamento.findMany({
+      where: {
+        unidade: { in: lojasNomes },
+        ano: anoNum,
+        semana: { gte: semanaInicio, lte: semanaFim }
+      }
+    }),
+    prisma.checklistCarrinho.findMany({
+      where: {
+        unidade: { in: lojasNomes },
+        ano: anoNum,
+        semana: { gte: semanaInicio, lte: semanaFim }
+      }
+    }),
+    prisma.checklistRotinaInfra.findMany({
+      where: {
+        unidade: { in: lojas.map(l => String(l.numero)) },
+        ano: anoNum,
+        mes: mesNum
+      }
+    }),
+    prisma.ativoLoja.findMany({
+      where: {
+        unidade: { in: lojasNomes },
+        ativo: true
+      }
+    })
+  ]);
+
+  const agora = new Date();
+
+  return lojas.map(loja => {
+    // 1. Cobertura de Checklist
+    const equipFills = checklistsEquip.filter(c => c.unidade === loja.nome).length;
+    const carrFills = checklistsCarrinho.filter(c => c.unidade === loja.nome).length;
+    const rotinaFills = checklistsRotina.filter(c => c.unidade === String(loja.numero)).length;
+    
+    const totalFilled = equipFills + carrFills + rotinaFills;
+    const totalExpected = totalSemanasNoMes * 3 + 1; // 1 de equip, 1 de carrinho, 1 de gerador por semana + 1 de incendio visual por mes
+    const checklistCoverage = totalExpected > 0 ? Math.min(100, Math.round((totalFilled / totalExpected) * 100)) : 100;
+
+    // 2. Adesão de Preventivas
+    const lojaAtivos = ativos.filter(a => a.unidade === loja.nome);
+    const ativosPreventiva = lojaAtivos.filter(a => a.intervaloPreventiva !== null);
+    let preventivasEmDia = 0;
+    
+    ativosPreventiva.forEach(a => {
+      if (a.proximaPreventiva) {
+        const proxima = new Date(a.proximaPreventiva);
+        if (proxima >= agora) {
+          preventivasEmDia++;
+        }
+      }
+    });
+
+    let totalItensAdesao = ativosPreventiva.length;
+    let itensAdesaoEmDia = preventivasEmDia;
+
+    // Adicionar a conformidade dos checklists de rotinas de infraestrutura do mês na adesão
+    const rotinasLoja = checklistsRotina.filter(r => r.unidade === String(loja.numero));
+    if (rotinasLoja.length > 0) {
+      const tiposRotina = [...new Set(rotinasLoja.map(r => r.tipo))];
+      tiposRotina.forEach(tipo => {
+        const rotinasTipo = rotinasLoja.filter(r => r.tipo === tipo);
+        const temFalha = rotinasTipo.some(r => r.conforme === false);
+        
+        totalItensAdesao++;
+        if (!temFalha) {
+          itensAdesaoEmDia++;
+        }
+      });
+    }
+
+    const preventivaAdherence = totalItensAdesao > 0 
+      ? Math.round((itensAdesaoEmDia / totalItensAdesao) * 100)
+      : 100;
+
+    // 3. Status de Baterias (Nobreak + Gerador) e Cabines Primárias
+    const geradores = lojaAtivos.filter(a => (a.categoria || '').toLowerCase().includes('gerador'));
+    const nobreaks = lojaAtivos.filter(a => (a.categoria || '').toLowerCase().includes('nobreak'));
+    const cabines = lojaAtivos.filter(a => (a.categoria || '').toLowerCase().includes('cabine'));
+
+    let bateriasOk = true;
+    let laudoCabineOk = true;
+    const alertas = [];
+
+    // Checagem de baterias físicas
+    [...geradores, ...nobreaks].forEach(a => {
+      if (a.proximaTrocaBateria) {
+        const proximaTroca = new Date(a.proximaTrocaBateria);
+        if (proximaTroca < agora) {
+          bateriasOk = false;
+          alertas.push(`Bateria do ${a.nome} vencida em ${proximaTroca.toLocaleDateString('pt-BR')}`);
+        }
+      }
+    });
+
+    // Checagem de laudo da cabine primária (proximaPreventiva)
+    cabines.forEach(a => {
+      if (a.proximaPreventiva) {
+        const vencimento = new Date(a.proximaPreventiva);
+        if (vencimento < agora) {
+          laudoCabineOk = false;
+          alertas.push(`Laudo da Cabine Primária ${a.nome} vencido em ${vencimento.toLocaleDateString('pt-BR')}`);
+        }
+      }
+    });
+
+    // Adicionar checagem das rotinas de infraestrutura do mês
+    const rotinasGeradorFalha = rotinasLoja.filter(r => r.tipo === 'GERADOR_SEMANAL' && r.conforme === false);
+    if (rotinasGeradorFalha.length > 0) {
+      bateriasOk = false;
+      rotinasGeradorFalha.forEach(r => {
+        alertas.push(`Gerador com não conformidade (Semana ${r.semana}): ${r.descricao || 'Sem descrição'}`);
+      });
+    }
+
+    const rotinasIncendioFalha = rotinasLoja.filter(r => ['INCENDIO_MENSAL_VISUAL', 'INCENDIO_BIMESTRAL_BOMBA'].includes(r.tipo) && r.conforme === false);
+    if (rotinasIncendioFalha.length > 0) {
+      laudoCabineOk = false;
+      rotinasIncendioFalha.forEach(r => {
+        alertas.push(`Sistema de Incêndio com não conformidade: ${r.descricao || 'Sem descrição'}`);
+      });
+    }
+
+    return {
+      unidade: loja.nome,
+      regiao: loja.regiao,
+      checklistCoverage,
+      preventivaAdherence,
+      statusBaterias: (geradores.length > 0 || nobreaks.length > 0 || rotinasGeradorFalha.length > 0) ? (bateriasOk ? 'OK' : 'VENCIDO') : 'OK',
+      statusCabine: (cabines.length > 0 || rotinasIncendioFalha.length > 0) ? (laudoCabineOk ? 'OK' : 'VENCIDO') : 'N/A',
+      alertas,
+      totalAtivos: lojaAtivos.length,
+      totalPreventivas: ativosPreventiva.length
+    };
+  });
+};
+
+const buyVsMaintain = async (user, query) => {
+  const filter = getAccessFilter(user);
+  
+  // Buscar todos os ativos com falhas e itens de checklist vinculados
+  const ativos = await prisma.ativoLoja.findMany({
+    where: { ...filter, ativo: true },
+    include: {
+      falhas: {
+        orderBy: { dataDeteccao: 'desc' }
+      },
+      checklistItens: {
+        select: {
+          valor: true
+        }
+      }
+    }
+  });
+
+  const agora = new Date();
+
+  return ativos.map(ativo => {
+    // 1. Métricas de Confiabilidade (MTBF, MTTR, Uptime %)
+    const tempoTotalHoras = Math.max(1, (agora - ativo.criadoEm) / (1000 * 60 * 60));
+    
+    let downtimeHoras = 0;
+    let tempoReparoSoma = 0;
+    let falhasResolvidas = 0;
+    
+    ativo.falhas.forEach(f => {
+      const fim = f.dataResolucao ? new Date(f.dataResolucao) : agora;
+      const duracaoFalha = Math.max(0, (fim - new Date(f.dataDeteccao)) / (1000 * 60 * 60));
+      downtimeHoras += duracaoFalha;
+      
+      if (f.dataResolucao) {
+        tempoReparoSoma += duracaoFalha;
+        falhasResolvidas++;
+      }
+    });
+
+    const uptimeHoras = Math.max(0, tempoTotalHoras - downtimeHoras);
+    const totalFalhas = ativo.falhas.length;
+    
+    const mtbf = totalFalhas > 0 ? (uptimeHoras / totalFalhas) : uptimeHoras;
+    const mttr = falhasResolvidas > 0 ? (tempoReparoSoma / falhasResolvidas) : 0;
+    const uptimePercentual = (uptimeHoras / tempoTotalHoras) * 100;
+
+    // 2. Custo Acumulado de Reparo
+    let custoAcumulado = 0;
+    ativo.checklistItens.forEach(item => {
+      if (item.valor) {
+        custoAcumulado += parseFloat(item.valor);
+      }
+    });
+
+    // 3. Custo Estimado de Substituição
+    let custoSubstituicao = 15000; // Baseline padrão
+    
+    const cat = (ativo.categoria || '').toLowerCase();
+    const isIlha = cat.includes('ilha') || cat.includes('congelado');
+
+    if (ativo.dadosTecnicos && typeof ativo.dadosTecnicos === 'object') {
+      const dt = ativo.dadosTecnicos;
+      if (dt.custoSubstituicao) {
+        custoSubstituicao = parseFloat(dt.custoSubstituicao);
+      } else {
+        if (cat.includes('gerador')) custoSubstituicao = 80000;
+        else if (cat.includes('nobreak')) custoSubstituicao = 35000;
+        else if (cat.includes('cabine')) custoSubstituicao = 120000;
+        else if (isIlha) custoSubstituicao = 25000;
+      }
+    } else {
+      if (cat.includes('gerador')) custoSubstituicao = 80000;
+      else if (cat.includes('nobreak')) custoSubstituicao = 35000;
+      else if (cat.includes('cabine')) custoSubstituicao = 120000;
+      else if (isIlha) custoSubstituicao = 25000;
+    }
+
+    // 4. Algoritmo de Recomendação Buy vs. Maintain
+    // Recomendação é "BUY" se:
+    // - Custo acumulado excede 60% do valor de substituição
+    // - OU Uptime < 85% e tem pelo menos 3 falhas
+    // - OU MTBF é muito baixo (< 720h / 30 dias para a maioria, ou < 1440h / 60 dias para ilha congelada se houver falhas recorrentes)
+    // Para Ilhas de Congelados: MTBF < 180 dias (4320 horas) ou reincidências > 2
+    let recomendacao = 'MAINTAIN';
+    const razoes = [];
+
+    const limiteCusto = custoSubstituicao * 0.6;
+    if (custoAcumulado > limiteCusto) {
+      recomendacao = 'BUY';
+      razoes.push(`Custo acumulado de manutenção (R$ ${custoAcumulado.toFixed(2)}) supera 60% do custo de substituição (R$ ${custoSubstituicao.toFixed(2)})`);
+    }
+
+    if (uptimePercentual < 85 && totalFalhas >= 3) {
+      recomendacao = 'BUY';
+      razoes.push(`Uptime de confiabilidade muito baixo (${uptimePercentual.toFixed(1)}%) com histórico recorrente`);
+    }
+
+    const mtbfDias = mtbf / 24;
+    const thresholdMtbf = isIlha ? 180 : 30; // 180 dias para ilhas (mais crítico!), 30 dias para os demais
+    
+    if (totalFalhas >= 2 && mtbfDias < thresholdMtbf) {
+      recomendacao = 'BUY';
+      razoes.push(`Intervalo médio entre falhas (MTBF de ${mtbfDias.toFixed(1)} dias) abaixo do limite recomendado (${thresholdMtbf} dias)`);
+    }
+
+    return {
+      ativoId: ativo.id,
+      nome: ativo.nome,
+      categoria: ativo.categoria,
+      tipo: ativo.tipo,
+      patrimonio: ativo.patrimonio,
+      unidade: ativo.unidade,
+      regiao: ativo.regiao,
+      totalFalhas,
+      uptimePercentual: uptimePercentual.toFixed(1),
+      mtbfDias: mtbfDias.toFixed(1),
+      mttrHoras: mttr.toFixed(1),
+      custoAcumulado,
+      custoSubstituicao,
+      recomendacao,
+      razoes
+    };
+  });
+};
+
 module.exports = {
   resumo,
   gastosPorSegmento,
@@ -644,4 +932,6 @@ module.exports = {
   detalheRegional,
   rankingCoordenadores,
   executivo,
+  conformidadeMatrix,
+  buyVsMaintain,
 };

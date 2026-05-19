@@ -93,6 +93,24 @@ const executivo = async (req, res, next) => {
   }
 };
 
+const conformidadeMatrix = async (req, res, next) => {
+  try {
+    const data = await dashboardService.conformidadeMatrix(req.user, req.query);
+    resSucesso(res, 'Operação realizada com sucesso', 200, data);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const buyVsMaintain = async (req, res, next) => {
+  try {
+    const data = await dashboardService.buyVsMaintain(req.user, req.query);
+    resSucesso(res, 'Operação realizada com sucesso', 200, data);
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   resumo,
   gastosPorSegmento,
@@ -101,4 +119,6 @@ module.exports = {
   detalheRegional,
   rankingCoordenadores,
   executivo,
+  conformidadeMatrix,
+  buyVsMaintain,
 };

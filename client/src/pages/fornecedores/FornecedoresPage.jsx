@@ -9,7 +9,53 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const SEGMENTOS = ['ELETRICA','EMPILHADEIRA','REFRIGERACAO','REFRIGERACAO-PÇS','SERRALHERIA', 'AR-CONDICIONADO', 'SERVIÇOS GERAIS' ,'CIVIL','EQUIPAMENTOS','GERADOR','ELEVADOR','PCI','DIVERSOS','ALUGUEL'];
+const SEGMENTOS = [
+  'AR_CONDICIONADO',
+  'CARRINHO_CLIENTE',
+  'CARRO_PIPA',
+  'LIMPEZA_ESGOTO',
+  'CIVIL',
+  'COZINHA_REFEITORIO',
+  'ELETRICA',
+  'TRANSPALETEIRA',
+  'EMPILHADEIRA',
+  'GERADOR',
+  'HIDRAULICA',
+  'LAUDOS',
+  'NOBREAK',
+  'MATERIAL_MANUTENCAO',
+  'PINTURA',
+  'REFRIGERACAO',
+  'REFRIGERACAO_PECAS',
+  'SERRALHERIA',
+  'SISTEMA_INCENDIO',
+  'LOCACAO',
+  'LIMPEZA',
+  'TRATAMENTO_AGUA',
+  'PORTA_PALETES',
+  'FERRAMENTAS',
+  'COMUNICACAO_VISUAL',
+  'ELEVADORES',
+  'ESTEIRAS',
+  'TELHADO',
+  'CHECKOUT',
+  'VIDRACARIA',
+  'FATIADORA',
+  'SERRA_FITA',
+  'EMBALADORA',
+  'MAQUINA_VACUO',
+  'LAVA_LOUCA',
+  'CAFETERIA',
+  'SISTEMA_SOM',
+  'FRENTE_CAIXA',
+  'GALERIAS',
+  'FRETE',
+  'OUTROS',
+];
+
+const formatarSegmento = (s) =>
+  s?.split('_').map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(' ') || s;
+
 const LIMIT = 16;
 
 /* ── Modal criar/editar ─────────────────────────────────────────────────── */
@@ -47,7 +93,7 @@ function FornecedorModal({ fornecedor, onClose }) {
               <label className="label">Segmento *</label>
               <select className="select" {...register('segmento', { required: 'Obrigatório' })}>
                 <option value="">Selecione...</option>
-                {SEGMENTOS.map(s => <option key={s} value={s}>{s}</option>)}
+                {SEGMENTOS.map(s => <option key={s} value={s}>{formatarSegmento(s)}</option>)}
               </select>
             </div>
           </div>
@@ -185,7 +231,7 @@ export default function FornecedoresPage() {
             onChange={e => atualizarFiltro('segmento', e.target.value)}
           >
             <option value="">Todos os segmentos</option>
-            {SEGMENTOS.map(s => <option key={s} value={s}>{s}</option>)}
+            {SEGMENTOS.map(s => <option key={s} value={s}>{formatarSegmento(s)}</option>)}
           </select>
         </div>
         <button className="btn btn-primary" onClick={() => setModal('novo')}>
@@ -234,7 +280,7 @@ export default function FornecedoresPage() {
               </div>
             </div>
             <div className="flex items-center gap-3 mt-3 flex-wrap" style={{ paddingTop: '12px', borderTop: '1px solid var(--color-border)' }}>
-              <span className="badge badge-brand" style={{ fontSize: '0.7rem' }}>{f.segmento}</span>
+              <span className="badge badge-brand" style={{ fontSize: '0.7rem' }}>{formatarSegmento(f.segmento)}</span>
               {f.telefone && <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{f.telefone}</span>}
               {f.email && <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.email}</span>}
             </div>

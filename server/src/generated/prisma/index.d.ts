@@ -44,6 +44,11 @@ export type Tarefa = $Result.DefaultSelection<Prisma.$TarefaPayload>
  */
 export type Notificacao = $Result.DefaultSelection<Prisma.$NotificacaoPayload>
 /**
+ * Model LogAuditoria
+ * 
+ */
+export type LogAuditoria = $Result.DefaultSelection<Prisma.$LogAuditoriaPayload>
+/**
  * Model ControleChamado
  * 
  */
@@ -108,12 +113,31 @@ export type FrotaCarrinho = $Result.DefaultSelection<Prisma.$FrotaCarrinhoPayloa
  * 
  */
 export type AtivoLoja = $Result.DefaultSelection<Prisma.$AtivoLojaPayload>
+/**
+ * Model RegistroFalhaAtivo
+ * 
+ */
+export type RegistroFalhaAtivo = $Result.DefaultSelection<Prisma.$RegistroFalhaAtivoPayload>
+/**
+ * Model ChecklistRotinaInfra
+ * 
+ */
+export type ChecklistRotinaInfra = $Result.DefaultSelection<Prisma.$ChecklistRotinaInfraPayload>
 
 /**
  * Enums
  */
 export namespace $Enums {
-  export const Role: {
+  export const TipoRotinaInfra: {
+  GERADOR_SEMANAL: 'GERADOR_SEMANAL',
+  INCENDIO_MENSAL_VISUAL: 'INCENDIO_MENSAL_VISUAL',
+  INCENDIO_BIMESTRAL_BOMBA: 'INCENDIO_BIMESTRAL_BOMBA'
+};
+
+export type TipoRotinaInfra = (typeof TipoRotinaInfra)[keyof typeof TipoRotinaInfra]
+
+
+export const Role: {
   ADMINISTRADOR: 'ADMINISTRADOR',
   DIRETOR: 'DIRETOR',
   GERENTE: 'GERENTE',
@@ -242,6 +266,10 @@ export const TipoCarrinho: {
 export type TipoCarrinho = (typeof TipoCarrinho)[keyof typeof TipoCarrinho]
 
 }
+
+export type TipoRotinaInfra = $Enums.TipoRotinaInfra
+
+export const TipoRotinaInfra: typeof $Enums.TipoRotinaInfra
 
 export type Role = $Enums.Role
 
@@ -457,6 +485,16 @@ export class PrismaClient<
   get notificacao(): Prisma.NotificacaoDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.logAuditoria`: Exposes CRUD operations for the **LogAuditoria** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more LogAuditorias
+    * const logAuditorias = await prisma.logAuditoria.findMany()
+    * ```
+    */
+  get logAuditoria(): Prisma.LogAuditoriaDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.controleChamado`: Exposes CRUD operations for the **ControleChamado** model.
     * Example usage:
     * ```ts
@@ -585,6 +623,26 @@ export class PrismaClient<
     * ```
     */
   get ativoLoja(): Prisma.AtivoLojaDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.registroFalhaAtivo`: Exposes CRUD operations for the **RegistroFalhaAtivo** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more RegistroFalhaAtivos
+    * const registroFalhaAtivos = await prisma.registroFalhaAtivo.findMany()
+    * ```
+    */
+  get registroFalhaAtivo(): Prisma.RegistroFalhaAtivoDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.checklistRotinaInfra`: Exposes CRUD operations for the **ChecklistRotinaInfra** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ChecklistRotinaInfras
+    * const checklistRotinaInfras = await prisma.checklistRotinaInfra.findMany()
+    * ```
+    */
+  get checklistRotinaInfra(): Prisma.ChecklistRotinaInfraDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1025,6 +1083,7 @@ export namespace Prisma {
     Sessao: 'Sessao',
     Tarefa: 'Tarefa',
     Notificacao: 'Notificacao',
+    LogAuditoria: 'LogAuditoria',
     ControleChamado: 'ControleChamado',
     Fornecedor: 'Fornecedor',
     MetaOrcamentaria: 'MetaOrcamentaria',
@@ -1037,7 +1096,9 @@ export namespace Prisma {
     ChecklistCarrinho: 'ChecklistCarrinho',
     ChecklistCarrinhoItem: 'ChecklistCarrinhoItem',
     FrotaCarrinho: 'FrotaCarrinho',
-    AtivoLoja: 'AtivoLoja'
+    AtivoLoja: 'AtivoLoja',
+    RegistroFalhaAtivo: 'RegistroFalhaAtivo',
+    ChecklistRotinaInfra: 'ChecklistRotinaInfra'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1053,7 +1114,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "loja" | "usuario" | "refreshToken" | "sessao" | "tarefa" | "notificacao" | "controleChamado" | "fornecedor" | "metaOrcamentaria" | "peca" | "entradaPeca" | "movimentacaoPeca" | "saidaPeca" | "checklistEquipamento" | "checklistEquipamentoItem" | "checklistCarrinho" | "checklistCarrinhoItem" | "frotaCarrinho" | "ativoLoja"
+      modelProps: "loja" | "usuario" | "refreshToken" | "sessao" | "tarefa" | "notificacao" | "logAuditoria" | "controleChamado" | "fornecedor" | "metaOrcamentaria" | "peca" | "entradaPeca" | "movimentacaoPeca" | "saidaPeca" | "checklistEquipamento" | "checklistEquipamentoItem" | "checklistCarrinho" | "checklistCarrinhoItem" | "frotaCarrinho" | "ativoLoja" | "registroFalhaAtivo" | "checklistRotinaInfra"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1498,6 +1559,80 @@ export namespace Prisma {
           count: {
             args: Prisma.NotificacaoCountArgs<ExtArgs>
             result: $Utils.Optional<NotificacaoCountAggregateOutputType> | number
+          }
+        }
+      }
+      LogAuditoria: {
+        payload: Prisma.$LogAuditoriaPayload<ExtArgs>
+        fields: Prisma.LogAuditoriaFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.LogAuditoriaFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LogAuditoriaPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.LogAuditoriaFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LogAuditoriaPayload>
+          }
+          findFirst: {
+            args: Prisma.LogAuditoriaFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LogAuditoriaPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.LogAuditoriaFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LogAuditoriaPayload>
+          }
+          findMany: {
+            args: Prisma.LogAuditoriaFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LogAuditoriaPayload>[]
+          }
+          create: {
+            args: Prisma.LogAuditoriaCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LogAuditoriaPayload>
+          }
+          createMany: {
+            args: Prisma.LogAuditoriaCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.LogAuditoriaCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LogAuditoriaPayload>[]
+          }
+          delete: {
+            args: Prisma.LogAuditoriaDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LogAuditoriaPayload>
+          }
+          update: {
+            args: Prisma.LogAuditoriaUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LogAuditoriaPayload>
+          }
+          deleteMany: {
+            args: Prisma.LogAuditoriaDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.LogAuditoriaUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.LogAuditoriaUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LogAuditoriaPayload>[]
+          }
+          upsert: {
+            args: Prisma.LogAuditoriaUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LogAuditoriaPayload>
+          }
+          aggregate: {
+            args: Prisma.LogAuditoriaAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateLogAuditoria>
+          }
+          groupBy: {
+            args: Prisma.LogAuditoriaGroupByArgs<ExtArgs>
+            result: $Utils.Optional<LogAuditoriaGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.LogAuditoriaCountArgs<ExtArgs>
+            result: $Utils.Optional<LogAuditoriaCountAggregateOutputType> | number
           }
         }
       }
@@ -2463,6 +2598,154 @@ export namespace Prisma {
           }
         }
       }
+      RegistroFalhaAtivo: {
+        payload: Prisma.$RegistroFalhaAtivoPayload<ExtArgs>
+        fields: Prisma.RegistroFalhaAtivoFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RegistroFalhaAtivoFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegistroFalhaAtivoPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RegistroFalhaAtivoFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegistroFalhaAtivoPayload>
+          }
+          findFirst: {
+            args: Prisma.RegistroFalhaAtivoFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegistroFalhaAtivoPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RegistroFalhaAtivoFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegistroFalhaAtivoPayload>
+          }
+          findMany: {
+            args: Prisma.RegistroFalhaAtivoFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegistroFalhaAtivoPayload>[]
+          }
+          create: {
+            args: Prisma.RegistroFalhaAtivoCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegistroFalhaAtivoPayload>
+          }
+          createMany: {
+            args: Prisma.RegistroFalhaAtivoCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.RegistroFalhaAtivoCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegistroFalhaAtivoPayload>[]
+          }
+          delete: {
+            args: Prisma.RegistroFalhaAtivoDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegistroFalhaAtivoPayload>
+          }
+          update: {
+            args: Prisma.RegistroFalhaAtivoUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegistroFalhaAtivoPayload>
+          }
+          deleteMany: {
+            args: Prisma.RegistroFalhaAtivoDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RegistroFalhaAtivoUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.RegistroFalhaAtivoUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegistroFalhaAtivoPayload>[]
+          }
+          upsert: {
+            args: Prisma.RegistroFalhaAtivoUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegistroFalhaAtivoPayload>
+          }
+          aggregate: {
+            args: Prisma.RegistroFalhaAtivoAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRegistroFalhaAtivo>
+          }
+          groupBy: {
+            args: Prisma.RegistroFalhaAtivoGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RegistroFalhaAtivoGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.RegistroFalhaAtivoCountArgs<ExtArgs>
+            result: $Utils.Optional<RegistroFalhaAtivoCountAggregateOutputType> | number
+          }
+        }
+      }
+      ChecklistRotinaInfra: {
+        payload: Prisma.$ChecklistRotinaInfraPayload<ExtArgs>
+        fields: Prisma.ChecklistRotinaInfraFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ChecklistRotinaInfraFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChecklistRotinaInfraPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ChecklistRotinaInfraFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChecklistRotinaInfraPayload>
+          }
+          findFirst: {
+            args: Prisma.ChecklistRotinaInfraFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChecklistRotinaInfraPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ChecklistRotinaInfraFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChecklistRotinaInfraPayload>
+          }
+          findMany: {
+            args: Prisma.ChecklistRotinaInfraFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChecklistRotinaInfraPayload>[]
+          }
+          create: {
+            args: Prisma.ChecklistRotinaInfraCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChecklistRotinaInfraPayload>
+          }
+          createMany: {
+            args: Prisma.ChecklistRotinaInfraCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ChecklistRotinaInfraCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChecklistRotinaInfraPayload>[]
+          }
+          delete: {
+            args: Prisma.ChecklistRotinaInfraDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChecklistRotinaInfraPayload>
+          }
+          update: {
+            args: Prisma.ChecklistRotinaInfraUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChecklistRotinaInfraPayload>
+          }
+          deleteMany: {
+            args: Prisma.ChecklistRotinaInfraDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ChecklistRotinaInfraUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ChecklistRotinaInfraUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChecklistRotinaInfraPayload>[]
+          }
+          upsert: {
+            args: Prisma.ChecklistRotinaInfraUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChecklistRotinaInfraPayload>
+          }
+          aggregate: {
+            args: Prisma.ChecklistRotinaInfraAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateChecklistRotinaInfra>
+          }
+          groupBy: {
+            args: Prisma.ChecklistRotinaInfraGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ChecklistRotinaInfraGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ChecklistRotinaInfraCountArgs<ExtArgs>
+            result: $Utils.Optional<ChecklistRotinaInfraCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2577,6 +2860,7 @@ export namespace Prisma {
     sessao?: SessaoOmit
     tarefa?: TarefaOmit
     notificacao?: NotificacaoOmit
+    logAuditoria?: LogAuditoriaOmit
     controleChamado?: ControleChamadoOmit
     fornecedor?: FornecedorOmit
     metaOrcamentaria?: MetaOrcamentariaOmit
@@ -2590,6 +2874,8 @@ export namespace Prisma {
     checklistCarrinhoItem?: ChecklistCarrinhoItemOmit
     frotaCarrinho?: FrotaCarrinhoOmit
     ativoLoja?: AtivoLojaOmit
+    registroFalhaAtivo?: RegistroFalhaAtivoOmit
+    checklistRotinaInfra?: ChecklistRotinaInfraOmit
   }
 
   /* Types for Logging */
@@ -2709,6 +2995,9 @@ export namespace Prisma {
     sessoes: number
     tarefasAtribuidas: number
     tarefasCriadas: number
+    logsAuditoria: number
+    falhasResolvidas: number
+    rotinasInfra: number
   }
 
   export type UsuarioCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2720,6 +3009,9 @@ export namespace Prisma {
     sessoes?: boolean | UsuarioCountOutputTypeCountSessoesArgs
     tarefasAtribuidas?: boolean | UsuarioCountOutputTypeCountTarefasAtribuidasArgs
     tarefasCriadas?: boolean | UsuarioCountOutputTypeCountTarefasCriadasArgs
+    logsAuditoria?: boolean | UsuarioCountOutputTypeCountLogsAuditoriaArgs
+    falhasResolvidas?: boolean | UsuarioCountOutputTypeCountFalhasResolvidasArgs
+    rotinasInfra?: boolean | UsuarioCountOutputTypeCountRotinasInfraArgs
   }
 
   // Custom InputTypes
@@ -2787,6 +3079,27 @@ export namespace Prisma {
    */
   export type UsuarioCountOutputTypeCountTarefasCriadasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TarefaWhereInput
+  }
+
+  /**
+   * UsuarioCountOutputType without action
+   */
+  export type UsuarioCountOutputTypeCountLogsAuditoriaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LogAuditoriaWhereInput
+  }
+
+  /**
+   * UsuarioCountOutputType without action
+   */
+  export type UsuarioCountOutputTypeCountFalhasResolvidasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RegistroFalhaAtivoWhereInput
+  }
+
+  /**
+   * UsuarioCountOutputType without action
+   */
+  export type UsuarioCountOutputTypeCountRotinasInfraArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ChecklistRotinaInfraWhereInput
   }
 
 
@@ -2929,6 +3242,46 @@ export namespace Prisma {
    */
   export type ChecklistCarrinhoCountOutputTypeCountItensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ChecklistCarrinhoItemWhereInput
+  }
+
+
+  /**
+   * Count Type AtivoLojaCountOutputType
+   */
+
+  export type AtivoLojaCountOutputType = {
+    falhas: number
+    checklistItens: number
+  }
+
+  export type AtivoLojaCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    falhas?: boolean | AtivoLojaCountOutputTypeCountFalhasArgs
+    checklistItens?: boolean | AtivoLojaCountOutputTypeCountChecklistItensArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * AtivoLojaCountOutputType without action
+   */
+  export type AtivoLojaCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AtivoLojaCountOutputType
+     */
+    select?: AtivoLojaCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * AtivoLojaCountOutputType without action
+   */
+  export type AtivoLojaCountOutputTypeCountFalhasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RegistroFalhaAtivoWhereInput
+  }
+
+  /**
+   * AtivoLojaCountOutputType without action
+   */
+  export type AtivoLojaCountOutputTypeCountChecklistItensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ChecklistEquipamentoItemWhereInput
   }
 
 
@@ -4310,6 +4663,9 @@ export namespace Prisma {
     sessoes?: boolean | Usuario$sessoesArgs<ExtArgs>
     tarefasAtribuidas?: boolean | Usuario$tarefasAtribuidasArgs<ExtArgs>
     tarefasCriadas?: boolean | Usuario$tarefasCriadasArgs<ExtArgs>
+    logsAuditoria?: boolean | Usuario$logsAuditoriaArgs<ExtArgs>
+    falhasResolvidas?: boolean | Usuario$falhasResolvidasArgs<ExtArgs>
+    rotinasInfra?: boolean | Usuario$rotinasInfraArgs<ExtArgs>
     _count?: boolean | UsuarioCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["usuario"]>
 
@@ -4365,6 +4721,9 @@ export namespace Prisma {
     sessoes?: boolean | Usuario$sessoesArgs<ExtArgs>
     tarefasAtribuidas?: boolean | Usuario$tarefasAtribuidasArgs<ExtArgs>
     tarefasCriadas?: boolean | Usuario$tarefasCriadasArgs<ExtArgs>
+    logsAuditoria?: boolean | Usuario$logsAuditoriaArgs<ExtArgs>
+    falhasResolvidas?: boolean | Usuario$falhasResolvidasArgs<ExtArgs>
+    rotinasInfra?: boolean | Usuario$rotinasInfraArgs<ExtArgs>
     _count?: boolean | UsuarioCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UsuarioIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4386,6 +4745,9 @@ export namespace Prisma {
       sessoes: Prisma.$SessaoPayload<ExtArgs>[]
       tarefasAtribuidas: Prisma.$TarefaPayload<ExtArgs>[]
       tarefasCriadas: Prisma.$TarefaPayload<ExtArgs>[]
+      logsAuditoria: Prisma.$LogAuditoriaPayload<ExtArgs>[]
+      falhasResolvidas: Prisma.$RegistroFalhaAtivoPayload<ExtArgs>[]
+      rotinasInfra: Prisma.$ChecklistRotinaInfraPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4801,6 +5163,9 @@ export namespace Prisma {
     sessoes<T extends Usuario$sessoesArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$sessoesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessaoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     tarefasAtribuidas<T extends Usuario$tarefasAtribuidasArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$tarefasAtribuidasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TarefaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     tarefasCriadas<T extends Usuario$tarefasCriadasArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$tarefasCriadasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TarefaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    logsAuditoria<T extends Usuario$logsAuditoriaArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$logsAuditoriaArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LogAuditoriaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    falhasResolvidas<T extends Usuario$falhasResolvidasArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$falhasResolvidasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RegistroFalhaAtivoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    rotinasInfra<T extends Usuario$rotinasInfraArgs<ExtArgs> = {}>(args?: Subset<T, Usuario$rotinasInfraArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChecklistRotinaInfraPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5449,6 +5814,78 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TarefaScalarFieldEnum | TarefaScalarFieldEnum[]
+  }
+
+  /**
+   * Usuario.logsAuditoria
+   */
+  export type Usuario$logsAuditoriaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LogAuditoria
+     */
+    select?: LogAuditoriaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LogAuditoria
+     */
+    omit?: LogAuditoriaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LogAuditoriaInclude<ExtArgs> | null
+    where?: LogAuditoriaWhereInput
+    orderBy?: LogAuditoriaOrderByWithRelationInput | LogAuditoriaOrderByWithRelationInput[]
+    cursor?: LogAuditoriaWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: LogAuditoriaScalarFieldEnum | LogAuditoriaScalarFieldEnum[]
+  }
+
+  /**
+   * Usuario.falhasResolvidas
+   */
+  export type Usuario$falhasResolvidasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegistroFalhaAtivo
+     */
+    select?: RegistroFalhaAtivoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegistroFalhaAtivo
+     */
+    omit?: RegistroFalhaAtivoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegistroFalhaAtivoInclude<ExtArgs> | null
+    where?: RegistroFalhaAtivoWhereInput
+    orderBy?: RegistroFalhaAtivoOrderByWithRelationInput | RegistroFalhaAtivoOrderByWithRelationInput[]
+    cursor?: RegistroFalhaAtivoWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RegistroFalhaAtivoScalarFieldEnum | RegistroFalhaAtivoScalarFieldEnum[]
+  }
+
+  /**
+   * Usuario.rotinasInfra
+   */
+  export type Usuario$rotinasInfraArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChecklistRotinaInfra
+     */
+    select?: ChecklistRotinaInfraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChecklistRotinaInfra
+     */
+    omit?: ChecklistRotinaInfraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChecklistRotinaInfraInclude<ExtArgs> | null
+    where?: ChecklistRotinaInfraWhereInput
+    orderBy?: ChecklistRotinaInfraOrderByWithRelationInput | ChecklistRotinaInfraOrderByWithRelationInput[]
+    cursor?: ChecklistRotinaInfraWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ChecklistRotinaInfraScalarFieldEnum | ChecklistRotinaInfraScalarFieldEnum[]
   }
 
   /**
@@ -9991,6 +10428,1104 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: NotificacaoInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model LogAuditoria
+   */
+
+  export type AggregateLogAuditoria = {
+    _count: LogAuditoriaCountAggregateOutputType | null
+    _min: LogAuditoriaMinAggregateOutputType | null
+    _max: LogAuditoriaMaxAggregateOutputType | null
+  }
+
+  export type LogAuditoriaMinAggregateOutputType = {
+    id: string | null
+    usuarioId: string | null
+    acao: string | null
+    modulo: string | null
+    ip: string | null
+    userAgent: string | null
+    criadoEm: Date | null
+  }
+
+  export type LogAuditoriaMaxAggregateOutputType = {
+    id: string | null
+    usuarioId: string | null
+    acao: string | null
+    modulo: string | null
+    ip: string | null
+    userAgent: string | null
+    criadoEm: Date | null
+  }
+
+  export type LogAuditoriaCountAggregateOutputType = {
+    id: number
+    usuarioId: number
+    acao: number
+    modulo: number
+    detalhes: number
+    ip: number
+    userAgent: number
+    criadoEm: number
+    _all: number
+  }
+
+
+  export type LogAuditoriaMinAggregateInputType = {
+    id?: true
+    usuarioId?: true
+    acao?: true
+    modulo?: true
+    ip?: true
+    userAgent?: true
+    criadoEm?: true
+  }
+
+  export type LogAuditoriaMaxAggregateInputType = {
+    id?: true
+    usuarioId?: true
+    acao?: true
+    modulo?: true
+    ip?: true
+    userAgent?: true
+    criadoEm?: true
+  }
+
+  export type LogAuditoriaCountAggregateInputType = {
+    id?: true
+    usuarioId?: true
+    acao?: true
+    modulo?: true
+    detalhes?: true
+    ip?: true
+    userAgent?: true
+    criadoEm?: true
+    _all?: true
+  }
+
+  export type LogAuditoriaAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LogAuditoria to aggregate.
+     */
+    where?: LogAuditoriaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LogAuditorias to fetch.
+     */
+    orderBy?: LogAuditoriaOrderByWithRelationInput | LogAuditoriaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: LogAuditoriaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LogAuditorias from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LogAuditorias.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned LogAuditorias
+    **/
+    _count?: true | LogAuditoriaCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: LogAuditoriaMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: LogAuditoriaMaxAggregateInputType
+  }
+
+  export type GetLogAuditoriaAggregateType<T extends LogAuditoriaAggregateArgs> = {
+        [P in keyof T & keyof AggregateLogAuditoria]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateLogAuditoria[P]>
+      : GetScalarType<T[P], AggregateLogAuditoria[P]>
+  }
+
+
+
+
+  export type LogAuditoriaGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LogAuditoriaWhereInput
+    orderBy?: LogAuditoriaOrderByWithAggregationInput | LogAuditoriaOrderByWithAggregationInput[]
+    by: LogAuditoriaScalarFieldEnum[] | LogAuditoriaScalarFieldEnum
+    having?: LogAuditoriaScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: LogAuditoriaCountAggregateInputType | true
+    _min?: LogAuditoriaMinAggregateInputType
+    _max?: LogAuditoriaMaxAggregateInputType
+  }
+
+  export type LogAuditoriaGroupByOutputType = {
+    id: string
+    usuarioId: string
+    acao: string
+    modulo: string
+    detalhes: JsonValue | null
+    ip: string | null
+    userAgent: string | null
+    criadoEm: Date
+    _count: LogAuditoriaCountAggregateOutputType | null
+    _min: LogAuditoriaMinAggregateOutputType | null
+    _max: LogAuditoriaMaxAggregateOutputType | null
+  }
+
+  type GetLogAuditoriaGroupByPayload<T extends LogAuditoriaGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<LogAuditoriaGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof LogAuditoriaGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], LogAuditoriaGroupByOutputType[P]>
+            : GetScalarType<T[P], LogAuditoriaGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type LogAuditoriaSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    usuarioId?: boolean
+    acao?: boolean
+    modulo?: boolean
+    detalhes?: boolean
+    ip?: boolean
+    userAgent?: boolean
+    criadoEm?: boolean
+    usuario?: boolean | UsuarioDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["logAuditoria"]>
+
+  export type LogAuditoriaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    usuarioId?: boolean
+    acao?: boolean
+    modulo?: boolean
+    detalhes?: boolean
+    ip?: boolean
+    userAgent?: boolean
+    criadoEm?: boolean
+    usuario?: boolean | UsuarioDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["logAuditoria"]>
+
+  export type LogAuditoriaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    usuarioId?: boolean
+    acao?: boolean
+    modulo?: boolean
+    detalhes?: boolean
+    ip?: boolean
+    userAgent?: boolean
+    criadoEm?: boolean
+    usuario?: boolean | UsuarioDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["logAuditoria"]>
+
+  export type LogAuditoriaSelectScalar = {
+    id?: boolean
+    usuarioId?: boolean
+    acao?: boolean
+    modulo?: boolean
+    detalhes?: boolean
+    ip?: boolean
+    userAgent?: boolean
+    criadoEm?: boolean
+  }
+
+  export type LogAuditoriaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "usuarioId" | "acao" | "modulo" | "detalhes" | "ip" | "userAgent" | "criadoEm", ExtArgs["result"]["logAuditoria"]>
+  export type LogAuditoriaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    usuario?: boolean | UsuarioDefaultArgs<ExtArgs>
+  }
+  export type LogAuditoriaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    usuario?: boolean | UsuarioDefaultArgs<ExtArgs>
+  }
+  export type LogAuditoriaIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    usuario?: boolean | UsuarioDefaultArgs<ExtArgs>
+  }
+
+  export type $LogAuditoriaPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "LogAuditoria"
+    objects: {
+      usuario: Prisma.$UsuarioPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      usuarioId: string
+      acao: string
+      modulo: string
+      detalhes: Prisma.JsonValue | null
+      ip: string | null
+      userAgent: string | null
+      criadoEm: Date
+    }, ExtArgs["result"]["logAuditoria"]>
+    composites: {}
+  }
+
+  type LogAuditoriaGetPayload<S extends boolean | null | undefined | LogAuditoriaDefaultArgs> = $Result.GetResult<Prisma.$LogAuditoriaPayload, S>
+
+  type LogAuditoriaCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<LogAuditoriaFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: LogAuditoriaCountAggregateInputType | true
+    }
+
+  export interface LogAuditoriaDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['LogAuditoria'], meta: { name: 'LogAuditoria' } }
+    /**
+     * Find zero or one LogAuditoria that matches the filter.
+     * @param {LogAuditoriaFindUniqueArgs} args - Arguments to find a LogAuditoria
+     * @example
+     * // Get one LogAuditoria
+     * const logAuditoria = await prisma.logAuditoria.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends LogAuditoriaFindUniqueArgs>(args: SelectSubset<T, LogAuditoriaFindUniqueArgs<ExtArgs>>): Prisma__LogAuditoriaClient<$Result.GetResult<Prisma.$LogAuditoriaPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one LogAuditoria that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {LogAuditoriaFindUniqueOrThrowArgs} args - Arguments to find a LogAuditoria
+     * @example
+     * // Get one LogAuditoria
+     * const logAuditoria = await prisma.logAuditoria.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends LogAuditoriaFindUniqueOrThrowArgs>(args: SelectSubset<T, LogAuditoriaFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LogAuditoriaClient<$Result.GetResult<Prisma.$LogAuditoriaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first LogAuditoria that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LogAuditoriaFindFirstArgs} args - Arguments to find a LogAuditoria
+     * @example
+     * // Get one LogAuditoria
+     * const logAuditoria = await prisma.logAuditoria.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends LogAuditoriaFindFirstArgs>(args?: SelectSubset<T, LogAuditoriaFindFirstArgs<ExtArgs>>): Prisma__LogAuditoriaClient<$Result.GetResult<Prisma.$LogAuditoriaPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first LogAuditoria that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LogAuditoriaFindFirstOrThrowArgs} args - Arguments to find a LogAuditoria
+     * @example
+     * // Get one LogAuditoria
+     * const logAuditoria = await prisma.logAuditoria.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends LogAuditoriaFindFirstOrThrowArgs>(args?: SelectSubset<T, LogAuditoriaFindFirstOrThrowArgs<ExtArgs>>): Prisma__LogAuditoriaClient<$Result.GetResult<Prisma.$LogAuditoriaPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more LogAuditorias that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LogAuditoriaFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all LogAuditorias
+     * const logAuditorias = await prisma.logAuditoria.findMany()
+     * 
+     * // Get first 10 LogAuditorias
+     * const logAuditorias = await prisma.logAuditoria.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const logAuditoriaWithIdOnly = await prisma.logAuditoria.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends LogAuditoriaFindManyArgs>(args?: SelectSubset<T, LogAuditoriaFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LogAuditoriaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a LogAuditoria.
+     * @param {LogAuditoriaCreateArgs} args - Arguments to create a LogAuditoria.
+     * @example
+     * // Create one LogAuditoria
+     * const LogAuditoria = await prisma.logAuditoria.create({
+     *   data: {
+     *     // ... data to create a LogAuditoria
+     *   }
+     * })
+     * 
+     */
+    create<T extends LogAuditoriaCreateArgs>(args: SelectSubset<T, LogAuditoriaCreateArgs<ExtArgs>>): Prisma__LogAuditoriaClient<$Result.GetResult<Prisma.$LogAuditoriaPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many LogAuditorias.
+     * @param {LogAuditoriaCreateManyArgs} args - Arguments to create many LogAuditorias.
+     * @example
+     * // Create many LogAuditorias
+     * const logAuditoria = await prisma.logAuditoria.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends LogAuditoriaCreateManyArgs>(args?: SelectSubset<T, LogAuditoriaCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many LogAuditorias and returns the data saved in the database.
+     * @param {LogAuditoriaCreateManyAndReturnArgs} args - Arguments to create many LogAuditorias.
+     * @example
+     * // Create many LogAuditorias
+     * const logAuditoria = await prisma.logAuditoria.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many LogAuditorias and only return the `id`
+     * const logAuditoriaWithIdOnly = await prisma.logAuditoria.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends LogAuditoriaCreateManyAndReturnArgs>(args?: SelectSubset<T, LogAuditoriaCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LogAuditoriaPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a LogAuditoria.
+     * @param {LogAuditoriaDeleteArgs} args - Arguments to delete one LogAuditoria.
+     * @example
+     * // Delete one LogAuditoria
+     * const LogAuditoria = await prisma.logAuditoria.delete({
+     *   where: {
+     *     // ... filter to delete one LogAuditoria
+     *   }
+     * })
+     * 
+     */
+    delete<T extends LogAuditoriaDeleteArgs>(args: SelectSubset<T, LogAuditoriaDeleteArgs<ExtArgs>>): Prisma__LogAuditoriaClient<$Result.GetResult<Prisma.$LogAuditoriaPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one LogAuditoria.
+     * @param {LogAuditoriaUpdateArgs} args - Arguments to update one LogAuditoria.
+     * @example
+     * // Update one LogAuditoria
+     * const logAuditoria = await prisma.logAuditoria.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends LogAuditoriaUpdateArgs>(args: SelectSubset<T, LogAuditoriaUpdateArgs<ExtArgs>>): Prisma__LogAuditoriaClient<$Result.GetResult<Prisma.$LogAuditoriaPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more LogAuditorias.
+     * @param {LogAuditoriaDeleteManyArgs} args - Arguments to filter LogAuditorias to delete.
+     * @example
+     * // Delete a few LogAuditorias
+     * const { count } = await prisma.logAuditoria.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends LogAuditoriaDeleteManyArgs>(args?: SelectSubset<T, LogAuditoriaDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LogAuditorias.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LogAuditoriaUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many LogAuditorias
+     * const logAuditoria = await prisma.logAuditoria.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends LogAuditoriaUpdateManyArgs>(args: SelectSubset<T, LogAuditoriaUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LogAuditorias and returns the data updated in the database.
+     * @param {LogAuditoriaUpdateManyAndReturnArgs} args - Arguments to update many LogAuditorias.
+     * @example
+     * // Update many LogAuditorias
+     * const logAuditoria = await prisma.logAuditoria.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more LogAuditorias and only return the `id`
+     * const logAuditoriaWithIdOnly = await prisma.logAuditoria.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends LogAuditoriaUpdateManyAndReturnArgs>(args: SelectSubset<T, LogAuditoriaUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LogAuditoriaPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one LogAuditoria.
+     * @param {LogAuditoriaUpsertArgs} args - Arguments to update or create a LogAuditoria.
+     * @example
+     * // Update or create a LogAuditoria
+     * const logAuditoria = await prisma.logAuditoria.upsert({
+     *   create: {
+     *     // ... data to create a LogAuditoria
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the LogAuditoria we want to update
+     *   }
+     * })
+     */
+    upsert<T extends LogAuditoriaUpsertArgs>(args: SelectSubset<T, LogAuditoriaUpsertArgs<ExtArgs>>): Prisma__LogAuditoriaClient<$Result.GetResult<Prisma.$LogAuditoriaPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of LogAuditorias.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LogAuditoriaCountArgs} args - Arguments to filter LogAuditorias to count.
+     * @example
+     * // Count the number of LogAuditorias
+     * const count = await prisma.logAuditoria.count({
+     *   where: {
+     *     // ... the filter for the LogAuditorias we want to count
+     *   }
+     * })
+    **/
+    count<T extends LogAuditoriaCountArgs>(
+      args?: Subset<T, LogAuditoriaCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], LogAuditoriaCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a LogAuditoria.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LogAuditoriaAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends LogAuditoriaAggregateArgs>(args: Subset<T, LogAuditoriaAggregateArgs>): Prisma.PrismaPromise<GetLogAuditoriaAggregateType<T>>
+
+    /**
+     * Group by LogAuditoria.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LogAuditoriaGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends LogAuditoriaGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: LogAuditoriaGroupByArgs['orderBy'] }
+        : { orderBy?: LogAuditoriaGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, LogAuditoriaGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLogAuditoriaGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the LogAuditoria model
+   */
+  readonly fields: LogAuditoriaFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for LogAuditoria.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__LogAuditoriaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    usuario<T extends UsuarioDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UsuarioDefaultArgs<ExtArgs>>): Prisma__UsuarioClient<$Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the LogAuditoria model
+   */
+  interface LogAuditoriaFieldRefs {
+    readonly id: FieldRef<"LogAuditoria", 'String'>
+    readonly usuarioId: FieldRef<"LogAuditoria", 'String'>
+    readonly acao: FieldRef<"LogAuditoria", 'String'>
+    readonly modulo: FieldRef<"LogAuditoria", 'String'>
+    readonly detalhes: FieldRef<"LogAuditoria", 'Json'>
+    readonly ip: FieldRef<"LogAuditoria", 'String'>
+    readonly userAgent: FieldRef<"LogAuditoria", 'String'>
+    readonly criadoEm: FieldRef<"LogAuditoria", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * LogAuditoria findUnique
+   */
+  export type LogAuditoriaFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LogAuditoria
+     */
+    select?: LogAuditoriaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LogAuditoria
+     */
+    omit?: LogAuditoriaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LogAuditoriaInclude<ExtArgs> | null
+    /**
+     * Filter, which LogAuditoria to fetch.
+     */
+    where: LogAuditoriaWhereUniqueInput
+  }
+
+  /**
+   * LogAuditoria findUniqueOrThrow
+   */
+  export type LogAuditoriaFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LogAuditoria
+     */
+    select?: LogAuditoriaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LogAuditoria
+     */
+    omit?: LogAuditoriaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LogAuditoriaInclude<ExtArgs> | null
+    /**
+     * Filter, which LogAuditoria to fetch.
+     */
+    where: LogAuditoriaWhereUniqueInput
+  }
+
+  /**
+   * LogAuditoria findFirst
+   */
+  export type LogAuditoriaFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LogAuditoria
+     */
+    select?: LogAuditoriaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LogAuditoria
+     */
+    omit?: LogAuditoriaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LogAuditoriaInclude<ExtArgs> | null
+    /**
+     * Filter, which LogAuditoria to fetch.
+     */
+    where?: LogAuditoriaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LogAuditorias to fetch.
+     */
+    orderBy?: LogAuditoriaOrderByWithRelationInput | LogAuditoriaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LogAuditorias.
+     */
+    cursor?: LogAuditoriaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LogAuditorias from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LogAuditorias.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LogAuditorias.
+     */
+    distinct?: LogAuditoriaScalarFieldEnum | LogAuditoriaScalarFieldEnum[]
+  }
+
+  /**
+   * LogAuditoria findFirstOrThrow
+   */
+  export type LogAuditoriaFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LogAuditoria
+     */
+    select?: LogAuditoriaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LogAuditoria
+     */
+    omit?: LogAuditoriaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LogAuditoriaInclude<ExtArgs> | null
+    /**
+     * Filter, which LogAuditoria to fetch.
+     */
+    where?: LogAuditoriaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LogAuditorias to fetch.
+     */
+    orderBy?: LogAuditoriaOrderByWithRelationInput | LogAuditoriaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LogAuditorias.
+     */
+    cursor?: LogAuditoriaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LogAuditorias from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LogAuditorias.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LogAuditorias.
+     */
+    distinct?: LogAuditoriaScalarFieldEnum | LogAuditoriaScalarFieldEnum[]
+  }
+
+  /**
+   * LogAuditoria findMany
+   */
+  export type LogAuditoriaFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LogAuditoria
+     */
+    select?: LogAuditoriaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LogAuditoria
+     */
+    omit?: LogAuditoriaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LogAuditoriaInclude<ExtArgs> | null
+    /**
+     * Filter, which LogAuditorias to fetch.
+     */
+    where?: LogAuditoriaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LogAuditorias to fetch.
+     */
+    orderBy?: LogAuditoriaOrderByWithRelationInput | LogAuditoriaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing LogAuditorias.
+     */
+    cursor?: LogAuditoriaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LogAuditorias from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LogAuditorias.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LogAuditorias.
+     */
+    distinct?: LogAuditoriaScalarFieldEnum | LogAuditoriaScalarFieldEnum[]
+  }
+
+  /**
+   * LogAuditoria create
+   */
+  export type LogAuditoriaCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LogAuditoria
+     */
+    select?: LogAuditoriaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LogAuditoria
+     */
+    omit?: LogAuditoriaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LogAuditoriaInclude<ExtArgs> | null
+    /**
+     * The data needed to create a LogAuditoria.
+     */
+    data: XOR<LogAuditoriaCreateInput, LogAuditoriaUncheckedCreateInput>
+  }
+
+  /**
+   * LogAuditoria createMany
+   */
+  export type LogAuditoriaCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many LogAuditorias.
+     */
+    data: LogAuditoriaCreateManyInput | LogAuditoriaCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * LogAuditoria createManyAndReturn
+   */
+  export type LogAuditoriaCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LogAuditoria
+     */
+    select?: LogAuditoriaSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the LogAuditoria
+     */
+    omit?: LogAuditoriaOmit<ExtArgs> | null
+    /**
+     * The data used to create many LogAuditorias.
+     */
+    data: LogAuditoriaCreateManyInput | LogAuditoriaCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LogAuditoriaIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * LogAuditoria update
+   */
+  export type LogAuditoriaUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LogAuditoria
+     */
+    select?: LogAuditoriaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LogAuditoria
+     */
+    omit?: LogAuditoriaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LogAuditoriaInclude<ExtArgs> | null
+    /**
+     * The data needed to update a LogAuditoria.
+     */
+    data: XOR<LogAuditoriaUpdateInput, LogAuditoriaUncheckedUpdateInput>
+    /**
+     * Choose, which LogAuditoria to update.
+     */
+    where: LogAuditoriaWhereUniqueInput
+  }
+
+  /**
+   * LogAuditoria updateMany
+   */
+  export type LogAuditoriaUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update LogAuditorias.
+     */
+    data: XOR<LogAuditoriaUpdateManyMutationInput, LogAuditoriaUncheckedUpdateManyInput>
+    /**
+     * Filter which LogAuditorias to update
+     */
+    where?: LogAuditoriaWhereInput
+    /**
+     * Limit how many LogAuditorias to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * LogAuditoria updateManyAndReturn
+   */
+  export type LogAuditoriaUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LogAuditoria
+     */
+    select?: LogAuditoriaSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the LogAuditoria
+     */
+    omit?: LogAuditoriaOmit<ExtArgs> | null
+    /**
+     * The data used to update LogAuditorias.
+     */
+    data: XOR<LogAuditoriaUpdateManyMutationInput, LogAuditoriaUncheckedUpdateManyInput>
+    /**
+     * Filter which LogAuditorias to update
+     */
+    where?: LogAuditoriaWhereInput
+    /**
+     * Limit how many LogAuditorias to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LogAuditoriaIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * LogAuditoria upsert
+   */
+  export type LogAuditoriaUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LogAuditoria
+     */
+    select?: LogAuditoriaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LogAuditoria
+     */
+    omit?: LogAuditoriaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LogAuditoriaInclude<ExtArgs> | null
+    /**
+     * The filter to search for the LogAuditoria to update in case it exists.
+     */
+    where: LogAuditoriaWhereUniqueInput
+    /**
+     * In case the LogAuditoria found by the `where` argument doesn't exist, create a new LogAuditoria with this data.
+     */
+    create: XOR<LogAuditoriaCreateInput, LogAuditoriaUncheckedCreateInput>
+    /**
+     * In case the LogAuditoria was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<LogAuditoriaUpdateInput, LogAuditoriaUncheckedUpdateInput>
+  }
+
+  /**
+   * LogAuditoria delete
+   */
+  export type LogAuditoriaDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LogAuditoria
+     */
+    select?: LogAuditoriaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LogAuditoria
+     */
+    omit?: LogAuditoriaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LogAuditoriaInclude<ExtArgs> | null
+    /**
+     * Filter which LogAuditoria to delete.
+     */
+    where: LogAuditoriaWhereUniqueInput
+  }
+
+  /**
+   * LogAuditoria deleteMany
+   */
+  export type LogAuditoriaDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LogAuditorias to delete
+     */
+    where?: LogAuditoriaWhereInput
+    /**
+     * Limit how many LogAuditorias to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * LogAuditoria without action
+   */
+  export type LogAuditoriaDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LogAuditoria
+     */
+    select?: LogAuditoriaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LogAuditoria
+     */
+    omit?: LogAuditoriaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LogAuditoriaInclude<ExtArgs> | null
   }
 
 
@@ -19181,6 +20716,7 @@ export namespace Prisma {
     numeroChamado: string | null
     descricaoProblema: string | null
     valor: Decimal | null
+    ativoId: string | null
   }
 
   export type ChecklistEquipamentoItemMaxAggregateOutputType = {
@@ -19194,6 +20730,7 @@ export namespace Prisma {
     numeroChamado: string | null
     descricaoProblema: string | null
     valor: Decimal | null
+    ativoId: string | null
   }
 
   export type ChecklistEquipamentoItemCountAggregateOutputType = {
@@ -19207,6 +20744,7 @@ export namespace Prisma {
     numeroChamado: number
     descricaoProblema: number
     valor: number
+    ativoId: number
     _all: number
   }
 
@@ -19234,6 +20772,7 @@ export namespace Prisma {
     numeroChamado?: true
     descricaoProblema?: true
     valor?: true
+    ativoId?: true
   }
 
   export type ChecklistEquipamentoItemMaxAggregateInputType = {
@@ -19247,6 +20786,7 @@ export namespace Prisma {
     numeroChamado?: true
     descricaoProblema?: true
     valor?: true
+    ativoId?: true
   }
 
   export type ChecklistEquipamentoItemCountAggregateInputType = {
@@ -19260,6 +20800,7 @@ export namespace Prisma {
     numeroChamado?: true
     descricaoProblema?: true
     valor?: true
+    ativoId?: true
     _all?: true
   }
 
@@ -19360,6 +20901,7 @@ export namespace Prisma {
     numeroChamado: string | null
     descricaoProblema: string | null
     valor: Decimal | null
+    ativoId: string | null
     _count: ChecklistEquipamentoItemCountAggregateOutputType | null
     _avg: ChecklistEquipamentoItemAvgAggregateOutputType | null
     _sum: ChecklistEquipamentoItemSumAggregateOutputType | null
@@ -19392,7 +20934,9 @@ export namespace Prisma {
     numeroChamado?: boolean
     descricaoProblema?: boolean
     valor?: boolean
+    ativoId?: boolean
     checklist?: boolean | ChecklistEquipamentoDefaultArgs<ExtArgs>
+    ativo?: boolean | ChecklistEquipamentoItem$ativoArgs<ExtArgs>
   }, ExtArgs["result"]["checklistEquipamentoItem"]>
 
   export type ChecklistEquipamentoItemSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -19406,7 +20950,9 @@ export namespace Prisma {
     numeroChamado?: boolean
     descricaoProblema?: boolean
     valor?: boolean
+    ativoId?: boolean
     checklist?: boolean | ChecklistEquipamentoDefaultArgs<ExtArgs>
+    ativo?: boolean | ChecklistEquipamentoItem$ativoArgs<ExtArgs>
   }, ExtArgs["result"]["checklistEquipamentoItem"]>
 
   export type ChecklistEquipamentoItemSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -19420,7 +20966,9 @@ export namespace Prisma {
     numeroChamado?: boolean
     descricaoProblema?: boolean
     valor?: boolean
+    ativoId?: boolean
     checklist?: boolean | ChecklistEquipamentoDefaultArgs<ExtArgs>
+    ativo?: boolean | ChecklistEquipamentoItem$ativoArgs<ExtArgs>
   }, ExtArgs["result"]["checklistEquipamentoItem"]>
 
   export type ChecklistEquipamentoItemSelectScalar = {
@@ -19434,23 +20982,28 @@ export namespace Prisma {
     numeroChamado?: boolean
     descricaoProblema?: boolean
     valor?: boolean
+    ativoId?: boolean
   }
 
-  export type ChecklistEquipamentoItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "checklistId" | "tipoEquipamento" | "operacional" | "quantidade" | "quantidadeQuebrada" | "numeroSerie" | "numeroChamado" | "descricaoProblema" | "valor", ExtArgs["result"]["checklistEquipamentoItem"]>
+  export type ChecklistEquipamentoItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "checklistId" | "tipoEquipamento" | "operacional" | "quantidade" | "quantidadeQuebrada" | "numeroSerie" | "numeroChamado" | "descricaoProblema" | "valor" | "ativoId", ExtArgs["result"]["checklistEquipamentoItem"]>
   export type ChecklistEquipamentoItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     checklist?: boolean | ChecklistEquipamentoDefaultArgs<ExtArgs>
+    ativo?: boolean | ChecklistEquipamentoItem$ativoArgs<ExtArgs>
   }
   export type ChecklistEquipamentoItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     checklist?: boolean | ChecklistEquipamentoDefaultArgs<ExtArgs>
+    ativo?: boolean | ChecklistEquipamentoItem$ativoArgs<ExtArgs>
   }
   export type ChecklistEquipamentoItemIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     checklist?: boolean | ChecklistEquipamentoDefaultArgs<ExtArgs>
+    ativo?: boolean | ChecklistEquipamentoItem$ativoArgs<ExtArgs>
   }
 
   export type $ChecklistEquipamentoItemPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "ChecklistEquipamentoItem"
     objects: {
       checklist: Prisma.$ChecklistEquipamentoPayload<ExtArgs>
+      ativo: Prisma.$AtivoLojaPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -19463,6 +21016,7 @@ export namespace Prisma {
       numeroChamado: string | null
       descricaoProblema: string | null
       valor: Prisma.Decimal | null
+      ativoId: string | null
     }, ExtArgs["result"]["checklistEquipamentoItem"]>
     composites: {}
   }
@@ -19858,6 +21412,7 @@ export namespace Prisma {
   export interface Prisma__ChecklistEquipamentoItemClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     checklist<T extends ChecklistEquipamentoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ChecklistEquipamentoDefaultArgs<ExtArgs>>): Prisma__ChecklistEquipamentoClient<$Result.GetResult<Prisma.$ChecklistEquipamentoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    ativo<T extends ChecklistEquipamentoItem$ativoArgs<ExtArgs> = {}>(args?: Subset<T, ChecklistEquipamentoItem$ativoArgs<ExtArgs>>): Prisma__AtivoLojaClient<$Result.GetResult<Prisma.$AtivoLojaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -19897,6 +21452,7 @@ export namespace Prisma {
     readonly numeroChamado: FieldRef<"ChecklistEquipamentoItem", 'String'>
     readonly descricaoProblema: FieldRef<"ChecklistEquipamentoItem", 'String'>
     readonly valor: FieldRef<"ChecklistEquipamentoItem", 'Decimal'>
+    readonly ativoId: FieldRef<"ChecklistEquipamentoItem", 'String'>
   }
     
 
@@ -20295,6 +21851,25 @@ export namespace Prisma {
      * Limit how many ChecklistEquipamentoItems to delete.
      */
     limit?: number
+  }
+
+  /**
+   * ChecklistEquipamentoItem.ativo
+   */
+  export type ChecklistEquipamentoItem$ativoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AtivoLoja
+     */
+    select?: AtivoLojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AtivoLoja
+     */
+    omit?: AtivoLojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AtivoLojaInclude<ExtArgs> | null
+    where?: AtivoLojaWhereInput
   }
 
   /**
@@ -23674,10 +25249,12 @@ export namespace Prisma {
 
   export type AtivoLojaAvgAggregateOutputType = {
     quantidade: number | null
+    intervaloPreventiva: number | null
   }
 
   export type AtivoLojaSumAggregateOutputType = {
     quantidade: number | null
+    intervaloPreventiva: number | null
   }
 
   export type AtivoLojaMinAggregateOutputType = {
@@ -23699,6 +25276,11 @@ export namespace Prisma {
     ativo: boolean | null
     criadoEm: Date | null
     atualizadoEm: Date | null
+    ultimaPreventiva: Date | null
+    proximaPreventiva: Date | null
+    ultimaTrocaBateria: Date | null
+    proximaTrocaBateria: Date | null
+    intervaloPreventiva: number | null
   }
 
   export type AtivoLojaMaxAggregateOutputType = {
@@ -23720,6 +25302,11 @@ export namespace Prisma {
     ativo: boolean | null
     criadoEm: Date | null
     atualizadoEm: Date | null
+    ultimaPreventiva: Date | null
+    proximaPreventiva: Date | null
+    ultimaTrocaBateria: Date | null
+    proximaTrocaBateria: Date | null
+    intervaloPreventiva: number | null
   }
 
   export type AtivoLojaCountAggregateOutputType = {
@@ -23741,16 +25328,24 @@ export namespace Prisma {
     ativo: number
     criadoEm: number
     atualizadoEm: number
+    ultimaPreventiva: number
+    proximaPreventiva: number
+    ultimaTrocaBateria: number
+    proximaTrocaBateria: number
+    intervaloPreventiva: number
+    dadosTecnicos: number
     _all: number
   }
 
 
   export type AtivoLojaAvgAggregateInputType = {
     quantidade?: true
+    intervaloPreventiva?: true
   }
 
   export type AtivoLojaSumAggregateInputType = {
     quantidade?: true
+    intervaloPreventiva?: true
   }
 
   export type AtivoLojaMinAggregateInputType = {
@@ -23772,6 +25367,11 @@ export namespace Prisma {
     ativo?: true
     criadoEm?: true
     atualizadoEm?: true
+    ultimaPreventiva?: true
+    proximaPreventiva?: true
+    ultimaTrocaBateria?: true
+    proximaTrocaBateria?: true
+    intervaloPreventiva?: true
   }
 
   export type AtivoLojaMaxAggregateInputType = {
@@ -23793,6 +25393,11 @@ export namespace Prisma {
     ativo?: true
     criadoEm?: true
     atualizadoEm?: true
+    ultimaPreventiva?: true
+    proximaPreventiva?: true
+    ultimaTrocaBateria?: true
+    proximaTrocaBateria?: true
+    intervaloPreventiva?: true
   }
 
   export type AtivoLojaCountAggregateInputType = {
@@ -23814,6 +25419,12 @@ export namespace Prisma {
     ativo?: true
     criadoEm?: true
     atualizadoEm?: true
+    ultimaPreventiva?: true
+    proximaPreventiva?: true
+    ultimaTrocaBateria?: true
+    proximaTrocaBateria?: true
+    intervaloPreventiva?: true
+    dadosTecnicos?: true
     _all?: true
   }
 
@@ -23922,6 +25533,12 @@ export namespace Prisma {
     ativo: boolean
     criadoEm: Date
     atualizadoEm: Date
+    ultimaPreventiva: Date | null
+    proximaPreventiva: Date | null
+    ultimaTrocaBateria: Date | null
+    proximaTrocaBateria: Date | null
+    intervaloPreventiva: number | null
+    dadosTecnicos: JsonValue | null
     _count: AtivoLojaCountAggregateOutputType | null
     _avg: AtivoLojaAvgAggregateOutputType | null
     _sum: AtivoLojaSumAggregateOutputType | null
@@ -23962,7 +25579,16 @@ export namespace Prisma {
     ativo?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
+    ultimaPreventiva?: boolean
+    proximaPreventiva?: boolean
+    ultimaTrocaBateria?: boolean
+    proximaTrocaBateria?: boolean
+    intervaloPreventiva?: boolean
+    dadosTecnicos?: boolean
     criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
+    falhas?: boolean | AtivoLoja$falhasArgs<ExtArgs>
+    checklistItens?: boolean | AtivoLoja$checklistItensArgs<ExtArgs>
+    _count?: boolean | AtivoLojaCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["ativoLoja"]>
 
   export type AtivoLojaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -23984,6 +25610,12 @@ export namespace Prisma {
     ativo?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
+    ultimaPreventiva?: boolean
+    proximaPreventiva?: boolean
+    ultimaTrocaBateria?: boolean
+    proximaTrocaBateria?: boolean
+    intervaloPreventiva?: boolean
+    dadosTecnicos?: boolean
     criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["ativoLoja"]>
 
@@ -24006,6 +25638,12 @@ export namespace Prisma {
     ativo?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
+    ultimaPreventiva?: boolean
+    proximaPreventiva?: boolean
+    ultimaTrocaBateria?: boolean
+    proximaTrocaBateria?: boolean
+    intervaloPreventiva?: boolean
+    dadosTecnicos?: boolean
     criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["ativoLoja"]>
 
@@ -24028,11 +25666,20 @@ export namespace Prisma {
     ativo?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
+    ultimaPreventiva?: boolean
+    proximaPreventiva?: boolean
+    ultimaTrocaBateria?: boolean
+    proximaTrocaBateria?: boolean
+    intervaloPreventiva?: boolean
+    dadosTecnicos?: boolean
   }
 
-  export type AtivoLojaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nome" | "categoria" | "tipo" | "fabricante" | "modelo" | "numeroSerie" | "patrimonio" | "quantidade" | "status" | "localizacao" | "observacoes" | "regiao" | "unidade" | "criadoPorId" | "ativo" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["ativoLoja"]>
+  export type AtivoLojaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nome" | "categoria" | "tipo" | "fabricante" | "modelo" | "numeroSerie" | "patrimonio" | "quantidade" | "status" | "localizacao" | "observacoes" | "regiao" | "unidade" | "criadoPorId" | "ativo" | "criadoEm" | "atualizadoEm" | "ultimaPreventiva" | "proximaPreventiva" | "ultimaTrocaBateria" | "proximaTrocaBateria" | "intervaloPreventiva" | "dadosTecnicos", ExtArgs["result"]["ativoLoja"]>
   export type AtivoLojaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
+    falhas?: boolean | AtivoLoja$falhasArgs<ExtArgs>
+    checklistItens?: boolean | AtivoLoja$checklistItensArgs<ExtArgs>
+    _count?: boolean | AtivoLojaCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type AtivoLojaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
@@ -24045,6 +25692,8 @@ export namespace Prisma {
     name: "AtivoLoja"
     objects: {
       criadoPor: Prisma.$UsuarioPayload<ExtArgs>
+      falhas: Prisma.$RegistroFalhaAtivoPayload<ExtArgs>[]
+      checklistItens: Prisma.$ChecklistEquipamentoItemPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -24065,6 +25714,12 @@ export namespace Prisma {
       ativo: boolean
       criadoEm: Date
       atualizadoEm: Date
+      ultimaPreventiva: Date | null
+      proximaPreventiva: Date | null
+      ultimaTrocaBateria: Date | null
+      proximaTrocaBateria: Date | null
+      intervaloPreventiva: number | null
+      dadosTecnicos: Prisma.JsonValue | null
     }, ExtArgs["result"]["ativoLoja"]>
     composites: {}
   }
@@ -24460,6 +26115,8 @@ export namespace Prisma {
   export interface Prisma__AtivoLojaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     criadoPor<T extends UsuarioDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UsuarioDefaultArgs<ExtArgs>>): Prisma__UsuarioClient<$Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    falhas<T extends AtivoLoja$falhasArgs<ExtArgs> = {}>(args?: Subset<T, AtivoLoja$falhasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RegistroFalhaAtivoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    checklistItens<T extends AtivoLoja$checklistItensArgs<ExtArgs> = {}>(args?: Subset<T, AtivoLoja$checklistItensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChecklistEquipamentoItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -24507,6 +26164,12 @@ export namespace Prisma {
     readonly ativo: FieldRef<"AtivoLoja", 'Boolean'>
     readonly criadoEm: FieldRef<"AtivoLoja", 'DateTime'>
     readonly atualizadoEm: FieldRef<"AtivoLoja", 'DateTime'>
+    readonly ultimaPreventiva: FieldRef<"AtivoLoja", 'DateTime'>
+    readonly proximaPreventiva: FieldRef<"AtivoLoja", 'DateTime'>
+    readonly ultimaTrocaBateria: FieldRef<"AtivoLoja", 'DateTime'>
+    readonly proximaTrocaBateria: FieldRef<"AtivoLoja", 'DateTime'>
+    readonly intervaloPreventiva: FieldRef<"AtivoLoja", 'Int'>
+    readonly dadosTecnicos: FieldRef<"AtivoLoja", 'Json'>
   }
     
 
@@ -24908,6 +26571,54 @@ export namespace Prisma {
   }
 
   /**
+   * AtivoLoja.falhas
+   */
+  export type AtivoLoja$falhasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegistroFalhaAtivo
+     */
+    select?: RegistroFalhaAtivoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegistroFalhaAtivo
+     */
+    omit?: RegistroFalhaAtivoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegistroFalhaAtivoInclude<ExtArgs> | null
+    where?: RegistroFalhaAtivoWhereInput
+    orderBy?: RegistroFalhaAtivoOrderByWithRelationInput | RegistroFalhaAtivoOrderByWithRelationInput[]
+    cursor?: RegistroFalhaAtivoWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RegistroFalhaAtivoScalarFieldEnum | RegistroFalhaAtivoScalarFieldEnum[]
+  }
+
+  /**
+   * AtivoLoja.checklistItens
+   */
+  export type AtivoLoja$checklistItensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChecklistEquipamentoItem
+     */
+    select?: ChecklistEquipamentoItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChecklistEquipamentoItem
+     */
+    omit?: ChecklistEquipamentoItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChecklistEquipamentoItemInclude<ExtArgs> | null
+    where?: ChecklistEquipamentoItemWhereInput
+    orderBy?: ChecklistEquipamentoItemOrderByWithRelationInput | ChecklistEquipamentoItemOrderByWithRelationInput[]
+    cursor?: ChecklistEquipamentoItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ChecklistEquipamentoItemScalarFieldEnum | ChecklistEquipamentoItemScalarFieldEnum[]
+  }
+
+  /**
    * AtivoLoja without action
    */
   export type AtivoLojaDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -24923,6 +26634,2383 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: AtivoLojaInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model RegistroFalhaAtivo
+   */
+
+  export type AggregateRegistroFalhaAtivo = {
+    _count: RegistroFalhaAtivoCountAggregateOutputType | null
+    _min: RegistroFalhaAtivoMinAggregateOutputType | null
+    _max: RegistroFalhaAtivoMaxAggregateOutputType | null
+  }
+
+  export type RegistroFalhaAtivoMinAggregateOutputType = {
+    id: string | null
+    ativoId: string | null
+    dataDeteccao: Date | null
+    dataResolucao: Date | null
+    origemResolucao: string | null
+    descricao: string | null
+    reincidencia: boolean | null
+    chamadoId: string | null
+    resolvidoPorId: string | null
+    criadoEm: Date | null
+  }
+
+  export type RegistroFalhaAtivoMaxAggregateOutputType = {
+    id: string | null
+    ativoId: string | null
+    dataDeteccao: Date | null
+    dataResolucao: Date | null
+    origemResolucao: string | null
+    descricao: string | null
+    reincidencia: boolean | null
+    chamadoId: string | null
+    resolvidoPorId: string | null
+    criadoEm: Date | null
+  }
+
+  export type RegistroFalhaAtivoCountAggregateOutputType = {
+    id: number
+    ativoId: number
+    dataDeteccao: number
+    dataResolucao: number
+    origemResolucao: number
+    descricao: number
+    reincidencia: number
+    chamadoId: number
+    resolvidoPorId: number
+    criadoEm: number
+    _all: number
+  }
+
+
+  export type RegistroFalhaAtivoMinAggregateInputType = {
+    id?: true
+    ativoId?: true
+    dataDeteccao?: true
+    dataResolucao?: true
+    origemResolucao?: true
+    descricao?: true
+    reincidencia?: true
+    chamadoId?: true
+    resolvidoPorId?: true
+    criadoEm?: true
+  }
+
+  export type RegistroFalhaAtivoMaxAggregateInputType = {
+    id?: true
+    ativoId?: true
+    dataDeteccao?: true
+    dataResolucao?: true
+    origemResolucao?: true
+    descricao?: true
+    reincidencia?: true
+    chamadoId?: true
+    resolvidoPorId?: true
+    criadoEm?: true
+  }
+
+  export type RegistroFalhaAtivoCountAggregateInputType = {
+    id?: true
+    ativoId?: true
+    dataDeteccao?: true
+    dataResolucao?: true
+    origemResolucao?: true
+    descricao?: true
+    reincidencia?: true
+    chamadoId?: true
+    resolvidoPorId?: true
+    criadoEm?: true
+    _all?: true
+  }
+
+  export type RegistroFalhaAtivoAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RegistroFalhaAtivo to aggregate.
+     */
+    where?: RegistroFalhaAtivoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RegistroFalhaAtivos to fetch.
+     */
+    orderBy?: RegistroFalhaAtivoOrderByWithRelationInput | RegistroFalhaAtivoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RegistroFalhaAtivoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RegistroFalhaAtivos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RegistroFalhaAtivos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned RegistroFalhaAtivos
+    **/
+    _count?: true | RegistroFalhaAtivoCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RegistroFalhaAtivoMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RegistroFalhaAtivoMaxAggregateInputType
+  }
+
+  export type GetRegistroFalhaAtivoAggregateType<T extends RegistroFalhaAtivoAggregateArgs> = {
+        [P in keyof T & keyof AggregateRegistroFalhaAtivo]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRegistroFalhaAtivo[P]>
+      : GetScalarType<T[P], AggregateRegistroFalhaAtivo[P]>
+  }
+
+
+
+
+  export type RegistroFalhaAtivoGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RegistroFalhaAtivoWhereInput
+    orderBy?: RegistroFalhaAtivoOrderByWithAggregationInput | RegistroFalhaAtivoOrderByWithAggregationInput[]
+    by: RegistroFalhaAtivoScalarFieldEnum[] | RegistroFalhaAtivoScalarFieldEnum
+    having?: RegistroFalhaAtivoScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RegistroFalhaAtivoCountAggregateInputType | true
+    _min?: RegistroFalhaAtivoMinAggregateInputType
+    _max?: RegistroFalhaAtivoMaxAggregateInputType
+  }
+
+  export type RegistroFalhaAtivoGroupByOutputType = {
+    id: string
+    ativoId: string
+    dataDeteccao: Date
+    dataResolucao: Date | null
+    origemResolucao: string | null
+    descricao: string
+    reincidencia: boolean
+    chamadoId: string | null
+    resolvidoPorId: string | null
+    criadoEm: Date
+    _count: RegistroFalhaAtivoCountAggregateOutputType | null
+    _min: RegistroFalhaAtivoMinAggregateOutputType | null
+    _max: RegistroFalhaAtivoMaxAggregateOutputType | null
+  }
+
+  type GetRegistroFalhaAtivoGroupByPayload<T extends RegistroFalhaAtivoGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RegistroFalhaAtivoGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RegistroFalhaAtivoGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RegistroFalhaAtivoGroupByOutputType[P]>
+            : GetScalarType<T[P], RegistroFalhaAtivoGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RegistroFalhaAtivoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    ativoId?: boolean
+    dataDeteccao?: boolean
+    dataResolucao?: boolean
+    origemResolucao?: boolean
+    descricao?: boolean
+    reincidencia?: boolean
+    chamadoId?: boolean
+    resolvidoPorId?: boolean
+    criadoEm?: boolean
+    ativo?: boolean | AtivoLojaDefaultArgs<ExtArgs>
+    resolvidoPor?: boolean | RegistroFalhaAtivo$resolvidoPorArgs<ExtArgs>
+  }, ExtArgs["result"]["registroFalhaAtivo"]>
+
+  export type RegistroFalhaAtivoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    ativoId?: boolean
+    dataDeteccao?: boolean
+    dataResolucao?: boolean
+    origemResolucao?: boolean
+    descricao?: boolean
+    reincidencia?: boolean
+    chamadoId?: boolean
+    resolvidoPorId?: boolean
+    criadoEm?: boolean
+    ativo?: boolean | AtivoLojaDefaultArgs<ExtArgs>
+    resolvidoPor?: boolean | RegistroFalhaAtivo$resolvidoPorArgs<ExtArgs>
+  }, ExtArgs["result"]["registroFalhaAtivo"]>
+
+  export type RegistroFalhaAtivoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    ativoId?: boolean
+    dataDeteccao?: boolean
+    dataResolucao?: boolean
+    origemResolucao?: boolean
+    descricao?: boolean
+    reincidencia?: boolean
+    chamadoId?: boolean
+    resolvidoPorId?: boolean
+    criadoEm?: boolean
+    ativo?: boolean | AtivoLojaDefaultArgs<ExtArgs>
+    resolvidoPor?: boolean | RegistroFalhaAtivo$resolvidoPorArgs<ExtArgs>
+  }, ExtArgs["result"]["registroFalhaAtivo"]>
+
+  export type RegistroFalhaAtivoSelectScalar = {
+    id?: boolean
+    ativoId?: boolean
+    dataDeteccao?: boolean
+    dataResolucao?: boolean
+    origemResolucao?: boolean
+    descricao?: boolean
+    reincidencia?: boolean
+    chamadoId?: boolean
+    resolvidoPorId?: boolean
+    criadoEm?: boolean
+  }
+
+  export type RegistroFalhaAtivoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ativoId" | "dataDeteccao" | "dataResolucao" | "origemResolucao" | "descricao" | "reincidencia" | "chamadoId" | "resolvidoPorId" | "criadoEm", ExtArgs["result"]["registroFalhaAtivo"]>
+  export type RegistroFalhaAtivoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    ativo?: boolean | AtivoLojaDefaultArgs<ExtArgs>
+    resolvidoPor?: boolean | RegistroFalhaAtivo$resolvidoPorArgs<ExtArgs>
+  }
+  export type RegistroFalhaAtivoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    ativo?: boolean | AtivoLojaDefaultArgs<ExtArgs>
+    resolvidoPor?: boolean | RegistroFalhaAtivo$resolvidoPorArgs<ExtArgs>
+  }
+  export type RegistroFalhaAtivoIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    ativo?: boolean | AtivoLojaDefaultArgs<ExtArgs>
+    resolvidoPor?: boolean | RegistroFalhaAtivo$resolvidoPorArgs<ExtArgs>
+  }
+
+  export type $RegistroFalhaAtivoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "RegistroFalhaAtivo"
+    objects: {
+      ativo: Prisma.$AtivoLojaPayload<ExtArgs>
+      resolvidoPor: Prisma.$UsuarioPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      ativoId: string
+      dataDeteccao: Date
+      dataResolucao: Date | null
+      origemResolucao: string | null
+      descricao: string
+      reincidencia: boolean
+      chamadoId: string | null
+      resolvidoPorId: string | null
+      criadoEm: Date
+    }, ExtArgs["result"]["registroFalhaAtivo"]>
+    composites: {}
+  }
+
+  type RegistroFalhaAtivoGetPayload<S extends boolean | null | undefined | RegistroFalhaAtivoDefaultArgs> = $Result.GetResult<Prisma.$RegistroFalhaAtivoPayload, S>
+
+  type RegistroFalhaAtivoCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<RegistroFalhaAtivoFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: RegistroFalhaAtivoCountAggregateInputType | true
+    }
+
+  export interface RegistroFalhaAtivoDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['RegistroFalhaAtivo'], meta: { name: 'RegistroFalhaAtivo' } }
+    /**
+     * Find zero or one RegistroFalhaAtivo that matches the filter.
+     * @param {RegistroFalhaAtivoFindUniqueArgs} args - Arguments to find a RegistroFalhaAtivo
+     * @example
+     * // Get one RegistroFalhaAtivo
+     * const registroFalhaAtivo = await prisma.registroFalhaAtivo.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RegistroFalhaAtivoFindUniqueArgs>(args: SelectSubset<T, RegistroFalhaAtivoFindUniqueArgs<ExtArgs>>): Prisma__RegistroFalhaAtivoClient<$Result.GetResult<Prisma.$RegistroFalhaAtivoPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one RegistroFalhaAtivo that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {RegistroFalhaAtivoFindUniqueOrThrowArgs} args - Arguments to find a RegistroFalhaAtivo
+     * @example
+     * // Get one RegistroFalhaAtivo
+     * const registroFalhaAtivo = await prisma.registroFalhaAtivo.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RegistroFalhaAtivoFindUniqueOrThrowArgs>(args: SelectSubset<T, RegistroFalhaAtivoFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RegistroFalhaAtivoClient<$Result.GetResult<Prisma.$RegistroFalhaAtivoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RegistroFalhaAtivo that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegistroFalhaAtivoFindFirstArgs} args - Arguments to find a RegistroFalhaAtivo
+     * @example
+     * // Get one RegistroFalhaAtivo
+     * const registroFalhaAtivo = await prisma.registroFalhaAtivo.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RegistroFalhaAtivoFindFirstArgs>(args?: SelectSubset<T, RegistroFalhaAtivoFindFirstArgs<ExtArgs>>): Prisma__RegistroFalhaAtivoClient<$Result.GetResult<Prisma.$RegistroFalhaAtivoPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RegistroFalhaAtivo that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegistroFalhaAtivoFindFirstOrThrowArgs} args - Arguments to find a RegistroFalhaAtivo
+     * @example
+     * // Get one RegistroFalhaAtivo
+     * const registroFalhaAtivo = await prisma.registroFalhaAtivo.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RegistroFalhaAtivoFindFirstOrThrowArgs>(args?: SelectSubset<T, RegistroFalhaAtivoFindFirstOrThrowArgs<ExtArgs>>): Prisma__RegistroFalhaAtivoClient<$Result.GetResult<Prisma.$RegistroFalhaAtivoPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more RegistroFalhaAtivos that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegistroFalhaAtivoFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all RegistroFalhaAtivos
+     * const registroFalhaAtivos = await prisma.registroFalhaAtivo.findMany()
+     * 
+     * // Get first 10 RegistroFalhaAtivos
+     * const registroFalhaAtivos = await prisma.registroFalhaAtivo.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const registroFalhaAtivoWithIdOnly = await prisma.registroFalhaAtivo.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends RegistroFalhaAtivoFindManyArgs>(args?: SelectSubset<T, RegistroFalhaAtivoFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RegistroFalhaAtivoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a RegistroFalhaAtivo.
+     * @param {RegistroFalhaAtivoCreateArgs} args - Arguments to create a RegistroFalhaAtivo.
+     * @example
+     * // Create one RegistroFalhaAtivo
+     * const RegistroFalhaAtivo = await prisma.registroFalhaAtivo.create({
+     *   data: {
+     *     // ... data to create a RegistroFalhaAtivo
+     *   }
+     * })
+     * 
+     */
+    create<T extends RegistroFalhaAtivoCreateArgs>(args: SelectSubset<T, RegistroFalhaAtivoCreateArgs<ExtArgs>>): Prisma__RegistroFalhaAtivoClient<$Result.GetResult<Prisma.$RegistroFalhaAtivoPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many RegistroFalhaAtivos.
+     * @param {RegistroFalhaAtivoCreateManyArgs} args - Arguments to create many RegistroFalhaAtivos.
+     * @example
+     * // Create many RegistroFalhaAtivos
+     * const registroFalhaAtivo = await prisma.registroFalhaAtivo.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RegistroFalhaAtivoCreateManyArgs>(args?: SelectSubset<T, RegistroFalhaAtivoCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many RegistroFalhaAtivos and returns the data saved in the database.
+     * @param {RegistroFalhaAtivoCreateManyAndReturnArgs} args - Arguments to create many RegistroFalhaAtivos.
+     * @example
+     * // Create many RegistroFalhaAtivos
+     * const registroFalhaAtivo = await prisma.registroFalhaAtivo.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many RegistroFalhaAtivos and only return the `id`
+     * const registroFalhaAtivoWithIdOnly = await prisma.registroFalhaAtivo.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends RegistroFalhaAtivoCreateManyAndReturnArgs>(args?: SelectSubset<T, RegistroFalhaAtivoCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RegistroFalhaAtivoPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a RegistroFalhaAtivo.
+     * @param {RegistroFalhaAtivoDeleteArgs} args - Arguments to delete one RegistroFalhaAtivo.
+     * @example
+     * // Delete one RegistroFalhaAtivo
+     * const RegistroFalhaAtivo = await prisma.registroFalhaAtivo.delete({
+     *   where: {
+     *     // ... filter to delete one RegistroFalhaAtivo
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RegistroFalhaAtivoDeleteArgs>(args: SelectSubset<T, RegistroFalhaAtivoDeleteArgs<ExtArgs>>): Prisma__RegistroFalhaAtivoClient<$Result.GetResult<Prisma.$RegistroFalhaAtivoPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one RegistroFalhaAtivo.
+     * @param {RegistroFalhaAtivoUpdateArgs} args - Arguments to update one RegistroFalhaAtivo.
+     * @example
+     * // Update one RegistroFalhaAtivo
+     * const registroFalhaAtivo = await prisma.registroFalhaAtivo.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RegistroFalhaAtivoUpdateArgs>(args: SelectSubset<T, RegistroFalhaAtivoUpdateArgs<ExtArgs>>): Prisma__RegistroFalhaAtivoClient<$Result.GetResult<Prisma.$RegistroFalhaAtivoPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more RegistroFalhaAtivos.
+     * @param {RegistroFalhaAtivoDeleteManyArgs} args - Arguments to filter RegistroFalhaAtivos to delete.
+     * @example
+     * // Delete a few RegistroFalhaAtivos
+     * const { count } = await prisma.registroFalhaAtivo.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RegistroFalhaAtivoDeleteManyArgs>(args?: SelectSubset<T, RegistroFalhaAtivoDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RegistroFalhaAtivos.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegistroFalhaAtivoUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many RegistroFalhaAtivos
+     * const registroFalhaAtivo = await prisma.registroFalhaAtivo.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RegistroFalhaAtivoUpdateManyArgs>(args: SelectSubset<T, RegistroFalhaAtivoUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RegistroFalhaAtivos and returns the data updated in the database.
+     * @param {RegistroFalhaAtivoUpdateManyAndReturnArgs} args - Arguments to update many RegistroFalhaAtivos.
+     * @example
+     * // Update many RegistroFalhaAtivos
+     * const registroFalhaAtivo = await prisma.registroFalhaAtivo.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more RegistroFalhaAtivos and only return the `id`
+     * const registroFalhaAtivoWithIdOnly = await prisma.registroFalhaAtivo.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends RegistroFalhaAtivoUpdateManyAndReturnArgs>(args: SelectSubset<T, RegistroFalhaAtivoUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RegistroFalhaAtivoPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one RegistroFalhaAtivo.
+     * @param {RegistroFalhaAtivoUpsertArgs} args - Arguments to update or create a RegistroFalhaAtivo.
+     * @example
+     * // Update or create a RegistroFalhaAtivo
+     * const registroFalhaAtivo = await prisma.registroFalhaAtivo.upsert({
+     *   create: {
+     *     // ... data to create a RegistroFalhaAtivo
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the RegistroFalhaAtivo we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RegistroFalhaAtivoUpsertArgs>(args: SelectSubset<T, RegistroFalhaAtivoUpsertArgs<ExtArgs>>): Prisma__RegistroFalhaAtivoClient<$Result.GetResult<Prisma.$RegistroFalhaAtivoPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of RegistroFalhaAtivos.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegistroFalhaAtivoCountArgs} args - Arguments to filter RegistroFalhaAtivos to count.
+     * @example
+     * // Count the number of RegistroFalhaAtivos
+     * const count = await prisma.registroFalhaAtivo.count({
+     *   where: {
+     *     // ... the filter for the RegistroFalhaAtivos we want to count
+     *   }
+     * })
+    **/
+    count<T extends RegistroFalhaAtivoCountArgs>(
+      args?: Subset<T, RegistroFalhaAtivoCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RegistroFalhaAtivoCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a RegistroFalhaAtivo.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegistroFalhaAtivoAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RegistroFalhaAtivoAggregateArgs>(args: Subset<T, RegistroFalhaAtivoAggregateArgs>): Prisma.PrismaPromise<GetRegistroFalhaAtivoAggregateType<T>>
+
+    /**
+     * Group by RegistroFalhaAtivo.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegistroFalhaAtivoGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RegistroFalhaAtivoGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RegistroFalhaAtivoGroupByArgs['orderBy'] }
+        : { orderBy?: RegistroFalhaAtivoGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RegistroFalhaAtivoGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRegistroFalhaAtivoGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the RegistroFalhaAtivo model
+   */
+  readonly fields: RegistroFalhaAtivoFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for RegistroFalhaAtivo.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RegistroFalhaAtivoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    ativo<T extends AtivoLojaDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AtivoLojaDefaultArgs<ExtArgs>>): Prisma__AtivoLojaClient<$Result.GetResult<Prisma.$AtivoLojaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    resolvidoPor<T extends RegistroFalhaAtivo$resolvidoPorArgs<ExtArgs> = {}>(args?: Subset<T, RegistroFalhaAtivo$resolvidoPorArgs<ExtArgs>>): Prisma__UsuarioClient<$Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the RegistroFalhaAtivo model
+   */
+  interface RegistroFalhaAtivoFieldRefs {
+    readonly id: FieldRef<"RegistroFalhaAtivo", 'String'>
+    readonly ativoId: FieldRef<"RegistroFalhaAtivo", 'String'>
+    readonly dataDeteccao: FieldRef<"RegistroFalhaAtivo", 'DateTime'>
+    readonly dataResolucao: FieldRef<"RegistroFalhaAtivo", 'DateTime'>
+    readonly origemResolucao: FieldRef<"RegistroFalhaAtivo", 'String'>
+    readonly descricao: FieldRef<"RegistroFalhaAtivo", 'String'>
+    readonly reincidencia: FieldRef<"RegistroFalhaAtivo", 'Boolean'>
+    readonly chamadoId: FieldRef<"RegistroFalhaAtivo", 'String'>
+    readonly resolvidoPorId: FieldRef<"RegistroFalhaAtivo", 'String'>
+    readonly criadoEm: FieldRef<"RegistroFalhaAtivo", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * RegistroFalhaAtivo findUnique
+   */
+  export type RegistroFalhaAtivoFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegistroFalhaAtivo
+     */
+    select?: RegistroFalhaAtivoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegistroFalhaAtivo
+     */
+    omit?: RegistroFalhaAtivoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegistroFalhaAtivoInclude<ExtArgs> | null
+    /**
+     * Filter, which RegistroFalhaAtivo to fetch.
+     */
+    where: RegistroFalhaAtivoWhereUniqueInput
+  }
+
+  /**
+   * RegistroFalhaAtivo findUniqueOrThrow
+   */
+  export type RegistroFalhaAtivoFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegistroFalhaAtivo
+     */
+    select?: RegistroFalhaAtivoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegistroFalhaAtivo
+     */
+    omit?: RegistroFalhaAtivoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegistroFalhaAtivoInclude<ExtArgs> | null
+    /**
+     * Filter, which RegistroFalhaAtivo to fetch.
+     */
+    where: RegistroFalhaAtivoWhereUniqueInput
+  }
+
+  /**
+   * RegistroFalhaAtivo findFirst
+   */
+  export type RegistroFalhaAtivoFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegistroFalhaAtivo
+     */
+    select?: RegistroFalhaAtivoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegistroFalhaAtivo
+     */
+    omit?: RegistroFalhaAtivoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegistroFalhaAtivoInclude<ExtArgs> | null
+    /**
+     * Filter, which RegistroFalhaAtivo to fetch.
+     */
+    where?: RegistroFalhaAtivoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RegistroFalhaAtivos to fetch.
+     */
+    orderBy?: RegistroFalhaAtivoOrderByWithRelationInput | RegistroFalhaAtivoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RegistroFalhaAtivos.
+     */
+    cursor?: RegistroFalhaAtivoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RegistroFalhaAtivos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RegistroFalhaAtivos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RegistroFalhaAtivos.
+     */
+    distinct?: RegistroFalhaAtivoScalarFieldEnum | RegistroFalhaAtivoScalarFieldEnum[]
+  }
+
+  /**
+   * RegistroFalhaAtivo findFirstOrThrow
+   */
+  export type RegistroFalhaAtivoFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegistroFalhaAtivo
+     */
+    select?: RegistroFalhaAtivoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegistroFalhaAtivo
+     */
+    omit?: RegistroFalhaAtivoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegistroFalhaAtivoInclude<ExtArgs> | null
+    /**
+     * Filter, which RegistroFalhaAtivo to fetch.
+     */
+    where?: RegistroFalhaAtivoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RegistroFalhaAtivos to fetch.
+     */
+    orderBy?: RegistroFalhaAtivoOrderByWithRelationInput | RegistroFalhaAtivoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RegistroFalhaAtivos.
+     */
+    cursor?: RegistroFalhaAtivoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RegistroFalhaAtivos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RegistroFalhaAtivos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RegistroFalhaAtivos.
+     */
+    distinct?: RegistroFalhaAtivoScalarFieldEnum | RegistroFalhaAtivoScalarFieldEnum[]
+  }
+
+  /**
+   * RegistroFalhaAtivo findMany
+   */
+  export type RegistroFalhaAtivoFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegistroFalhaAtivo
+     */
+    select?: RegistroFalhaAtivoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegistroFalhaAtivo
+     */
+    omit?: RegistroFalhaAtivoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegistroFalhaAtivoInclude<ExtArgs> | null
+    /**
+     * Filter, which RegistroFalhaAtivos to fetch.
+     */
+    where?: RegistroFalhaAtivoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RegistroFalhaAtivos to fetch.
+     */
+    orderBy?: RegistroFalhaAtivoOrderByWithRelationInput | RegistroFalhaAtivoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing RegistroFalhaAtivos.
+     */
+    cursor?: RegistroFalhaAtivoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RegistroFalhaAtivos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RegistroFalhaAtivos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RegistroFalhaAtivos.
+     */
+    distinct?: RegistroFalhaAtivoScalarFieldEnum | RegistroFalhaAtivoScalarFieldEnum[]
+  }
+
+  /**
+   * RegistroFalhaAtivo create
+   */
+  export type RegistroFalhaAtivoCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegistroFalhaAtivo
+     */
+    select?: RegistroFalhaAtivoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegistroFalhaAtivo
+     */
+    omit?: RegistroFalhaAtivoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegistroFalhaAtivoInclude<ExtArgs> | null
+    /**
+     * The data needed to create a RegistroFalhaAtivo.
+     */
+    data: XOR<RegistroFalhaAtivoCreateInput, RegistroFalhaAtivoUncheckedCreateInput>
+  }
+
+  /**
+   * RegistroFalhaAtivo createMany
+   */
+  export type RegistroFalhaAtivoCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many RegistroFalhaAtivos.
+     */
+    data: RegistroFalhaAtivoCreateManyInput | RegistroFalhaAtivoCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * RegistroFalhaAtivo createManyAndReturn
+   */
+  export type RegistroFalhaAtivoCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegistroFalhaAtivo
+     */
+    select?: RegistroFalhaAtivoSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegistroFalhaAtivo
+     */
+    omit?: RegistroFalhaAtivoOmit<ExtArgs> | null
+    /**
+     * The data used to create many RegistroFalhaAtivos.
+     */
+    data: RegistroFalhaAtivoCreateManyInput | RegistroFalhaAtivoCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegistroFalhaAtivoIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * RegistroFalhaAtivo update
+   */
+  export type RegistroFalhaAtivoUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegistroFalhaAtivo
+     */
+    select?: RegistroFalhaAtivoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegistroFalhaAtivo
+     */
+    omit?: RegistroFalhaAtivoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegistroFalhaAtivoInclude<ExtArgs> | null
+    /**
+     * The data needed to update a RegistroFalhaAtivo.
+     */
+    data: XOR<RegistroFalhaAtivoUpdateInput, RegistroFalhaAtivoUncheckedUpdateInput>
+    /**
+     * Choose, which RegistroFalhaAtivo to update.
+     */
+    where: RegistroFalhaAtivoWhereUniqueInput
+  }
+
+  /**
+   * RegistroFalhaAtivo updateMany
+   */
+  export type RegistroFalhaAtivoUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update RegistroFalhaAtivos.
+     */
+    data: XOR<RegistroFalhaAtivoUpdateManyMutationInput, RegistroFalhaAtivoUncheckedUpdateManyInput>
+    /**
+     * Filter which RegistroFalhaAtivos to update
+     */
+    where?: RegistroFalhaAtivoWhereInput
+    /**
+     * Limit how many RegistroFalhaAtivos to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * RegistroFalhaAtivo updateManyAndReturn
+   */
+  export type RegistroFalhaAtivoUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegistroFalhaAtivo
+     */
+    select?: RegistroFalhaAtivoSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegistroFalhaAtivo
+     */
+    omit?: RegistroFalhaAtivoOmit<ExtArgs> | null
+    /**
+     * The data used to update RegistroFalhaAtivos.
+     */
+    data: XOR<RegistroFalhaAtivoUpdateManyMutationInput, RegistroFalhaAtivoUncheckedUpdateManyInput>
+    /**
+     * Filter which RegistroFalhaAtivos to update
+     */
+    where?: RegistroFalhaAtivoWhereInput
+    /**
+     * Limit how many RegistroFalhaAtivos to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegistroFalhaAtivoIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * RegistroFalhaAtivo upsert
+   */
+  export type RegistroFalhaAtivoUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegistroFalhaAtivo
+     */
+    select?: RegistroFalhaAtivoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegistroFalhaAtivo
+     */
+    omit?: RegistroFalhaAtivoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegistroFalhaAtivoInclude<ExtArgs> | null
+    /**
+     * The filter to search for the RegistroFalhaAtivo to update in case it exists.
+     */
+    where: RegistroFalhaAtivoWhereUniqueInput
+    /**
+     * In case the RegistroFalhaAtivo found by the `where` argument doesn't exist, create a new RegistroFalhaAtivo with this data.
+     */
+    create: XOR<RegistroFalhaAtivoCreateInput, RegistroFalhaAtivoUncheckedCreateInput>
+    /**
+     * In case the RegistroFalhaAtivo was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RegistroFalhaAtivoUpdateInput, RegistroFalhaAtivoUncheckedUpdateInput>
+  }
+
+  /**
+   * RegistroFalhaAtivo delete
+   */
+  export type RegistroFalhaAtivoDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegistroFalhaAtivo
+     */
+    select?: RegistroFalhaAtivoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegistroFalhaAtivo
+     */
+    omit?: RegistroFalhaAtivoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegistroFalhaAtivoInclude<ExtArgs> | null
+    /**
+     * Filter which RegistroFalhaAtivo to delete.
+     */
+    where: RegistroFalhaAtivoWhereUniqueInput
+  }
+
+  /**
+   * RegistroFalhaAtivo deleteMany
+   */
+  export type RegistroFalhaAtivoDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RegistroFalhaAtivos to delete
+     */
+    where?: RegistroFalhaAtivoWhereInput
+    /**
+     * Limit how many RegistroFalhaAtivos to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * RegistroFalhaAtivo.resolvidoPor
+   */
+  export type RegistroFalhaAtivo$resolvidoPorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Usuario
+     */
+    select?: UsuarioSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Usuario
+     */
+    omit?: UsuarioOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UsuarioInclude<ExtArgs> | null
+    where?: UsuarioWhereInput
+  }
+
+  /**
+   * RegistroFalhaAtivo without action
+   */
+  export type RegistroFalhaAtivoDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegistroFalhaAtivo
+     */
+    select?: RegistroFalhaAtivoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RegistroFalhaAtivo
+     */
+    omit?: RegistroFalhaAtivoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegistroFalhaAtivoInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ChecklistRotinaInfra
+   */
+
+  export type AggregateChecklistRotinaInfra = {
+    _count: ChecklistRotinaInfraCountAggregateOutputType | null
+    _avg: ChecklistRotinaInfraAvgAggregateOutputType | null
+    _sum: ChecklistRotinaInfraSumAggregateOutputType | null
+    _min: ChecklistRotinaInfraMinAggregateOutputType | null
+    _max: ChecklistRotinaInfraMaxAggregateOutputType | null
+  }
+
+  export type ChecklistRotinaInfraAvgAggregateOutputType = {
+    semana: number | null
+    mes: number | null
+    ano: number | null
+  }
+
+  export type ChecklistRotinaInfraSumAggregateOutputType = {
+    semana: number | null
+    mes: number | null
+    ano: number | null
+  }
+
+  export type ChecklistRotinaInfraMinAggregateOutputType = {
+    id: string | null
+    tipo: $Enums.TipoRotinaInfra | null
+    regiao: string | null
+    unidade: string | null
+    semana: number | null
+    mes: number | null
+    ano: number | null
+    conforme: boolean | null
+    descricao: string | null
+    preenchidoEm: Date | null
+    preenchidoComAtraso: boolean | null
+    dataLimite: Date | null
+    criadoPorId: string | null
+    ativoId: string | null
+  }
+
+  export type ChecklistRotinaInfraMaxAggregateOutputType = {
+    id: string | null
+    tipo: $Enums.TipoRotinaInfra | null
+    regiao: string | null
+    unidade: string | null
+    semana: number | null
+    mes: number | null
+    ano: number | null
+    conforme: boolean | null
+    descricao: string | null
+    preenchidoEm: Date | null
+    preenchidoComAtraso: boolean | null
+    dataLimite: Date | null
+    criadoPorId: string | null
+    ativoId: string | null
+  }
+
+  export type ChecklistRotinaInfraCountAggregateOutputType = {
+    id: number
+    tipo: number
+    regiao: number
+    unidade: number
+    semana: number
+    mes: number
+    ano: number
+    conforme: number
+    descricao: number
+    preenchidoEm: number
+    preenchidoComAtraso: number
+    dataLimite: number
+    criadoPorId: number
+    ativoId: number
+    _all: number
+  }
+
+
+  export type ChecklistRotinaInfraAvgAggregateInputType = {
+    semana?: true
+    mes?: true
+    ano?: true
+  }
+
+  export type ChecklistRotinaInfraSumAggregateInputType = {
+    semana?: true
+    mes?: true
+    ano?: true
+  }
+
+  export type ChecklistRotinaInfraMinAggregateInputType = {
+    id?: true
+    tipo?: true
+    regiao?: true
+    unidade?: true
+    semana?: true
+    mes?: true
+    ano?: true
+    conforme?: true
+    descricao?: true
+    preenchidoEm?: true
+    preenchidoComAtraso?: true
+    dataLimite?: true
+    criadoPorId?: true
+    ativoId?: true
+  }
+
+  export type ChecklistRotinaInfraMaxAggregateInputType = {
+    id?: true
+    tipo?: true
+    regiao?: true
+    unidade?: true
+    semana?: true
+    mes?: true
+    ano?: true
+    conforme?: true
+    descricao?: true
+    preenchidoEm?: true
+    preenchidoComAtraso?: true
+    dataLimite?: true
+    criadoPorId?: true
+    ativoId?: true
+  }
+
+  export type ChecklistRotinaInfraCountAggregateInputType = {
+    id?: true
+    tipo?: true
+    regiao?: true
+    unidade?: true
+    semana?: true
+    mes?: true
+    ano?: true
+    conforme?: true
+    descricao?: true
+    preenchidoEm?: true
+    preenchidoComAtraso?: true
+    dataLimite?: true
+    criadoPorId?: true
+    ativoId?: true
+    _all?: true
+  }
+
+  export type ChecklistRotinaInfraAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ChecklistRotinaInfra to aggregate.
+     */
+    where?: ChecklistRotinaInfraWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ChecklistRotinaInfras to fetch.
+     */
+    orderBy?: ChecklistRotinaInfraOrderByWithRelationInput | ChecklistRotinaInfraOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ChecklistRotinaInfraWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ChecklistRotinaInfras from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ChecklistRotinaInfras.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ChecklistRotinaInfras
+    **/
+    _count?: true | ChecklistRotinaInfraCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ChecklistRotinaInfraAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ChecklistRotinaInfraSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ChecklistRotinaInfraMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ChecklistRotinaInfraMaxAggregateInputType
+  }
+
+  export type GetChecklistRotinaInfraAggregateType<T extends ChecklistRotinaInfraAggregateArgs> = {
+        [P in keyof T & keyof AggregateChecklistRotinaInfra]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateChecklistRotinaInfra[P]>
+      : GetScalarType<T[P], AggregateChecklistRotinaInfra[P]>
+  }
+
+
+
+
+  export type ChecklistRotinaInfraGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ChecklistRotinaInfraWhereInput
+    orderBy?: ChecklistRotinaInfraOrderByWithAggregationInput | ChecklistRotinaInfraOrderByWithAggregationInput[]
+    by: ChecklistRotinaInfraScalarFieldEnum[] | ChecklistRotinaInfraScalarFieldEnum
+    having?: ChecklistRotinaInfraScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ChecklistRotinaInfraCountAggregateInputType | true
+    _avg?: ChecklistRotinaInfraAvgAggregateInputType
+    _sum?: ChecklistRotinaInfraSumAggregateInputType
+    _min?: ChecklistRotinaInfraMinAggregateInputType
+    _max?: ChecklistRotinaInfraMaxAggregateInputType
+  }
+
+  export type ChecklistRotinaInfraGroupByOutputType = {
+    id: string
+    tipo: $Enums.TipoRotinaInfra
+    regiao: string
+    unidade: string
+    semana: number | null
+    mes: number
+    ano: number
+    conforme: boolean
+    descricao: string | null
+    preenchidoEm: Date
+    preenchidoComAtraso: boolean
+    dataLimite: Date
+    criadoPorId: string
+    ativoId: string | null
+    _count: ChecklistRotinaInfraCountAggregateOutputType | null
+    _avg: ChecklistRotinaInfraAvgAggregateOutputType | null
+    _sum: ChecklistRotinaInfraSumAggregateOutputType | null
+    _min: ChecklistRotinaInfraMinAggregateOutputType | null
+    _max: ChecklistRotinaInfraMaxAggregateOutputType | null
+  }
+
+  type GetChecklistRotinaInfraGroupByPayload<T extends ChecklistRotinaInfraGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ChecklistRotinaInfraGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ChecklistRotinaInfraGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ChecklistRotinaInfraGroupByOutputType[P]>
+            : GetScalarType<T[P], ChecklistRotinaInfraGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ChecklistRotinaInfraSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tipo?: boolean
+    regiao?: boolean
+    unidade?: boolean
+    semana?: boolean
+    mes?: boolean
+    ano?: boolean
+    conforme?: boolean
+    descricao?: boolean
+    preenchidoEm?: boolean
+    preenchidoComAtraso?: boolean
+    dataLimite?: boolean
+    criadoPorId?: boolean
+    ativoId?: boolean
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["checklistRotinaInfra"]>
+
+  export type ChecklistRotinaInfraSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tipo?: boolean
+    regiao?: boolean
+    unidade?: boolean
+    semana?: boolean
+    mes?: boolean
+    ano?: boolean
+    conforme?: boolean
+    descricao?: boolean
+    preenchidoEm?: boolean
+    preenchidoComAtraso?: boolean
+    dataLimite?: boolean
+    criadoPorId?: boolean
+    ativoId?: boolean
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["checklistRotinaInfra"]>
+
+  export type ChecklistRotinaInfraSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tipo?: boolean
+    regiao?: boolean
+    unidade?: boolean
+    semana?: boolean
+    mes?: boolean
+    ano?: boolean
+    conforme?: boolean
+    descricao?: boolean
+    preenchidoEm?: boolean
+    preenchidoComAtraso?: boolean
+    dataLimite?: boolean
+    criadoPorId?: boolean
+    ativoId?: boolean
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["checklistRotinaInfra"]>
+
+  export type ChecklistRotinaInfraSelectScalar = {
+    id?: boolean
+    tipo?: boolean
+    regiao?: boolean
+    unidade?: boolean
+    semana?: boolean
+    mes?: boolean
+    ano?: boolean
+    conforme?: boolean
+    descricao?: boolean
+    preenchidoEm?: boolean
+    preenchidoComAtraso?: boolean
+    dataLimite?: boolean
+    criadoPorId?: boolean
+    ativoId?: boolean
+  }
+
+  export type ChecklistRotinaInfraOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tipo" | "regiao" | "unidade" | "semana" | "mes" | "ano" | "conforme" | "descricao" | "preenchidoEm" | "preenchidoComAtraso" | "dataLimite" | "criadoPorId" | "ativoId", ExtArgs["result"]["checklistRotinaInfra"]>
+  export type ChecklistRotinaInfraInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
+  }
+  export type ChecklistRotinaInfraIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
+  }
+  export type ChecklistRotinaInfraIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
+  }
+
+  export type $ChecklistRotinaInfraPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ChecklistRotinaInfra"
+    objects: {
+      criadoPor: Prisma.$UsuarioPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tipo: $Enums.TipoRotinaInfra
+      regiao: string
+      unidade: string
+      semana: number | null
+      mes: number
+      ano: number
+      conforme: boolean
+      descricao: string | null
+      preenchidoEm: Date
+      preenchidoComAtraso: boolean
+      dataLimite: Date
+      criadoPorId: string
+      ativoId: string | null
+    }, ExtArgs["result"]["checklistRotinaInfra"]>
+    composites: {}
+  }
+
+  type ChecklistRotinaInfraGetPayload<S extends boolean | null | undefined | ChecklistRotinaInfraDefaultArgs> = $Result.GetResult<Prisma.$ChecklistRotinaInfraPayload, S>
+
+  type ChecklistRotinaInfraCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ChecklistRotinaInfraFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ChecklistRotinaInfraCountAggregateInputType | true
+    }
+
+  export interface ChecklistRotinaInfraDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ChecklistRotinaInfra'], meta: { name: 'ChecklistRotinaInfra' } }
+    /**
+     * Find zero or one ChecklistRotinaInfra that matches the filter.
+     * @param {ChecklistRotinaInfraFindUniqueArgs} args - Arguments to find a ChecklistRotinaInfra
+     * @example
+     * // Get one ChecklistRotinaInfra
+     * const checklistRotinaInfra = await prisma.checklistRotinaInfra.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ChecklistRotinaInfraFindUniqueArgs>(args: SelectSubset<T, ChecklistRotinaInfraFindUniqueArgs<ExtArgs>>): Prisma__ChecklistRotinaInfraClient<$Result.GetResult<Prisma.$ChecklistRotinaInfraPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ChecklistRotinaInfra that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ChecklistRotinaInfraFindUniqueOrThrowArgs} args - Arguments to find a ChecklistRotinaInfra
+     * @example
+     * // Get one ChecklistRotinaInfra
+     * const checklistRotinaInfra = await prisma.checklistRotinaInfra.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ChecklistRotinaInfraFindUniqueOrThrowArgs>(args: SelectSubset<T, ChecklistRotinaInfraFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ChecklistRotinaInfraClient<$Result.GetResult<Prisma.$ChecklistRotinaInfraPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ChecklistRotinaInfra that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChecklistRotinaInfraFindFirstArgs} args - Arguments to find a ChecklistRotinaInfra
+     * @example
+     * // Get one ChecklistRotinaInfra
+     * const checklistRotinaInfra = await prisma.checklistRotinaInfra.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ChecklistRotinaInfraFindFirstArgs>(args?: SelectSubset<T, ChecklistRotinaInfraFindFirstArgs<ExtArgs>>): Prisma__ChecklistRotinaInfraClient<$Result.GetResult<Prisma.$ChecklistRotinaInfraPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ChecklistRotinaInfra that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChecklistRotinaInfraFindFirstOrThrowArgs} args - Arguments to find a ChecklistRotinaInfra
+     * @example
+     * // Get one ChecklistRotinaInfra
+     * const checklistRotinaInfra = await prisma.checklistRotinaInfra.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ChecklistRotinaInfraFindFirstOrThrowArgs>(args?: SelectSubset<T, ChecklistRotinaInfraFindFirstOrThrowArgs<ExtArgs>>): Prisma__ChecklistRotinaInfraClient<$Result.GetResult<Prisma.$ChecklistRotinaInfraPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ChecklistRotinaInfras that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChecklistRotinaInfraFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ChecklistRotinaInfras
+     * const checklistRotinaInfras = await prisma.checklistRotinaInfra.findMany()
+     * 
+     * // Get first 10 ChecklistRotinaInfras
+     * const checklistRotinaInfras = await prisma.checklistRotinaInfra.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const checklistRotinaInfraWithIdOnly = await prisma.checklistRotinaInfra.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ChecklistRotinaInfraFindManyArgs>(args?: SelectSubset<T, ChecklistRotinaInfraFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChecklistRotinaInfraPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ChecklistRotinaInfra.
+     * @param {ChecklistRotinaInfraCreateArgs} args - Arguments to create a ChecklistRotinaInfra.
+     * @example
+     * // Create one ChecklistRotinaInfra
+     * const ChecklistRotinaInfra = await prisma.checklistRotinaInfra.create({
+     *   data: {
+     *     // ... data to create a ChecklistRotinaInfra
+     *   }
+     * })
+     * 
+     */
+    create<T extends ChecklistRotinaInfraCreateArgs>(args: SelectSubset<T, ChecklistRotinaInfraCreateArgs<ExtArgs>>): Prisma__ChecklistRotinaInfraClient<$Result.GetResult<Prisma.$ChecklistRotinaInfraPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ChecklistRotinaInfras.
+     * @param {ChecklistRotinaInfraCreateManyArgs} args - Arguments to create many ChecklistRotinaInfras.
+     * @example
+     * // Create many ChecklistRotinaInfras
+     * const checklistRotinaInfra = await prisma.checklistRotinaInfra.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ChecklistRotinaInfraCreateManyArgs>(args?: SelectSubset<T, ChecklistRotinaInfraCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ChecklistRotinaInfras and returns the data saved in the database.
+     * @param {ChecklistRotinaInfraCreateManyAndReturnArgs} args - Arguments to create many ChecklistRotinaInfras.
+     * @example
+     * // Create many ChecklistRotinaInfras
+     * const checklistRotinaInfra = await prisma.checklistRotinaInfra.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ChecklistRotinaInfras and only return the `id`
+     * const checklistRotinaInfraWithIdOnly = await prisma.checklistRotinaInfra.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ChecklistRotinaInfraCreateManyAndReturnArgs>(args?: SelectSubset<T, ChecklistRotinaInfraCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChecklistRotinaInfraPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ChecklistRotinaInfra.
+     * @param {ChecklistRotinaInfraDeleteArgs} args - Arguments to delete one ChecklistRotinaInfra.
+     * @example
+     * // Delete one ChecklistRotinaInfra
+     * const ChecklistRotinaInfra = await prisma.checklistRotinaInfra.delete({
+     *   where: {
+     *     // ... filter to delete one ChecklistRotinaInfra
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ChecklistRotinaInfraDeleteArgs>(args: SelectSubset<T, ChecklistRotinaInfraDeleteArgs<ExtArgs>>): Prisma__ChecklistRotinaInfraClient<$Result.GetResult<Prisma.$ChecklistRotinaInfraPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ChecklistRotinaInfra.
+     * @param {ChecklistRotinaInfraUpdateArgs} args - Arguments to update one ChecklistRotinaInfra.
+     * @example
+     * // Update one ChecklistRotinaInfra
+     * const checklistRotinaInfra = await prisma.checklistRotinaInfra.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ChecklistRotinaInfraUpdateArgs>(args: SelectSubset<T, ChecklistRotinaInfraUpdateArgs<ExtArgs>>): Prisma__ChecklistRotinaInfraClient<$Result.GetResult<Prisma.$ChecklistRotinaInfraPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ChecklistRotinaInfras.
+     * @param {ChecklistRotinaInfraDeleteManyArgs} args - Arguments to filter ChecklistRotinaInfras to delete.
+     * @example
+     * // Delete a few ChecklistRotinaInfras
+     * const { count } = await prisma.checklistRotinaInfra.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ChecklistRotinaInfraDeleteManyArgs>(args?: SelectSubset<T, ChecklistRotinaInfraDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ChecklistRotinaInfras.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChecklistRotinaInfraUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ChecklistRotinaInfras
+     * const checklistRotinaInfra = await prisma.checklistRotinaInfra.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ChecklistRotinaInfraUpdateManyArgs>(args: SelectSubset<T, ChecklistRotinaInfraUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ChecklistRotinaInfras and returns the data updated in the database.
+     * @param {ChecklistRotinaInfraUpdateManyAndReturnArgs} args - Arguments to update many ChecklistRotinaInfras.
+     * @example
+     * // Update many ChecklistRotinaInfras
+     * const checklistRotinaInfra = await prisma.checklistRotinaInfra.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ChecklistRotinaInfras and only return the `id`
+     * const checklistRotinaInfraWithIdOnly = await prisma.checklistRotinaInfra.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ChecklistRotinaInfraUpdateManyAndReturnArgs>(args: SelectSubset<T, ChecklistRotinaInfraUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChecklistRotinaInfraPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ChecklistRotinaInfra.
+     * @param {ChecklistRotinaInfraUpsertArgs} args - Arguments to update or create a ChecklistRotinaInfra.
+     * @example
+     * // Update or create a ChecklistRotinaInfra
+     * const checklistRotinaInfra = await prisma.checklistRotinaInfra.upsert({
+     *   create: {
+     *     // ... data to create a ChecklistRotinaInfra
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ChecklistRotinaInfra we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ChecklistRotinaInfraUpsertArgs>(args: SelectSubset<T, ChecklistRotinaInfraUpsertArgs<ExtArgs>>): Prisma__ChecklistRotinaInfraClient<$Result.GetResult<Prisma.$ChecklistRotinaInfraPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ChecklistRotinaInfras.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChecklistRotinaInfraCountArgs} args - Arguments to filter ChecklistRotinaInfras to count.
+     * @example
+     * // Count the number of ChecklistRotinaInfras
+     * const count = await prisma.checklistRotinaInfra.count({
+     *   where: {
+     *     // ... the filter for the ChecklistRotinaInfras we want to count
+     *   }
+     * })
+    **/
+    count<T extends ChecklistRotinaInfraCountArgs>(
+      args?: Subset<T, ChecklistRotinaInfraCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ChecklistRotinaInfraCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ChecklistRotinaInfra.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChecklistRotinaInfraAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ChecklistRotinaInfraAggregateArgs>(args: Subset<T, ChecklistRotinaInfraAggregateArgs>): Prisma.PrismaPromise<GetChecklistRotinaInfraAggregateType<T>>
+
+    /**
+     * Group by ChecklistRotinaInfra.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChecklistRotinaInfraGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ChecklistRotinaInfraGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ChecklistRotinaInfraGroupByArgs['orderBy'] }
+        : { orderBy?: ChecklistRotinaInfraGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ChecklistRotinaInfraGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetChecklistRotinaInfraGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ChecklistRotinaInfra model
+   */
+  readonly fields: ChecklistRotinaInfraFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ChecklistRotinaInfra.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ChecklistRotinaInfraClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    criadoPor<T extends UsuarioDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UsuarioDefaultArgs<ExtArgs>>): Prisma__UsuarioClient<$Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ChecklistRotinaInfra model
+   */
+  interface ChecklistRotinaInfraFieldRefs {
+    readonly id: FieldRef<"ChecklistRotinaInfra", 'String'>
+    readonly tipo: FieldRef<"ChecklistRotinaInfra", 'TipoRotinaInfra'>
+    readonly regiao: FieldRef<"ChecklistRotinaInfra", 'String'>
+    readonly unidade: FieldRef<"ChecklistRotinaInfra", 'String'>
+    readonly semana: FieldRef<"ChecklistRotinaInfra", 'Int'>
+    readonly mes: FieldRef<"ChecklistRotinaInfra", 'Int'>
+    readonly ano: FieldRef<"ChecklistRotinaInfra", 'Int'>
+    readonly conforme: FieldRef<"ChecklistRotinaInfra", 'Boolean'>
+    readonly descricao: FieldRef<"ChecklistRotinaInfra", 'String'>
+    readonly preenchidoEm: FieldRef<"ChecklistRotinaInfra", 'DateTime'>
+    readonly preenchidoComAtraso: FieldRef<"ChecklistRotinaInfra", 'Boolean'>
+    readonly dataLimite: FieldRef<"ChecklistRotinaInfra", 'DateTime'>
+    readonly criadoPorId: FieldRef<"ChecklistRotinaInfra", 'String'>
+    readonly ativoId: FieldRef<"ChecklistRotinaInfra", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ChecklistRotinaInfra findUnique
+   */
+  export type ChecklistRotinaInfraFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChecklistRotinaInfra
+     */
+    select?: ChecklistRotinaInfraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChecklistRotinaInfra
+     */
+    omit?: ChecklistRotinaInfraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChecklistRotinaInfraInclude<ExtArgs> | null
+    /**
+     * Filter, which ChecklistRotinaInfra to fetch.
+     */
+    where: ChecklistRotinaInfraWhereUniqueInput
+  }
+
+  /**
+   * ChecklistRotinaInfra findUniqueOrThrow
+   */
+  export type ChecklistRotinaInfraFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChecklistRotinaInfra
+     */
+    select?: ChecklistRotinaInfraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChecklistRotinaInfra
+     */
+    omit?: ChecklistRotinaInfraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChecklistRotinaInfraInclude<ExtArgs> | null
+    /**
+     * Filter, which ChecklistRotinaInfra to fetch.
+     */
+    where: ChecklistRotinaInfraWhereUniqueInput
+  }
+
+  /**
+   * ChecklistRotinaInfra findFirst
+   */
+  export type ChecklistRotinaInfraFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChecklistRotinaInfra
+     */
+    select?: ChecklistRotinaInfraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChecklistRotinaInfra
+     */
+    omit?: ChecklistRotinaInfraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChecklistRotinaInfraInclude<ExtArgs> | null
+    /**
+     * Filter, which ChecklistRotinaInfra to fetch.
+     */
+    where?: ChecklistRotinaInfraWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ChecklistRotinaInfras to fetch.
+     */
+    orderBy?: ChecklistRotinaInfraOrderByWithRelationInput | ChecklistRotinaInfraOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ChecklistRotinaInfras.
+     */
+    cursor?: ChecklistRotinaInfraWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ChecklistRotinaInfras from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ChecklistRotinaInfras.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ChecklistRotinaInfras.
+     */
+    distinct?: ChecklistRotinaInfraScalarFieldEnum | ChecklistRotinaInfraScalarFieldEnum[]
+  }
+
+  /**
+   * ChecklistRotinaInfra findFirstOrThrow
+   */
+  export type ChecklistRotinaInfraFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChecklistRotinaInfra
+     */
+    select?: ChecklistRotinaInfraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChecklistRotinaInfra
+     */
+    omit?: ChecklistRotinaInfraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChecklistRotinaInfraInclude<ExtArgs> | null
+    /**
+     * Filter, which ChecklistRotinaInfra to fetch.
+     */
+    where?: ChecklistRotinaInfraWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ChecklistRotinaInfras to fetch.
+     */
+    orderBy?: ChecklistRotinaInfraOrderByWithRelationInput | ChecklistRotinaInfraOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ChecklistRotinaInfras.
+     */
+    cursor?: ChecklistRotinaInfraWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ChecklistRotinaInfras from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ChecklistRotinaInfras.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ChecklistRotinaInfras.
+     */
+    distinct?: ChecklistRotinaInfraScalarFieldEnum | ChecklistRotinaInfraScalarFieldEnum[]
+  }
+
+  /**
+   * ChecklistRotinaInfra findMany
+   */
+  export type ChecklistRotinaInfraFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChecklistRotinaInfra
+     */
+    select?: ChecklistRotinaInfraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChecklistRotinaInfra
+     */
+    omit?: ChecklistRotinaInfraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChecklistRotinaInfraInclude<ExtArgs> | null
+    /**
+     * Filter, which ChecklistRotinaInfras to fetch.
+     */
+    where?: ChecklistRotinaInfraWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ChecklistRotinaInfras to fetch.
+     */
+    orderBy?: ChecklistRotinaInfraOrderByWithRelationInput | ChecklistRotinaInfraOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ChecklistRotinaInfras.
+     */
+    cursor?: ChecklistRotinaInfraWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ChecklistRotinaInfras from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ChecklistRotinaInfras.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ChecklistRotinaInfras.
+     */
+    distinct?: ChecklistRotinaInfraScalarFieldEnum | ChecklistRotinaInfraScalarFieldEnum[]
+  }
+
+  /**
+   * ChecklistRotinaInfra create
+   */
+  export type ChecklistRotinaInfraCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChecklistRotinaInfra
+     */
+    select?: ChecklistRotinaInfraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChecklistRotinaInfra
+     */
+    omit?: ChecklistRotinaInfraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChecklistRotinaInfraInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ChecklistRotinaInfra.
+     */
+    data: XOR<ChecklistRotinaInfraCreateInput, ChecklistRotinaInfraUncheckedCreateInput>
+  }
+
+  /**
+   * ChecklistRotinaInfra createMany
+   */
+  export type ChecklistRotinaInfraCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ChecklistRotinaInfras.
+     */
+    data: ChecklistRotinaInfraCreateManyInput | ChecklistRotinaInfraCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ChecklistRotinaInfra createManyAndReturn
+   */
+  export type ChecklistRotinaInfraCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChecklistRotinaInfra
+     */
+    select?: ChecklistRotinaInfraSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChecklistRotinaInfra
+     */
+    omit?: ChecklistRotinaInfraOmit<ExtArgs> | null
+    /**
+     * The data used to create many ChecklistRotinaInfras.
+     */
+    data: ChecklistRotinaInfraCreateManyInput | ChecklistRotinaInfraCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChecklistRotinaInfraIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ChecklistRotinaInfra update
+   */
+  export type ChecklistRotinaInfraUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChecklistRotinaInfra
+     */
+    select?: ChecklistRotinaInfraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChecklistRotinaInfra
+     */
+    omit?: ChecklistRotinaInfraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChecklistRotinaInfraInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ChecklistRotinaInfra.
+     */
+    data: XOR<ChecklistRotinaInfraUpdateInput, ChecklistRotinaInfraUncheckedUpdateInput>
+    /**
+     * Choose, which ChecklistRotinaInfra to update.
+     */
+    where: ChecklistRotinaInfraWhereUniqueInput
+  }
+
+  /**
+   * ChecklistRotinaInfra updateMany
+   */
+  export type ChecklistRotinaInfraUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ChecklistRotinaInfras.
+     */
+    data: XOR<ChecklistRotinaInfraUpdateManyMutationInput, ChecklistRotinaInfraUncheckedUpdateManyInput>
+    /**
+     * Filter which ChecklistRotinaInfras to update
+     */
+    where?: ChecklistRotinaInfraWhereInput
+    /**
+     * Limit how many ChecklistRotinaInfras to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ChecklistRotinaInfra updateManyAndReturn
+   */
+  export type ChecklistRotinaInfraUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChecklistRotinaInfra
+     */
+    select?: ChecklistRotinaInfraSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChecklistRotinaInfra
+     */
+    omit?: ChecklistRotinaInfraOmit<ExtArgs> | null
+    /**
+     * The data used to update ChecklistRotinaInfras.
+     */
+    data: XOR<ChecklistRotinaInfraUpdateManyMutationInput, ChecklistRotinaInfraUncheckedUpdateManyInput>
+    /**
+     * Filter which ChecklistRotinaInfras to update
+     */
+    where?: ChecklistRotinaInfraWhereInput
+    /**
+     * Limit how many ChecklistRotinaInfras to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChecklistRotinaInfraIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ChecklistRotinaInfra upsert
+   */
+  export type ChecklistRotinaInfraUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChecklistRotinaInfra
+     */
+    select?: ChecklistRotinaInfraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChecklistRotinaInfra
+     */
+    omit?: ChecklistRotinaInfraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChecklistRotinaInfraInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ChecklistRotinaInfra to update in case it exists.
+     */
+    where: ChecklistRotinaInfraWhereUniqueInput
+    /**
+     * In case the ChecklistRotinaInfra found by the `where` argument doesn't exist, create a new ChecklistRotinaInfra with this data.
+     */
+    create: XOR<ChecklistRotinaInfraCreateInput, ChecklistRotinaInfraUncheckedCreateInput>
+    /**
+     * In case the ChecklistRotinaInfra was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ChecklistRotinaInfraUpdateInput, ChecklistRotinaInfraUncheckedUpdateInput>
+  }
+
+  /**
+   * ChecklistRotinaInfra delete
+   */
+  export type ChecklistRotinaInfraDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChecklistRotinaInfra
+     */
+    select?: ChecklistRotinaInfraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChecklistRotinaInfra
+     */
+    omit?: ChecklistRotinaInfraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChecklistRotinaInfraInclude<ExtArgs> | null
+    /**
+     * Filter which ChecklistRotinaInfra to delete.
+     */
+    where: ChecklistRotinaInfraWhereUniqueInput
+  }
+
+  /**
+   * ChecklistRotinaInfra deleteMany
+   */
+  export type ChecklistRotinaInfraDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ChecklistRotinaInfras to delete
+     */
+    where?: ChecklistRotinaInfraWhereInput
+    /**
+     * Limit how many ChecklistRotinaInfras to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ChecklistRotinaInfra without action
+   */
+  export type ChecklistRotinaInfraDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChecklistRotinaInfra
+     */
+    select?: ChecklistRotinaInfraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChecklistRotinaInfra
+     */
+    omit?: ChecklistRotinaInfraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChecklistRotinaInfraInclude<ExtArgs> | null
   }
 
 
@@ -25026,6 +29114,20 @@ export namespace Prisma {
   };
 
   export type NotificacaoScalarFieldEnum = (typeof NotificacaoScalarFieldEnum)[keyof typeof NotificacaoScalarFieldEnum]
+
+
+  export const LogAuditoriaScalarFieldEnum: {
+    id: 'id',
+    usuarioId: 'usuarioId',
+    acao: 'acao',
+    modulo: 'modulo',
+    detalhes: 'detalhes',
+    ip: 'ip',
+    userAgent: 'userAgent',
+    criadoEm: 'criadoEm'
+  };
+
+  export type LogAuditoriaScalarFieldEnum = (typeof LogAuditoriaScalarFieldEnum)[keyof typeof LogAuditoriaScalarFieldEnum]
 
 
   export const ControleChamadoScalarFieldEnum: {
@@ -25163,7 +29265,8 @@ export namespace Prisma {
     numeroSerie: 'numeroSerie',
     numeroChamado: 'numeroChamado',
     descricaoProblema: 'descricaoProblema',
-    valor: 'valor'
+    valor: 'valor',
+    ativoId: 'ativoId'
   };
 
   export type ChecklistEquipamentoItemScalarFieldEnum = (typeof ChecklistEquipamentoItemScalarFieldEnum)[keyof typeof ChecklistEquipamentoItemScalarFieldEnum]
@@ -25226,10 +29329,52 @@ export namespace Prisma {
     criadoPorId: 'criadoPorId',
     ativo: 'ativo',
     criadoEm: 'criadoEm',
-    atualizadoEm: 'atualizadoEm'
+    atualizadoEm: 'atualizadoEm',
+    ultimaPreventiva: 'ultimaPreventiva',
+    proximaPreventiva: 'proximaPreventiva',
+    ultimaTrocaBateria: 'ultimaTrocaBateria',
+    proximaTrocaBateria: 'proximaTrocaBateria',
+    intervaloPreventiva: 'intervaloPreventiva',
+    dadosTecnicos: 'dadosTecnicos'
   };
 
   export type AtivoLojaScalarFieldEnum = (typeof AtivoLojaScalarFieldEnum)[keyof typeof AtivoLojaScalarFieldEnum]
+
+
+  export const RegistroFalhaAtivoScalarFieldEnum: {
+    id: 'id',
+    ativoId: 'ativoId',
+    dataDeteccao: 'dataDeteccao',
+    dataResolucao: 'dataResolucao',
+    origemResolucao: 'origemResolucao',
+    descricao: 'descricao',
+    reincidencia: 'reincidencia',
+    chamadoId: 'chamadoId',
+    resolvidoPorId: 'resolvidoPorId',
+    criadoEm: 'criadoEm'
+  };
+
+  export type RegistroFalhaAtivoScalarFieldEnum = (typeof RegistroFalhaAtivoScalarFieldEnum)[keyof typeof RegistroFalhaAtivoScalarFieldEnum]
+
+
+  export const ChecklistRotinaInfraScalarFieldEnum: {
+    id: 'id',
+    tipo: 'tipo',
+    regiao: 'regiao',
+    unidade: 'unidade',
+    semana: 'semana',
+    mes: 'mes',
+    ano: 'ano',
+    conforme: 'conforme',
+    descricao: 'descricao',
+    preenchidoEm: 'preenchidoEm',
+    preenchidoComAtraso: 'preenchidoComAtraso',
+    dataLimite: 'dataLimite',
+    criadoPorId: 'criadoPorId',
+    ativoId: 'ativoId'
+  };
+
+  export type ChecklistRotinaInfraScalarFieldEnum = (typeof ChecklistRotinaInfraScalarFieldEnum)[keyof typeof ChecklistRotinaInfraScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -25238,6 +29383,14 @@ export namespace Prisma {
   };
 
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
   export const QueryMode: {
@@ -25254,6 +29407,15 @@ export namespace Prisma {
   };
 
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -25353,6 +29515,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+  /**
    * Reference to a field of type 'SegmentoChamado'
    */
   export type EnumSegmentoChamadoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SegmentoChamado'>
@@ -25433,6 +29609,20 @@ export namespace Prisma {
    * Reference to a field of type 'TipoCarrinho[]'
    */
   export type ListEnumTipoCarrinhoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TipoCarrinho[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'TipoRotinaInfra'
+   */
+  export type EnumTipoRotinaInfraFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TipoRotinaInfra'>
+    
+
+
+  /**
+   * Reference to a field of type 'TipoRotinaInfra[]'
+   */
+  export type ListEnumTipoRotinaInfraFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TipoRotinaInfra[]'>
     
 
 
@@ -25553,6 +29743,9 @@ export namespace Prisma {
     sessoes?: SessaoListRelationFilter
     tarefasAtribuidas?: TarefaListRelationFilter
     tarefasCriadas?: TarefaListRelationFilter
+    logsAuditoria?: LogAuditoriaListRelationFilter
+    falhasResolvidas?: RegistroFalhaAtivoListRelationFilter
+    rotinasInfra?: ChecklistRotinaInfraListRelationFilter
   }
 
   export type UsuarioOrderByWithRelationInput = {
@@ -25575,6 +29768,9 @@ export namespace Prisma {
     sessoes?: SessaoOrderByRelationAggregateInput
     tarefasAtribuidas?: TarefaOrderByRelationAggregateInput
     tarefasCriadas?: TarefaOrderByRelationAggregateInput
+    logsAuditoria?: LogAuditoriaOrderByRelationAggregateInput
+    falhasResolvidas?: RegistroFalhaAtivoOrderByRelationAggregateInput
+    rotinasInfra?: ChecklistRotinaInfraOrderByRelationAggregateInput
   }
 
   export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
@@ -25600,6 +29796,9 @@ export namespace Prisma {
     sessoes?: SessaoListRelationFilter
     tarefasAtribuidas?: TarefaListRelationFilter
     tarefasCriadas?: TarefaListRelationFilter
+    logsAuditoria?: LogAuditoriaListRelationFilter
+    falhasResolvidas?: RegistroFalhaAtivoListRelationFilter
+    rotinasInfra?: ChecklistRotinaInfraListRelationFilter
   }, "id" | "email">
 
   export type UsuarioOrderByWithAggregationInput = {
@@ -25926,6 +30125,76 @@ export namespace Prisma {
     tarefaId?: StringNullableWithAggregatesFilter<"Notificacao"> | string | null
     usuarioId?: StringNullableWithAggregatesFilter<"Notificacao"> | string | null
     criadoEm?: DateTimeWithAggregatesFilter<"Notificacao"> | Date | string
+  }
+
+  export type LogAuditoriaWhereInput = {
+    AND?: LogAuditoriaWhereInput | LogAuditoriaWhereInput[]
+    OR?: LogAuditoriaWhereInput[]
+    NOT?: LogAuditoriaWhereInput | LogAuditoriaWhereInput[]
+    id?: StringFilter<"LogAuditoria"> | string
+    usuarioId?: StringFilter<"LogAuditoria"> | string
+    acao?: StringFilter<"LogAuditoria"> | string
+    modulo?: StringFilter<"LogAuditoria"> | string
+    detalhes?: JsonNullableFilter<"LogAuditoria">
+    ip?: StringNullableFilter<"LogAuditoria"> | string | null
+    userAgent?: StringNullableFilter<"LogAuditoria"> | string | null
+    criadoEm?: DateTimeFilter<"LogAuditoria"> | Date | string
+    usuario?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
+  }
+
+  export type LogAuditoriaOrderByWithRelationInput = {
+    id?: SortOrder
+    usuarioId?: SortOrder
+    acao?: SortOrder
+    modulo?: SortOrder
+    detalhes?: SortOrderInput | SortOrder
+    ip?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    criadoEm?: SortOrder
+    usuario?: UsuarioOrderByWithRelationInput
+  }
+
+  export type LogAuditoriaWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: LogAuditoriaWhereInput | LogAuditoriaWhereInput[]
+    OR?: LogAuditoriaWhereInput[]
+    NOT?: LogAuditoriaWhereInput | LogAuditoriaWhereInput[]
+    usuarioId?: StringFilter<"LogAuditoria"> | string
+    acao?: StringFilter<"LogAuditoria"> | string
+    modulo?: StringFilter<"LogAuditoria"> | string
+    detalhes?: JsonNullableFilter<"LogAuditoria">
+    ip?: StringNullableFilter<"LogAuditoria"> | string | null
+    userAgent?: StringNullableFilter<"LogAuditoria"> | string | null
+    criadoEm?: DateTimeFilter<"LogAuditoria"> | Date | string
+    usuario?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
+  }, "id">
+
+  export type LogAuditoriaOrderByWithAggregationInput = {
+    id?: SortOrder
+    usuarioId?: SortOrder
+    acao?: SortOrder
+    modulo?: SortOrder
+    detalhes?: SortOrderInput | SortOrder
+    ip?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    criadoEm?: SortOrder
+    _count?: LogAuditoriaCountOrderByAggregateInput
+    _max?: LogAuditoriaMaxOrderByAggregateInput
+    _min?: LogAuditoriaMinOrderByAggregateInput
+  }
+
+  export type LogAuditoriaScalarWhereWithAggregatesInput = {
+    AND?: LogAuditoriaScalarWhereWithAggregatesInput | LogAuditoriaScalarWhereWithAggregatesInput[]
+    OR?: LogAuditoriaScalarWhereWithAggregatesInput[]
+    NOT?: LogAuditoriaScalarWhereWithAggregatesInput | LogAuditoriaScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"LogAuditoria"> | string
+    usuarioId?: StringWithAggregatesFilter<"LogAuditoria"> | string
+    acao?: StringWithAggregatesFilter<"LogAuditoria"> | string
+    modulo?: StringWithAggregatesFilter<"LogAuditoria"> | string
+    detalhes?: JsonNullableWithAggregatesFilter<"LogAuditoria">
+    ip?: StringNullableWithAggregatesFilter<"LogAuditoria"> | string | null
+    userAgent?: StringNullableWithAggregatesFilter<"LogAuditoria"> | string | null
+    criadoEm?: DateTimeWithAggregatesFilter<"LogAuditoria"> | Date | string
   }
 
   export type ControleChamadoWhereInput = {
@@ -26583,7 +30852,9 @@ export namespace Prisma {
     numeroChamado?: StringNullableFilter<"ChecklistEquipamentoItem"> | string | null
     descricaoProblema?: StringNullableFilter<"ChecklistEquipamentoItem"> | string | null
     valor?: DecimalNullableFilter<"ChecklistEquipamentoItem"> | Decimal | DecimalJsLike | number | string | null
+    ativoId?: StringNullableFilter<"ChecklistEquipamentoItem"> | string | null
     checklist?: XOR<ChecklistEquipamentoScalarRelationFilter, ChecklistEquipamentoWhereInput>
+    ativo?: XOR<AtivoLojaNullableScalarRelationFilter, AtivoLojaWhereInput> | null
   }
 
   export type ChecklistEquipamentoItemOrderByWithRelationInput = {
@@ -26597,7 +30868,9 @@ export namespace Prisma {
     numeroChamado?: SortOrderInput | SortOrder
     descricaoProblema?: SortOrderInput | SortOrder
     valor?: SortOrderInput | SortOrder
+    ativoId?: SortOrderInput | SortOrder
     checklist?: ChecklistEquipamentoOrderByWithRelationInput
+    ativo?: AtivoLojaOrderByWithRelationInput
   }
 
   export type ChecklistEquipamentoItemWhereUniqueInput = Prisma.AtLeast<{
@@ -26614,7 +30887,9 @@ export namespace Prisma {
     numeroChamado?: StringNullableFilter<"ChecklistEquipamentoItem"> | string | null
     descricaoProblema?: StringNullableFilter<"ChecklistEquipamentoItem"> | string | null
     valor?: DecimalNullableFilter<"ChecklistEquipamentoItem"> | Decimal | DecimalJsLike | number | string | null
+    ativoId?: StringNullableFilter<"ChecklistEquipamentoItem"> | string | null
     checklist?: XOR<ChecklistEquipamentoScalarRelationFilter, ChecklistEquipamentoWhereInput>
+    ativo?: XOR<AtivoLojaNullableScalarRelationFilter, AtivoLojaWhereInput> | null
   }, "id">
 
   export type ChecklistEquipamentoItemOrderByWithAggregationInput = {
@@ -26628,6 +30903,7 @@ export namespace Prisma {
     numeroChamado?: SortOrderInput | SortOrder
     descricaoProblema?: SortOrderInput | SortOrder
     valor?: SortOrderInput | SortOrder
+    ativoId?: SortOrderInput | SortOrder
     _count?: ChecklistEquipamentoItemCountOrderByAggregateInput
     _avg?: ChecklistEquipamentoItemAvgOrderByAggregateInput
     _max?: ChecklistEquipamentoItemMaxOrderByAggregateInput
@@ -26649,6 +30925,7 @@ export namespace Prisma {
     numeroChamado?: StringNullableWithAggregatesFilter<"ChecklistEquipamentoItem"> | string | null
     descricaoProblema?: StringNullableWithAggregatesFilter<"ChecklistEquipamentoItem"> | string | null
     valor?: DecimalNullableWithAggregatesFilter<"ChecklistEquipamentoItem"> | Decimal | DecimalJsLike | number | string | null
+    ativoId?: StringNullableWithAggregatesFilter<"ChecklistEquipamentoItem"> | string | null
   }
 
   export type ChecklistCarrinhoWhereInput = {
@@ -26876,7 +31153,15 @@ export namespace Prisma {
     ativo?: BoolFilter<"AtivoLoja"> | boolean
     criadoEm?: DateTimeFilter<"AtivoLoja"> | Date | string
     atualizadoEm?: DateTimeFilter<"AtivoLoja"> | Date | string
+    ultimaPreventiva?: DateTimeNullableFilter<"AtivoLoja"> | Date | string | null
+    proximaPreventiva?: DateTimeNullableFilter<"AtivoLoja"> | Date | string | null
+    ultimaTrocaBateria?: DateTimeNullableFilter<"AtivoLoja"> | Date | string | null
+    proximaTrocaBateria?: DateTimeNullableFilter<"AtivoLoja"> | Date | string | null
+    intervaloPreventiva?: IntNullableFilter<"AtivoLoja"> | number | null
+    dadosTecnicos?: JsonNullableFilter<"AtivoLoja">
     criadoPor?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
+    falhas?: RegistroFalhaAtivoListRelationFilter
+    checklistItens?: ChecklistEquipamentoItemListRelationFilter
   }
 
   export type AtivoLojaOrderByWithRelationInput = {
@@ -26898,7 +31183,15 @@ export namespace Prisma {
     ativo?: SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
+    ultimaPreventiva?: SortOrderInput | SortOrder
+    proximaPreventiva?: SortOrderInput | SortOrder
+    ultimaTrocaBateria?: SortOrderInput | SortOrder
+    proximaTrocaBateria?: SortOrderInput | SortOrder
+    intervaloPreventiva?: SortOrderInput | SortOrder
+    dadosTecnicos?: SortOrderInput | SortOrder
     criadoPor?: UsuarioOrderByWithRelationInput
+    falhas?: RegistroFalhaAtivoOrderByRelationAggregateInput
+    checklistItens?: ChecklistEquipamentoItemOrderByRelationAggregateInput
   }
 
   export type AtivoLojaWhereUniqueInput = Prisma.AtLeast<{
@@ -26923,7 +31216,15 @@ export namespace Prisma {
     ativo?: BoolFilter<"AtivoLoja"> | boolean
     criadoEm?: DateTimeFilter<"AtivoLoja"> | Date | string
     atualizadoEm?: DateTimeFilter<"AtivoLoja"> | Date | string
+    ultimaPreventiva?: DateTimeNullableFilter<"AtivoLoja"> | Date | string | null
+    proximaPreventiva?: DateTimeNullableFilter<"AtivoLoja"> | Date | string | null
+    ultimaTrocaBateria?: DateTimeNullableFilter<"AtivoLoja"> | Date | string | null
+    proximaTrocaBateria?: DateTimeNullableFilter<"AtivoLoja"> | Date | string | null
+    intervaloPreventiva?: IntNullableFilter<"AtivoLoja"> | number | null
+    dadosTecnicos?: JsonNullableFilter<"AtivoLoja">
     criadoPor?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
+    falhas?: RegistroFalhaAtivoListRelationFilter
+    checklistItens?: ChecklistEquipamentoItemListRelationFilter
   }, "id">
 
   export type AtivoLojaOrderByWithAggregationInput = {
@@ -26945,6 +31246,12 @@ export namespace Prisma {
     ativo?: SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
+    ultimaPreventiva?: SortOrderInput | SortOrder
+    proximaPreventiva?: SortOrderInput | SortOrder
+    ultimaTrocaBateria?: SortOrderInput | SortOrder
+    proximaTrocaBateria?: SortOrderInput | SortOrder
+    intervaloPreventiva?: SortOrderInput | SortOrder
+    dadosTecnicos?: SortOrderInput | SortOrder
     _count?: AtivoLojaCountOrderByAggregateInput
     _avg?: AtivoLojaAvgOrderByAggregateInput
     _max?: AtivoLojaMaxOrderByAggregateInput
@@ -26974,6 +31281,198 @@ export namespace Prisma {
     ativo?: BoolWithAggregatesFilter<"AtivoLoja"> | boolean
     criadoEm?: DateTimeWithAggregatesFilter<"AtivoLoja"> | Date | string
     atualizadoEm?: DateTimeWithAggregatesFilter<"AtivoLoja"> | Date | string
+    ultimaPreventiva?: DateTimeNullableWithAggregatesFilter<"AtivoLoja"> | Date | string | null
+    proximaPreventiva?: DateTimeNullableWithAggregatesFilter<"AtivoLoja"> | Date | string | null
+    ultimaTrocaBateria?: DateTimeNullableWithAggregatesFilter<"AtivoLoja"> | Date | string | null
+    proximaTrocaBateria?: DateTimeNullableWithAggregatesFilter<"AtivoLoja"> | Date | string | null
+    intervaloPreventiva?: IntNullableWithAggregatesFilter<"AtivoLoja"> | number | null
+    dadosTecnicos?: JsonNullableWithAggregatesFilter<"AtivoLoja">
+  }
+
+  export type RegistroFalhaAtivoWhereInput = {
+    AND?: RegistroFalhaAtivoWhereInput | RegistroFalhaAtivoWhereInput[]
+    OR?: RegistroFalhaAtivoWhereInput[]
+    NOT?: RegistroFalhaAtivoWhereInput | RegistroFalhaAtivoWhereInput[]
+    id?: StringFilter<"RegistroFalhaAtivo"> | string
+    ativoId?: StringFilter<"RegistroFalhaAtivo"> | string
+    dataDeteccao?: DateTimeFilter<"RegistroFalhaAtivo"> | Date | string
+    dataResolucao?: DateTimeNullableFilter<"RegistroFalhaAtivo"> | Date | string | null
+    origemResolucao?: StringNullableFilter<"RegistroFalhaAtivo"> | string | null
+    descricao?: StringFilter<"RegistroFalhaAtivo"> | string
+    reincidencia?: BoolFilter<"RegistroFalhaAtivo"> | boolean
+    chamadoId?: StringNullableFilter<"RegistroFalhaAtivo"> | string | null
+    resolvidoPorId?: StringNullableFilter<"RegistroFalhaAtivo"> | string | null
+    criadoEm?: DateTimeFilter<"RegistroFalhaAtivo"> | Date | string
+    ativo?: XOR<AtivoLojaScalarRelationFilter, AtivoLojaWhereInput>
+    resolvidoPor?: XOR<UsuarioNullableScalarRelationFilter, UsuarioWhereInput> | null
+  }
+
+  export type RegistroFalhaAtivoOrderByWithRelationInput = {
+    id?: SortOrder
+    ativoId?: SortOrder
+    dataDeteccao?: SortOrder
+    dataResolucao?: SortOrderInput | SortOrder
+    origemResolucao?: SortOrderInput | SortOrder
+    descricao?: SortOrder
+    reincidencia?: SortOrder
+    chamadoId?: SortOrderInput | SortOrder
+    resolvidoPorId?: SortOrderInput | SortOrder
+    criadoEm?: SortOrder
+    ativo?: AtivoLojaOrderByWithRelationInput
+    resolvidoPor?: UsuarioOrderByWithRelationInput
+  }
+
+  export type RegistroFalhaAtivoWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: RegistroFalhaAtivoWhereInput | RegistroFalhaAtivoWhereInput[]
+    OR?: RegistroFalhaAtivoWhereInput[]
+    NOT?: RegistroFalhaAtivoWhereInput | RegistroFalhaAtivoWhereInput[]
+    ativoId?: StringFilter<"RegistroFalhaAtivo"> | string
+    dataDeteccao?: DateTimeFilter<"RegistroFalhaAtivo"> | Date | string
+    dataResolucao?: DateTimeNullableFilter<"RegistroFalhaAtivo"> | Date | string | null
+    origemResolucao?: StringNullableFilter<"RegistroFalhaAtivo"> | string | null
+    descricao?: StringFilter<"RegistroFalhaAtivo"> | string
+    reincidencia?: BoolFilter<"RegistroFalhaAtivo"> | boolean
+    chamadoId?: StringNullableFilter<"RegistroFalhaAtivo"> | string | null
+    resolvidoPorId?: StringNullableFilter<"RegistroFalhaAtivo"> | string | null
+    criadoEm?: DateTimeFilter<"RegistroFalhaAtivo"> | Date | string
+    ativo?: XOR<AtivoLojaScalarRelationFilter, AtivoLojaWhereInput>
+    resolvidoPor?: XOR<UsuarioNullableScalarRelationFilter, UsuarioWhereInput> | null
+  }, "id">
+
+  export type RegistroFalhaAtivoOrderByWithAggregationInput = {
+    id?: SortOrder
+    ativoId?: SortOrder
+    dataDeteccao?: SortOrder
+    dataResolucao?: SortOrderInput | SortOrder
+    origemResolucao?: SortOrderInput | SortOrder
+    descricao?: SortOrder
+    reincidencia?: SortOrder
+    chamadoId?: SortOrderInput | SortOrder
+    resolvidoPorId?: SortOrderInput | SortOrder
+    criadoEm?: SortOrder
+    _count?: RegistroFalhaAtivoCountOrderByAggregateInput
+    _max?: RegistroFalhaAtivoMaxOrderByAggregateInput
+    _min?: RegistroFalhaAtivoMinOrderByAggregateInput
+  }
+
+  export type RegistroFalhaAtivoScalarWhereWithAggregatesInput = {
+    AND?: RegistroFalhaAtivoScalarWhereWithAggregatesInput | RegistroFalhaAtivoScalarWhereWithAggregatesInput[]
+    OR?: RegistroFalhaAtivoScalarWhereWithAggregatesInput[]
+    NOT?: RegistroFalhaAtivoScalarWhereWithAggregatesInput | RegistroFalhaAtivoScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"RegistroFalhaAtivo"> | string
+    ativoId?: StringWithAggregatesFilter<"RegistroFalhaAtivo"> | string
+    dataDeteccao?: DateTimeWithAggregatesFilter<"RegistroFalhaAtivo"> | Date | string
+    dataResolucao?: DateTimeNullableWithAggregatesFilter<"RegistroFalhaAtivo"> | Date | string | null
+    origemResolucao?: StringNullableWithAggregatesFilter<"RegistroFalhaAtivo"> | string | null
+    descricao?: StringWithAggregatesFilter<"RegistroFalhaAtivo"> | string
+    reincidencia?: BoolWithAggregatesFilter<"RegistroFalhaAtivo"> | boolean
+    chamadoId?: StringNullableWithAggregatesFilter<"RegistroFalhaAtivo"> | string | null
+    resolvidoPorId?: StringNullableWithAggregatesFilter<"RegistroFalhaAtivo"> | string | null
+    criadoEm?: DateTimeWithAggregatesFilter<"RegistroFalhaAtivo"> | Date | string
+  }
+
+  export type ChecklistRotinaInfraWhereInput = {
+    AND?: ChecklistRotinaInfraWhereInput | ChecklistRotinaInfraWhereInput[]
+    OR?: ChecklistRotinaInfraWhereInput[]
+    NOT?: ChecklistRotinaInfraWhereInput | ChecklistRotinaInfraWhereInput[]
+    id?: StringFilter<"ChecklistRotinaInfra"> | string
+    tipo?: EnumTipoRotinaInfraFilter<"ChecklistRotinaInfra"> | $Enums.TipoRotinaInfra
+    regiao?: StringFilter<"ChecklistRotinaInfra"> | string
+    unidade?: StringFilter<"ChecklistRotinaInfra"> | string
+    semana?: IntNullableFilter<"ChecklistRotinaInfra"> | number | null
+    mes?: IntFilter<"ChecklistRotinaInfra"> | number
+    ano?: IntFilter<"ChecklistRotinaInfra"> | number
+    conforme?: BoolFilter<"ChecklistRotinaInfra"> | boolean
+    descricao?: StringNullableFilter<"ChecklistRotinaInfra"> | string | null
+    preenchidoEm?: DateTimeFilter<"ChecklistRotinaInfra"> | Date | string
+    preenchidoComAtraso?: BoolFilter<"ChecklistRotinaInfra"> | boolean
+    dataLimite?: DateTimeFilter<"ChecklistRotinaInfra"> | Date | string
+    criadoPorId?: StringFilter<"ChecklistRotinaInfra"> | string
+    ativoId?: StringNullableFilter<"ChecklistRotinaInfra"> | string | null
+    criadoPor?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
+  }
+
+  export type ChecklistRotinaInfraOrderByWithRelationInput = {
+    id?: SortOrder
+    tipo?: SortOrder
+    regiao?: SortOrder
+    unidade?: SortOrder
+    semana?: SortOrderInput | SortOrder
+    mes?: SortOrder
+    ano?: SortOrder
+    conforme?: SortOrder
+    descricao?: SortOrderInput | SortOrder
+    preenchidoEm?: SortOrder
+    preenchidoComAtraso?: SortOrder
+    dataLimite?: SortOrder
+    criadoPorId?: SortOrder
+    ativoId?: SortOrderInput | SortOrder
+    criadoPor?: UsuarioOrderByWithRelationInput
+  }
+
+  export type ChecklistRotinaInfraWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    rotina_unica?: ChecklistRotinaInfraRotina_unicaCompoundUniqueInput
+    AND?: ChecklistRotinaInfraWhereInput | ChecklistRotinaInfraWhereInput[]
+    OR?: ChecklistRotinaInfraWhereInput[]
+    NOT?: ChecklistRotinaInfraWhereInput | ChecklistRotinaInfraWhereInput[]
+    tipo?: EnumTipoRotinaInfraFilter<"ChecklistRotinaInfra"> | $Enums.TipoRotinaInfra
+    regiao?: StringFilter<"ChecklistRotinaInfra"> | string
+    unidade?: StringFilter<"ChecklistRotinaInfra"> | string
+    semana?: IntNullableFilter<"ChecklistRotinaInfra"> | number | null
+    mes?: IntFilter<"ChecklistRotinaInfra"> | number
+    ano?: IntFilter<"ChecklistRotinaInfra"> | number
+    conforme?: BoolFilter<"ChecklistRotinaInfra"> | boolean
+    descricao?: StringNullableFilter<"ChecklistRotinaInfra"> | string | null
+    preenchidoEm?: DateTimeFilter<"ChecklistRotinaInfra"> | Date | string
+    preenchidoComAtraso?: BoolFilter<"ChecklistRotinaInfra"> | boolean
+    dataLimite?: DateTimeFilter<"ChecklistRotinaInfra"> | Date | string
+    criadoPorId?: StringFilter<"ChecklistRotinaInfra"> | string
+    ativoId?: StringNullableFilter<"ChecklistRotinaInfra"> | string | null
+    criadoPor?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
+  }, "id" | "rotina_unica">
+
+  export type ChecklistRotinaInfraOrderByWithAggregationInput = {
+    id?: SortOrder
+    tipo?: SortOrder
+    regiao?: SortOrder
+    unidade?: SortOrder
+    semana?: SortOrderInput | SortOrder
+    mes?: SortOrder
+    ano?: SortOrder
+    conforme?: SortOrder
+    descricao?: SortOrderInput | SortOrder
+    preenchidoEm?: SortOrder
+    preenchidoComAtraso?: SortOrder
+    dataLimite?: SortOrder
+    criadoPorId?: SortOrder
+    ativoId?: SortOrderInput | SortOrder
+    _count?: ChecklistRotinaInfraCountOrderByAggregateInput
+    _avg?: ChecklistRotinaInfraAvgOrderByAggregateInput
+    _max?: ChecklistRotinaInfraMaxOrderByAggregateInput
+    _min?: ChecklistRotinaInfraMinOrderByAggregateInput
+    _sum?: ChecklistRotinaInfraSumOrderByAggregateInput
+  }
+
+  export type ChecklistRotinaInfraScalarWhereWithAggregatesInput = {
+    AND?: ChecklistRotinaInfraScalarWhereWithAggregatesInput | ChecklistRotinaInfraScalarWhereWithAggregatesInput[]
+    OR?: ChecklistRotinaInfraScalarWhereWithAggregatesInput[]
+    NOT?: ChecklistRotinaInfraScalarWhereWithAggregatesInput | ChecklistRotinaInfraScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ChecklistRotinaInfra"> | string
+    tipo?: EnumTipoRotinaInfraWithAggregatesFilter<"ChecklistRotinaInfra"> | $Enums.TipoRotinaInfra
+    regiao?: StringWithAggregatesFilter<"ChecklistRotinaInfra"> | string
+    unidade?: StringWithAggregatesFilter<"ChecklistRotinaInfra"> | string
+    semana?: IntNullableWithAggregatesFilter<"ChecklistRotinaInfra"> | number | null
+    mes?: IntWithAggregatesFilter<"ChecklistRotinaInfra"> | number
+    ano?: IntWithAggregatesFilter<"ChecklistRotinaInfra"> | number
+    conforme?: BoolWithAggregatesFilter<"ChecklistRotinaInfra"> | boolean
+    descricao?: StringNullableWithAggregatesFilter<"ChecklistRotinaInfra"> | string | null
+    preenchidoEm?: DateTimeWithAggregatesFilter<"ChecklistRotinaInfra"> | Date | string
+    preenchidoComAtraso?: BoolWithAggregatesFilter<"ChecklistRotinaInfra"> | boolean
+    dataLimite?: DateTimeWithAggregatesFilter<"ChecklistRotinaInfra"> | Date | string
+    criadoPorId?: StringWithAggregatesFilter<"ChecklistRotinaInfra"> | string
+    ativoId?: StringNullableWithAggregatesFilter<"ChecklistRotinaInfra"> | string | null
   }
 
   export type LojaCreateInput = {
@@ -27083,6 +31582,9 @@ export namespace Prisma {
     sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioUncheckedCreateInput = {
@@ -27104,6 +31606,9 @@ export namespace Prisma {
     sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaUncheckedCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioUpdateInput = {
@@ -27125,6 +31630,9 @@ export namespace Prisma {
     sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type UsuarioUncheckedUpdateInput = {
@@ -27146,6 +31654,9 @@ export namespace Prisma {
     sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUncheckedUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type UsuarioCreateManyInput = {
@@ -27496,6 +32007,82 @@ export namespace Prisma {
     lida?: BoolFieldUpdateOperationsInput | boolean
     tarefaId?: NullableStringFieldUpdateOperationsInput | string | null
     usuarioId?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LogAuditoriaCreateInput = {
+    id?: string
+    acao: string
+    modulo: string
+    detalhes?: NullableJsonNullValueInput | InputJsonValue
+    ip?: string | null
+    userAgent?: string | null
+    criadoEm?: Date | string
+    usuario: UsuarioCreateNestedOneWithoutLogsAuditoriaInput
+  }
+
+  export type LogAuditoriaUncheckedCreateInput = {
+    id?: string
+    usuarioId: string
+    acao: string
+    modulo: string
+    detalhes?: NullableJsonNullValueInput | InputJsonValue
+    ip?: string | null
+    userAgent?: string | null
+    criadoEm?: Date | string
+  }
+
+  export type LogAuditoriaUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    acao?: StringFieldUpdateOperationsInput | string
+    modulo?: StringFieldUpdateOperationsInput | string
+    detalhes?: NullableJsonNullValueInput | InputJsonValue
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    usuario?: UsuarioUpdateOneRequiredWithoutLogsAuditoriaNestedInput
+  }
+
+  export type LogAuditoriaUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    usuarioId?: StringFieldUpdateOperationsInput | string
+    acao?: StringFieldUpdateOperationsInput | string
+    modulo?: StringFieldUpdateOperationsInput | string
+    detalhes?: NullableJsonNullValueInput | InputJsonValue
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LogAuditoriaCreateManyInput = {
+    id?: string
+    usuarioId: string
+    acao: string
+    modulo: string
+    detalhes?: NullableJsonNullValueInput | InputJsonValue
+    ip?: string | null
+    userAgent?: string | null
+    criadoEm?: Date | string
+  }
+
+  export type LogAuditoriaUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    acao?: StringFieldUpdateOperationsInput | string
+    modulo?: StringFieldUpdateOperationsInput | string
+    detalhes?: NullableJsonNullValueInput | InputJsonValue
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LogAuditoriaUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    usuarioId?: StringFieldUpdateOperationsInput | string
+    acao?: StringFieldUpdateOperationsInput | string
+    modulo?: StringFieldUpdateOperationsInput | string
+    detalhes?: NullableJsonNullValueInput | InputJsonValue
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -28229,6 +32816,7 @@ export namespace Prisma {
     descricaoProblema?: string | null
     valor?: Decimal | DecimalJsLike | number | string | null
     checklist: ChecklistEquipamentoCreateNestedOneWithoutItensInput
+    ativo?: AtivoLojaCreateNestedOneWithoutChecklistItensInput
   }
 
   export type ChecklistEquipamentoItemUncheckedCreateInput = {
@@ -28242,6 +32830,7 @@ export namespace Prisma {
     numeroChamado?: string | null
     descricaoProblema?: string | null
     valor?: Decimal | DecimalJsLike | number | string | null
+    ativoId?: string | null
   }
 
   export type ChecklistEquipamentoItemUpdateInput = {
@@ -28255,6 +32844,7 @@ export namespace Prisma {
     descricaoProblema?: NullableStringFieldUpdateOperationsInput | string | null
     valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     checklist?: ChecklistEquipamentoUpdateOneRequiredWithoutItensNestedInput
+    ativo?: AtivoLojaUpdateOneWithoutChecklistItensNestedInput
   }
 
   export type ChecklistEquipamentoItemUncheckedUpdateInput = {
@@ -28268,6 +32858,7 @@ export namespace Prisma {
     numeroChamado?: NullableStringFieldUpdateOperationsInput | string | null
     descricaoProblema?: NullableStringFieldUpdateOperationsInput | string | null
     valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    ativoId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ChecklistEquipamentoItemCreateManyInput = {
@@ -28281,6 +32872,7 @@ export namespace Prisma {
     numeroChamado?: string | null
     descricaoProblema?: string | null
     valor?: Decimal | DecimalJsLike | number | string | null
+    ativoId?: string | null
   }
 
   export type ChecklistEquipamentoItemUpdateManyMutationInput = {
@@ -28306,6 +32898,7 @@ export namespace Prisma {
     numeroChamado?: NullableStringFieldUpdateOperationsInput | string | null
     descricaoProblema?: NullableStringFieldUpdateOperationsInput | string | null
     valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    ativoId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ChecklistCarrinhoCreateInput = {
@@ -28538,7 +33131,15 @@ export namespace Prisma {
     ativo?: boolean
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    ultimaPreventiva?: Date | string | null
+    proximaPreventiva?: Date | string | null
+    ultimaTrocaBateria?: Date | string | null
+    proximaTrocaBateria?: Date | string | null
+    intervaloPreventiva?: number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
     criadoPor: UsuarioCreateNestedOneWithoutAtivosLojaInput
+    falhas?: RegistroFalhaAtivoCreateNestedManyWithoutAtivoInput
+    checklistItens?: ChecklistEquipamentoItemCreateNestedManyWithoutAtivoInput
   }
 
   export type AtivoLojaUncheckedCreateInput = {
@@ -28560,6 +33161,14 @@ export namespace Prisma {
     ativo?: boolean
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    ultimaPreventiva?: Date | string | null
+    proximaPreventiva?: Date | string | null
+    ultimaTrocaBateria?: Date | string | null
+    proximaTrocaBateria?: Date | string | null
+    intervaloPreventiva?: number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    falhas?: RegistroFalhaAtivoUncheckedCreateNestedManyWithoutAtivoInput
+    checklistItens?: ChecklistEquipamentoItemUncheckedCreateNestedManyWithoutAtivoInput
   }
 
   export type AtivoLojaUpdateInput = {
@@ -28580,7 +33189,15 @@ export namespace Prisma {
     ativo?: BoolFieldUpdateOperationsInput | boolean
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    ultimaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ultimaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
     criadoPor?: UsuarioUpdateOneRequiredWithoutAtivosLojaNestedInput
+    falhas?: RegistroFalhaAtivoUpdateManyWithoutAtivoNestedInput
+    checklistItens?: ChecklistEquipamentoItemUpdateManyWithoutAtivoNestedInput
   }
 
   export type AtivoLojaUncheckedUpdateInput = {
@@ -28602,6 +33219,14 @@ export namespace Prisma {
     ativo?: BoolFieldUpdateOperationsInput | boolean
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    ultimaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ultimaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    falhas?: RegistroFalhaAtivoUncheckedUpdateManyWithoutAtivoNestedInput
+    checklistItens?: ChecklistEquipamentoItemUncheckedUpdateManyWithoutAtivoNestedInput
   }
 
   export type AtivoLojaCreateManyInput = {
@@ -28623,6 +33248,12 @@ export namespace Prisma {
     ativo?: boolean
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    ultimaPreventiva?: Date | string | null
+    proximaPreventiva?: Date | string | null
+    ultimaTrocaBateria?: Date | string | null
+    proximaTrocaBateria?: Date | string | null
+    intervaloPreventiva?: number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type AtivoLojaUpdateManyMutationInput = {
@@ -28643,6 +33274,12 @@ export namespace Prisma {
     ativo?: BoolFieldUpdateOperationsInput | boolean
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    ultimaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ultimaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type AtivoLojaUncheckedUpdateManyInput = {
@@ -28664,6 +33301,219 @@ export namespace Prisma {
     ativo?: BoolFieldUpdateOperationsInput | boolean
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    ultimaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ultimaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+  }
+
+  export type RegistroFalhaAtivoCreateInput = {
+    id?: string
+    dataDeteccao: Date | string
+    dataResolucao?: Date | string | null
+    origemResolucao?: string | null
+    descricao: string
+    reincidencia?: boolean
+    chamadoId?: string | null
+    criadoEm?: Date | string
+    ativo: AtivoLojaCreateNestedOneWithoutFalhasInput
+    resolvidoPor?: UsuarioCreateNestedOneWithoutFalhasResolvidasInput
+  }
+
+  export type RegistroFalhaAtivoUncheckedCreateInput = {
+    id?: string
+    ativoId: string
+    dataDeteccao: Date | string
+    dataResolucao?: Date | string | null
+    origemResolucao?: string | null
+    descricao: string
+    reincidencia?: boolean
+    chamadoId?: string | null
+    resolvidoPorId?: string | null
+    criadoEm?: Date | string
+  }
+
+  export type RegistroFalhaAtivoUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dataDeteccao?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataResolucao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origemResolucao?: NullableStringFieldUpdateOperationsInput | string | null
+    descricao?: StringFieldUpdateOperationsInput | string
+    reincidencia?: BoolFieldUpdateOperationsInput | boolean
+    chamadoId?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    ativo?: AtivoLojaUpdateOneRequiredWithoutFalhasNestedInput
+    resolvidoPor?: UsuarioUpdateOneWithoutFalhasResolvidasNestedInput
+  }
+
+  export type RegistroFalhaAtivoUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ativoId?: StringFieldUpdateOperationsInput | string
+    dataDeteccao?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataResolucao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origemResolucao?: NullableStringFieldUpdateOperationsInput | string | null
+    descricao?: StringFieldUpdateOperationsInput | string
+    reincidencia?: BoolFieldUpdateOperationsInput | boolean
+    chamadoId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvidoPorId?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RegistroFalhaAtivoCreateManyInput = {
+    id?: string
+    ativoId: string
+    dataDeteccao: Date | string
+    dataResolucao?: Date | string | null
+    origemResolucao?: string | null
+    descricao: string
+    reincidencia?: boolean
+    chamadoId?: string | null
+    resolvidoPorId?: string | null
+    criadoEm?: Date | string
+  }
+
+  export type RegistroFalhaAtivoUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dataDeteccao?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataResolucao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origemResolucao?: NullableStringFieldUpdateOperationsInput | string | null
+    descricao?: StringFieldUpdateOperationsInput | string
+    reincidencia?: BoolFieldUpdateOperationsInput | boolean
+    chamadoId?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RegistroFalhaAtivoUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ativoId?: StringFieldUpdateOperationsInput | string
+    dataDeteccao?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataResolucao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origemResolucao?: NullableStringFieldUpdateOperationsInput | string | null
+    descricao?: StringFieldUpdateOperationsInput | string
+    reincidencia?: BoolFieldUpdateOperationsInput | boolean
+    chamadoId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvidoPorId?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ChecklistRotinaInfraCreateInput = {
+    id?: string
+    tipo: $Enums.TipoRotinaInfra
+    regiao: string
+    unidade: string
+    semana?: number | null
+    mes: number
+    ano: number
+    conforme: boolean
+    descricao?: string | null
+    preenchidoEm?: Date | string
+    preenchidoComAtraso?: boolean
+    dataLimite: Date | string
+    ativoId?: string | null
+    criadoPor: UsuarioCreateNestedOneWithoutRotinasInfraInput
+  }
+
+  export type ChecklistRotinaInfraUncheckedCreateInput = {
+    id?: string
+    tipo: $Enums.TipoRotinaInfra
+    regiao: string
+    unidade: string
+    semana?: number | null
+    mes: number
+    ano: number
+    conforme: boolean
+    descricao?: string | null
+    preenchidoEm?: Date | string
+    preenchidoComAtraso?: boolean
+    dataLimite: Date | string
+    criadoPorId: string
+    ativoId?: string | null
+  }
+
+  export type ChecklistRotinaInfraUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tipo?: EnumTipoRotinaInfraFieldUpdateOperationsInput | $Enums.TipoRotinaInfra
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    semana?: NullableIntFieldUpdateOperationsInput | number | null
+    mes?: IntFieldUpdateOperationsInput | number
+    ano?: IntFieldUpdateOperationsInput | number
+    conforme?: BoolFieldUpdateOperationsInput | boolean
+    descricao?: NullableStringFieldUpdateOperationsInput | string | null
+    preenchidoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    preenchidoComAtraso?: BoolFieldUpdateOperationsInput | boolean
+    dataLimite?: DateTimeFieldUpdateOperationsInput | Date | string
+    ativoId?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoPor?: UsuarioUpdateOneRequiredWithoutRotinasInfraNestedInput
+  }
+
+  export type ChecklistRotinaInfraUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tipo?: EnumTipoRotinaInfraFieldUpdateOperationsInput | $Enums.TipoRotinaInfra
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    semana?: NullableIntFieldUpdateOperationsInput | number | null
+    mes?: IntFieldUpdateOperationsInput | number
+    ano?: IntFieldUpdateOperationsInput | number
+    conforme?: BoolFieldUpdateOperationsInput | boolean
+    descricao?: NullableStringFieldUpdateOperationsInput | string | null
+    preenchidoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    preenchidoComAtraso?: BoolFieldUpdateOperationsInput | boolean
+    dataLimite?: DateTimeFieldUpdateOperationsInput | Date | string
+    criadoPorId?: StringFieldUpdateOperationsInput | string
+    ativoId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ChecklistRotinaInfraCreateManyInput = {
+    id?: string
+    tipo: $Enums.TipoRotinaInfra
+    regiao: string
+    unidade: string
+    semana?: number | null
+    mes: number
+    ano: number
+    conforme: boolean
+    descricao?: string | null
+    preenchidoEm?: Date | string
+    preenchidoComAtraso?: boolean
+    dataLimite: Date | string
+    criadoPorId: string
+    ativoId?: string | null
+  }
+
+  export type ChecklistRotinaInfraUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tipo?: EnumTipoRotinaInfraFieldUpdateOperationsInput | $Enums.TipoRotinaInfra
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    semana?: NullableIntFieldUpdateOperationsInput | number | null
+    mes?: IntFieldUpdateOperationsInput | number
+    ano?: IntFieldUpdateOperationsInput | number
+    conforme?: BoolFieldUpdateOperationsInput | boolean
+    descricao?: NullableStringFieldUpdateOperationsInput | string | null
+    preenchidoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    preenchidoComAtraso?: BoolFieldUpdateOperationsInput | boolean
+    dataLimite?: DateTimeFieldUpdateOperationsInput | Date | string
+    ativoId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ChecklistRotinaInfraUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tipo?: EnumTipoRotinaInfraFieldUpdateOperationsInput | $Enums.TipoRotinaInfra
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    semana?: NullableIntFieldUpdateOperationsInput | number | null
+    mes?: IntFieldUpdateOperationsInput | number
+    ano?: IntFieldUpdateOperationsInput | number
+    conforme?: BoolFieldUpdateOperationsInput | boolean
+    descricao?: NullableStringFieldUpdateOperationsInput | string | null
+    preenchidoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    preenchidoComAtraso?: BoolFieldUpdateOperationsInput | boolean
+    dataLimite?: DateTimeFieldUpdateOperationsInput | Date | string
+    criadoPorId?: StringFieldUpdateOperationsInput | string
+    ativoId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -28910,6 +33760,24 @@ export namespace Prisma {
     none?: TarefaWhereInput
   }
 
+  export type LogAuditoriaListRelationFilter = {
+    every?: LogAuditoriaWhereInput
+    some?: LogAuditoriaWhereInput
+    none?: LogAuditoriaWhereInput
+  }
+
+  export type RegistroFalhaAtivoListRelationFilter = {
+    every?: RegistroFalhaAtivoWhereInput
+    some?: RegistroFalhaAtivoWhereInput
+    none?: RegistroFalhaAtivoWhereInput
+  }
+
+  export type ChecklistRotinaInfraListRelationFilter = {
+    every?: ChecklistRotinaInfraWhereInput
+    some?: ChecklistRotinaInfraWhereInput
+    none?: ChecklistRotinaInfraWhereInput
+  }
+
   export type ChecklistCarrinhoOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -28935,6 +33803,18 @@ export namespace Prisma {
   }
 
   export type TarefaOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type LogAuditoriaOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type RegistroFalhaAtivoOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ChecklistRotinaInfraOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -29194,6 +34074,86 @@ export namespace Prisma {
     tarefaId?: SortOrder
     usuarioId?: SortOrder
     criadoEm?: SortOrder
+  }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type LogAuditoriaCountOrderByAggregateInput = {
+    id?: SortOrder
+    usuarioId?: SortOrder
+    acao?: SortOrder
+    modulo?: SortOrder
+    detalhes?: SortOrder
+    ip?: SortOrder
+    userAgent?: SortOrder
+    criadoEm?: SortOrder
+  }
+
+  export type LogAuditoriaMaxOrderByAggregateInput = {
+    id?: SortOrder
+    usuarioId?: SortOrder
+    acao?: SortOrder
+    modulo?: SortOrder
+    ip?: SortOrder
+    userAgent?: SortOrder
+    criadoEm?: SortOrder
+  }
+
+  export type LogAuditoriaMinOrderByAggregateInput = {
+    id?: SortOrder
+    usuarioId?: SortOrder
+    acao?: SortOrder
+    modulo?: SortOrder
+    ip?: SortOrder
+    userAgent?: SortOrder
+    criadoEm?: SortOrder
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
   export type EnumSegmentoChamadoFilter<$PrismaModel = never> = {
@@ -29740,6 +34700,11 @@ export namespace Prisma {
     isNot?: ChecklistEquipamentoWhereInput
   }
 
+  export type AtivoLojaNullableScalarRelationFilter = {
+    is?: AtivoLojaWhereInput | null
+    isNot?: AtivoLojaWhereInput | null
+  }
+
   export type ChecklistEquipamentoItemCountOrderByAggregateInput = {
     id?: SortOrder
     checklistId?: SortOrder
@@ -29751,6 +34716,7 @@ export namespace Prisma {
     numeroChamado?: SortOrder
     descricaoProblema?: SortOrder
     valor?: SortOrder
+    ativoId?: SortOrder
   }
 
   export type ChecklistEquipamentoItemAvgOrderByAggregateInput = {
@@ -29770,6 +34736,7 @@ export namespace Prisma {
     numeroChamado?: SortOrder
     descricaoProblema?: SortOrder
     valor?: SortOrder
+    ativoId?: SortOrder
   }
 
   export type ChecklistEquipamentoItemMinOrderByAggregateInput = {
@@ -29783,6 +34750,7 @@ export namespace Prisma {
     numeroChamado?: SortOrder
     descricaoProblema?: SortOrder
     valor?: SortOrder
+    ativoId?: SortOrder
   }
 
   export type ChecklistEquipamentoItemSumOrderByAggregateInput = {
@@ -29962,6 +34930,17 @@ export namespace Prisma {
     total?: SortOrder
   }
 
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type AtivoLojaCountOrderByAggregateInput = {
     id?: SortOrder
     nome?: SortOrder
@@ -29981,10 +34960,17 @@ export namespace Prisma {
     ativo?: SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
+    ultimaPreventiva?: SortOrder
+    proximaPreventiva?: SortOrder
+    ultimaTrocaBateria?: SortOrder
+    proximaTrocaBateria?: SortOrder
+    intervaloPreventiva?: SortOrder
+    dadosTecnicos?: SortOrder
   }
 
   export type AtivoLojaAvgOrderByAggregateInput = {
     quantidade?: SortOrder
+    intervaloPreventiva?: SortOrder
   }
 
   export type AtivoLojaMaxOrderByAggregateInput = {
@@ -30006,6 +34992,11 @@ export namespace Prisma {
     ativo?: SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
+    ultimaPreventiva?: SortOrder
+    proximaPreventiva?: SortOrder
+    ultimaTrocaBateria?: SortOrder
+    proximaTrocaBateria?: SortOrder
+    intervaloPreventiva?: SortOrder
   }
 
   export type AtivoLojaMinOrderByAggregateInput = {
@@ -30027,10 +35018,164 @@ export namespace Prisma {
     ativo?: SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
+    ultimaPreventiva?: SortOrder
+    proximaPreventiva?: SortOrder
+    ultimaTrocaBateria?: SortOrder
+    proximaTrocaBateria?: SortOrder
+    intervaloPreventiva?: SortOrder
   }
 
   export type AtivoLojaSumOrderByAggregateInput = {
     quantidade?: SortOrder
+    intervaloPreventiva?: SortOrder
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type AtivoLojaScalarRelationFilter = {
+    is?: AtivoLojaWhereInput
+    isNot?: AtivoLojaWhereInput
+  }
+
+  export type RegistroFalhaAtivoCountOrderByAggregateInput = {
+    id?: SortOrder
+    ativoId?: SortOrder
+    dataDeteccao?: SortOrder
+    dataResolucao?: SortOrder
+    origemResolucao?: SortOrder
+    descricao?: SortOrder
+    reincidencia?: SortOrder
+    chamadoId?: SortOrder
+    resolvidoPorId?: SortOrder
+    criadoEm?: SortOrder
+  }
+
+  export type RegistroFalhaAtivoMaxOrderByAggregateInput = {
+    id?: SortOrder
+    ativoId?: SortOrder
+    dataDeteccao?: SortOrder
+    dataResolucao?: SortOrder
+    origemResolucao?: SortOrder
+    descricao?: SortOrder
+    reincidencia?: SortOrder
+    chamadoId?: SortOrder
+    resolvidoPorId?: SortOrder
+    criadoEm?: SortOrder
+  }
+
+  export type RegistroFalhaAtivoMinOrderByAggregateInput = {
+    id?: SortOrder
+    ativoId?: SortOrder
+    dataDeteccao?: SortOrder
+    dataResolucao?: SortOrder
+    origemResolucao?: SortOrder
+    descricao?: SortOrder
+    reincidencia?: SortOrder
+    chamadoId?: SortOrder
+    resolvidoPorId?: SortOrder
+    criadoEm?: SortOrder
+  }
+
+  export type EnumTipoRotinaInfraFilter<$PrismaModel = never> = {
+    equals?: $Enums.TipoRotinaInfra | EnumTipoRotinaInfraFieldRefInput<$PrismaModel>
+    in?: $Enums.TipoRotinaInfra[] | ListEnumTipoRotinaInfraFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TipoRotinaInfra[] | ListEnumTipoRotinaInfraFieldRefInput<$PrismaModel>
+    not?: NestedEnumTipoRotinaInfraFilter<$PrismaModel> | $Enums.TipoRotinaInfra
+  }
+
+  export type ChecklistRotinaInfraRotina_unicaCompoundUniqueInput = {
+    tipo: $Enums.TipoRotinaInfra
+    unidade: string
+    semana: number
+    mes: number
+    ano: number
+  }
+
+  export type ChecklistRotinaInfraCountOrderByAggregateInput = {
+    id?: SortOrder
+    tipo?: SortOrder
+    regiao?: SortOrder
+    unidade?: SortOrder
+    semana?: SortOrder
+    mes?: SortOrder
+    ano?: SortOrder
+    conforme?: SortOrder
+    descricao?: SortOrder
+    preenchidoEm?: SortOrder
+    preenchidoComAtraso?: SortOrder
+    dataLimite?: SortOrder
+    criadoPorId?: SortOrder
+    ativoId?: SortOrder
+  }
+
+  export type ChecklistRotinaInfraAvgOrderByAggregateInput = {
+    semana?: SortOrder
+    mes?: SortOrder
+    ano?: SortOrder
+  }
+
+  export type ChecklistRotinaInfraMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tipo?: SortOrder
+    regiao?: SortOrder
+    unidade?: SortOrder
+    semana?: SortOrder
+    mes?: SortOrder
+    ano?: SortOrder
+    conforme?: SortOrder
+    descricao?: SortOrder
+    preenchidoEm?: SortOrder
+    preenchidoComAtraso?: SortOrder
+    dataLimite?: SortOrder
+    criadoPorId?: SortOrder
+    ativoId?: SortOrder
+  }
+
+  export type ChecklistRotinaInfraMinOrderByAggregateInput = {
+    id?: SortOrder
+    tipo?: SortOrder
+    regiao?: SortOrder
+    unidade?: SortOrder
+    semana?: SortOrder
+    mes?: SortOrder
+    ano?: SortOrder
+    conforme?: SortOrder
+    descricao?: SortOrder
+    preenchidoEm?: SortOrder
+    preenchidoComAtraso?: SortOrder
+    dataLimite?: SortOrder
+    criadoPorId?: SortOrder
+    ativoId?: SortOrder
+  }
+
+  export type ChecklistRotinaInfraSumOrderByAggregateInput = {
+    semana?: SortOrder
+    mes?: SortOrder
+    ano?: SortOrder
+  }
+
+  export type EnumTipoRotinaInfraWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TipoRotinaInfra | EnumTipoRotinaInfraFieldRefInput<$PrismaModel>
+    in?: $Enums.TipoRotinaInfra[] | ListEnumTipoRotinaInfraFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TipoRotinaInfra[] | ListEnumTipoRotinaInfraFieldRefInput<$PrismaModel>
+    not?: NestedEnumTipoRotinaInfraWithAggregatesFilter<$PrismaModel> | $Enums.TipoRotinaInfra
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTipoRotinaInfraFilter<$PrismaModel>
+    _max?: NestedEnumTipoRotinaInfraFilter<$PrismaModel>
   }
 
   export type UsuarioCreateNestedManyWithoutLojaInput = {
@@ -30161,6 +35306,27 @@ export namespace Prisma {
     connect?: TarefaWhereUniqueInput | TarefaWhereUniqueInput[]
   }
 
+  export type LogAuditoriaCreateNestedManyWithoutUsuarioInput = {
+    create?: XOR<LogAuditoriaCreateWithoutUsuarioInput, LogAuditoriaUncheckedCreateWithoutUsuarioInput> | LogAuditoriaCreateWithoutUsuarioInput[] | LogAuditoriaUncheckedCreateWithoutUsuarioInput[]
+    connectOrCreate?: LogAuditoriaCreateOrConnectWithoutUsuarioInput | LogAuditoriaCreateOrConnectWithoutUsuarioInput[]
+    createMany?: LogAuditoriaCreateManyUsuarioInputEnvelope
+    connect?: LogAuditoriaWhereUniqueInput | LogAuditoriaWhereUniqueInput[]
+  }
+
+  export type RegistroFalhaAtivoCreateNestedManyWithoutResolvidoPorInput = {
+    create?: XOR<RegistroFalhaAtivoCreateWithoutResolvidoPorInput, RegistroFalhaAtivoUncheckedCreateWithoutResolvidoPorInput> | RegistroFalhaAtivoCreateWithoutResolvidoPorInput[] | RegistroFalhaAtivoUncheckedCreateWithoutResolvidoPorInput[]
+    connectOrCreate?: RegistroFalhaAtivoCreateOrConnectWithoutResolvidoPorInput | RegistroFalhaAtivoCreateOrConnectWithoutResolvidoPorInput[]
+    createMany?: RegistroFalhaAtivoCreateManyResolvidoPorInputEnvelope
+    connect?: RegistroFalhaAtivoWhereUniqueInput | RegistroFalhaAtivoWhereUniqueInput[]
+  }
+
+  export type ChecklistRotinaInfraCreateNestedManyWithoutCriadoPorInput = {
+    create?: XOR<ChecklistRotinaInfraCreateWithoutCriadoPorInput, ChecklistRotinaInfraUncheckedCreateWithoutCriadoPorInput> | ChecklistRotinaInfraCreateWithoutCriadoPorInput[] | ChecklistRotinaInfraUncheckedCreateWithoutCriadoPorInput[]
+    connectOrCreate?: ChecklistRotinaInfraCreateOrConnectWithoutCriadoPorInput | ChecklistRotinaInfraCreateOrConnectWithoutCriadoPorInput[]
+    createMany?: ChecklistRotinaInfraCreateManyCriadoPorInputEnvelope
+    connect?: ChecklistRotinaInfraWhereUniqueInput | ChecklistRotinaInfraWhereUniqueInput[]
+  }
+
   export type ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput = {
     create?: XOR<ChecklistCarrinhoCreateWithoutCriadoPorInput, ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput> | ChecklistCarrinhoCreateWithoutCriadoPorInput[] | ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput[]
     connectOrCreate?: ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput | ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput[]
@@ -30215,6 +35381,27 @@ export namespace Prisma {
     connectOrCreate?: TarefaCreateOrConnectWithoutCriadoPorInput | TarefaCreateOrConnectWithoutCriadoPorInput[]
     createMany?: TarefaCreateManyCriadoPorInputEnvelope
     connect?: TarefaWhereUniqueInput | TarefaWhereUniqueInput[]
+  }
+
+  export type LogAuditoriaUncheckedCreateNestedManyWithoutUsuarioInput = {
+    create?: XOR<LogAuditoriaCreateWithoutUsuarioInput, LogAuditoriaUncheckedCreateWithoutUsuarioInput> | LogAuditoriaCreateWithoutUsuarioInput[] | LogAuditoriaUncheckedCreateWithoutUsuarioInput[]
+    connectOrCreate?: LogAuditoriaCreateOrConnectWithoutUsuarioInput | LogAuditoriaCreateOrConnectWithoutUsuarioInput[]
+    createMany?: LogAuditoriaCreateManyUsuarioInputEnvelope
+    connect?: LogAuditoriaWhereUniqueInput | LogAuditoriaWhereUniqueInput[]
+  }
+
+  export type RegistroFalhaAtivoUncheckedCreateNestedManyWithoutResolvidoPorInput = {
+    create?: XOR<RegistroFalhaAtivoCreateWithoutResolvidoPorInput, RegistroFalhaAtivoUncheckedCreateWithoutResolvidoPorInput> | RegistroFalhaAtivoCreateWithoutResolvidoPorInput[] | RegistroFalhaAtivoUncheckedCreateWithoutResolvidoPorInput[]
+    connectOrCreate?: RegistroFalhaAtivoCreateOrConnectWithoutResolvidoPorInput | RegistroFalhaAtivoCreateOrConnectWithoutResolvidoPorInput[]
+    createMany?: RegistroFalhaAtivoCreateManyResolvidoPorInputEnvelope
+    connect?: RegistroFalhaAtivoWhereUniqueInput | RegistroFalhaAtivoWhereUniqueInput[]
+  }
+
+  export type ChecklistRotinaInfraUncheckedCreateNestedManyWithoutCriadoPorInput = {
+    create?: XOR<ChecklistRotinaInfraCreateWithoutCriadoPorInput, ChecklistRotinaInfraUncheckedCreateWithoutCriadoPorInput> | ChecklistRotinaInfraCreateWithoutCriadoPorInput[] | ChecklistRotinaInfraUncheckedCreateWithoutCriadoPorInput[]
+    connectOrCreate?: ChecklistRotinaInfraCreateOrConnectWithoutCriadoPorInput | ChecklistRotinaInfraCreateOrConnectWithoutCriadoPorInput[]
+    createMany?: ChecklistRotinaInfraCreateManyCriadoPorInputEnvelope
+    connect?: ChecklistRotinaInfraWhereUniqueInput | ChecklistRotinaInfraWhereUniqueInput[]
   }
 
   export type EnumRoleFieldUpdateOperationsInput = {
@@ -30343,6 +35530,48 @@ export namespace Prisma {
     deleteMany?: TarefaScalarWhereInput | TarefaScalarWhereInput[]
   }
 
+  export type LogAuditoriaUpdateManyWithoutUsuarioNestedInput = {
+    create?: XOR<LogAuditoriaCreateWithoutUsuarioInput, LogAuditoriaUncheckedCreateWithoutUsuarioInput> | LogAuditoriaCreateWithoutUsuarioInput[] | LogAuditoriaUncheckedCreateWithoutUsuarioInput[]
+    connectOrCreate?: LogAuditoriaCreateOrConnectWithoutUsuarioInput | LogAuditoriaCreateOrConnectWithoutUsuarioInput[]
+    upsert?: LogAuditoriaUpsertWithWhereUniqueWithoutUsuarioInput | LogAuditoriaUpsertWithWhereUniqueWithoutUsuarioInput[]
+    createMany?: LogAuditoriaCreateManyUsuarioInputEnvelope
+    set?: LogAuditoriaWhereUniqueInput | LogAuditoriaWhereUniqueInput[]
+    disconnect?: LogAuditoriaWhereUniqueInput | LogAuditoriaWhereUniqueInput[]
+    delete?: LogAuditoriaWhereUniqueInput | LogAuditoriaWhereUniqueInput[]
+    connect?: LogAuditoriaWhereUniqueInput | LogAuditoriaWhereUniqueInput[]
+    update?: LogAuditoriaUpdateWithWhereUniqueWithoutUsuarioInput | LogAuditoriaUpdateWithWhereUniqueWithoutUsuarioInput[]
+    updateMany?: LogAuditoriaUpdateManyWithWhereWithoutUsuarioInput | LogAuditoriaUpdateManyWithWhereWithoutUsuarioInput[]
+    deleteMany?: LogAuditoriaScalarWhereInput | LogAuditoriaScalarWhereInput[]
+  }
+
+  export type RegistroFalhaAtivoUpdateManyWithoutResolvidoPorNestedInput = {
+    create?: XOR<RegistroFalhaAtivoCreateWithoutResolvidoPorInput, RegistroFalhaAtivoUncheckedCreateWithoutResolvidoPorInput> | RegistroFalhaAtivoCreateWithoutResolvidoPorInput[] | RegistroFalhaAtivoUncheckedCreateWithoutResolvidoPorInput[]
+    connectOrCreate?: RegistroFalhaAtivoCreateOrConnectWithoutResolvidoPorInput | RegistroFalhaAtivoCreateOrConnectWithoutResolvidoPorInput[]
+    upsert?: RegistroFalhaAtivoUpsertWithWhereUniqueWithoutResolvidoPorInput | RegistroFalhaAtivoUpsertWithWhereUniqueWithoutResolvidoPorInput[]
+    createMany?: RegistroFalhaAtivoCreateManyResolvidoPorInputEnvelope
+    set?: RegistroFalhaAtivoWhereUniqueInput | RegistroFalhaAtivoWhereUniqueInput[]
+    disconnect?: RegistroFalhaAtivoWhereUniqueInput | RegistroFalhaAtivoWhereUniqueInput[]
+    delete?: RegistroFalhaAtivoWhereUniqueInput | RegistroFalhaAtivoWhereUniqueInput[]
+    connect?: RegistroFalhaAtivoWhereUniqueInput | RegistroFalhaAtivoWhereUniqueInput[]
+    update?: RegistroFalhaAtivoUpdateWithWhereUniqueWithoutResolvidoPorInput | RegistroFalhaAtivoUpdateWithWhereUniqueWithoutResolvidoPorInput[]
+    updateMany?: RegistroFalhaAtivoUpdateManyWithWhereWithoutResolvidoPorInput | RegistroFalhaAtivoUpdateManyWithWhereWithoutResolvidoPorInput[]
+    deleteMany?: RegistroFalhaAtivoScalarWhereInput | RegistroFalhaAtivoScalarWhereInput[]
+  }
+
+  export type ChecklistRotinaInfraUpdateManyWithoutCriadoPorNestedInput = {
+    create?: XOR<ChecklistRotinaInfraCreateWithoutCriadoPorInput, ChecklistRotinaInfraUncheckedCreateWithoutCriadoPorInput> | ChecklistRotinaInfraCreateWithoutCriadoPorInput[] | ChecklistRotinaInfraUncheckedCreateWithoutCriadoPorInput[]
+    connectOrCreate?: ChecklistRotinaInfraCreateOrConnectWithoutCriadoPorInput | ChecklistRotinaInfraCreateOrConnectWithoutCriadoPorInput[]
+    upsert?: ChecklistRotinaInfraUpsertWithWhereUniqueWithoutCriadoPorInput | ChecklistRotinaInfraUpsertWithWhereUniqueWithoutCriadoPorInput[]
+    createMany?: ChecklistRotinaInfraCreateManyCriadoPorInputEnvelope
+    set?: ChecklistRotinaInfraWhereUniqueInput | ChecklistRotinaInfraWhereUniqueInput[]
+    disconnect?: ChecklistRotinaInfraWhereUniqueInput | ChecklistRotinaInfraWhereUniqueInput[]
+    delete?: ChecklistRotinaInfraWhereUniqueInput | ChecklistRotinaInfraWhereUniqueInput[]
+    connect?: ChecklistRotinaInfraWhereUniqueInput | ChecklistRotinaInfraWhereUniqueInput[]
+    update?: ChecklistRotinaInfraUpdateWithWhereUniqueWithoutCriadoPorInput | ChecklistRotinaInfraUpdateWithWhereUniqueWithoutCriadoPorInput[]
+    updateMany?: ChecklistRotinaInfraUpdateManyWithWhereWithoutCriadoPorInput | ChecklistRotinaInfraUpdateManyWithWhereWithoutCriadoPorInput[]
+    deleteMany?: ChecklistRotinaInfraScalarWhereInput | ChecklistRotinaInfraScalarWhereInput[]
+  }
+
   export type ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput = {
     create?: XOR<ChecklistCarrinhoCreateWithoutCriadoPorInput, ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput> | ChecklistCarrinhoCreateWithoutCriadoPorInput[] | ChecklistCarrinhoUncheckedCreateWithoutCriadoPorInput[]
     connectOrCreate?: ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput | ChecklistCarrinhoCreateOrConnectWithoutCriadoPorInput[]
@@ -30453,6 +35682,48 @@ export namespace Prisma {
     update?: TarefaUpdateWithWhereUniqueWithoutCriadoPorInput | TarefaUpdateWithWhereUniqueWithoutCriadoPorInput[]
     updateMany?: TarefaUpdateManyWithWhereWithoutCriadoPorInput | TarefaUpdateManyWithWhereWithoutCriadoPorInput[]
     deleteMany?: TarefaScalarWhereInput | TarefaScalarWhereInput[]
+  }
+
+  export type LogAuditoriaUncheckedUpdateManyWithoutUsuarioNestedInput = {
+    create?: XOR<LogAuditoriaCreateWithoutUsuarioInput, LogAuditoriaUncheckedCreateWithoutUsuarioInput> | LogAuditoriaCreateWithoutUsuarioInput[] | LogAuditoriaUncheckedCreateWithoutUsuarioInput[]
+    connectOrCreate?: LogAuditoriaCreateOrConnectWithoutUsuarioInput | LogAuditoriaCreateOrConnectWithoutUsuarioInput[]
+    upsert?: LogAuditoriaUpsertWithWhereUniqueWithoutUsuarioInput | LogAuditoriaUpsertWithWhereUniqueWithoutUsuarioInput[]
+    createMany?: LogAuditoriaCreateManyUsuarioInputEnvelope
+    set?: LogAuditoriaWhereUniqueInput | LogAuditoriaWhereUniqueInput[]
+    disconnect?: LogAuditoriaWhereUniqueInput | LogAuditoriaWhereUniqueInput[]
+    delete?: LogAuditoriaWhereUniqueInput | LogAuditoriaWhereUniqueInput[]
+    connect?: LogAuditoriaWhereUniqueInput | LogAuditoriaWhereUniqueInput[]
+    update?: LogAuditoriaUpdateWithWhereUniqueWithoutUsuarioInput | LogAuditoriaUpdateWithWhereUniqueWithoutUsuarioInput[]
+    updateMany?: LogAuditoriaUpdateManyWithWhereWithoutUsuarioInput | LogAuditoriaUpdateManyWithWhereWithoutUsuarioInput[]
+    deleteMany?: LogAuditoriaScalarWhereInput | LogAuditoriaScalarWhereInput[]
+  }
+
+  export type RegistroFalhaAtivoUncheckedUpdateManyWithoutResolvidoPorNestedInput = {
+    create?: XOR<RegistroFalhaAtivoCreateWithoutResolvidoPorInput, RegistroFalhaAtivoUncheckedCreateWithoutResolvidoPorInput> | RegistroFalhaAtivoCreateWithoutResolvidoPorInput[] | RegistroFalhaAtivoUncheckedCreateWithoutResolvidoPorInput[]
+    connectOrCreate?: RegistroFalhaAtivoCreateOrConnectWithoutResolvidoPorInput | RegistroFalhaAtivoCreateOrConnectWithoutResolvidoPorInput[]
+    upsert?: RegistroFalhaAtivoUpsertWithWhereUniqueWithoutResolvidoPorInput | RegistroFalhaAtivoUpsertWithWhereUniqueWithoutResolvidoPorInput[]
+    createMany?: RegistroFalhaAtivoCreateManyResolvidoPorInputEnvelope
+    set?: RegistroFalhaAtivoWhereUniqueInput | RegistroFalhaAtivoWhereUniqueInput[]
+    disconnect?: RegistroFalhaAtivoWhereUniqueInput | RegistroFalhaAtivoWhereUniqueInput[]
+    delete?: RegistroFalhaAtivoWhereUniqueInput | RegistroFalhaAtivoWhereUniqueInput[]
+    connect?: RegistroFalhaAtivoWhereUniqueInput | RegistroFalhaAtivoWhereUniqueInput[]
+    update?: RegistroFalhaAtivoUpdateWithWhereUniqueWithoutResolvidoPorInput | RegistroFalhaAtivoUpdateWithWhereUniqueWithoutResolvidoPorInput[]
+    updateMany?: RegistroFalhaAtivoUpdateManyWithWhereWithoutResolvidoPorInput | RegistroFalhaAtivoUpdateManyWithWhereWithoutResolvidoPorInput[]
+    deleteMany?: RegistroFalhaAtivoScalarWhereInput | RegistroFalhaAtivoScalarWhereInput[]
+  }
+
+  export type ChecklistRotinaInfraUncheckedUpdateManyWithoutCriadoPorNestedInput = {
+    create?: XOR<ChecklistRotinaInfraCreateWithoutCriadoPorInput, ChecklistRotinaInfraUncheckedCreateWithoutCriadoPorInput> | ChecklistRotinaInfraCreateWithoutCriadoPorInput[] | ChecklistRotinaInfraUncheckedCreateWithoutCriadoPorInput[]
+    connectOrCreate?: ChecklistRotinaInfraCreateOrConnectWithoutCriadoPorInput | ChecklistRotinaInfraCreateOrConnectWithoutCriadoPorInput[]
+    upsert?: ChecklistRotinaInfraUpsertWithWhereUniqueWithoutCriadoPorInput | ChecklistRotinaInfraUpsertWithWhereUniqueWithoutCriadoPorInput[]
+    createMany?: ChecklistRotinaInfraCreateManyCriadoPorInputEnvelope
+    set?: ChecklistRotinaInfraWhereUniqueInput | ChecklistRotinaInfraWhereUniqueInput[]
+    disconnect?: ChecklistRotinaInfraWhereUniqueInput | ChecklistRotinaInfraWhereUniqueInput[]
+    delete?: ChecklistRotinaInfraWhereUniqueInput | ChecklistRotinaInfraWhereUniqueInput[]
+    connect?: ChecklistRotinaInfraWhereUniqueInput | ChecklistRotinaInfraWhereUniqueInput[]
+    update?: ChecklistRotinaInfraUpdateWithWhereUniqueWithoutCriadoPorInput | ChecklistRotinaInfraUpdateWithWhereUniqueWithoutCriadoPorInput[]
+    updateMany?: ChecklistRotinaInfraUpdateManyWithWhereWithoutCriadoPorInput | ChecklistRotinaInfraUpdateManyWithWhereWithoutCriadoPorInput[]
+    deleteMany?: ChecklistRotinaInfraScalarWhereInput | ChecklistRotinaInfraScalarWhereInput[]
   }
 
   export type UsuarioCreateNestedOneWithoutRefreshTokensInput = {
@@ -30597,6 +35868,20 @@ export namespace Prisma {
     delete?: UsuarioWhereInput | boolean
     connect?: UsuarioWhereUniqueInput
     update?: XOR<XOR<UsuarioUpdateToOneWithWhereWithoutNotificacoesInput, UsuarioUpdateWithoutNotificacoesInput>, UsuarioUncheckedUpdateWithoutNotificacoesInput>
+  }
+
+  export type UsuarioCreateNestedOneWithoutLogsAuditoriaInput = {
+    create?: XOR<UsuarioCreateWithoutLogsAuditoriaInput, UsuarioUncheckedCreateWithoutLogsAuditoriaInput>
+    connectOrCreate?: UsuarioCreateOrConnectWithoutLogsAuditoriaInput
+    connect?: UsuarioWhereUniqueInput
+  }
+
+  export type UsuarioUpdateOneRequiredWithoutLogsAuditoriaNestedInput = {
+    create?: XOR<UsuarioCreateWithoutLogsAuditoriaInput, UsuarioUncheckedCreateWithoutLogsAuditoriaInput>
+    connectOrCreate?: UsuarioCreateOrConnectWithoutLogsAuditoriaInput
+    upsert?: UsuarioUpsertWithoutLogsAuditoriaInput
+    connect?: UsuarioWhereUniqueInput
+    update?: XOR<XOR<UsuarioUpdateToOneWithWhereWithoutLogsAuditoriaInput, UsuarioUpdateWithoutLogsAuditoriaInput>, UsuarioUncheckedUpdateWithoutLogsAuditoriaInput>
   }
 
   export type EnumSegmentoChamadoFieldUpdateOperationsInput = {
@@ -30857,6 +36142,12 @@ export namespace Prisma {
     connect?: ChecklistEquipamentoWhereUniqueInput
   }
 
+  export type AtivoLojaCreateNestedOneWithoutChecklistItensInput = {
+    create?: XOR<AtivoLojaCreateWithoutChecklistItensInput, AtivoLojaUncheckedCreateWithoutChecklistItensInput>
+    connectOrCreate?: AtivoLojaCreateOrConnectWithoutChecklistItensInput
+    connect?: AtivoLojaWhereUniqueInput
+  }
+
   export type EnumTipoEquipamentoFieldUpdateOperationsInput = {
     set?: $Enums.TipoEquipamento
   }
@@ -30867,6 +36158,16 @@ export namespace Prisma {
     upsert?: ChecklistEquipamentoUpsertWithoutItensInput
     connect?: ChecklistEquipamentoWhereUniqueInput
     update?: XOR<XOR<ChecklistEquipamentoUpdateToOneWithWhereWithoutItensInput, ChecklistEquipamentoUpdateWithoutItensInput>, ChecklistEquipamentoUncheckedUpdateWithoutItensInput>
+  }
+
+  export type AtivoLojaUpdateOneWithoutChecklistItensNestedInput = {
+    create?: XOR<AtivoLojaCreateWithoutChecklistItensInput, AtivoLojaUncheckedCreateWithoutChecklistItensInput>
+    connectOrCreate?: AtivoLojaCreateOrConnectWithoutChecklistItensInput
+    upsert?: AtivoLojaUpsertWithoutChecklistItensInput
+    disconnect?: AtivoLojaWhereInput | boolean
+    delete?: AtivoLojaWhereInput | boolean
+    connect?: AtivoLojaWhereUniqueInput
+    update?: XOR<XOR<AtivoLojaUpdateToOneWithWhereWithoutChecklistItensInput, AtivoLojaUpdateWithoutChecklistItensInput>, AtivoLojaUncheckedUpdateWithoutChecklistItensInput>
   }
 
   export type ChecklistCarrinhoItemCreateNestedManyWithoutChecklistInput = {
@@ -30949,12 +36250,152 @@ export namespace Prisma {
     connect?: UsuarioWhereUniqueInput
   }
 
+  export type RegistroFalhaAtivoCreateNestedManyWithoutAtivoInput = {
+    create?: XOR<RegistroFalhaAtivoCreateWithoutAtivoInput, RegistroFalhaAtivoUncheckedCreateWithoutAtivoInput> | RegistroFalhaAtivoCreateWithoutAtivoInput[] | RegistroFalhaAtivoUncheckedCreateWithoutAtivoInput[]
+    connectOrCreate?: RegistroFalhaAtivoCreateOrConnectWithoutAtivoInput | RegistroFalhaAtivoCreateOrConnectWithoutAtivoInput[]
+    createMany?: RegistroFalhaAtivoCreateManyAtivoInputEnvelope
+    connect?: RegistroFalhaAtivoWhereUniqueInput | RegistroFalhaAtivoWhereUniqueInput[]
+  }
+
+  export type ChecklistEquipamentoItemCreateNestedManyWithoutAtivoInput = {
+    create?: XOR<ChecklistEquipamentoItemCreateWithoutAtivoInput, ChecklistEquipamentoItemUncheckedCreateWithoutAtivoInput> | ChecklistEquipamentoItemCreateWithoutAtivoInput[] | ChecklistEquipamentoItemUncheckedCreateWithoutAtivoInput[]
+    connectOrCreate?: ChecklistEquipamentoItemCreateOrConnectWithoutAtivoInput | ChecklistEquipamentoItemCreateOrConnectWithoutAtivoInput[]
+    createMany?: ChecklistEquipamentoItemCreateManyAtivoInputEnvelope
+    connect?: ChecklistEquipamentoItemWhereUniqueInput | ChecklistEquipamentoItemWhereUniqueInput[]
+  }
+
+  export type RegistroFalhaAtivoUncheckedCreateNestedManyWithoutAtivoInput = {
+    create?: XOR<RegistroFalhaAtivoCreateWithoutAtivoInput, RegistroFalhaAtivoUncheckedCreateWithoutAtivoInput> | RegistroFalhaAtivoCreateWithoutAtivoInput[] | RegistroFalhaAtivoUncheckedCreateWithoutAtivoInput[]
+    connectOrCreate?: RegistroFalhaAtivoCreateOrConnectWithoutAtivoInput | RegistroFalhaAtivoCreateOrConnectWithoutAtivoInput[]
+    createMany?: RegistroFalhaAtivoCreateManyAtivoInputEnvelope
+    connect?: RegistroFalhaAtivoWhereUniqueInput | RegistroFalhaAtivoWhereUniqueInput[]
+  }
+
+  export type ChecklistEquipamentoItemUncheckedCreateNestedManyWithoutAtivoInput = {
+    create?: XOR<ChecklistEquipamentoItemCreateWithoutAtivoInput, ChecklistEquipamentoItemUncheckedCreateWithoutAtivoInput> | ChecklistEquipamentoItemCreateWithoutAtivoInput[] | ChecklistEquipamentoItemUncheckedCreateWithoutAtivoInput[]
+    connectOrCreate?: ChecklistEquipamentoItemCreateOrConnectWithoutAtivoInput | ChecklistEquipamentoItemCreateOrConnectWithoutAtivoInput[]
+    createMany?: ChecklistEquipamentoItemCreateManyAtivoInputEnvelope
+    connect?: ChecklistEquipamentoItemWhereUniqueInput | ChecklistEquipamentoItemWhereUniqueInput[]
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type UsuarioUpdateOneRequiredWithoutAtivosLojaNestedInput = {
     create?: XOR<UsuarioCreateWithoutAtivosLojaInput, UsuarioUncheckedCreateWithoutAtivosLojaInput>
     connectOrCreate?: UsuarioCreateOrConnectWithoutAtivosLojaInput
     upsert?: UsuarioUpsertWithoutAtivosLojaInput
     connect?: UsuarioWhereUniqueInput
     update?: XOR<XOR<UsuarioUpdateToOneWithWhereWithoutAtivosLojaInput, UsuarioUpdateWithoutAtivosLojaInput>, UsuarioUncheckedUpdateWithoutAtivosLojaInput>
+  }
+
+  export type RegistroFalhaAtivoUpdateManyWithoutAtivoNestedInput = {
+    create?: XOR<RegistroFalhaAtivoCreateWithoutAtivoInput, RegistroFalhaAtivoUncheckedCreateWithoutAtivoInput> | RegistroFalhaAtivoCreateWithoutAtivoInput[] | RegistroFalhaAtivoUncheckedCreateWithoutAtivoInput[]
+    connectOrCreate?: RegistroFalhaAtivoCreateOrConnectWithoutAtivoInput | RegistroFalhaAtivoCreateOrConnectWithoutAtivoInput[]
+    upsert?: RegistroFalhaAtivoUpsertWithWhereUniqueWithoutAtivoInput | RegistroFalhaAtivoUpsertWithWhereUniqueWithoutAtivoInput[]
+    createMany?: RegistroFalhaAtivoCreateManyAtivoInputEnvelope
+    set?: RegistroFalhaAtivoWhereUniqueInput | RegistroFalhaAtivoWhereUniqueInput[]
+    disconnect?: RegistroFalhaAtivoWhereUniqueInput | RegistroFalhaAtivoWhereUniqueInput[]
+    delete?: RegistroFalhaAtivoWhereUniqueInput | RegistroFalhaAtivoWhereUniqueInput[]
+    connect?: RegistroFalhaAtivoWhereUniqueInput | RegistroFalhaAtivoWhereUniqueInput[]
+    update?: RegistroFalhaAtivoUpdateWithWhereUniqueWithoutAtivoInput | RegistroFalhaAtivoUpdateWithWhereUniqueWithoutAtivoInput[]
+    updateMany?: RegistroFalhaAtivoUpdateManyWithWhereWithoutAtivoInput | RegistroFalhaAtivoUpdateManyWithWhereWithoutAtivoInput[]
+    deleteMany?: RegistroFalhaAtivoScalarWhereInput | RegistroFalhaAtivoScalarWhereInput[]
+  }
+
+  export type ChecklistEquipamentoItemUpdateManyWithoutAtivoNestedInput = {
+    create?: XOR<ChecklistEquipamentoItemCreateWithoutAtivoInput, ChecklistEquipamentoItemUncheckedCreateWithoutAtivoInput> | ChecklistEquipamentoItemCreateWithoutAtivoInput[] | ChecklistEquipamentoItemUncheckedCreateWithoutAtivoInput[]
+    connectOrCreate?: ChecklistEquipamentoItemCreateOrConnectWithoutAtivoInput | ChecklistEquipamentoItemCreateOrConnectWithoutAtivoInput[]
+    upsert?: ChecklistEquipamentoItemUpsertWithWhereUniqueWithoutAtivoInput | ChecklistEquipamentoItemUpsertWithWhereUniqueWithoutAtivoInput[]
+    createMany?: ChecklistEquipamentoItemCreateManyAtivoInputEnvelope
+    set?: ChecklistEquipamentoItemWhereUniqueInput | ChecklistEquipamentoItemWhereUniqueInput[]
+    disconnect?: ChecklistEquipamentoItemWhereUniqueInput | ChecklistEquipamentoItemWhereUniqueInput[]
+    delete?: ChecklistEquipamentoItemWhereUniqueInput | ChecklistEquipamentoItemWhereUniqueInput[]
+    connect?: ChecklistEquipamentoItemWhereUniqueInput | ChecklistEquipamentoItemWhereUniqueInput[]
+    update?: ChecklistEquipamentoItemUpdateWithWhereUniqueWithoutAtivoInput | ChecklistEquipamentoItemUpdateWithWhereUniqueWithoutAtivoInput[]
+    updateMany?: ChecklistEquipamentoItemUpdateManyWithWhereWithoutAtivoInput | ChecklistEquipamentoItemUpdateManyWithWhereWithoutAtivoInput[]
+    deleteMany?: ChecklistEquipamentoItemScalarWhereInput | ChecklistEquipamentoItemScalarWhereInput[]
+  }
+
+  export type RegistroFalhaAtivoUncheckedUpdateManyWithoutAtivoNestedInput = {
+    create?: XOR<RegistroFalhaAtivoCreateWithoutAtivoInput, RegistroFalhaAtivoUncheckedCreateWithoutAtivoInput> | RegistroFalhaAtivoCreateWithoutAtivoInput[] | RegistroFalhaAtivoUncheckedCreateWithoutAtivoInput[]
+    connectOrCreate?: RegistroFalhaAtivoCreateOrConnectWithoutAtivoInput | RegistroFalhaAtivoCreateOrConnectWithoutAtivoInput[]
+    upsert?: RegistroFalhaAtivoUpsertWithWhereUniqueWithoutAtivoInput | RegistroFalhaAtivoUpsertWithWhereUniqueWithoutAtivoInput[]
+    createMany?: RegistroFalhaAtivoCreateManyAtivoInputEnvelope
+    set?: RegistroFalhaAtivoWhereUniqueInput | RegistroFalhaAtivoWhereUniqueInput[]
+    disconnect?: RegistroFalhaAtivoWhereUniqueInput | RegistroFalhaAtivoWhereUniqueInput[]
+    delete?: RegistroFalhaAtivoWhereUniqueInput | RegistroFalhaAtivoWhereUniqueInput[]
+    connect?: RegistroFalhaAtivoWhereUniqueInput | RegistroFalhaAtivoWhereUniqueInput[]
+    update?: RegistroFalhaAtivoUpdateWithWhereUniqueWithoutAtivoInput | RegistroFalhaAtivoUpdateWithWhereUniqueWithoutAtivoInput[]
+    updateMany?: RegistroFalhaAtivoUpdateManyWithWhereWithoutAtivoInput | RegistroFalhaAtivoUpdateManyWithWhereWithoutAtivoInput[]
+    deleteMany?: RegistroFalhaAtivoScalarWhereInput | RegistroFalhaAtivoScalarWhereInput[]
+  }
+
+  export type ChecklistEquipamentoItemUncheckedUpdateManyWithoutAtivoNestedInput = {
+    create?: XOR<ChecklistEquipamentoItemCreateWithoutAtivoInput, ChecklistEquipamentoItemUncheckedCreateWithoutAtivoInput> | ChecklistEquipamentoItemCreateWithoutAtivoInput[] | ChecklistEquipamentoItemUncheckedCreateWithoutAtivoInput[]
+    connectOrCreate?: ChecklistEquipamentoItemCreateOrConnectWithoutAtivoInput | ChecklistEquipamentoItemCreateOrConnectWithoutAtivoInput[]
+    upsert?: ChecklistEquipamentoItemUpsertWithWhereUniqueWithoutAtivoInput | ChecklistEquipamentoItemUpsertWithWhereUniqueWithoutAtivoInput[]
+    createMany?: ChecklistEquipamentoItemCreateManyAtivoInputEnvelope
+    set?: ChecklistEquipamentoItemWhereUniqueInput | ChecklistEquipamentoItemWhereUniqueInput[]
+    disconnect?: ChecklistEquipamentoItemWhereUniqueInput | ChecklistEquipamentoItemWhereUniqueInput[]
+    delete?: ChecklistEquipamentoItemWhereUniqueInput | ChecklistEquipamentoItemWhereUniqueInput[]
+    connect?: ChecklistEquipamentoItemWhereUniqueInput | ChecklistEquipamentoItemWhereUniqueInput[]
+    update?: ChecklistEquipamentoItemUpdateWithWhereUniqueWithoutAtivoInput | ChecklistEquipamentoItemUpdateWithWhereUniqueWithoutAtivoInput[]
+    updateMany?: ChecklistEquipamentoItemUpdateManyWithWhereWithoutAtivoInput | ChecklistEquipamentoItemUpdateManyWithWhereWithoutAtivoInput[]
+    deleteMany?: ChecklistEquipamentoItemScalarWhereInput | ChecklistEquipamentoItemScalarWhereInput[]
+  }
+
+  export type AtivoLojaCreateNestedOneWithoutFalhasInput = {
+    create?: XOR<AtivoLojaCreateWithoutFalhasInput, AtivoLojaUncheckedCreateWithoutFalhasInput>
+    connectOrCreate?: AtivoLojaCreateOrConnectWithoutFalhasInput
+    connect?: AtivoLojaWhereUniqueInput
+  }
+
+  export type UsuarioCreateNestedOneWithoutFalhasResolvidasInput = {
+    create?: XOR<UsuarioCreateWithoutFalhasResolvidasInput, UsuarioUncheckedCreateWithoutFalhasResolvidasInput>
+    connectOrCreate?: UsuarioCreateOrConnectWithoutFalhasResolvidasInput
+    connect?: UsuarioWhereUniqueInput
+  }
+
+  export type AtivoLojaUpdateOneRequiredWithoutFalhasNestedInput = {
+    create?: XOR<AtivoLojaCreateWithoutFalhasInput, AtivoLojaUncheckedCreateWithoutFalhasInput>
+    connectOrCreate?: AtivoLojaCreateOrConnectWithoutFalhasInput
+    upsert?: AtivoLojaUpsertWithoutFalhasInput
+    connect?: AtivoLojaWhereUniqueInput
+    update?: XOR<XOR<AtivoLojaUpdateToOneWithWhereWithoutFalhasInput, AtivoLojaUpdateWithoutFalhasInput>, AtivoLojaUncheckedUpdateWithoutFalhasInput>
+  }
+
+  export type UsuarioUpdateOneWithoutFalhasResolvidasNestedInput = {
+    create?: XOR<UsuarioCreateWithoutFalhasResolvidasInput, UsuarioUncheckedCreateWithoutFalhasResolvidasInput>
+    connectOrCreate?: UsuarioCreateOrConnectWithoutFalhasResolvidasInput
+    upsert?: UsuarioUpsertWithoutFalhasResolvidasInput
+    disconnect?: UsuarioWhereInput | boolean
+    delete?: UsuarioWhereInput | boolean
+    connect?: UsuarioWhereUniqueInput
+    update?: XOR<XOR<UsuarioUpdateToOneWithWhereWithoutFalhasResolvidasInput, UsuarioUpdateWithoutFalhasResolvidasInput>, UsuarioUncheckedUpdateWithoutFalhasResolvidasInput>
+  }
+
+  export type UsuarioCreateNestedOneWithoutRotinasInfraInput = {
+    create?: XOR<UsuarioCreateWithoutRotinasInfraInput, UsuarioUncheckedCreateWithoutRotinasInfraInput>
+    connectOrCreate?: UsuarioCreateOrConnectWithoutRotinasInfraInput
+    connect?: UsuarioWhereUniqueInput
+  }
+
+  export type EnumTipoRotinaInfraFieldUpdateOperationsInput = {
+    set?: $Enums.TipoRotinaInfra
+  }
+
+  export type UsuarioUpdateOneRequiredWithoutRotinasInfraNestedInput = {
+    create?: XOR<UsuarioCreateWithoutRotinasInfraInput, UsuarioUncheckedCreateWithoutRotinasInfraInput>
+    connectOrCreate?: UsuarioCreateOrConnectWithoutRotinasInfraInput
+    upsert?: UsuarioUpsertWithoutRotinasInfraInput
+    connect?: UsuarioWhereUniqueInput
+    update?: XOR<XOR<UsuarioUpdateToOneWithWhereWithoutRotinasInfraInput, UsuarioUpdateWithoutRotinasInfraInput>, UsuarioUncheckedUpdateWithoutRotinasInfraInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -31181,6 +36622,29 @@ export namespace Prisma {
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type NestedEnumSegmentoChamadoFilter<$PrismaModel = never> = {
     equals?: $Enums.SegmentoChamado | EnumSegmentoChamadoFieldRefInput<$PrismaModel>
@@ -31321,6 +36785,50 @@ export namespace Prisma {
     _max?: NestedEnumTipoCarrinhoFilter<$PrismaModel>
   }
 
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedEnumTipoRotinaInfraFilter<$PrismaModel = never> = {
+    equals?: $Enums.TipoRotinaInfra | EnumTipoRotinaInfraFieldRefInput<$PrismaModel>
+    in?: $Enums.TipoRotinaInfra[] | ListEnumTipoRotinaInfraFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TipoRotinaInfra[] | ListEnumTipoRotinaInfraFieldRefInput<$PrismaModel>
+    not?: NestedEnumTipoRotinaInfraFilter<$PrismaModel> | $Enums.TipoRotinaInfra
+  }
+
+  export type NestedEnumTipoRotinaInfraWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TipoRotinaInfra | EnumTipoRotinaInfraFieldRefInput<$PrismaModel>
+    in?: $Enums.TipoRotinaInfra[] | ListEnumTipoRotinaInfraFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TipoRotinaInfra[] | ListEnumTipoRotinaInfraFieldRefInput<$PrismaModel>
+    not?: NestedEnumTipoRotinaInfraWithAggregatesFilter<$PrismaModel> | $Enums.TipoRotinaInfra
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTipoRotinaInfraFilter<$PrismaModel>
+    _max?: NestedEnumTipoRotinaInfraFilter<$PrismaModel>
+  }
+
   export type UsuarioCreateWithoutLojaInput = {
     id?: string
     nome: string
@@ -31339,6 +36847,9 @@ export namespace Prisma {
     sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioUncheckedCreateWithoutLojaInput = {
@@ -31359,6 +36870,9 @@ export namespace Prisma {
     sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaUncheckedCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioCreateOrConnectWithoutLojaInput = {
@@ -31518,6 +37032,14 @@ export namespace Prisma {
     ativo?: boolean
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    ultimaPreventiva?: Date | string | null
+    proximaPreventiva?: Date | string | null
+    ultimaTrocaBateria?: Date | string | null
+    proximaTrocaBateria?: Date | string | null
+    intervaloPreventiva?: number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    falhas?: RegistroFalhaAtivoCreateNestedManyWithoutAtivoInput
+    checklistItens?: ChecklistEquipamentoItemCreateNestedManyWithoutAtivoInput
   }
 
   export type AtivoLojaUncheckedCreateWithoutCriadoPorInput = {
@@ -31538,6 +37060,14 @@ export namespace Prisma {
     ativo?: boolean
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    ultimaPreventiva?: Date | string | null
+    proximaPreventiva?: Date | string | null
+    ultimaTrocaBateria?: Date | string | null
+    proximaTrocaBateria?: Date | string | null
+    intervaloPreventiva?: number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    falhas?: RegistroFalhaAtivoUncheckedCreateNestedManyWithoutAtivoInput
+    checklistItens?: ChecklistEquipamentoItemUncheckedCreateNestedManyWithoutAtivoInput
   }
 
   export type AtivoLojaCreateOrConnectWithoutCriadoPorInput = {
@@ -31714,6 +37244,112 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type LogAuditoriaCreateWithoutUsuarioInput = {
+    id?: string
+    acao: string
+    modulo: string
+    detalhes?: NullableJsonNullValueInput | InputJsonValue
+    ip?: string | null
+    userAgent?: string | null
+    criadoEm?: Date | string
+  }
+
+  export type LogAuditoriaUncheckedCreateWithoutUsuarioInput = {
+    id?: string
+    acao: string
+    modulo: string
+    detalhes?: NullableJsonNullValueInput | InputJsonValue
+    ip?: string | null
+    userAgent?: string | null
+    criadoEm?: Date | string
+  }
+
+  export type LogAuditoriaCreateOrConnectWithoutUsuarioInput = {
+    where: LogAuditoriaWhereUniqueInput
+    create: XOR<LogAuditoriaCreateWithoutUsuarioInput, LogAuditoriaUncheckedCreateWithoutUsuarioInput>
+  }
+
+  export type LogAuditoriaCreateManyUsuarioInputEnvelope = {
+    data: LogAuditoriaCreateManyUsuarioInput | LogAuditoriaCreateManyUsuarioInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type RegistroFalhaAtivoCreateWithoutResolvidoPorInput = {
+    id?: string
+    dataDeteccao: Date | string
+    dataResolucao?: Date | string | null
+    origemResolucao?: string | null
+    descricao: string
+    reincidencia?: boolean
+    chamadoId?: string | null
+    criadoEm?: Date | string
+    ativo: AtivoLojaCreateNestedOneWithoutFalhasInput
+  }
+
+  export type RegistroFalhaAtivoUncheckedCreateWithoutResolvidoPorInput = {
+    id?: string
+    ativoId: string
+    dataDeteccao: Date | string
+    dataResolucao?: Date | string | null
+    origemResolucao?: string | null
+    descricao: string
+    reincidencia?: boolean
+    chamadoId?: string | null
+    criadoEm?: Date | string
+  }
+
+  export type RegistroFalhaAtivoCreateOrConnectWithoutResolvidoPorInput = {
+    where: RegistroFalhaAtivoWhereUniqueInput
+    create: XOR<RegistroFalhaAtivoCreateWithoutResolvidoPorInput, RegistroFalhaAtivoUncheckedCreateWithoutResolvidoPorInput>
+  }
+
+  export type RegistroFalhaAtivoCreateManyResolvidoPorInputEnvelope = {
+    data: RegistroFalhaAtivoCreateManyResolvidoPorInput | RegistroFalhaAtivoCreateManyResolvidoPorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ChecklistRotinaInfraCreateWithoutCriadoPorInput = {
+    id?: string
+    tipo: $Enums.TipoRotinaInfra
+    regiao: string
+    unidade: string
+    semana?: number | null
+    mes: number
+    ano: number
+    conforme: boolean
+    descricao?: string | null
+    preenchidoEm?: Date | string
+    preenchidoComAtraso?: boolean
+    dataLimite: Date | string
+    ativoId?: string | null
+  }
+
+  export type ChecklistRotinaInfraUncheckedCreateWithoutCriadoPorInput = {
+    id?: string
+    tipo: $Enums.TipoRotinaInfra
+    regiao: string
+    unidade: string
+    semana?: number | null
+    mes: number
+    ano: number
+    conforme: boolean
+    descricao?: string | null
+    preenchidoEm?: Date | string
+    preenchidoComAtraso?: boolean
+    dataLimite: Date | string
+    ativoId?: string | null
+  }
+
+  export type ChecklistRotinaInfraCreateOrConnectWithoutCriadoPorInput = {
+    where: ChecklistRotinaInfraWhereUniqueInput
+    create: XOR<ChecklistRotinaInfraCreateWithoutCriadoPorInput, ChecklistRotinaInfraUncheckedCreateWithoutCriadoPorInput>
+  }
+
+  export type ChecklistRotinaInfraCreateManyCriadoPorInputEnvelope = {
+    data: ChecklistRotinaInfraCreateManyCriadoPorInput | ChecklistRotinaInfraCreateManyCriadoPorInput[]
+    skipDuplicates?: boolean
+  }
+
   export type LojaUpsertWithoutUsuariosInput = {
     update: XOR<LojaUpdateWithoutUsuariosInput, LojaUncheckedUpdateWithoutUsuariosInput>
     create: XOR<LojaCreateWithoutUsuariosInput, LojaUncheckedCreateWithoutUsuariosInput>
@@ -31849,6 +37485,12 @@ export namespace Prisma {
     ativo?: BoolFilter<"AtivoLoja"> | boolean
     criadoEm?: DateTimeFilter<"AtivoLoja"> | Date | string
     atualizadoEm?: DateTimeFilter<"AtivoLoja"> | Date | string
+    ultimaPreventiva?: DateTimeNullableFilter<"AtivoLoja"> | Date | string | null
+    proximaPreventiva?: DateTimeNullableFilter<"AtivoLoja"> | Date | string | null
+    ultimaTrocaBateria?: DateTimeNullableFilter<"AtivoLoja"> | Date | string | null
+    proximaTrocaBateria?: DateTimeNullableFilter<"AtivoLoja"> | Date | string | null
+    intervaloPreventiva?: IntNullableFilter<"AtivoLoja"> | number | null
+    dadosTecnicos?: JsonNullableFilter<"AtivoLoja">
   }
 
   export type NotificacaoUpsertWithWhereUniqueWithoutUsuarioInput = {
@@ -31988,6 +37630,104 @@ export namespace Prisma {
     data: XOR<TarefaUpdateManyMutationInput, TarefaUncheckedUpdateManyWithoutCriadoPorInput>
   }
 
+  export type LogAuditoriaUpsertWithWhereUniqueWithoutUsuarioInput = {
+    where: LogAuditoriaWhereUniqueInput
+    update: XOR<LogAuditoriaUpdateWithoutUsuarioInput, LogAuditoriaUncheckedUpdateWithoutUsuarioInput>
+    create: XOR<LogAuditoriaCreateWithoutUsuarioInput, LogAuditoriaUncheckedCreateWithoutUsuarioInput>
+  }
+
+  export type LogAuditoriaUpdateWithWhereUniqueWithoutUsuarioInput = {
+    where: LogAuditoriaWhereUniqueInput
+    data: XOR<LogAuditoriaUpdateWithoutUsuarioInput, LogAuditoriaUncheckedUpdateWithoutUsuarioInput>
+  }
+
+  export type LogAuditoriaUpdateManyWithWhereWithoutUsuarioInput = {
+    where: LogAuditoriaScalarWhereInput
+    data: XOR<LogAuditoriaUpdateManyMutationInput, LogAuditoriaUncheckedUpdateManyWithoutUsuarioInput>
+  }
+
+  export type LogAuditoriaScalarWhereInput = {
+    AND?: LogAuditoriaScalarWhereInput | LogAuditoriaScalarWhereInput[]
+    OR?: LogAuditoriaScalarWhereInput[]
+    NOT?: LogAuditoriaScalarWhereInput | LogAuditoriaScalarWhereInput[]
+    id?: StringFilter<"LogAuditoria"> | string
+    usuarioId?: StringFilter<"LogAuditoria"> | string
+    acao?: StringFilter<"LogAuditoria"> | string
+    modulo?: StringFilter<"LogAuditoria"> | string
+    detalhes?: JsonNullableFilter<"LogAuditoria">
+    ip?: StringNullableFilter<"LogAuditoria"> | string | null
+    userAgent?: StringNullableFilter<"LogAuditoria"> | string | null
+    criadoEm?: DateTimeFilter<"LogAuditoria"> | Date | string
+  }
+
+  export type RegistroFalhaAtivoUpsertWithWhereUniqueWithoutResolvidoPorInput = {
+    where: RegistroFalhaAtivoWhereUniqueInput
+    update: XOR<RegistroFalhaAtivoUpdateWithoutResolvidoPorInput, RegistroFalhaAtivoUncheckedUpdateWithoutResolvidoPorInput>
+    create: XOR<RegistroFalhaAtivoCreateWithoutResolvidoPorInput, RegistroFalhaAtivoUncheckedCreateWithoutResolvidoPorInput>
+  }
+
+  export type RegistroFalhaAtivoUpdateWithWhereUniqueWithoutResolvidoPorInput = {
+    where: RegistroFalhaAtivoWhereUniqueInput
+    data: XOR<RegistroFalhaAtivoUpdateWithoutResolvidoPorInput, RegistroFalhaAtivoUncheckedUpdateWithoutResolvidoPorInput>
+  }
+
+  export type RegistroFalhaAtivoUpdateManyWithWhereWithoutResolvidoPorInput = {
+    where: RegistroFalhaAtivoScalarWhereInput
+    data: XOR<RegistroFalhaAtivoUpdateManyMutationInput, RegistroFalhaAtivoUncheckedUpdateManyWithoutResolvidoPorInput>
+  }
+
+  export type RegistroFalhaAtivoScalarWhereInput = {
+    AND?: RegistroFalhaAtivoScalarWhereInput | RegistroFalhaAtivoScalarWhereInput[]
+    OR?: RegistroFalhaAtivoScalarWhereInput[]
+    NOT?: RegistroFalhaAtivoScalarWhereInput | RegistroFalhaAtivoScalarWhereInput[]
+    id?: StringFilter<"RegistroFalhaAtivo"> | string
+    ativoId?: StringFilter<"RegistroFalhaAtivo"> | string
+    dataDeteccao?: DateTimeFilter<"RegistroFalhaAtivo"> | Date | string
+    dataResolucao?: DateTimeNullableFilter<"RegistroFalhaAtivo"> | Date | string | null
+    origemResolucao?: StringNullableFilter<"RegistroFalhaAtivo"> | string | null
+    descricao?: StringFilter<"RegistroFalhaAtivo"> | string
+    reincidencia?: BoolFilter<"RegistroFalhaAtivo"> | boolean
+    chamadoId?: StringNullableFilter<"RegistroFalhaAtivo"> | string | null
+    resolvidoPorId?: StringNullableFilter<"RegistroFalhaAtivo"> | string | null
+    criadoEm?: DateTimeFilter<"RegistroFalhaAtivo"> | Date | string
+  }
+
+  export type ChecklistRotinaInfraUpsertWithWhereUniqueWithoutCriadoPorInput = {
+    where: ChecklistRotinaInfraWhereUniqueInput
+    update: XOR<ChecklistRotinaInfraUpdateWithoutCriadoPorInput, ChecklistRotinaInfraUncheckedUpdateWithoutCriadoPorInput>
+    create: XOR<ChecklistRotinaInfraCreateWithoutCriadoPorInput, ChecklistRotinaInfraUncheckedCreateWithoutCriadoPorInput>
+  }
+
+  export type ChecklistRotinaInfraUpdateWithWhereUniqueWithoutCriadoPorInput = {
+    where: ChecklistRotinaInfraWhereUniqueInput
+    data: XOR<ChecklistRotinaInfraUpdateWithoutCriadoPorInput, ChecklistRotinaInfraUncheckedUpdateWithoutCriadoPorInput>
+  }
+
+  export type ChecklistRotinaInfraUpdateManyWithWhereWithoutCriadoPorInput = {
+    where: ChecklistRotinaInfraScalarWhereInput
+    data: XOR<ChecklistRotinaInfraUpdateManyMutationInput, ChecklistRotinaInfraUncheckedUpdateManyWithoutCriadoPorInput>
+  }
+
+  export type ChecklistRotinaInfraScalarWhereInput = {
+    AND?: ChecklistRotinaInfraScalarWhereInput | ChecklistRotinaInfraScalarWhereInput[]
+    OR?: ChecklistRotinaInfraScalarWhereInput[]
+    NOT?: ChecklistRotinaInfraScalarWhereInput | ChecklistRotinaInfraScalarWhereInput[]
+    id?: StringFilter<"ChecklistRotinaInfra"> | string
+    tipo?: EnumTipoRotinaInfraFilter<"ChecklistRotinaInfra"> | $Enums.TipoRotinaInfra
+    regiao?: StringFilter<"ChecklistRotinaInfra"> | string
+    unidade?: StringFilter<"ChecklistRotinaInfra"> | string
+    semana?: IntNullableFilter<"ChecklistRotinaInfra"> | number | null
+    mes?: IntFilter<"ChecklistRotinaInfra"> | number
+    ano?: IntFilter<"ChecklistRotinaInfra"> | number
+    conforme?: BoolFilter<"ChecklistRotinaInfra"> | boolean
+    descricao?: StringNullableFilter<"ChecklistRotinaInfra"> | string | null
+    preenchidoEm?: DateTimeFilter<"ChecklistRotinaInfra"> | Date | string
+    preenchidoComAtraso?: BoolFilter<"ChecklistRotinaInfra"> | boolean
+    dataLimite?: DateTimeFilter<"ChecklistRotinaInfra"> | Date | string
+    criadoPorId?: StringFilter<"ChecklistRotinaInfra"> | string
+    ativoId?: StringNullableFilter<"ChecklistRotinaInfra"> | string | null
+  }
+
   export type UsuarioCreateWithoutRefreshTokensInput = {
     id?: string
     nome: string
@@ -32006,6 +37746,9 @@ export namespace Prisma {
     sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioUncheckedCreateWithoutRefreshTokensInput = {
@@ -32026,6 +37769,9 @@ export namespace Prisma {
     sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaUncheckedCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioCreateOrConnectWithoutRefreshTokensInput = {
@@ -32062,6 +37808,9 @@ export namespace Prisma {
     sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type UsuarioUncheckedUpdateWithoutRefreshTokensInput = {
@@ -32082,6 +37831,9 @@ export namespace Prisma {
     sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUncheckedUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type UsuarioCreateWithoutSessoesInput = {
@@ -32102,6 +37854,9 @@ export namespace Prisma {
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioUncheckedCreateWithoutSessoesInput = {
@@ -32122,6 +37877,9 @@ export namespace Prisma {
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaUncheckedCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioCreateOrConnectWithoutSessoesInput = {
@@ -32158,6 +37916,9 @@ export namespace Prisma {
     refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type UsuarioUncheckedUpdateWithoutSessoesInput = {
@@ -32178,6 +37939,9 @@ export namespace Prisma {
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUncheckedUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type NotificacaoCreateWithoutTarefaInput = {
@@ -32226,6 +37990,9 @@ export namespace Prisma {
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
     tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioUncheckedCreateWithoutTarefasAtribuidasInput = {
@@ -32246,6 +38013,9 @@ export namespace Prisma {
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
     tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaUncheckedCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioCreateOrConnectWithoutTarefasAtribuidasInput = {
@@ -32271,6 +38041,9 @@ export namespace Prisma {
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
+    logsAuditoria?: LogAuditoriaCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioUncheckedCreateWithoutTarefasCriadasInput = {
@@ -32291,6 +38064,9 @@ export namespace Prisma {
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
     sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
+    logsAuditoria?: LogAuditoriaUncheckedCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioCreateOrConnectWithoutTarefasCriadasInput = {
@@ -32343,6 +38119,9 @@ export namespace Prisma {
     refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
     tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type UsuarioUncheckedUpdateWithoutTarefasAtribuidasInput = {
@@ -32363,6 +38142,9 @@ export namespace Prisma {
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
     tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUncheckedUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type UsuarioUpsertWithoutTarefasCriadasInput = {
@@ -32394,6 +38176,9 @@ export namespace Prisma {
     refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
+    logsAuditoria?: LogAuditoriaUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type UsuarioUncheckedUpdateWithoutTarefasCriadasInput = {
@@ -32414,6 +38199,9 @@ export namespace Prisma {
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
     sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
+    logsAuditoria?: LogAuditoriaUncheckedUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type TarefaCreateWithoutNotificacoesInput = {
@@ -32469,6 +38257,9 @@ export namespace Prisma {
     sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioUncheckedCreateWithoutNotificacoesInput = {
@@ -32489,6 +38280,9 @@ export namespace Prisma {
     sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaUncheckedCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioCreateOrConnectWithoutNotificacoesInput = {
@@ -32566,6 +38360,9 @@ export namespace Prisma {
     sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type UsuarioUncheckedUpdateWithoutNotificacoesInput = {
@@ -32586,6 +38383,117 @@ export namespace Prisma {
     sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUncheckedUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedUpdateManyWithoutCriadoPorNestedInput
+  }
+
+  export type UsuarioCreateWithoutLogsAuditoriaInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    loja?: LojaCreateNestedOneWithoutUsuariosInput
+    checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
+    sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
+    tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
+    tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
+    falhasResolvidas?: RegistroFalhaAtivoCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraCreateNestedManyWithoutCriadoPorInput
+  }
+
+  export type UsuarioUncheckedCreateWithoutLogsAuditoriaInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    lojaId?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaUncheckedCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
+    sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
+    tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
+    tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedCreateNestedManyWithoutCriadoPorInput
+  }
+
+  export type UsuarioCreateOrConnectWithoutLogsAuditoriaInput = {
+    where: UsuarioWhereUniqueInput
+    create: XOR<UsuarioCreateWithoutLogsAuditoriaInput, UsuarioUncheckedCreateWithoutLogsAuditoriaInput>
+  }
+
+  export type UsuarioUpsertWithoutLogsAuditoriaInput = {
+    update: XOR<UsuarioUpdateWithoutLogsAuditoriaInput, UsuarioUncheckedUpdateWithoutLogsAuditoriaInput>
+    create: XOR<UsuarioCreateWithoutLogsAuditoriaInput, UsuarioUncheckedCreateWithoutLogsAuditoriaInput>
+    where?: UsuarioWhereInput
+  }
+
+  export type UsuarioUpdateToOneWithWhereWithoutLogsAuditoriaInput = {
+    where?: UsuarioWhereInput
+    data: XOR<UsuarioUpdateWithoutLogsAuditoriaInput, UsuarioUncheckedUpdateWithoutLogsAuditoriaInput>
+  }
+
+  export type UsuarioUpdateWithoutLogsAuditoriaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    loja?: LojaUpdateOneWithoutUsuariosNestedInput
+    checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
+    refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
+    sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
+    tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
+    tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUpdateManyWithoutCriadoPorNestedInput
+  }
+
+  export type UsuarioUncheckedUpdateWithoutLogsAuditoriaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    lojaId?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUncheckedUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
+    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
+    sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
+    tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
+    tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type EntradaPecaCreateWithoutPecaInput = {
@@ -32961,6 +38869,7 @@ export namespace Prisma {
     numeroChamado?: string | null
     descricaoProblema?: string | null
     valor?: Decimal | DecimalJsLike | number | string | null
+    ativo?: AtivoLojaCreateNestedOneWithoutChecklistItensInput
   }
 
   export type ChecklistEquipamentoItemUncheckedCreateWithoutChecklistInput = {
@@ -32973,6 +38882,7 @@ export namespace Prisma {
     numeroChamado?: string | null
     descricaoProblema?: string | null
     valor?: Decimal | DecimalJsLike | number | string | null
+    ativoId?: string | null
   }
 
   export type ChecklistEquipamentoItemCreateOrConnectWithoutChecklistInput = {
@@ -33003,6 +38913,9 @@ export namespace Prisma {
     sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioUncheckedCreateWithoutChecklistsEquipamentoInput = {
@@ -33023,6 +38936,9 @@ export namespace Prisma {
     sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaUncheckedCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioCreateOrConnectWithoutChecklistsEquipamentoInput = {
@@ -33060,6 +38976,7 @@ export namespace Prisma {
     numeroChamado?: StringNullableFilter<"ChecklistEquipamentoItem"> | string | null
     descricaoProblema?: StringNullableFilter<"ChecklistEquipamentoItem"> | string | null
     valor?: DecimalNullableFilter<"ChecklistEquipamentoItem"> | Decimal | DecimalJsLike | number | string | null
+    ativoId?: StringNullableFilter<"ChecklistEquipamentoItem"> | string | null
   }
 
   export type UsuarioUpsertWithoutChecklistsEquipamentoInput = {
@@ -33091,6 +39008,9 @@ export namespace Prisma {
     sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type UsuarioUncheckedUpdateWithoutChecklistsEquipamentoInput = {
@@ -33111,6 +39031,9 @@ export namespace Prisma {
     sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUncheckedUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type ChecklistEquipamentoCreateWithoutItensInput = {
@@ -33140,6 +39063,67 @@ export namespace Prisma {
   export type ChecklistEquipamentoCreateOrConnectWithoutItensInput = {
     where: ChecklistEquipamentoWhereUniqueInput
     create: XOR<ChecklistEquipamentoCreateWithoutItensInput, ChecklistEquipamentoUncheckedCreateWithoutItensInput>
+  }
+
+  export type AtivoLojaCreateWithoutChecklistItensInput = {
+    id?: string
+    nome: string
+    categoria: string
+    tipo?: string | null
+    fabricante?: string | null
+    modelo?: string | null
+    numeroSerie?: string | null
+    patrimonio?: string | null
+    quantidade?: number
+    status?: string
+    localizacao?: string | null
+    observacoes?: string | null
+    regiao: string
+    unidade: string
+    ativo?: boolean
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    ultimaPreventiva?: Date | string | null
+    proximaPreventiva?: Date | string | null
+    ultimaTrocaBateria?: Date | string | null
+    proximaTrocaBateria?: Date | string | null
+    intervaloPreventiva?: number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    criadoPor: UsuarioCreateNestedOneWithoutAtivosLojaInput
+    falhas?: RegistroFalhaAtivoCreateNestedManyWithoutAtivoInput
+  }
+
+  export type AtivoLojaUncheckedCreateWithoutChecklistItensInput = {
+    id?: string
+    nome: string
+    categoria: string
+    tipo?: string | null
+    fabricante?: string | null
+    modelo?: string | null
+    numeroSerie?: string | null
+    patrimonio?: string | null
+    quantidade?: number
+    status?: string
+    localizacao?: string | null
+    observacoes?: string | null
+    regiao: string
+    unidade: string
+    criadoPorId: string
+    ativo?: boolean
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    ultimaPreventiva?: Date | string | null
+    proximaPreventiva?: Date | string | null
+    ultimaTrocaBateria?: Date | string | null
+    proximaTrocaBateria?: Date | string | null
+    intervaloPreventiva?: number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    falhas?: RegistroFalhaAtivoUncheckedCreateNestedManyWithoutAtivoInput
+  }
+
+  export type AtivoLojaCreateOrConnectWithoutChecklistItensInput = {
+    where: AtivoLojaWhereUniqueInput
+    create: XOR<AtivoLojaCreateWithoutChecklistItensInput, AtivoLojaUncheckedCreateWithoutChecklistItensInput>
   }
 
   export type ChecklistEquipamentoUpsertWithoutItensInput = {
@@ -33175,6 +39159,73 @@ export namespace Prisma {
     observacoes?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AtivoLojaUpsertWithoutChecklistItensInput = {
+    update: XOR<AtivoLojaUpdateWithoutChecklistItensInput, AtivoLojaUncheckedUpdateWithoutChecklistItensInput>
+    create: XOR<AtivoLojaCreateWithoutChecklistItensInput, AtivoLojaUncheckedCreateWithoutChecklistItensInput>
+    where?: AtivoLojaWhereInput
+  }
+
+  export type AtivoLojaUpdateToOneWithWhereWithoutChecklistItensInput = {
+    where?: AtivoLojaWhereInput
+    data: XOR<AtivoLojaUpdateWithoutChecklistItensInput, AtivoLojaUncheckedUpdateWithoutChecklistItensInput>
+  }
+
+  export type AtivoLojaUpdateWithoutChecklistItensInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    categoria?: StringFieldUpdateOperationsInput | string
+    tipo?: NullableStringFieldUpdateOperationsInput | string | null
+    fabricante?: NullableStringFieldUpdateOperationsInput | string | null
+    modelo?: NullableStringFieldUpdateOperationsInput | string | null
+    numeroSerie?: NullableStringFieldUpdateOperationsInput | string | null
+    patrimonio?: NullableStringFieldUpdateOperationsInput | string | null
+    quantidade?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    localizacao?: NullableStringFieldUpdateOperationsInput | string | null
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    ultimaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ultimaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    criadoPor?: UsuarioUpdateOneRequiredWithoutAtivosLojaNestedInput
+    falhas?: RegistroFalhaAtivoUpdateManyWithoutAtivoNestedInput
+  }
+
+  export type AtivoLojaUncheckedUpdateWithoutChecklistItensInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    categoria?: StringFieldUpdateOperationsInput | string
+    tipo?: NullableStringFieldUpdateOperationsInput | string | null
+    fabricante?: NullableStringFieldUpdateOperationsInput | string | null
+    modelo?: NullableStringFieldUpdateOperationsInput | string | null
+    numeroSerie?: NullableStringFieldUpdateOperationsInput | string | null
+    patrimonio?: NullableStringFieldUpdateOperationsInput | string | null
+    quantidade?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    localizacao?: NullableStringFieldUpdateOperationsInput | string | null
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    criadoPorId?: StringFieldUpdateOperationsInput | string
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    ultimaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ultimaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    falhas?: RegistroFalhaAtivoUncheckedUpdateManyWithoutAtivoNestedInput
   }
 
   export type ChecklistCarrinhoItemCreateWithoutChecklistInput = {
@@ -33223,6 +39274,9 @@ export namespace Prisma {
     sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioUncheckedCreateWithoutChecklistsCarrinhoInput = {
@@ -33243,6 +39297,9 @@ export namespace Prisma {
     sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaUncheckedCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioCreateOrConnectWithoutChecklistsCarrinhoInput = {
@@ -33308,6 +39365,9 @@ export namespace Prisma {
     sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type UsuarioUncheckedUpdateWithoutChecklistsCarrinhoInput = {
@@ -33328,6 +39388,9 @@ export namespace Prisma {
     sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUncheckedUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type ChecklistCarrinhoCreateWithoutItensInput = {
@@ -33412,6 +39475,9 @@ export namespace Prisma {
     sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioUncheckedCreateWithoutAtivosLojaInput = {
@@ -33432,11 +39498,84 @@ export namespace Prisma {
     sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
     tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
     tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaUncheckedCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedCreateNestedManyWithoutResolvidoPorInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedCreateNestedManyWithoutCriadoPorInput
   }
 
   export type UsuarioCreateOrConnectWithoutAtivosLojaInput = {
     where: UsuarioWhereUniqueInput
     create: XOR<UsuarioCreateWithoutAtivosLojaInput, UsuarioUncheckedCreateWithoutAtivosLojaInput>
+  }
+
+  export type RegistroFalhaAtivoCreateWithoutAtivoInput = {
+    id?: string
+    dataDeteccao: Date | string
+    dataResolucao?: Date | string | null
+    origemResolucao?: string | null
+    descricao: string
+    reincidencia?: boolean
+    chamadoId?: string | null
+    criadoEm?: Date | string
+    resolvidoPor?: UsuarioCreateNestedOneWithoutFalhasResolvidasInput
+  }
+
+  export type RegistroFalhaAtivoUncheckedCreateWithoutAtivoInput = {
+    id?: string
+    dataDeteccao: Date | string
+    dataResolucao?: Date | string | null
+    origemResolucao?: string | null
+    descricao: string
+    reincidencia?: boolean
+    chamadoId?: string | null
+    resolvidoPorId?: string | null
+    criadoEm?: Date | string
+  }
+
+  export type RegistroFalhaAtivoCreateOrConnectWithoutAtivoInput = {
+    where: RegistroFalhaAtivoWhereUniqueInput
+    create: XOR<RegistroFalhaAtivoCreateWithoutAtivoInput, RegistroFalhaAtivoUncheckedCreateWithoutAtivoInput>
+  }
+
+  export type RegistroFalhaAtivoCreateManyAtivoInputEnvelope = {
+    data: RegistroFalhaAtivoCreateManyAtivoInput | RegistroFalhaAtivoCreateManyAtivoInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ChecklistEquipamentoItemCreateWithoutAtivoInput = {
+    id?: string
+    tipoEquipamento: $Enums.TipoEquipamento
+    operacional?: boolean
+    quantidade?: number
+    quantidadeQuebrada?: number
+    numeroSerie?: string | null
+    numeroChamado?: string | null
+    descricaoProblema?: string | null
+    valor?: Decimal | DecimalJsLike | number | string | null
+    checklist: ChecklistEquipamentoCreateNestedOneWithoutItensInput
+  }
+
+  export type ChecklistEquipamentoItemUncheckedCreateWithoutAtivoInput = {
+    id?: string
+    checklistId: string
+    tipoEquipamento: $Enums.TipoEquipamento
+    operacional?: boolean
+    quantidade?: number
+    quantidadeQuebrada?: number
+    numeroSerie?: string | null
+    numeroChamado?: string | null
+    descricaoProblema?: string | null
+    valor?: Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type ChecklistEquipamentoItemCreateOrConnectWithoutAtivoInput = {
+    where: ChecklistEquipamentoItemWhereUniqueInput
+    create: XOR<ChecklistEquipamentoItemCreateWithoutAtivoInput, ChecklistEquipamentoItemUncheckedCreateWithoutAtivoInput>
+  }
+
+  export type ChecklistEquipamentoItemCreateManyAtivoInputEnvelope = {
+    data: ChecklistEquipamentoItemCreateManyAtivoInput | ChecklistEquipamentoItemCreateManyAtivoInput[]
+    skipDuplicates?: boolean
   }
 
   export type UsuarioUpsertWithoutAtivosLojaInput = {
@@ -33468,6 +39607,9 @@ export namespace Prisma {
     sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type UsuarioUncheckedUpdateWithoutAtivosLojaInput = {
@@ -33488,6 +39630,385 @@ export namespace Prisma {
     sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUncheckedUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedUpdateManyWithoutCriadoPorNestedInput
+  }
+
+  export type RegistroFalhaAtivoUpsertWithWhereUniqueWithoutAtivoInput = {
+    where: RegistroFalhaAtivoWhereUniqueInput
+    update: XOR<RegistroFalhaAtivoUpdateWithoutAtivoInput, RegistroFalhaAtivoUncheckedUpdateWithoutAtivoInput>
+    create: XOR<RegistroFalhaAtivoCreateWithoutAtivoInput, RegistroFalhaAtivoUncheckedCreateWithoutAtivoInput>
+  }
+
+  export type RegistroFalhaAtivoUpdateWithWhereUniqueWithoutAtivoInput = {
+    where: RegistroFalhaAtivoWhereUniqueInput
+    data: XOR<RegistroFalhaAtivoUpdateWithoutAtivoInput, RegistroFalhaAtivoUncheckedUpdateWithoutAtivoInput>
+  }
+
+  export type RegistroFalhaAtivoUpdateManyWithWhereWithoutAtivoInput = {
+    where: RegistroFalhaAtivoScalarWhereInput
+    data: XOR<RegistroFalhaAtivoUpdateManyMutationInput, RegistroFalhaAtivoUncheckedUpdateManyWithoutAtivoInput>
+  }
+
+  export type ChecklistEquipamentoItemUpsertWithWhereUniqueWithoutAtivoInput = {
+    where: ChecklistEquipamentoItemWhereUniqueInput
+    update: XOR<ChecklistEquipamentoItemUpdateWithoutAtivoInput, ChecklistEquipamentoItemUncheckedUpdateWithoutAtivoInput>
+    create: XOR<ChecklistEquipamentoItemCreateWithoutAtivoInput, ChecklistEquipamentoItemUncheckedCreateWithoutAtivoInput>
+  }
+
+  export type ChecklistEquipamentoItemUpdateWithWhereUniqueWithoutAtivoInput = {
+    where: ChecklistEquipamentoItemWhereUniqueInput
+    data: XOR<ChecklistEquipamentoItemUpdateWithoutAtivoInput, ChecklistEquipamentoItemUncheckedUpdateWithoutAtivoInput>
+  }
+
+  export type ChecklistEquipamentoItemUpdateManyWithWhereWithoutAtivoInput = {
+    where: ChecklistEquipamentoItemScalarWhereInput
+    data: XOR<ChecklistEquipamentoItemUpdateManyMutationInput, ChecklistEquipamentoItemUncheckedUpdateManyWithoutAtivoInput>
+  }
+
+  export type AtivoLojaCreateWithoutFalhasInput = {
+    id?: string
+    nome: string
+    categoria: string
+    tipo?: string | null
+    fabricante?: string | null
+    modelo?: string | null
+    numeroSerie?: string | null
+    patrimonio?: string | null
+    quantidade?: number
+    status?: string
+    localizacao?: string | null
+    observacoes?: string | null
+    regiao: string
+    unidade: string
+    ativo?: boolean
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    ultimaPreventiva?: Date | string | null
+    proximaPreventiva?: Date | string | null
+    ultimaTrocaBateria?: Date | string | null
+    proximaTrocaBateria?: Date | string | null
+    intervaloPreventiva?: number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    criadoPor: UsuarioCreateNestedOneWithoutAtivosLojaInput
+    checklistItens?: ChecklistEquipamentoItemCreateNestedManyWithoutAtivoInput
+  }
+
+  export type AtivoLojaUncheckedCreateWithoutFalhasInput = {
+    id?: string
+    nome: string
+    categoria: string
+    tipo?: string | null
+    fabricante?: string | null
+    modelo?: string | null
+    numeroSerie?: string | null
+    patrimonio?: string | null
+    quantidade?: number
+    status?: string
+    localizacao?: string | null
+    observacoes?: string | null
+    regiao: string
+    unidade: string
+    criadoPorId: string
+    ativo?: boolean
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    ultimaPreventiva?: Date | string | null
+    proximaPreventiva?: Date | string | null
+    ultimaTrocaBateria?: Date | string | null
+    proximaTrocaBateria?: Date | string | null
+    intervaloPreventiva?: number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    checklistItens?: ChecklistEquipamentoItemUncheckedCreateNestedManyWithoutAtivoInput
+  }
+
+  export type AtivoLojaCreateOrConnectWithoutFalhasInput = {
+    where: AtivoLojaWhereUniqueInput
+    create: XOR<AtivoLojaCreateWithoutFalhasInput, AtivoLojaUncheckedCreateWithoutFalhasInput>
+  }
+
+  export type UsuarioCreateWithoutFalhasResolvidasInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    loja?: LojaCreateNestedOneWithoutUsuariosInput
+    checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
+    sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
+    tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
+    tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaCreateNestedManyWithoutUsuarioInput
+    rotinasInfra?: ChecklistRotinaInfraCreateNestedManyWithoutCriadoPorInput
+  }
+
+  export type UsuarioUncheckedCreateWithoutFalhasResolvidasInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    lojaId?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaUncheckedCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
+    sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
+    tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
+    tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaUncheckedCreateNestedManyWithoutUsuarioInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedCreateNestedManyWithoutCriadoPorInput
+  }
+
+  export type UsuarioCreateOrConnectWithoutFalhasResolvidasInput = {
+    where: UsuarioWhereUniqueInput
+    create: XOR<UsuarioCreateWithoutFalhasResolvidasInput, UsuarioUncheckedCreateWithoutFalhasResolvidasInput>
+  }
+
+  export type AtivoLojaUpsertWithoutFalhasInput = {
+    update: XOR<AtivoLojaUpdateWithoutFalhasInput, AtivoLojaUncheckedUpdateWithoutFalhasInput>
+    create: XOR<AtivoLojaCreateWithoutFalhasInput, AtivoLojaUncheckedCreateWithoutFalhasInput>
+    where?: AtivoLojaWhereInput
+  }
+
+  export type AtivoLojaUpdateToOneWithWhereWithoutFalhasInput = {
+    where?: AtivoLojaWhereInput
+    data: XOR<AtivoLojaUpdateWithoutFalhasInput, AtivoLojaUncheckedUpdateWithoutFalhasInput>
+  }
+
+  export type AtivoLojaUpdateWithoutFalhasInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    categoria?: StringFieldUpdateOperationsInput | string
+    tipo?: NullableStringFieldUpdateOperationsInput | string | null
+    fabricante?: NullableStringFieldUpdateOperationsInput | string | null
+    modelo?: NullableStringFieldUpdateOperationsInput | string | null
+    numeroSerie?: NullableStringFieldUpdateOperationsInput | string | null
+    patrimonio?: NullableStringFieldUpdateOperationsInput | string | null
+    quantidade?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    localizacao?: NullableStringFieldUpdateOperationsInput | string | null
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    ultimaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ultimaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    criadoPor?: UsuarioUpdateOneRequiredWithoutAtivosLojaNestedInput
+    checklistItens?: ChecklistEquipamentoItemUpdateManyWithoutAtivoNestedInput
+  }
+
+  export type AtivoLojaUncheckedUpdateWithoutFalhasInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    categoria?: StringFieldUpdateOperationsInput | string
+    tipo?: NullableStringFieldUpdateOperationsInput | string | null
+    fabricante?: NullableStringFieldUpdateOperationsInput | string | null
+    modelo?: NullableStringFieldUpdateOperationsInput | string | null
+    numeroSerie?: NullableStringFieldUpdateOperationsInput | string | null
+    patrimonio?: NullableStringFieldUpdateOperationsInput | string | null
+    quantidade?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    localizacao?: NullableStringFieldUpdateOperationsInput | string | null
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    criadoPorId?: StringFieldUpdateOperationsInput | string
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    ultimaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ultimaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    checklistItens?: ChecklistEquipamentoItemUncheckedUpdateManyWithoutAtivoNestedInput
+  }
+
+  export type UsuarioUpsertWithoutFalhasResolvidasInput = {
+    update: XOR<UsuarioUpdateWithoutFalhasResolvidasInput, UsuarioUncheckedUpdateWithoutFalhasResolvidasInput>
+    create: XOR<UsuarioCreateWithoutFalhasResolvidasInput, UsuarioUncheckedCreateWithoutFalhasResolvidasInput>
+    where?: UsuarioWhereInput
+  }
+
+  export type UsuarioUpdateToOneWithWhereWithoutFalhasResolvidasInput = {
+    where?: UsuarioWhereInput
+    data: XOR<UsuarioUpdateWithoutFalhasResolvidasInput, UsuarioUncheckedUpdateWithoutFalhasResolvidasInput>
+  }
+
+  export type UsuarioUpdateWithoutFalhasResolvidasInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    loja?: LojaUpdateOneWithoutUsuariosNestedInput
+    checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
+    refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
+    sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
+    tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
+    tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUpdateManyWithoutUsuarioNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUpdateManyWithoutCriadoPorNestedInput
+  }
+
+  export type UsuarioUncheckedUpdateWithoutFalhasResolvidasInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    lojaId?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUncheckedUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
+    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
+    sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
+    tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
+    tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUncheckedUpdateManyWithoutUsuarioNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedUpdateManyWithoutCriadoPorNestedInput
+  }
+
+  export type UsuarioCreateWithoutRotinasInfraInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    loja?: LojaCreateNestedOneWithoutUsuariosInput
+    checklistsCarrinho?: ChecklistCarrinhoCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoCreateNestedManyWithoutUsuarioInput
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutUsuarioInput
+    sessoes?: SessaoCreateNestedManyWithoutUsuarioInput
+    tarefasAtribuidas?: TarefaCreateNestedManyWithoutAtribuidoParaInput
+    tarefasCriadas?: TarefaCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoCreateNestedManyWithoutResolvidoPorInput
+  }
+
+  export type UsuarioUncheckedCreateWithoutRotinasInfraInput = {
+    id?: string
+    nome: string
+    email: string
+    senha: string
+    role?: $Enums.Role
+    ativo?: boolean
+    regiao?: string | null
+    lojaId?: string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedCreateNestedManyWithoutCriadoPorInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedCreateNestedManyWithoutCriadoPorInput
+    ativosLoja?: AtivoLojaUncheckedCreateNestedManyWithoutCriadoPorInput
+    notificacoes?: NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
+    sessoes?: SessaoUncheckedCreateNestedManyWithoutUsuarioInput
+    tarefasAtribuidas?: TarefaUncheckedCreateNestedManyWithoutAtribuidoParaInput
+    tarefasCriadas?: TarefaUncheckedCreateNestedManyWithoutCriadoPorInput
+    logsAuditoria?: LogAuditoriaUncheckedCreateNestedManyWithoutUsuarioInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedCreateNestedManyWithoutResolvidoPorInput
+  }
+
+  export type UsuarioCreateOrConnectWithoutRotinasInfraInput = {
+    where: UsuarioWhereUniqueInput
+    create: XOR<UsuarioCreateWithoutRotinasInfraInput, UsuarioUncheckedCreateWithoutRotinasInfraInput>
+  }
+
+  export type UsuarioUpsertWithoutRotinasInfraInput = {
+    update: XOR<UsuarioUpdateWithoutRotinasInfraInput, UsuarioUncheckedUpdateWithoutRotinasInfraInput>
+    create: XOR<UsuarioCreateWithoutRotinasInfraInput, UsuarioUncheckedCreateWithoutRotinasInfraInput>
+    where?: UsuarioWhereInput
+  }
+
+  export type UsuarioUpdateToOneWithWhereWithoutRotinasInfraInput = {
+    where?: UsuarioWhereInput
+    data: XOR<UsuarioUpdateWithoutRotinasInfraInput, UsuarioUncheckedUpdateWithoutRotinasInfraInput>
+  }
+
+  export type UsuarioUpdateWithoutRotinasInfraInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    loja?: LojaUpdateOneWithoutUsuariosNestedInput
+    checklistsCarrinho?: ChecklistCarrinhoUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUpdateManyWithoutUsuarioNestedInput
+    refreshTokens?: RefreshTokenUpdateManyWithoutUsuarioNestedInput
+    sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
+    tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
+    tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUpdateManyWithoutResolvidoPorNestedInput
+  }
+
+  export type UsuarioUncheckedUpdateWithoutRotinasInfraInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    senha?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    lojaId?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    checklistsCarrinho?: ChecklistCarrinhoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    checklistsEquipamento?: ChecklistEquipamentoUncheckedUpdateManyWithoutCriadoPorNestedInput
+    ativosLoja?: AtivoLojaUncheckedUpdateManyWithoutCriadoPorNestedInput
+    notificacoes?: NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
+    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
+    sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
+    tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
+    tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUncheckedUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedUpdateManyWithoutResolvidoPorNestedInput
   }
 
   export type UsuarioCreateManyLojaInput = {
@@ -33520,6 +40041,9 @@ export namespace Prisma {
     sessoes?: SessaoUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type UsuarioUncheckedUpdateWithoutLojaInput = {
@@ -33540,6 +40064,9 @@ export namespace Prisma {
     sessoes?: SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
     tarefasAtribuidas?: TarefaUncheckedUpdateManyWithoutAtribuidoParaNestedInput
     tarefasCriadas?: TarefaUncheckedUpdateManyWithoutCriadoPorNestedInput
+    logsAuditoria?: LogAuditoriaUncheckedUpdateManyWithoutUsuarioNestedInput
+    falhasResolvidas?: RegistroFalhaAtivoUncheckedUpdateManyWithoutResolvidoPorNestedInput
+    rotinasInfra?: ChecklistRotinaInfraUncheckedUpdateManyWithoutCriadoPorNestedInput
   }
 
   export type UsuarioUncheckedUpdateManyWithoutLojaInput = {
@@ -33594,6 +40121,12 @@ export namespace Prisma {
     ativo?: boolean
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    ultimaPreventiva?: Date | string | null
+    proximaPreventiva?: Date | string | null
+    ultimaTrocaBateria?: Date | string | null
+    proximaTrocaBateria?: Date | string | null
+    intervaloPreventiva?: number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type NotificacaoCreateManyUsuarioInput = {
@@ -33649,6 +40182,44 @@ export namespace Prisma {
     atribuidoParaId?: string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+  }
+
+  export type LogAuditoriaCreateManyUsuarioInput = {
+    id?: string
+    acao: string
+    modulo: string
+    detalhes?: NullableJsonNullValueInput | InputJsonValue
+    ip?: string | null
+    userAgent?: string | null
+    criadoEm?: Date | string
+  }
+
+  export type RegistroFalhaAtivoCreateManyResolvidoPorInput = {
+    id?: string
+    ativoId: string
+    dataDeteccao: Date | string
+    dataResolucao?: Date | string | null
+    origemResolucao?: string | null
+    descricao: string
+    reincidencia?: boolean
+    chamadoId?: string | null
+    criadoEm?: Date | string
+  }
+
+  export type ChecklistRotinaInfraCreateManyCriadoPorInput = {
+    id?: string
+    tipo: $Enums.TipoRotinaInfra
+    regiao: string
+    unidade: string
+    semana?: number | null
+    mes: number
+    ano: number
+    conforme: boolean
+    descricao?: string | null
+    preenchidoEm?: Date | string
+    preenchidoComAtraso?: boolean
+    dataLimite: Date | string
+    ativoId?: string | null
   }
 
   export type ChecklistCarrinhoUpdateWithoutCriadoPorInput = {
@@ -33739,6 +40310,14 @@ export namespace Prisma {
     ativo?: BoolFieldUpdateOperationsInput | boolean
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    ultimaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ultimaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    falhas?: RegistroFalhaAtivoUpdateManyWithoutAtivoNestedInput
+    checklistItens?: ChecklistEquipamentoItemUpdateManyWithoutAtivoNestedInput
   }
 
   export type AtivoLojaUncheckedUpdateWithoutCriadoPorInput = {
@@ -33759,6 +40338,14 @@ export namespace Prisma {
     ativo?: BoolFieldUpdateOperationsInput | boolean
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    ultimaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ultimaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    falhas?: RegistroFalhaAtivoUncheckedUpdateManyWithoutAtivoNestedInput
+    checklistItens?: ChecklistEquipamentoItemUncheckedUpdateManyWithoutAtivoNestedInput
   }
 
   export type AtivoLojaUncheckedUpdateManyWithoutCriadoPorInput = {
@@ -33779,6 +40366,12 @@ export namespace Prisma {
     ativo?: BoolFieldUpdateOperationsInput | boolean
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    ultimaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ultimaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type NotificacaoUpdateWithoutUsuarioInput = {
@@ -33948,6 +40541,120 @@ export namespace Prisma {
     atribuidoParaId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LogAuditoriaUpdateWithoutUsuarioInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    acao?: StringFieldUpdateOperationsInput | string
+    modulo?: StringFieldUpdateOperationsInput | string
+    detalhes?: NullableJsonNullValueInput | InputJsonValue
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LogAuditoriaUncheckedUpdateWithoutUsuarioInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    acao?: StringFieldUpdateOperationsInput | string
+    modulo?: StringFieldUpdateOperationsInput | string
+    detalhes?: NullableJsonNullValueInput | InputJsonValue
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LogAuditoriaUncheckedUpdateManyWithoutUsuarioInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    acao?: StringFieldUpdateOperationsInput | string
+    modulo?: StringFieldUpdateOperationsInput | string
+    detalhes?: NullableJsonNullValueInput | InputJsonValue
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RegistroFalhaAtivoUpdateWithoutResolvidoPorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dataDeteccao?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataResolucao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origemResolucao?: NullableStringFieldUpdateOperationsInput | string | null
+    descricao?: StringFieldUpdateOperationsInput | string
+    reincidencia?: BoolFieldUpdateOperationsInput | boolean
+    chamadoId?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    ativo?: AtivoLojaUpdateOneRequiredWithoutFalhasNestedInput
+  }
+
+  export type RegistroFalhaAtivoUncheckedUpdateWithoutResolvidoPorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ativoId?: StringFieldUpdateOperationsInput | string
+    dataDeteccao?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataResolucao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origemResolucao?: NullableStringFieldUpdateOperationsInput | string | null
+    descricao?: StringFieldUpdateOperationsInput | string
+    reincidencia?: BoolFieldUpdateOperationsInput | boolean
+    chamadoId?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RegistroFalhaAtivoUncheckedUpdateManyWithoutResolvidoPorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ativoId?: StringFieldUpdateOperationsInput | string
+    dataDeteccao?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataResolucao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origemResolucao?: NullableStringFieldUpdateOperationsInput | string | null
+    descricao?: StringFieldUpdateOperationsInput | string
+    reincidencia?: BoolFieldUpdateOperationsInput | boolean
+    chamadoId?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ChecklistRotinaInfraUpdateWithoutCriadoPorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tipo?: EnumTipoRotinaInfraFieldUpdateOperationsInput | $Enums.TipoRotinaInfra
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    semana?: NullableIntFieldUpdateOperationsInput | number | null
+    mes?: IntFieldUpdateOperationsInput | number
+    ano?: IntFieldUpdateOperationsInput | number
+    conforme?: BoolFieldUpdateOperationsInput | boolean
+    descricao?: NullableStringFieldUpdateOperationsInput | string | null
+    preenchidoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    preenchidoComAtraso?: BoolFieldUpdateOperationsInput | boolean
+    dataLimite?: DateTimeFieldUpdateOperationsInput | Date | string
+    ativoId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ChecklistRotinaInfraUncheckedUpdateWithoutCriadoPorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tipo?: EnumTipoRotinaInfraFieldUpdateOperationsInput | $Enums.TipoRotinaInfra
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    semana?: NullableIntFieldUpdateOperationsInput | number | null
+    mes?: IntFieldUpdateOperationsInput | number
+    ano?: IntFieldUpdateOperationsInput | number
+    conforme?: BoolFieldUpdateOperationsInput | boolean
+    descricao?: NullableStringFieldUpdateOperationsInput | string | null
+    preenchidoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    preenchidoComAtraso?: BoolFieldUpdateOperationsInput | boolean
+    dataLimite?: DateTimeFieldUpdateOperationsInput | Date | string
+    ativoId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ChecklistRotinaInfraUncheckedUpdateManyWithoutCriadoPorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tipo?: EnumTipoRotinaInfraFieldUpdateOperationsInput | $Enums.TipoRotinaInfra
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    semana?: NullableIntFieldUpdateOperationsInput | number | null
+    mes?: IntFieldUpdateOperationsInput | number
+    ano?: IntFieldUpdateOperationsInput | number
+    conforme?: BoolFieldUpdateOperationsInput | boolean
+    descricao?: NullableStringFieldUpdateOperationsInput | string | null
+    preenchidoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    preenchidoComAtraso?: BoolFieldUpdateOperationsInput | boolean
+    dataLimite?: DateTimeFieldUpdateOperationsInput | Date | string
+    ativoId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type NotificacaoCreateManyTarefaInput = {
@@ -34120,6 +40827,7 @@ export namespace Prisma {
     numeroChamado?: string | null
     descricaoProblema?: string | null
     valor?: Decimal | DecimalJsLike | number | string | null
+    ativoId?: string | null
   }
 
   export type ChecklistEquipamentoItemUpdateWithoutChecklistInput = {
@@ -34132,6 +40840,7 @@ export namespace Prisma {
     numeroChamado?: NullableStringFieldUpdateOperationsInput | string | null
     descricaoProblema?: NullableStringFieldUpdateOperationsInput | string | null
     valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    ativo?: AtivoLojaUpdateOneWithoutChecklistItensNestedInput
   }
 
   export type ChecklistEquipamentoItemUncheckedUpdateWithoutChecklistInput = {
@@ -34144,6 +40853,7 @@ export namespace Prisma {
     numeroChamado?: NullableStringFieldUpdateOperationsInput | string | null
     descricaoProblema?: NullableStringFieldUpdateOperationsInput | string | null
     valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    ativoId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ChecklistEquipamentoItemUncheckedUpdateManyWithoutChecklistInput = {
@@ -34156,6 +40866,7 @@ export namespace Prisma {
     numeroChamado?: NullableStringFieldUpdateOperationsInput | string | null
     descricaoProblema?: NullableStringFieldUpdateOperationsInput | string | null
     valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    ativoId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ChecklistCarrinhoItemCreateManyChecklistInput = {
@@ -34192,6 +40903,106 @@ export namespace Prisma {
     quebrados?: IntFieldUpdateOperationsInput | number
     numeroChamado?: NullableStringFieldUpdateOperationsInput | string | null
     descricaoProblema?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type RegistroFalhaAtivoCreateManyAtivoInput = {
+    id?: string
+    dataDeteccao: Date | string
+    dataResolucao?: Date | string | null
+    origemResolucao?: string | null
+    descricao: string
+    reincidencia?: boolean
+    chamadoId?: string | null
+    resolvidoPorId?: string | null
+    criadoEm?: Date | string
+  }
+
+  export type ChecklistEquipamentoItemCreateManyAtivoInput = {
+    id?: string
+    checklistId: string
+    tipoEquipamento: $Enums.TipoEquipamento
+    operacional?: boolean
+    quantidade?: number
+    quantidadeQuebrada?: number
+    numeroSerie?: string | null
+    numeroChamado?: string | null
+    descricaoProblema?: string | null
+    valor?: Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type RegistroFalhaAtivoUpdateWithoutAtivoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dataDeteccao?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataResolucao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origemResolucao?: NullableStringFieldUpdateOperationsInput | string | null
+    descricao?: StringFieldUpdateOperationsInput | string
+    reincidencia?: BoolFieldUpdateOperationsInput | boolean
+    chamadoId?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolvidoPor?: UsuarioUpdateOneWithoutFalhasResolvidasNestedInput
+  }
+
+  export type RegistroFalhaAtivoUncheckedUpdateWithoutAtivoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dataDeteccao?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataResolucao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origemResolucao?: NullableStringFieldUpdateOperationsInput | string | null
+    descricao?: StringFieldUpdateOperationsInput | string
+    reincidencia?: BoolFieldUpdateOperationsInput | boolean
+    chamadoId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvidoPorId?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RegistroFalhaAtivoUncheckedUpdateManyWithoutAtivoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dataDeteccao?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataResolucao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    origemResolucao?: NullableStringFieldUpdateOperationsInput | string | null
+    descricao?: StringFieldUpdateOperationsInput | string
+    reincidencia?: BoolFieldUpdateOperationsInput | boolean
+    chamadoId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvidoPorId?: NullableStringFieldUpdateOperationsInput | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ChecklistEquipamentoItemUpdateWithoutAtivoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tipoEquipamento?: EnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento
+    operacional?: BoolFieldUpdateOperationsInput | boolean
+    quantidade?: IntFieldUpdateOperationsInput | number
+    quantidadeQuebrada?: IntFieldUpdateOperationsInput | number
+    numeroSerie?: NullableStringFieldUpdateOperationsInput | string | null
+    numeroChamado?: NullableStringFieldUpdateOperationsInput | string | null
+    descricaoProblema?: NullableStringFieldUpdateOperationsInput | string | null
+    valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    checklist?: ChecklistEquipamentoUpdateOneRequiredWithoutItensNestedInput
+  }
+
+  export type ChecklistEquipamentoItemUncheckedUpdateWithoutAtivoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    checklistId?: StringFieldUpdateOperationsInput | string
+    tipoEquipamento?: EnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento
+    operacional?: BoolFieldUpdateOperationsInput | boolean
+    quantidade?: IntFieldUpdateOperationsInput | number
+    quantidadeQuebrada?: IntFieldUpdateOperationsInput | number
+    numeroSerie?: NullableStringFieldUpdateOperationsInput | string | null
+    numeroChamado?: NullableStringFieldUpdateOperationsInput | string | null
+    descricaoProblema?: NullableStringFieldUpdateOperationsInput | string | null
+    valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type ChecklistEquipamentoItemUncheckedUpdateManyWithoutAtivoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    checklistId?: StringFieldUpdateOperationsInput | string
+    tipoEquipamento?: EnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento
+    operacional?: BoolFieldUpdateOperationsInput | boolean
+    quantidade?: IntFieldUpdateOperationsInput | number
+    quantidadeQuebrada?: IntFieldUpdateOperationsInput | number
+    numeroSerie?: NullableStringFieldUpdateOperationsInput | string | null
+    numeroChamado?: NullableStringFieldUpdateOperationsInput | string | null
+    descricaoProblema?: NullableStringFieldUpdateOperationsInput | string | null
+    valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
   }
 
 
