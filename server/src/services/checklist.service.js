@@ -37,6 +37,30 @@ const resolverTipoCarrinhoAtivo = (ativo) => {
   return null;
 };
 
+const subtrairDias = (data, dias) => new Date(data.getTime() - dias * 24 * 60 * 60 * 1000);
+
+const verificarReincidenciaAtivo = async (ativoId, descricao, dataDeteccao) => {
+  const where = {
+    ativoId,
+    dataDeteccao: {
+      gte: subtrairDias(dataDeteccao, 90),
+      lt: dataDeteccao,
+    },
+  };
+
+  if (descricao) {
+    where.descricao = { equals: descricao, mode: 'insensitive' };
+  }
+
+  const falhaAnterior = await prisma.registroFalhaAtivo.findFirst({
+    where,
+    select: { id: true },
+    orderBy: { dataDeteccao: 'desc' },
+  });
+
+  return Boolean(falhaAnterior);
+};
+
 const buscarFrotaCarrinhosPorAtivos = async (unidade) => {
   const ativos = await prisma.ativoLoja.findMany({
     where: {
@@ -156,12 +180,17 @@ const salvarEquipamento = async (user, body) => {
           where: { ativoId: item.ativoId, dataResolucao: null },
         });
         if (!falhaAberta) {
+          const dataDeteccao = new Date();
+          const descricao = item.descricaoProblema || 'Falha detectada via checklist';
+          const reincidencia = await verificarReincidenciaAtivo(item.ativoId, descricao, dataDeteccao);
+
           // Cria nova falha
           await prisma.registroFalhaAtivo.create({
             data: {
               ativoId: item.ativoId,
-              dataDeteccao: new Date(),
-              descricao: item.descricaoProblema || 'Falha detectada via checklist',
+              dataDeteccao,
+              descricao,
+              reincidencia,
               chamadoId: null, // Pode ser vinculado futuramente se houver chamado aberto
             },
           });

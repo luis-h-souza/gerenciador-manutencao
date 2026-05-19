@@ -55,12 +55,38 @@ const listar = async (user, query) => {
   return { data: rotinas, meta: { total, page: parseInt(page), limit: parseInt(limit) } };
 };
 
-const criar = async (user, body) => {
-  const { tipo, unidade, regiao, semana, mes, ano, conforme, descricao, ativoId } = body;
-  
+const resolverEscopoCriacao = (user, body) => {
+  if (user.role === 'GESTOR') {
+    if (!user.loja?.numero || !user.loja?.regiao) {
+      throw new Error('Usuário sem loja definida para registrar rotina');
+    }
+
+    return {
+      unidade: String(user.loja.numero),
+      regiao: user.loja.regiao,
+    };
+  }
+
+  const unidade = body.unidade ? String(body.unidade) : null;
+  const regiao = body.regiao ? String(body.regiao) : null;
+
   if (!unidade || !regiao) {
     throw new Error('Unidade e Região são obrigatórias');
   }
+
+  const podeFiltrarRegiao = ['ADMINISTRADOR', 'DIRETOR'].includes(user.role)
+    || getUserRegions(user).includes(regiao);
+
+  if (!podeFiltrarRegiao) {
+    throw new Error('Acesso negado: região fora da sua abrangência');
+  }
+
+  return { unidade, regiao };
+};
+
+const criar = async (user, body) => {
+  const { tipo, semana, mes, ano, conforme, descricao, ativoId } = body;
+  const { unidade, regiao } = resolverEscopoCriacao(user, body);
 
   if (!conforme && !descricao) {
     throw new Error('Descrição é obrigatória quando não conforme');

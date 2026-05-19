@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { ativosService, lojasService, usuariosService } from "../../services";
+import { ativosService, falhaAtivoService, lojasService, usuariosService } from "../../services";
 import { useAuth } from "../../contexts/AuthContext";
 import {
   Plus,
@@ -312,19 +312,12 @@ function AtivoModal({ ativo, onClose }) {
 function DetalhesAtivoModal({ ativo, onClose }) {
   const { data: kpis, isLoading: loadingKpis } = useQuery({
     queryKey: ["ativo-confiabilidade", ativo.id],
-    queryFn: () => {
-      // Import needed from the top implicitly or explicitly, but it's available via falhaAtivoService
-      const { falhaAtivoService } = require("../../services");
-      return falhaAtivoService.calcularConfiabilidade(ativo.id).then(r => r.data.data);
-    }
+    queryFn: () => falhaAtivoService.calcularConfiabilidade(ativo.id).then(r => r.data),
   });
 
   const { data: falhasData, isLoading: loadingFalhas } = useQuery({
     queryKey: ["ativo-falhas", ativo.id],
-    queryFn: () => {
-      const { falhaAtivoService } = require("../../services");
-      return falhaAtivoService.listarPorAtivo(ativo.id, { limit: 10 }).then(r => r.data.data);
-    }
+    queryFn: () => falhaAtivoService.listarPorAtivo(ativo.id, { limit: 10 }).then(r => r.data.data || []),
   });
 
   return (

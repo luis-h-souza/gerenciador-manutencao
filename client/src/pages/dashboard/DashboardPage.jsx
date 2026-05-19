@@ -27,6 +27,7 @@ import {
   usuariosService,
 } from "../../services";
 import { useAuth } from "../../contexts/AuthContext";
+import InfoTooltip from "../../components/feedback/InfoTooltip";
 import {
   ClipboardList,
   DollarSign,
@@ -781,7 +782,7 @@ function CorporativoDashboard({ filtro, setFiltro }) {
   });
 
   const ranking = rankingCoordenadores?.data || [];
-  
+
   // Dados de Checklist para o card de Adesão
   const { data: checklistData } = useQuery({
     queryKey: ["checklist-consolidado-regional-all", filtro.mes, filtro.ano],
@@ -820,9 +821,9 @@ function CorporativoDashboard({ filtro, setFiltro }) {
   });
 
   // ─── LÓGICA DE AGREGAÇÃO PARA HIERARQUIA ────────────────────────────────────
-  
+
   const splitRegions = (r) => (r ? r.split(',').map(s => s.trim().toUpperCase()).filter(Boolean) : []);
-  
+
   // Agrega dados para Gerentes
   const gerentesAgregados = useMemo(() => {
     if (!gerentesData || !regionalRes?.data) return [];
@@ -846,7 +847,7 @@ function CorporativoDashboard({ filtro, setFiltro }) {
   const coordenadoresAgregados = useMemo(() => {
     if (!coordenadoresData || !regionalRes?.data) return [];
     const regionalData = regionalRes.data;
-    
+
     // Se houver um gerente selecionado, filtra apenas os coordenadores que têm interseção de regional
     let baseCoords = coordenadoresData.filter(c => c.id !== usuario?.id);
     if (gerenteDrill) {
@@ -1097,7 +1098,7 @@ function CorporativoDashboard({ filtro, setFiltro }) {
               accent="var(--color-warning)"
             />
           </div>
-          <div 
+          <div
             style={{ flex: "1 1 300px", cursor: 'pointer' }}
             onClick={() => navigate('/checklists-consolidado')}
           >
@@ -1341,8 +1342,8 @@ function CorporativoDashboard({ filtro, setFiltro }) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             {dashboardEtapa !== roleInicial && (
-              <button 
-                className="btn btn-ghost btn-sm" 
+              <button
+                className="btn btn-ghost btn-sm"
                 onClick={handleBack}
                 style={{ padding: '8px' }}
               >
@@ -1368,7 +1369,7 @@ function CorporativoDashboard({ filtro, setFiltro }) {
               </h2>
             </div>
           </div>
-          
+
           <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
             {dashboardEtapa === "gerentes" && "Clique em um gerente para detalhar coordenadores"}
             {dashboardEtapa === "coordenadores" && "Clique em um coordenador para detalhar regionais"}
@@ -2900,6 +2901,22 @@ function ConformidadeDashboard({ filtro }) {
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in">
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-2">
+          <h3 style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--color-text-primary)", margin: 0 }}>
+            Conformidade Operacional
+          </h3>
+          <InfoTooltip
+            title="Conformidade operacional"
+            text="Mostra a aderência das lojas aos checklists, rotinas de infraestrutura, preventivas, baterias e laudos. Use para identificar pendências e priorizar ações."
+            balloonStyle={{ right: "auto", left: -100 }}
+          />
+        </div>
+        <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", margin: 0 }}>
+          Visão por unidade da aderência às rotinas, preventivas e vencimentos críticos.
+        </p>
+      </div>
+
       <div className="grid gap-4 md:grid-cols-3">
         <StatCard
           label="Média de Cobertura de Checklists"
@@ -2940,8 +2957,8 @@ function ConformidadeDashboard({ filtro }) {
 
             return (
               <div key={regiao} className="card" style={{ background: "var(--color-surface-800)", padding: "16px", display: "flex", flexDirection: "column", gap: "12px", border: "1px solid var(--color-border)" }}>
-                <div 
-                  className="flex items-center justify-between pointer" 
+                <div
+                  className="flex items-center justify-between pointer"
                   onClick={() => toggleRegion(regiao)}
                   style={{ userSelect: "none" }}
                 >
@@ -3096,6 +3113,22 @@ function BuyVsMaintainDashboard() {
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in">
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-2">
+          <h3 style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--color-text-primary)", margin: 0 }}>
+            Decisão Comprar x Manter
+          </h3>
+          <InfoTooltip
+            title="Comprar x manter"
+            text="Cruza falhas, MTBF, MTTR e custos de manutenção para indicar ativos que podem exigir substituição em vez de novos reparos."
+            balloonStyle={{ right: "auto", left: -100 }}
+          />
+        </div>
+        <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", margin: 0 }}>
+          Inteligência de ativos para priorizar substituições, reparos e abertura de chamados.
+        </p>
+      </div>
+
       <div className="grid gap-4 md:grid-cols-4">
         <StatCard
           label="Total de Ativos Analisados"
@@ -3143,8 +3176,8 @@ function BuyVsMaintainDashboard() {
 
             return (
               <div key={regiao} className="flex flex-col gap-4">
-                <div 
-                  className="flex items-center justify-between pointer" 
+                <div
+                  className="flex items-center justify-between pointer"
                   onClick={() => toggleRegion(regiao)}
                   style={{ userSelect: "none", background: "var(--color-surface-700)", padding: "12px 18px", borderRadius: "12px", border: "1px solid var(--color-border)" }}
                 >

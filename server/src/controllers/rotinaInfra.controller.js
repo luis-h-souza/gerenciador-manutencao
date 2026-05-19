@@ -16,6 +16,7 @@ const criar = async (req, res, next) => {
     const rotina = await rotinaInfraService.criar(req.user, req.body);
     resSucesso(res, 'Operação realizada com sucesso', 201, rotina);
   } catch (err) {
+    if (err.message.includes('Acesso negado')) return resErroClient(res, err.message, 403);
     if (err.message.includes('Já existe um registro') || err.message.includes('obrigatória')) {
       return resErroClient(res, err.message, 400);
     }
