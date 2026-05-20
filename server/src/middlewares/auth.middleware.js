@@ -41,7 +41,7 @@ const autenticar = async (req, res, next) => {
         ativo: true,
         regiao: true,
         lojaId: true,
-        loja: { select: { id: true, numero: true, nome: true, regiao: true } },
+        loja: { select: { id: true, numero: true, nome: true, regiao: true, telefone: true, endereco: true } },
       },
     });
 

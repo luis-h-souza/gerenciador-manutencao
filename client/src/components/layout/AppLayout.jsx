@@ -3,11 +3,9 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
-import ConfiguracaoModal from './ConfiguracaoModal';
 
 export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 1024);
-  const [showConfig, setShowConfig] = useState(false);
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: 'var(--color-surface-900)' }}>
@@ -24,7 +22,6 @@ export default function AppLayout() {
       <Sidebar
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
-        onOpenConfig={() => setShowConfig(true)}
       />
 
       {/* Conteúdo principal */}
@@ -34,8 +31,6 @@ export default function AppLayout() {
           <Outlet />
         </main>
       </div>
-
-      <ConfiguracaoModal open={showConfig} onClose={() => setShowConfig(false)} />
     </div>
   );
 }

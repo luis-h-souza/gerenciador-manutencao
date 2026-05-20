@@ -31,7 +31,13 @@ const login = async (req, res, next) => {
         regiao: usuario.loja?.regiao || usuario.regiao || null,
         unidade: usuario.loja?.nome || null,
         lojaId: usuario.lojaId,
-        loja: usuario.loja,
+        loja: usuario.loja
+          ? {
+              ...usuario.loja,
+              telefone: usuario.loja.telefone ?? null,
+              endereco: usuario.loja.endereco ?? null,
+            }
+          : null,
       },
     });
   } catch (err) {

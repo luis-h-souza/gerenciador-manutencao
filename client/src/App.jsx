@@ -20,6 +20,7 @@ import ChecklistPage from "./pages/checklists/ChecklistPage";
 import ChecklistConsolidadoPage from "./pages/checklists/ChecklistConsolidadoPage";
 import LojasPage from "./pages/lojas/LojasPage";
 import LogsPage from "./pages/admin/LogsPage";
+import ConfiguracaoPage from "./pages/configuracoes/ConfiguracaoPage";
 
 
 // Rota protegida
@@ -209,6 +210,15 @@ function AppRoutes() {
           element={
             <ProtectedRoute roles={["ADMINISTRADOR"]}>
               <LogsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="configuracoes"
+          element={
+            <ProtectedRoute roles={ROLES.TODOS}>
+              <ConfiguracaoPage />
             </ProtectedRoute>
           }
         />

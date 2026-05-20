@@ -56,7 +56,11 @@ api.interceptors.response.use(
         const refreshToken = localStorage.getItem('refreshToken');
         if (!refreshToken) throw new Error('Sem refresh token');
 
-        const { data } = await axios.post('/api/v1/auth/refresh', { refreshToken });
+        const { data: raw } = await axios.post('/api/v1/auth/refresh', { refreshToken });
+        const data = raw?.sucesso && raw?.dados ? raw.dados : raw;
+        if (!data?.accessToken || !data?.refreshToken) {
+          throw new Error('Resposta de refresh inválida');
+        }
         localStorage.setItem('accessToken', data.accessToken);
         localStorage.setItem('refreshToken', data.refreshToken);
 

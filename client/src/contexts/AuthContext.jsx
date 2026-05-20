@@ -85,8 +85,16 @@ export function AuthProvider({ children }) {
     return usuario ? roles.includes(usuario.role) : false;
   }, [usuario]);
 
+  const refreshUsuario = useCallback(async () => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) return null;
+    const { data } = await api.get('/auth/me');
+    setUsuario(data.usuario);
+    return data.usuario;
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ usuario, carregando, login, logout, hasRole }}>
+    <AuthContext.Provider value={{ usuario, carregando, login, logout, hasRole, refreshUsuario }}>
       {children}
     </AuthContext.Provider>
   );

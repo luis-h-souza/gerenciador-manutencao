@@ -14,11 +14,13 @@ Substituir quatro planilhas Excel manuais (Geradores, No-Breaks, Cabines Primár
 
 ## Hierarquia de Responsabilidades (Regras de Negócio)
 
-| Role | Responsabilidade |
-|------|--------------------|
-| **GESTOR** | Executa checklists semanais/mensais/bimestrais; abre chamados corretivos; orça com fornecedores; pode fechar manualmente um registro de falha |
-| **COORDENADOR** | Monitora conformidade; programa preventivas de alto custo (baterias); delega tarefas ao Gestor via sistema; pode executar em caso de ausência do Gestor |
-| **GERENTE / DIRETOR** | Visualiza indicadores agregados e decisões estratégicas (Buy vs Maintain) |
+
+| Role                  | Responsabilidade                                                                                                                                        |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **GESTOR**            | Executa checklists semanais/mensais/bimestrais; abre chamados corretivos; orça com fornecedores; pode fechar manualmente um registro de falha           |
+| **COORDENADOR**       | Monitora conformidade; programa preventivas de alto custo (baterias); delega tarefas ao Gestor via sistema; pode executar em caso de ausência do Gestor |
+| **GERENTE / DIRETOR** | Visualiza indicadores agregados e decisões estratégicas (Buy vs Maintain)                                                                               |
+
 
 ---
 
@@ -30,6 +32,7 @@ Substituir quatro planilhas Excel manuais (Geradores, No-Breaks, Cabines Primár
 > Ilhas Self **não possuem manutenção preventiva** — apenas corretiva. Porém, são ativos de **extrema importância** para o negócio: em uma rede de supermercados, "sem ilha = sem venda". Qualquer falha impacta diretamente o faturamento da loja.
 
 **Implicação para o sistema:**
+
 - Ilhas Self devem ser rastreadas com `RegistroFalhaAtivo` para cálculo de MTBF e MTTR
 - O Painel de Inteligência deve destacar ilhas com **alta frequência de falhas** (MTBF baixo) como ativos críticos que demandam substituição prioritária
 - O critério "Comprar vs Manter" se aplica com peso maior para ilhas (menor tolerância de MTBF)
@@ -93,6 +96,7 @@ model AtivoLoja {
 
 > [!NOTE]
 > `dadosTecnicos` (Json) por categoria:
+>
 > - **Gerador**: `{ fabricante, motor, alternador, tensao, capacidadeKva, qtdBaterias, descricaoBateria }`
 >   - `descricaoBateria`: descrição livre da bateria (ex: `"12V/35AH"`, `"12V/7AH"`)
 > - **Nobreak**: `{ qtdBaterias, descricaoBateria, capacidadeKva }`
@@ -195,14 +199,17 @@ enum TipoRotinaInfra {
 
 **Endpoints:**
 
-| Método | Rota | Acesso | Descrição |
-|--------|------|--------|-----------|
-| `GET` | `/rotinas-infra` | COORDENADOR+ | Lista com status calculado |
-| `POST` | `/rotinas-infra` | GESTOR+ | Cria registro; seta `preenchidoComAtraso` e `dataLimite` |
-| `GET` | `/rotinas-infra/conformidade` | COORDENADOR+ | Matriz conformidade por unidade/mês. Aceita `?dataRef=YYYY-MM-DD` |
-| `GET` | `/rotinas-infra/gerador/pendencias` | COORDENADOR+ | Lista semanas sem teste por unidade |
+
+| Método | Rota                                | Acesso       | Descrição                                                         |
+| ------ | ----------------------------------- | ------------ | ----------------------------------------------------------------- |
+| `GET`  | `/rotinas-infra`                    | COORDENADOR+ | Lista com status calculado                                        |
+| `POST` | `/rotinas-infra`                    | GESTOR+      | Cria registro; seta `preenchidoComAtraso` e `dataLimite`          |
+| `GET`  | `/rotinas-infra/conformidade`       | COORDENADOR+ | Matriz conformidade por unidade/mês. Aceita `?dataRef=YYYY-MM-DD` |
+| `GET`  | `/rotinas-infra/gerador/pendencias` | COORDENADOR+ | Lista semanas sem teste por unidade                               |
+
 
 **Lógica de status — Incêndio:**
+
 ```
 se registro existe:
   se preenchidoComAtraso → "CONCLUIDO_COM_ATRASO"
@@ -214,6 +221,7 @@ senão:
 ```
 
 **Lógica de status — Gerador Semanal:**
+
 ```
 se registro existe para semana W:
   se preenchidoComAtraso → "CONCLUIDO_COM_ATRASO"  (badge laranja)
@@ -231,10 +239,12 @@ senão:
 
 #### [NEW] `src/controllers/falhaAtivo.controller.js` + `src/routes/falhaAtivo.routes.js`
 
-| Método | Rota | Acesso | Descrição |
-|--------|------|--------|-----------|
-| `GET` | `/falhas-ativo/:ativoId` | COORDENADOR+ | Histórico de falhas do ativo |
-| `PATCH` | `/falhas-ativo/:id/resolver` | GESTOR+ | **"Marcar como Resolvido"** — fecha manualmente o registro; seta `dataResolucao = now()` e `origemResolucao = "MANUAL"` |
+
+| Método  | Rota                         | Acesso       | Descrição                                                                                                               |
+| ------- | ---------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| `GET`   | `/falhas-ativo/:ativoId`     | COORDENADOR+ | Histórico de falhas do ativo                                                                                            |
+| `PATCH` | `/falhas-ativo/:id/resolver` | GESTOR+      | **"Marcar como Resolvido"** — fecha manualmente o registro; seta `dataResolucao = now()` e `origemResolucao = "MANUAL"` |
+
 
 ---
 
@@ -260,21 +270,25 @@ Custo acumulado por ativo =
 
 **Critério "Comprar vs Manter"** — flag `SUBSTITUIR` quando **2 ou mais** condições verdadeiras:
 
-| Condição | Threshold Padrão | Ilhas Self |
-|----------|-----------------|------------|
-| MTBF baixo | < 90 dias | < 180 dias (mais rigoroso — negócio crítico) |
-| Custo acumulado (último ano) | > R$ 8.000 | > R$ 5.000 |
-| Reincidências (último semestre) | > 3 | > 2 |
+
+| Condição                        | Threshold Padrão | Ilhas Self                                   |
+| ------------------------------- | ---------------- | -------------------------------------------- |
+| MTBF baixo                      | < 90 dias        | < 180 dias (mais rigoroso — negócio crítico) |
+| Custo acumulado (último ano)    | > R$ 8.000       | > R$ 5.000                                   |
+| Reincidências (último semestre) | > 3              | > 2                                          |
+
 
 ---
 
 #### [MODIFY] Checklist de Equipamentos — Service/Controller
 
 Ao salvar um `ChecklistEquipamentoItem` com `operacional = false` **e** `ativoId` preenchido:
+
 1. Criar automaticamente um `RegistroFalhaAtivo` com `dataDeteccao = data do checklist`
 2. Verificar se existe falha aberta anterior para o ativo (sem `dataResolucao`) — se sim, marcar `reincidencia = true`
 
 Ao salvar um item com `operacional = true` **e** existir `RegistroFalhaAtivo` aberto para o ativo:
+
 1. Atualizar `dataResolucao = data do checklist` e `origemResolucao = "CHECKLIST"` automaticamente
 
 ---
@@ -326,6 +340,7 @@ Ao salvar um item com `operacional = true` **e** existir `RegistroFalhaAtivo` ab
 **Seção 1 — Matriz de Conformidade (Incêndio)**
 
 Tabela `unidades × meses` com faróis:
+
 - 🟢 Concluído no prazo
 - 🟡 Concluído com atraso
 - 🔴 Não realizado / Vencido
@@ -340,6 +355,7 @@ Grade `semanas × unidades` das últimas 8 semanas. Células vermelhas = semana 
 **Seção 3 — Vencimentos de Preventivas**
 
 Cards por unidade com semáforo:
+
 - 🟢 > 60 dias | 🟡 30–60 dias | 🔴 < 30 dias ou vencido
 
 Cobre: troca de bateria (nobreak + gerador), TOF semestral, laudo de cabine primária. Ilhas Self **não aparecem** nesta seção (sem preventiva).
@@ -373,6 +389,7 @@ Cada ativo com falha aberta exibe botão **"✅ Marcar como Resolvido"** → cha
 **Acesso:** COORDENADOR, ADMINISTRADOR
 
 Formulário adaptativo por categoria para migrar dados das planilhas:
+
 - **Gerador**: fabricante, motor, alternador, tensão (V), capacidade (kVa), nº série, TOF, qtd baterias, descrição da bateria (ex: `12V/35AH`)
 - **Nobreak**: fabricante, modelo, capacidade (kVa), qtd baterias, descrição da bateria
 - **Cabine Primária**: tipo QTA, responsável pelo laudo, **data do último laudo** (`ultimaPreventiva`), **data de vencimento do laudo** (`proximaPreventiva`) — campos obrigatórios para controle no painel
@@ -383,29 +400,25 @@ Formulário adaptativo por categoria para migrar dados das planilhas:
 ## Verification Plan
 
 1. **Regra do dia 20** — Usar `?dataRef=2026-05-21` → unidades sem registro aparecem como `NAO_REALIZADO_VENCIDO`. Com `?dataRef=2026-05-19` → `PENDENTE`.
-
 2. **Badge de gerador pendente** — Criar sistema na semana 20, não preencher gerador. Na semana 21, verificar que a semana 20 ainda exibe badge de pendência na tela do Gestor.
-
 3. **RegistroFalhaAtivo automático** — Salvar checklist com `operacional = false` para ativo cadastrado → `RegistroFalhaAtivo` criado com `dataDeteccao` correta.
-
 4. **Fechamento automático via checklist** — Na semana seguinte, salvar checklist com `operacional = true` para o mesmo ativo → `dataResolucao` preenchida e `origemResolucao = "CHECKLIST"`.
-
 5. **Fechamento manual** — Clicar "Marcar como Resolvido" no painel → `dataResolucao = now()` e `origemResolucao = "MANUAL"`.
-
 6. **MTBF** — Inserir 3 registros de falha com datas conhecidas → verificar cálculo de MTBF no endpoint de indicadores.
-
 7. **Flag Substituir (Ilha Self)** — Inserir 3 reincidências e custo > R$ 5.000 → painel exibe badge "AVALIAR SUBSTITUIÇÃO".
-
 8. **Delegação de Tarefa** — Dia 21: clicar "Delegar" para unidade vermelha → `Tarefa` criada com `atribuidoParaId` = Gestor e notificação enviada.
 
 ---
 
 ## Fases de Entrega (Prioridade)
 
-| Fase | Escopo | Dependência |
-|------|--------|-------------|
-| **1** | Schema (AtivoLoja + RegistroFalhaAtivo + ChecklistRotinaInfra) + migração das planilhas | Nenhuma |
-| **2** | Checklists de Rotinas (Gerador + Incêndio) + tela do Gestor | Fase 1 |
-| **3** | Vínculo `ativoId` no checklist de equipamentos + criação/fechamento automático de `RegistroFalhaAtivo` | Fase 1 |
-| **4** | `IndicadoresService` (MTBF/MTTR) + botão "Marcar Resolvido" | Fase 3 |
-| **5** | Painel de Inteligência do Coordenador (conformidade + vencimentos + Buy vs Maintain) | Fases 2, 3 e 4 |
+
+| Fase  | Escopo                                                                                                 | Dependência    |
+| ----- | ------------------------------------------------------------------------------------------------------ | -------------- |
+| **1** | Schema (AtivoLoja + RegistroFalhaAtivo + ChecklistRotinaInfra) + migração das planilhas                | Nenhuma        |
+| **2** | Checklists de Rotinas (Gerador + Incêndio) + tela do Gestor                                            | Fase 1         |
+| **3** | Vínculo `ativoId` no checklist de equipamentos + criação/fechamento automático de `RegistroFalhaAtivo` | Fase 1         |
+| **4** | `IndicadoresService` (MTBF/MTTR) + botão "Marcar Resolvido"                                            | Fase 3         |
+| **5** | Painel de Inteligência do Coordenador (conformidade + vencimentos + Buy vs Maintain)                   | Fases 2, 3 e 4 |
+
+

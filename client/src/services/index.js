@@ -11,8 +11,10 @@ export const lojasService = {
   listar:        (params) => api.get('/lojas', { params }),
   listarRegioes: ()       => api.get('/lojas/regioes'),
   buscar:        (id)     => api.get(`/lojas/${id}`),
+  buscarMinha:   ()       => api.get('/lojas/minha'),
   criar:         (data)   => api.post('/lojas', data),
   atualizar:     (id, data) => api.put(`/lojas/${id}`, data),
+  atualizarMinha: (data)   => api.patch('/lojas/minha', data),
   remover:       (id)     => api.delete(`/lojas/${id}`),
 };
 

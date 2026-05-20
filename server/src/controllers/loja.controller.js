@@ -23,6 +23,9 @@ const buscarPorId = async (req, res, next) => {
   } catch (err) {
     if (err.message === 'Loja não encontrada') return res.status(404).json({ error: err.message });
     if (err.message === 'Acesso negado: loja de outra região') return res.status(403).json({ error: err.message });
+    if (err.message === 'Acesso negado: você só pode consultar a sua loja') {
+      return res.status(403).json({ error: err.message });
+    }
     next(err);
   }
 };
@@ -50,6 +53,30 @@ const atualizar = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+const buscarMinha = async (req, res, next) => {
+  try {
+    const loja = await lojaService.buscarMinhaLoja(req.user);
+    resSucesso(res, 'Operação realizada com sucesso', 200, loja);
+  } catch (err) {
+    if (err.status) {
+      return res.status(err.status).json({ error: err.error, message: err.message });
+    }
+    next(err);
+  }
+};
+
+const atualizarMinha = async (req, res, next) => {
+  try {
+    const loja = await lojaService.atualizarMinhaLoja(req.user, req.body);
+    resSucesso(res, 'Dados da loja atualizados', 200, loja);
+  } catch (err) {
+    if (err.status) {
+      return res.status(err.status).json({ error: err.error, message: err.message });
+    }
+    next(err);
+  }
+};
+
 const remover = async (req, res, next) => {
   try {
     await lojaService.remover(req.params.id);
@@ -57,4 +84,4 @@ const remover = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-module.exports = { listar, listarRegioes, buscarPorId, criar, atualizar, remover };
+module.exports = { listar, listarRegioes, buscarPorId, buscarMinha, criar, atualizar, atualizarMinha, remover };

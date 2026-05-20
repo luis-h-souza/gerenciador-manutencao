@@ -50,11 +50,18 @@ const listarRegioes = async (user) => {
 const buscarPorId = async (user, id) => {
   const loja = await prisma.loja.findUnique({ where: { id } });
   if (!loja) throw new Error('Loja não encontrada');
-  
+
+  if (user.role === 'GESTOR') {
+    if (!user.lojaId || user.lojaId !== id) {
+      throw new Error('Acesso negado: você só pode consultar a sua loja');
+    }
+    return loja;
+  }
+
   if (user.role === 'COORDENADOR' && !canAccessRegion(user, loja.regiao)) {
     throw new Error('Acesso negado: loja de outra região');
   }
-  
+
   return loja;
 };
 
@@ -115,8 +122,50 @@ const atualizar = async (id, body) => {
   return prisma.loja.update({ where: { id }, data });
 };
 
+/** Gestor: consulta a própria loja vinculada */
+const buscarMinhaLoja = async (user) => {
+  if (user.role !== 'GESTOR') {
+    throw { status: 403, error: 'Acesso negado', message: 'Somente gestores podem usar este recurso' };
+  }
+  if (!user.lojaId) {
+    throw { status: 400, error: 'Sem loja', message: 'Sua conta não está vinculada a uma loja. Contate o administrador.' };
+  }
+
+  const loja = await prisma.loja.findUnique({ where: { id: user.lojaId } });
+  if (!loja || !loja.ativo) {
+    throw { status: 404, error: 'Loja não encontrada', message: 'Loja vinculada não encontrada ou inativa' };
+  }
+
+  return loja;
+};
+
+/** Gestor: atualiza apenas telefone e endereço da própria loja */
+const atualizarMinhaLoja = async (user, body) => {
+  if (user.role !== 'GESTOR') {
+    throw { status: 403, error: 'Acesso negado', message: 'Somente gestores podem usar este recurso' };
+  }
+  if (!user.lojaId) {
+    throw { status: 400, error: 'Sem loja', message: 'Sua conta não está vinculada a uma loja. Contate o administrador.' };
+  }
+
+  const data = {};
+  if (body.telefone !== undefined) data.telefone = body.telefone?.trim() || null;
+  if (body.endereco !== undefined) data.endereco = body.endereco?.trim() || null;
+
+  if (!Object.keys(data).length) {
+    throw { status: 400, error: 'Dados inválidos', message: 'Informe telefone e/ou endereço para atualizar' };
+  }
+
+  const loja = await prisma.loja.findUnique({ where: { id: user.lojaId } });
+  if (!loja || !loja.ativo) {
+    throw { status: 404, error: 'Loja não encontrada', message: 'Loja vinculada não encontrada ou inativa' };
+  }
+
+  return prisma.loja.update({ where: { id: user.lojaId }, data });
+};
+
 const remover = async (id) => {
   return prisma.loja.update({ where: { id }, data: { ativo: false } });
 };
 
-module.exports = { listar, listarRegioes, buscarPorId, criar, atualizar, remover };
+module.exports = { listar, listarRegioes, buscarPorId, buscarMinhaLoja, criar, atualizar, atualizarMinhaLoja, remover };

@@ -108,7 +108,7 @@ const NAV = [
   },
 ];
 
-export default function Sidebar({ open, onClose, onOpenConfig }) {
+export default function Sidebar({ open, onClose }) {
   const { usuario } = useAuth();
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
@@ -213,14 +213,18 @@ export default function Sidebar({ open, onClose, onOpenConfig }) {
         className="px-3 py-3"
         style={{ borderTop: "1px solid var(--color-border)" }}
       >
-        <button
-          onClick={onOpenConfig}
-          className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg group transition-colors"
+        <NavLink
+          to="/configuracoes"
+          onClick={handleNavClick}
+          className={({ isActive }) =>
+            `w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg group transition-colors nav-item ${isActive ? "active" : ""}`
+          }
           style={{
             background: "var(--color-surface-700)",
             border: "none",
             cursor: "pointer",
             textAlign: "left",
+            textDecoration: "none",
           }}
           title="Configurações"
         >
@@ -262,7 +266,7 @@ export default function Sidebar({ open, onClose, onOpenConfig }) {
             size={14}
             style={{ color: "var(--color-text-muted)", flexShrink: 0 }}
           />
-        </button>
+        </NavLink>
       </div>
     </aside>
   );

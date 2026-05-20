@@ -6,19 +6,21 @@ Sistema completo para gerenciamento de tarefas, controle financeiro, estoque de 
 
 ## Stack (versões atuais — Abril 2026)
 
-| Camada | Tecnologia | Versão |
-|---|---|---|
-| **Backend** | Node.js | >=22.12.0 |
-| **Framework** | Express.js | ^5.1.0 |
-| **ORM** | Prisma | ^7.0.0 |
-| **Banco de Dados** | PostgreSQL | >= 15 |
-| **Cache / Sessões** | Redis | >= 7 |
-| **Frontend** | React | ^19.2.5 |
-| **Build tool** | Vite | ^6.2.0 |
-| **CSS** | Tailwind CSS | ^4.2.2 |
-| **Data fetching** | TanStack Query | ^5.99.0 |
-| **Roteamento** | React Router | ^7.5.3 |
-| **Datas** | date-fns | ^4.1.0 |
+
+| Camada              | Tecnologia     | Versão    |
+| ------------------- | -------------- | --------- |
+| **Backend**         | Node.js        | >=22.12.0 |
+| **Framework**       | Express.js     | ^5.1.0    |
+| **ORM**             | Prisma         | ^7.0.0    |
+| **Banco de Dados**  | PostgreSQL     | >= 15     |
+| **Cache / Sessões** | Redis          | >= 7      |
+| **Frontend**        | React          | ^19.2.5   |
+| **Build tool**      | Vite           | ^6.2.0    |
+| **CSS**             | Tailwind CSS   | ^4.2.2    |
+| **Data fetching**   | TanStack Query | ^5.99.0   |
+| **Roteamento**      | React Router   | ^7.5.3    |
+| **Datas**           | date-fns       | ^4.1.0    |
+
 
 ---
 
@@ -33,14 +35,16 @@ Sistema completo para gerenciamento de tarefas, controle financeiro, estoque de 
 - **Mass assignment prevenido** — controllers de estoque e fornecedor aceitam apenas campos explícitos do body
 - **RBAC** — 6 roles com visão em camadas:
 
-| Role | Escopo | Permissões |
-|---|---|---|
-| `ADMINISTRADOR` | Global | Acesso total a todas as regiões e funcionalidades |
-| `DIRETOR` | Global | Visão consolidada de toda a operação; pode consultar usuários e lojas, mas a gestão administrativa completa continua concentrada no administrador |
-| `GERENTE` | Regional múltiplo | Visão gerencial das **suas regionais**; acompanha coordenadores, gestores e indicadores da sua abrangência |
-| `COORDENADOR` | Regional múltiplo | Visão operacional das **suas regionais**; acompanha lojas, checklists e times dentro da sua abrangência |
-| `GESTOR` | Unidade | Acesso à **sua loja**; único que preenche checklists. Gerencia tarefas da sua unidade. |
-| `TECNICO` | Atribuição | Vê apenas tarefas **atribuídas a ele**. Pode atualizar o status. |
+
+| Role            | Escopo            | Permissões                                                                                                                                        |
+| --------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ADMINISTRADOR` | Global            | Acesso total a todas as regiões e funcionalidades                                                                                                 |
+| `DIRETOR`       | Global            | Visão consolidada de toda a operação; pode consultar usuários e lojas, mas a gestão administrativa completa continua concentrada no administrador |
+| `GERENTE`       | Regional múltiplo | Visão gerencial das **suas regionais**; acompanha coordenadores, gestores e indicadores da sua abrangência                                        |
+| `COORDENADOR`   | Regional múltiplo | Visão operacional das **suas regionais**; acompanha lojas, checklists e times dentro da sua abrangência                                           |
+| `GESTOR`        | Unidade           | Acesso à **sua loja**; único que preenche checklists. Gerencia tarefas da sua unidade.                                                            |
+| `TECNICO`       | Atribuição        | Vê apenas tarefas **atribuídas a ele**. Pode atualizar o status.                                                                                  |
+
 
 - **Isolamento regional (RLS de negócio):** filtros automáticos aplicados nos controllers via `getAccessFilter()`. Sem região definida → acesso bloqueado por padrão (fail-secure)
 - **Soft delete** para usuários (nunca removidos fisicamente)
@@ -52,6 +56,7 @@ Sistema completo para gerenciamento de tarefas, controle financeiro, estoque de 
 ## Configuração e execução
 
 ### Pré-requisitos
+
 - Node.js >= 22.12
 - Docker (recomendado para PostgreSQL + Redis)
 
@@ -91,16 +96,18 @@ npm run dev
 
 ## Variáveis de Ambiente (.env)
 
-| Variável | Descrição |
-|---|---|
-| `DATABASE_URL` | String de conexão com o PostgreSQL |
-| `REDIS_URL` | URL de conexão com o Redis |
-| `JWT_SECRET` | Chave secreta para o Access Token |
-| `JWT_REFRESH_SECRET` | Chave secreta para o Refresh Token |
-| `SESSION_SECRET` | Segredo para as sessões do Express |
-| `CORS_ORIGIN` | URL(s) permitida(s) para acessar a API |
-| `PORT` | Porta do servidor Express (padrão: 3001) |
-| `CRON_SECRET` | Chave secreta para autenticação de jobs externos (ex: cron-job.org) |
+
+| Variável             | Descrição                                                           |
+| -------------------- | ------------------------------------------------------------------- |
+| `DATABASE_URL`       | String de conexão com o PostgreSQL                                  |
+| `REDIS_URL`          | URL de conexão com o Redis                                          |
+| `JWT_SECRET`         | Chave secreta para o Access Token                                   |
+| `JWT_REFRESH_SECRET` | Chave secreta para o Refresh Token                                  |
+| `SESSION_SECRET`     | Segredo para as sessões do Express                                  |
+| `CORS_ORIGIN`        | URL(s) permitida(s) para acessar a API                              |
+| `PORT`               | Porta do servidor Express (padrão: 3001)                            |
+| `CRON_SECRET`        | Chave secreta para autenticação de jobs externos (ex: cron-job.org) |
+
 
 > Nunca versione o arquivo `.env` real. Use o `.env.example` para compartilhar a estrutura.
 
@@ -111,11 +118,13 @@ npm run dev
 O sistema possui uma rotina de limpeza automática para evitar o crescimento descontrolado do banco de dados (especialmente útil para instâncias gratuitas do Neon/PostgreSQL).
 
 ### O que é limpo?
+
 - **Sessões:** Removidas após 24h de inatividade ou expiração.
 - **Refresh Tokens:** Removidos após 90 dias ou se estiverem revogados.
 - **Logs de Auditoria:** Removidos após períodos específicos (Logs de Auth: 90 dias, Logs de Negócio: 2 anos).
 
 ### Estratégia de Execução
+
 - **Servidores Persistentes (Local/Railway):** O job roda internamente via `node-cron` todo domingo às 03:00.
 - **Serverless (Vercel):** Como processos em background não são mantidos, a limpeza é acionada via endpoint HTTP protegido (`POST /api/v1/jobs/limpar`) por um serviço externo (como [cron-job.org](https://cron-job.org)).
 
@@ -123,14 +132,16 @@ O sistema possui uma rotina de limpeza automática para evitar o crescimento des
 
 ## Hierarquia de Acesso Regional
 
-| Role | Escopo | Descrição |
-|---|---|---|
-| `ADMINISTRADOR` | **Global** | Camada máxima de acesso. Gerencia usuários, infraestrutura e todo o sistema |
-| `DIRETOR` | **Global** | Visão completa do sistema, com leitura ampla e acesso executivo |
-| `GERENTE` | **Regional múltiplo** | Visualiza dados das **suas regionais**; pode ter uma ou mais regionais atribuídas |
-| `COORDENADOR` | **Regional múltiplo** | Visualiza dados das **suas regionais**; pode ter uma ou mais regionais atribuídas |
-| `GESTOR` | **Unidade** | Visualiza sua loja. Único que preenche checklists. Gerencia tarefas da sua unidade. |
-| `TECNICO` | **Atribuição** | Vê apenas tarefas designadas para ele. Atualiza status de execução. |
+
+| Role            | Escopo                | Descrição                                                                           |
+| --------------- | --------------------- | ----------------------------------------------------------------------------------- |
+| `ADMINISTRADOR` | **Global**            | Camada máxima de acesso. Gerencia usuários, infraestrutura e todo o sistema         |
+| `DIRETOR`       | **Global**            | Visão completa do sistema, com leitura ampla e acesso executivo                     |
+| `GERENTE`       | **Regional múltiplo** | Visualiza dados das **suas regionais**; pode ter uma ou mais regionais atribuídas   |
+| `COORDENADOR`   | **Regional múltiplo** | Visualiza dados das **suas regionais**; pode ter uma ou mais regionais atribuídas   |
+| `GESTOR`        | **Unidade**           | Visualiza sua loja. Único que preenche checklists. Gerencia tarefas da sua unidade. |
+| `TECNICO`       | **Atribuição**        | Vê apenas tarefas designadas para ele. Atualiza status de execução.                 |
+
 
 Fluxo de leitura por camada:
 `DIRETOR > GERENTE > COORDENADOR > GESTOR > TECNICO`
@@ -143,13 +154,15 @@ Fluxo de leitura por camada:
 
 ## Credenciais de teste (após seed)
 
-| E-mail | Senha | Perfil | Região |
-|---|---|---|---|
-| admin@manutencao.com | Senha@123 | Administrador | — |
-| gerente@manutencao.com | Senha@123 | Gerente | — |
-| coordenador@manutencao.com | Senha@123 | Coordenador | SP1 |
-| gestor@manutencao.com | Senha@123 | Gestor | SP7 |
-| tecnico@manutencao.com | Senha@123 | Técnico | SP1 |
+
+| E-mail                                                          | Senha     | Perfil        | Região |
+| --------------------------------------------------------------- | --------- | ------------- | ------ |
+| [admin@manutencao.com](mailto:admin@manutencao.com)             | Senha@123 | Administrador | —      |
+| [gerente@manutencao.com](mailto:gerente@manutencao.com)         | Senha@123 | Gerente       | —      |
+| [coordenador@manutencao.com](mailto:coordenador@manutencao.com) | Senha@123 | Coordenador   | SP1    |
+| [gestor@manutencao.com](mailto:gestor@manutencao.com)           | Senha@123 | Gestor        | SP7    |
+| [tecnico@manutencao.com](mailto:tecnico@manutencao.com)         | Senha@123 | Técnico       | SP1    |
+
 
 ---
 
@@ -246,6 +259,7 @@ manutencao/
 O sistema já está operando com os módulos abaixo:
 
 ### Dashboard Principal
+
 - KPIs executivos por perfil
 - Histórico mensal de gastos
 - Distribuição de gastos por segmento da rede em visualização tipo rosca com lista lateral
@@ -257,6 +271,7 @@ O sistema já está operando com os módulos abaixo:
 - **Agrupamento Regional Escalável**: Visualizações executivas ("Matriz de Conformidade" e "Inteligência de Ativos Buy vs. Maintain") agrupadas dinamicamente em formato *Accordion* (sanfona) por Regional, otimizando a leitura para gestores de grandes carteiras.
 
 ### Controle Financeiro (Chamados)
+
 - Navegação por camadas: regionais -> lojas -> chamados
 - Abertura direta por URL para regional, loja ou visão de BI regional
 - KPIs financeiros do período
@@ -272,6 +287,7 @@ O sistema já está operando com os módulos abaixo:
   - tooltip explicativo para o usuário
 
 ### Checklists e Rotinas de Infraestrutura
+
 - Preenchimento semanal de equipamentos e carrinhos pelo `GESTOR`
 - **Filtro em Cascata por Regional**: Nas Rotinas de Infraestrutura, seleção intuitiva em dois passos (Regional -> Loja) para coordenadores, substituindo listas longas e cansativas.
 - Consulta consolidada para perfis gerenciais (Diretor, Gerente e Coordenador)
@@ -283,17 +299,21 @@ O sistema já está operando com os módulos abaixo:
 - Alertas para regionais com baixa cobertura e indício de correlação com maior gasto
 
 ### Cadastros e Operação
+
 - Gestão de usuários com restrição por perfil
 - Gestão de lojas e regionais
 - Gestão de fornecedores
 - Gestão de estoque de peças, entradas, movimentações e saídas
+
 ### Gestão de Tarefas
+
 - Organização de demandas por prioridade e status
 - **Hierarquia de Atribuição**: Fluxo de comando rígido (Diretor -> Gerente -> Coordenador -> Gestor -> Técnico)
 - **Centro de Notificações**: Alertas em tempo real e função de leitura em massa no cabeçalho
 - **Restrição de Status**: Gerentes e Coordenadores gerenciam a fila mas não alteram o progresso operacional
 
 ### Documentação complementar
+
 - Guia do usuário: [docs/guia-do-usuario.md](docs/guia-do-usuario.md)
 
 ---
@@ -301,98 +321,128 @@ O sistema já está operando com os módulos abaixo:
 ## Endpoints da API
 
 ### Autenticação
-| Método | Endpoint | Descrição |
-|---|---|---|
-| POST | `/api/v1/auth/login` | Login — retorna access + refresh token |
-| POST | `/api/v1/auth/refresh` | Renova tokens |
-| POST | `/api/v1/auth/logout` | Logout (revoga refresh token) |
-| GET | `/api/v1/auth/me` | Dados do usuário autenticado |
+
+
+| Método | Endpoint               | Descrição                              |
+| ------ | ---------------------- | -------------------------------------- |
+| POST   | `/api/v1/auth/login`   | Login — retorna access + refresh token |
+| POST   | `/api/v1/auth/refresh` | Renova tokens                          |
+| POST   | `/api/v1/auth/logout`  | Logout (revoga refresh token)          |
+| GET    | `/api/v1/auth/me`      | Dados do usuário autenticado           |
+
 
 ### Tarefas
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/api/v1/tarefas` | Listar (filtrado por região/técnico) |
-| POST | `/api/v1/tarefas` | Criar (herda região do criador; notifica destinatário) |
-| PUT | `/api/v1/tarefas/:id` | Editar (notifica ao mudar status) |
-| DELETE | `/api/v1/tarefas/:id` | Remover |
+
+
+| Método | Endpoint              | Descrição                                              |
+| ------ | --------------------- | ------------------------------------------------------ |
+| GET    | `/api/v1/tarefas`     | Listar (filtrado por região/técnico)                   |
+| POST   | `/api/v1/tarefas`     | Criar (herda região do criador; notifica destinatário) |
+| PUT    | `/api/v1/tarefas/:id` | Editar (notifica ao mudar status)                      |
+| DELETE | `/api/v1/tarefas/:id` | Remover                                                |
+
 
 ### Controle Financeiro (Chamados)
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/api/v1/chamados` | Listar (`?mes=&ano=` + região) |
-| POST | `/api/v1/chamados` | Criar |
-| GET | `/api/v1/chamados/resumo` | Resumo por mês |
-| PUT/DELETE | `/api/v1/chamados/:id` | Editar / Remover |
+
+
+| Método     | Endpoint                  | Descrição                      |
+| ---------- | ------------------------- | ------------------------------ |
+| GET        | `/api/v1/chamados`        | Listar (`?mes=&ano=` + região) |
+| POST       | `/api/v1/chamados`        | Criar                          |
+| GET        | `/api/v1/chamados/resumo` | Resumo por mês                 |
+| PUT/DELETE | `/api/v1/chamados/:id`    | Editar / Remover               |
+
 
 ### Estoque
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET/POST | `/api/v1/estoque/pecas` | Peças (global) |
-| GET/POST | `/api/v1/estoque/entradas` | Entradas NF (incrementa estoque) |
-| GET/POST | `/api/v1/estoque/movimentacoes` | Movimentações (decrementa estoque) |
-| GET/POST | `/api/v1/estoque/saidas` | Saídas definitivas (decrementa estoque) |
+
+
+| Método   | Endpoint                        | Descrição                               |
+| -------- | ------------------------------- | --------------------------------------- |
+| GET/POST | `/api/v1/estoque/pecas`         | Peças (global)                          |
+| GET/POST | `/api/v1/estoque/entradas`      | Entradas NF (incrementa estoque)        |
+| GET/POST | `/api/v1/estoque/movimentacoes` | Movimentações (decrementa estoque)      |
+| GET/POST | `/api/v1/estoque/saidas`        | Saídas definitivas (decrementa estoque) |
+
 
 ### Dashboard
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/api/v1/dashboard/resumo` | KPIs por perfil (peças em alerta apenas para GESTOR) |
-| GET | `/api/v1/dashboard/historico-mensal` | Histórico 6 meses |
-| GET | `/api/v1/dashboard/gastos-por-segmento` | Gastos agrupados por segmento |
-| GET | `/api/v1/dashboard/regional` | Visão por regional (Corporativo) |
+
+
+| Método | Endpoint                                | Descrição                                            |
+| ------ | --------------------------------------- | ---------------------------------------------------- |
+| GET    | `/api/v1/dashboard/resumo`              | KPIs por perfil (peças em alerta apenas para GESTOR) |
+| GET    | `/api/v1/dashboard/historico-mensal`    | Histórico 6 meses                                    |
+| GET    | `/api/v1/dashboard/gastos-por-segmento` | Gastos agrupados por segmento                        |
+| GET    | `/api/v1/dashboard/regional`            | Visão por regional (Corporativo)                     |
+
 
 ### Checklists Semanais
-| Método | Endpoint | Acesso | Descrição |
-|---|---|---|---|
-| GET | `/api/v1/checklists/equipamentos` | Coord+ | Listar checklists de equipamentos |
-| GET | `/api/v1/checklists/equipamentos/semana` | Coord+ | Checklist da semana atual |
-| POST | `/api/v1/checklists/equipamentos` | **Gestor** | Criar/atualizar checklist |
-| GET | `/api/v1/checklists/equipamentos/kpi` | Coord+ | KPI da semana atual |
-| GET | `/api/v1/checklists/carrinhos` | Coord+ | Listar checklists de carrinhos |
-| GET | `/api/v1/checklists/carrinhos/semana` | Coord+ | Checklist da semana atual |
-| POST | `/api/v1/checklists/carrinhos` | **Gestor** | Criar/atualizar checklist |
-| GET | `/api/v1/checklists/carrinhos/kpi` | Coord+ | KPI da semana atual |
-| GET | `/api/v1/checklists/kpi-mensal` | Coord+ | KPI consolidado do mês |
+
+
+| Método | Endpoint                                 | Acesso     | Descrição                         |
+| ------ | ---------------------------------------- | ---------- | --------------------------------- |
+| GET    | `/api/v1/checklists/equipamentos`        | Coord+     | Listar checklists de equipamentos |
+| GET    | `/api/v1/checklists/equipamentos/semana` | Coord+     | Checklist da semana atual         |
+| POST   | `/api/v1/checklists/equipamentos`        | **Gestor** | Criar/atualizar checklist         |
+| GET    | `/api/v1/checklists/equipamentos/kpi`    | Coord+     | KPI da semana atual               |
+| GET    | `/api/v1/checklists/carrinhos`           | Coord+     | Listar checklists de carrinhos    |
+| GET    | `/api/v1/checklists/carrinhos/semana`    | Coord+     | Checklist da semana atual         |
+| POST   | `/api/v1/checklists/carrinhos`           | **Gestor** | Criar/atualizar checklist         |
+| GET    | `/api/v1/checklists/carrinhos/kpi`       | Coord+     | KPI da semana atual               |
+| GET    | `/api/v1/checklists/kpi-mensal`          | Coord+     | KPI consolidado do mês            |
+
 
 ### Notificações
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/api/v1/notificacoes` | Listar notificações do usuário logado |
-| PATCH | `/api/v1/notificacoes/:id/lida` | Marcar uma como lida |
-| PATCH | `/api/v1/notificacoes/marcar-todas-lidas` | Marcar todas como lidas |
+
+
+| Método | Endpoint                                  | Descrição                             |
+| ------ | ----------------------------------------- | ------------------------------------- |
+| GET    | `/api/v1/notificacoes`                    | Listar notificações do usuário logado |
+| PATCH  | `/api/v1/notificacoes/:id/lida`           | Marcar uma como lida                  |
+| PATCH  | `/api/v1/notificacoes/marcar-todas-lidas` | Marcar todas como lidas               |
+
 
 ### Usuários, Lojas & Fornecedores
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/api/v1/usuarios` | Listagem de usuários para `ADMINISTRADOR`, `DIRETOR`, `GERENTE`, `COORDENADOR` e `GESTOR` |
-| POST | `/api/v1/usuarios` | Criação de usuários apenas por `ADMINISTRADOR` |
-| PUT | `/api/v1/usuarios/:id` | Edição de usuários por `ADMINISTRADOR` e `DIRETOR` |
-| DELETE | `/api/v1/usuarios/:id` | Desativação de usuários por `ADMINISTRADOR` e `DIRETOR` |
-| GET | `/api/v1/lojas` | Listagem de lojas para usuários autenticados; `COORDENADOR` enxerga apenas suas regionais |
-| GET | `/api/v1/lojas/regioes` | Lista de regionais disponíveis para filtros e formulários |
-| GET | `/api/v1/lojas/:id` | Detalhe de loja com restrição regional para `COORDENADOR` |
-| POST/PUT/DELETE | `/api/v1/lojas` | Gestão de lojas por `ADMINISTRADOR` e `DIRETOR` |
-| GET/POST | `/api/v1/fornecedores` | Gestão de fornecedores (global) |
-| PUT | `/api/v1/fornecedores/:id` | Editar fornecedor |
+
+
+| Método          | Endpoint                   | Descrição                                                                                 |
+| --------------- | -------------------------- | ----------------------------------------------------------------------------------------- |
+| GET             | `/api/v1/usuarios`         | Listagem de usuários para `ADMINISTRADOR`, `DIRETOR`, `GERENTE`, `COORDENADOR` e `GESTOR` |
+| POST            | `/api/v1/usuarios`         | Criação de usuários apenas por `ADMINISTRADOR`                                            |
+| PUT             | `/api/v1/usuarios/:id`     | Edição de usuários por `ADMINISTRADOR` e `DIRETOR`                                        |
+| DELETE          | `/api/v1/usuarios/:id`     | Desativação de usuários por `ADMINISTRADOR` e `DIRETOR`                                   |
+| GET             | `/api/v1/lojas`            | Listagem de lojas para usuários autenticados; `COORDENADOR` enxerga apenas suas regionais |
+| GET             | `/api/v1/lojas/regioes`    | Lista de regionais disponíveis para filtros e formulários                                 |
+| GET             | `/api/v1/lojas/:id`        | Detalhe de loja com restrição regional para `COORDENADOR`                                 |
+| POST/PUT/DELETE | `/api/v1/lojas`            | Gestão de lojas por `ADMINISTRADOR` e `DIRETOR`                                           |
+| GET/POST        | `/api/v1/fornecedores`     | Gestão de fornecedores (global)                                                           |
+| PUT             | `/api/v1/fornecedores/:id` | Editar fornecedor                                                                         |
+
 
 ### Manutenção (Jobs)
-| Método | Endpoint | Proteção | Descrição |
-|---|---|---|---|
-| POST | `/api/v1/jobs/limpar` | `CRON_SECRET` | Executa limpeza de logs, sessões e tokens expirados |
+
+
+| Método | Endpoint              | Proteção      | Descrição                                           |
+| ------ | --------------------- | ------------- | --------------------------------------------------- |
+| POST   | `/api/v1/jobs/limpar` | `CRON_SECRET` | Executa limpeza de logs, sessões e tokens expirados |
+
 
 ---
 
 ## Checklists Semanais
 
 ### Equipamentos verificados
+
 Empilhadeira Elétrica, Empilhadeira a Combustão, Empilhadeira Patolada, Máquina de Moer Carne, Serra Fita, Embaladora a Vácuo, Fatiadora, Fatiadora Grande, Elevadores, Ilhaself, Escada Rolante
 
 ### Carrinhos verificados
+
 Maria Gorda, Supercar, Dois Andares, Prancha, Prancha Perecíveis, Carrinhos de Abastecimento, Escadas
 
 ### Regras de acesso
+
 - **Quem preenche:** somente `GESTOR`
 - **Quem visualiza:** `COORDENADOR`, `ADMINISTRADOR`, `DIRETOR`, `GERENTE`
-- **Preenchimento:** 1x por semana — o sistema usa _upsert_, o formulário é reeditável na mesma semana
+- **Preenchimento:** 1x por semana — o sistema usa *upsert*, o formulário é reeditável na mesma semana
 - **Unicidade:** uma entrada por `(semana, ano, unidade)`
 
 ---
@@ -438,11 +488,13 @@ FrotaCarrinho            — capacidade por tipo/unidade
 O projeto usa dois projetos separados no Vercel:
 
 **Backend (`server/`):**
+
 - `vercel.json` redireciona todas as rotas para `src/server.js` (serverless)
 - `postinstall` no `package.json` executa `prisma generate` automaticamente a cada deploy
 - Variáveis de ambiente configuradas no painel do Vercel
 
 **Frontend (`client/`):**
+
 - `vercel.json` usa rewrite `/(.*) → /index.html` para suporte a SPA routing (resolve 404 no F5)
 - Variável `VITE_API_URL` deve apontar para a URL do backend em produção
 
@@ -478,3 +530,4 @@ services:
 docker compose up -d   # subir
 docker compose down    # parar
 ```
+
