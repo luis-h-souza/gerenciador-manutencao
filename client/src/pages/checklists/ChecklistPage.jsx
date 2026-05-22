@@ -379,7 +379,7 @@ function LinhaCarrinho({ carrinho, value, onChange, readOnly }) {
               color: "var(--color-text-primary)",
             }}
           >
-            {carrinho.label}
+            {carrinho?.label || value.tipoCarrinho}
           </span>
         </div>
 
@@ -809,7 +809,7 @@ function TabCarrinhos({ semana, ano, usuario, canEdit }) {
     queryKey: ["ativos-carrinhos-checklist", usuario.unidade],
     queryFn: () =>
       ativosService
-        .listar({ categoria: "Carrinho", unidade: usuario.unidade, status: "ATIVO", limit: 500 })
+        .listar({ categoria: "Carrinho,Escada", unidade: usuario.unidade, status: "ATIVO", limit: 500 })
         .then((r) => r.data.data || []),
     enabled: !!usuario.unidade,
   });

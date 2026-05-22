@@ -18,16 +18,16 @@ export const faqData = [
     content: `O Gráfico de Pareto mostra quais segmentos de manutenção concentram a maior parte dos custos, com base na regra 80/20.
 
 **Como funciona:**
-- Os segmentos são ordenados do maior para o menor gasto
-- A linha acumulada mostra quantos segmentos respondem por 80% do total
-- Normalmente 2 a 4 segmentos concentram a maior parte dos gastos
+- Os segmentos ou empresas são ordenados do maior para o menor gasto
+- A linha acumulada mostra quantos segmentos ou empresas respondem por 80% do total
+- Normalmente 2 a 4 segmentos ou empresas concentram a maior parte dos gastos
 
 **Como usar:**
-- Identifique os segmentos que estão acima da linha de 80%
+- Identifique o que está acima da linha de 80%
 - Esses são os focos prioritários de otimização de custo
-- Renegocie contratos ou avalie se há mau uso nos segmentos líderes
+- Renegocie contratos para preventivas ou avalie se há mau uso nos segmentos líderes
 
-**Exemplo:** Se AR_CONDICIONADO e GERADOR representam 78% dos gastos, são eles que merecem atenção estratégica primeiro.`,
+**Exemplo:** Se AR CONDICIONADO e GERADOR representam 78% dos gastos, são eles que merecem atenção estratégica primeiro.`,
   },
   {
     id: 'buy-vs-maintain',
@@ -58,7 +58,7 @@ export const faqData = [
 
 **Rotinas monitoradas:**
 - Teste semanal do gerador
-- Inspeção visual mensal do sistema de incêndio
+- inspeção mensal do sistema de incêndio
 - Teste bimestral da bomba de incêndio
 - Preenchimento semanal dos checklists de equipamentos e carrinhos
 
@@ -77,11 +77,11 @@ export const faqData = [
     category: 'checklists',
     title: 'O que são os Checklists semanais?',
     description: 'Entenda como funcionam os checklists de equipamentos e carrinhos.',
-    content: `Os **Checklists semanais** são inspeções periódicas realizadas pelos Gestores de cada loja para monitorar o estado dos equipamentos e carrinhos de transporte.
+    content: `Os **Checklists semanais** são inspeções periódicas realizadas pelos Gestores de cada loja para monitorar o estado dos equipamentos e carrinhos de clientes.
 
 **Tipos de checklist:**
-- **Equipamentos:** Empilhadeiras, serras-fita, elevadores, escadas rolantes, ilhas self-service, etc.
-- **Carrinhos:** Maria-gorda, supercar, dois-andares, prancha, etc.
+- **Equipamentos:** Empilhadeiras, serras-fita, elevadores, escadas rolantes, ilhas self, etc.
+- **Carrinhos:** Maria-gorda, supercar, dois-andares, prancha, carrinho de bebê, etc.
 
 **Como funciona:**
 1. A cada semana, o Gestor acessa a página de Checklists
@@ -89,7 +89,7 @@ export const faqData = [
 3. Se houver problemas, registra o número do chamado e descrição
 4. O sistema vincula automaticamente ao ativo correspondente
 
-**Prazos:** O checklist deve ser preenchido até sexta-feira de cada semana. Preenchimentos após essa data ficam marcados como "atrasados".
+**Prazos:** O **checklist de equipamentos** deve ser preenchido toda **terça-feira**, o **checklist de carrinhos** deve ser preenchido toda **quinta-feira** de cada semana. Preenchimentos após estas datas ficam marcados como "atrasados".
 
 **Quem vê o quê:**
 - **GESTOR:** Preenche e visualiza apenas sua loja
@@ -98,13 +98,13 @@ export const faqData = [
   {
     id: 'gerador-semanal',
     category: 'infraestrutura',
-    title: 'Teste Semanal do Gerador',
+    title: 'Teste Semanal com carga do Gerador',
     description: 'Como registrar e acompanhar o teste semanal do gerador.',
     content: `O **teste semanal do gerador** é uma rotina obrigatória de manutenção preventiva para garantir que o equipamento funcione em casos de falta de energia.
 
 **Frequência:** Uma vez por semana (toda semana)
 
-**Prazo para registro:** Até domingo de cada semana
+**Prazo para registro:** Preferencialmente às segundas-feiras (teste com carga)
 
 **Como registrar:**
 1. Acesse "Rotinas de Infra." no menu lateral
@@ -124,25 +124,25 @@ export const faqData = [
   {
     id: 'incendio-mensal',
     category: 'infraestrutura',
-    title: 'Inspeção Visual Mensal do Sistema de Incêndio',
-    description: 'Como registrar a inspeção visual mensal do sistema de combate a incêndio.',
-    content: `A **inspeção visual mensal** verifica o estado aparente dos componentes do sistema de incêndio (sprinklers, extintores, sinalização).
+    title: 'Inspeção mensal do Sistema de combate a Incêndio',
+    description: 'Como registrar a inspeção mensal do sistema de combate a incêndio.',
+    content: `A **inspeção mensal do sistema de combate a incêndio** verifica o estado aparente dos componentes do sistema de incêndio (sprinklers, extintores, sinalização, bombas de incêndio, VGA's, iluminação de emergência).
 
 **Frequência:** Uma vez por mês
 
-**Prazo para registro:** Até o último dia do mês
+**Prazo para registro:** Até o dia 20 do mês
 
 **O que deve ser verificado:**
-- Mangueiras sem rasgos ou vazamentos
-- Extintores com validade e lacre intact
+- A realização do checklist mensal de combate a incêndio
+- Extintores com validade e lacre intacto
 - Sinalização de emergência visível e iluminada
 - Sprinklers sem obstruções
-- Acesso às hidrantes desobstruído
+- Acesso aos hidrantes desobstruídos com as mangueiras e acessórios em conformidade
 
 **Como registrar:**
 1. Acesse "Rotinas de Infra." no menu lateral
 2. Clique em "Nova Rotina"
-3. Selecione **Inspeção Visual Mensal (Incêndio)**
+3. Selecione **inspeção mensal (Incêndio)**
 4. Marque se está **Conforme** ou **Não Conforme**
 5. Descreva qualquer anomalia encontrada
 
@@ -153,20 +153,19 @@ export const faqData = [
     category: 'infraestrutura',
     title: 'Teste Bimestral da Bomba de Incêndio',
     description: 'Procedimento para registrar o teste bimestral da bomba de incêndio.',
-    content: `O **teste bimestral da bomba** é um teste operacional completo que verifica se a bomba de pressurização do sistema de incêndio funciona corretamente sob carga.
+    content: `**Teste bimestral da bomba** é um teste operacional completo que verifica se a bomba de pressurização do sistema de incêndio funciona corretamente sob carga.
 
 **Frequência:** A cada dois meses (bimestral)
 
 **Meses de referência:** Fevereiro, Abril, Junho, Agosto, Outubro, Dezembro
 
-**Prazo para registro:** Até o último dia do mês correspondente
+**Prazo para registro:** Até o dia 20 do mês
 
 **Como funciona o teste:**
-1. A bomba é acionada manualmente
+1. A bomba é acionada através de um hidrante ou no cavelete de testes
 2. Verifica-se a pressão atingida (deve estar dentro dos parâmetros do projeto)
-3. Testa-se o acionamento automático (se houver)
-4. Verifica-se o tempo de resposta
-5. Confirma-se que não há vazamentos nas conexões
+3. Verifica-se o tempo de resposta
+4. Confirma-se que não há vazamentos nas conexões
 
 **Como registrar no sistema:**
 1. Acesse "Rotinas de Infra." → "Nova Rotina"
@@ -198,9 +197,9 @@ export const faqData = [
 - O Dashboard executa um ranking dos ativos com mais reincidências
 
 **O que fazer com reincidências:**
-1. Escalar o chamado para um técnico especializado
-2. Questionar o fornecedor sobre a solução definitiva
-3. Avaliar substituição do componente ou do ativo completo`,
+- Escalar o chamado para um técnico especializado
+- Questionar o fornecedor sobre a solução definitiva
+- Avaliar substituição do componente ou do ativo completo`,
   },
   {
     id: 'mtbf-mttr',
@@ -231,7 +230,7 @@ Mede quanto tempo leva, em média, para resolver uma falha após sua detecção.
 
 **Interpretação:**
 - MTTR baixo = problemas são resolvidos rapidamente
-- MTTR alto = demora excessiva na resolução → rever processo de chamados
+- MTTR alto = demora excessiva na resolução → rever processos
 
 ---
 
@@ -286,8 +285,8 @@ Um ativo com 95%+ de disponibilidade está em excelente estado.
 
 **Hierarquia de acesso:**
 
-| Role | O que vê |
-|------|----------|
+  Role  |  O que vê
+|-----|----------|
 | ADMINISTRADOR | Tudo — todas as regiões |
 | DIRETOR | Tudo — visão executiva |
 | GERENTE | Sua(s) regional(is) completa(s) |

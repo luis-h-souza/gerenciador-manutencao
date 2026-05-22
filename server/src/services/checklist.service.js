@@ -77,7 +77,10 @@ const buscarFrotaCarrinhosPorAtivos = async (unidade) => {
       unidade,
       ativo: true,
       status: 'ATIVO',
-      categoria: { contains: 'Carrinho', mode: 'insensitive' },
+      OR: [
+        { categoria: { contains: 'Carrinho', mode: 'insensitive' } },
+        { categoria: { contains: 'Escada', mode: 'insensitive' } }
+      ],
     },
   });
 

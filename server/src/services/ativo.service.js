@@ -81,7 +81,14 @@ const listar = async (user, query) => {
 
   if (incluirInativos !== 'true') where.ativo = true;
   if (nome) where.nome = { contains: nome, mode: 'insensitive' };
-  if (categoria) where.categoria = { contains: categoria, mode: 'insensitive' };
+  if (categoria) {
+    const categorias = categoria.split(',').map(c => c.trim());
+    if (categorias.length > 1) {
+      where.OR = categorias.map(cat => ({ categoria: { contains: cat, mode: 'insensitive' } }));
+    } else {
+      where.categoria = { contains: categoria, mode: 'insensitive' };
+    }
+  }
   if (tipo) where.tipo = { contains: tipo, mode: 'insensitive' };
   if (status) where.status = status;
   if (patrimonio) where.patrimonio = { contains: patrimonio, mode: 'insensitive' };
