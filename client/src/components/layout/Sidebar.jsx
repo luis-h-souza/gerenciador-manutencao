@@ -16,6 +16,7 @@ import {
   Boxes,
   History,
   Activity,
+  HelpCircle,
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -105,6 +106,12 @@ const NAV = [
     icon: History,
     label: "Auditoria (Logs)",
     roles: ["ADMINISTRADOR"],
+  },
+  {
+    to: "/ajuda",
+    icon: HelpCircle,
+    label: "Ajuda",
+    roles: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR", "TECNICO"],
   },
 ];
 

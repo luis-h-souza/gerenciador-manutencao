@@ -63,6 +63,9 @@ const CARRINHOS = [
   { key: "PRANCHA_PERECIVEIS", label: "Prancha Perecíveis" },
   { key: "CARRINHO_ABASTECIMENTO", label: "Carrinho de Abastecimento" },
   { key: "ESCADA", label: "Escada" },
+  { key: "BEBE_CONFORTO", label: "Bebê Conforto" },
+  { key: "CARRINHO_MOTORIZADO", label: "Carrinho Motorizado" },
+  { key: "ESCADA_ABASTECIMENTO", label: "Escada de Abastecimento" },
 ];
 
 const normalizarTexto = (valor) =>
@@ -74,24 +77,59 @@ const normalizarTexto = (valor) =>
     .toUpperCase();
 
 const resolverTipoCarrinhoAtivo = (ativo) => {
-  const candidatos = [ativo.tipo, ativo.nome].map(normalizarTexto);
+  const candidatos = [ativo.tipo, ativo.nome].map(normalizarTexto).filter(Boolean);
+
   const aliases = {
     MARIA_GORDA: "MARIA_GORDA",
     SUPERCAR: "SUPERCAR",
     DOIS_ANDARES: "DOIS_ANDARES",
     CARRINHO_DOIS_ANDARES: "DOIS_ANDARES",
+    DOIS_ANDAR: "DOIS_ANDARES",
     PRANCHA: "PRANCHA",
     PRANCHA_PERECIVEIS: "PRANCHA_PERECIVEIS",
     PRANCHA_PERECIVEL: "PRANCHA_PERECIVEIS",
+    PRANCHA_PERECIIVEL: "PRANCHA_PERECIVEIS",
     CARRINHO_ABASTECIMENTO: "CARRINHO_ABASTECIMENTO",
+    CARRINHO_DE_ABASTECIMENTO: "CARRINHO_ABASTECIMENTO",
     ABASTECIMENTO: "CARRINHO_ABASTECIMENTO",
     ESCADA: "ESCADA",
+    BEBE_CONFORTO: "BEBE_CONFORTO",
+    CARRINHO_BEBE: "BEBE_CONFORTO",
+    BEBE: "BEBE_CONFORTO",
+    CONFORTO: "BEBE_CONFORTO",
+    CARRINHO_MOTORIZADO: "CARRINHO_MOTORIZADO",
+    MOTORIZADO: "CARRINHO_MOTORIZADO",
+    ESCADA_ABASTECIMENTO: "ESCADA_ABASTECIMENTO",
+    ESCADA_DE_ABASTECIMENTO: "ESCADA_ABASTECIMENTO",
   };
 
+  // 1ª passagem: match exato contra aliases e labels normalizados
   for (const candidato of candidatos) {
     if (aliases[candidato]) return aliases[candidato];
-    const encontrado = CARRINHOS.find((c) => normalizarTexto(c.label) === candidato || c.key === candidato);
+    const encontrado = CARRINHOS.find(
+      (c) => normalizarTexto(c.label) === candidato || c.key === candidato,
+    );
     if (encontrado) return encontrado.key;
+  }
+
+  // 2ª passagem: match por substring — útil para nomes como "Maria Gorda 01" ou "Supercar - Grande"
+  const PADROES = [
+    { key: "MARIA_GORDA",            tokens: ["MARIA_GORDA", "MARIA"] },
+    { key: "SUPERCAR",               tokens: ["SUPERCAR"] },
+    { key: "DOIS_ANDARES",           tokens: ["DOIS_ANDARES", "DOIS_ANDAR", "2_ANDARES", "2_ANDAR"] },
+    { key: "PRANCHA_PERECIVEIS",     tokens: ["PRANCHA_PERECIV", "PERECIV"] },
+    { key: "PRANCHA",                tokens: ["PRANCHA"] },
+    { key: "CARRINHO_ABASTECIMENTO", tokens: ["ABASTECIMENTO"] },
+    { key: "ESCADA",                 tokens: ["ESCADA"] },
+    { key: "BEBE_CONFORTO",          tokens: ["BEBE_CONFORTO", "BEBE", "CONFORTO"] },
+    { key: "CARRINHO_MOTORIZADO",    tokens: ["MOTORIZADO"] },
+    { key: "ESCADA_ABASTECIMENTO",   tokens: ["ESCADA_ABASTECIMENTO"] },
+  ];
+
+  for (const candidato of candidatos) {
+    for (const { key, tokens } of PADROES) {
+      if (tokens.some((t) => candidato.includes(t))) return key;
+    }
   }
 
   return null;
@@ -771,7 +809,7 @@ function TabCarrinhos({ semana, ano, usuario, canEdit }) {
     queryKey: ["ativos-carrinhos-checklist", usuario.unidade],
     queryFn: () =>
       ativosService
-        .listar({ categoria: "Carrinhos", unidade: usuario.unidade, status: "ATIVO", limit: 500 })
+        .listar({ categoria: "Carrinho", unidade: usuario.unidade, status: "ATIVO", limit: 500 })
         .then((r) => r.data.data || []),
     enabled: !!usuario.unidade,
   });
@@ -786,6 +824,9 @@ function TabCarrinhos({ semana, ano, usuario, canEdit }) {
 
   const frota = montarFrotaCarrinhosPorAtivos(ativosCarrinhos);
   const hasAtivosCarrinhos = frota.length > 0 && frota.some((f) => f.total > 0);
+  const ativosNaoResolvidos = ativosCarrinhos.filter(
+    (a) => resolverTipoCarrinhoAtivo(a) === null,
+  );
 
   const [itens, setItens] = useState([]);
   const [observacoes, setObservacoes] = useState("");
@@ -995,6 +1036,31 @@ function TabCarrinhos({ semana, ano, usuario, canEdit }) {
           </div>
         )}
       </div>
+
+      {ativosNaoResolvidos.length > 0 && (
+        <div
+          className="card"
+          style={{
+            padding: "14px 18px",
+            borderLeft: "4px solid var(--color-warning)",
+            background: "rgba(245,158,11,0.06)",
+          }}
+        >
+          <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-warning)", marginBottom: "6px" }}>
+            {ativosNaoResolvidos.length} ativo(s) não puderam ser mapeados para o checklist:
+          </p>
+          <ul style={{ listStyle: "disc", paddingLeft: "18px" }}>
+            {ativosNaoResolvidos.map((a) => (
+              <li key={a.id} style={{ fontSize: "0.8125rem", color: "var(--color-text-secondary)" }}>
+                <strong>{a.nome}</strong>{a.tipo ? ` — tipo: "${a.tipo}"` : " — tipo não preenchido"}
+              </li>
+            ))}
+          </ul>
+          <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginTop: "8px" }}>
+            Acesse <Link to="/ativos" style={{ color: "var(--color-brand-400)" }}>Ativos da Loja</Link> e defina o campo <strong>Tipo</strong> como: Maria Gorda, Supercar, Dois Andares, Prancha, Prancha Perecíveis, Carrinho de Abastecimento ou Escada.
+          </p>
+        </div>
+      )}
 
       {canEdit && (
         <div className="flex justify-end">

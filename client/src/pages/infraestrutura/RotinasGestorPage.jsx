@@ -12,6 +12,56 @@ import toast from 'react-hot-toast';
 import { format, getISOWeek, getYear } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+function FormularioInline({ titulo, placeholder, register, handleSubmit, onSubmit, errors, conformeValue, isPending, onClose }) {
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="mt-4 pt-4 border-t border-[color:var(--color-border)] bg-[color:var(--color-surface-700)]/40 -mx-4 -mb-4 px-4 pb-4">
+      <div className="flex justify-between items-center mb-3">
+        <h4 className="text-sm font-semibold text-[color:var(--color-text-primary)]">{titulo}</h4>
+        <button type="button" onClick={onClose} className="text-[color:var(--color-text-muted)] hover:text-[color:var(--color-text-secondary)] cursor-pointer">
+          <X size={16} />
+        </button>
+      </div>
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-[color:var(--color-text-secondary)] mb-1">Status de Conformidade</label>
+          <div className="flex gap-4">
+            <label className="flex items-center gap-2 cursor-pointer text-sm text-[color:var(--color-text-primary)]">
+              <input type="radio" value="true" {...register('conforme')} className="w-4 h-4" />
+              Conforme (OK)
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer text-sm text-[color:var(--color-danger)]">
+              <input type="radio" value="false" {...register('conforme')} className="w-4 h-4" />
+              Não Conforme
+            </label>
+          </div>
+        </div>
+        {conformeValue === 'false' && (
+          <div>
+            <label className="block text-sm font-medium text-[color:var(--color-text-secondary)] mb-1">Motivo da Não Conformidade</label>
+            <textarea
+              {...register('descricao', { required: 'Justifique a não conformidade' })}
+              rows={2}
+              className="w-full rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface-700)] px-3 py-2 text-sm text-[color:var(--color-text-primary)] focus:border-[color:var(--color-brand-500)] outline-none focus:ring-1 focus:ring-[color:var(--color-brand-500)]"
+              placeholder={placeholder}
+            />
+            {errors.descricao && <span className="text-xs text-[color:var(--color-danger)] mt-1">{errors.descricao.message}</span>}
+          </div>
+        )}
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            disabled={isPending}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[color:var(--color-brand-600)] text-white rounded-lg text-sm font-medium hover:bg-[color:var(--color-brand-500)] disabled:opacity-50 cursor-pointer"
+          >
+            {isPending ? <Loader2 className="animate-spin w-4 h-4" /> : <Save className="w-4 h-4" />}
+            Salvar Registro
+          </button>
+        </div>
+      </div>
+    </form>
+  );
+}
+
 export default function RotinasGestorPage() {
   const { usuario } = useAuth();
   const queryClient = useQueryClient();
@@ -237,56 +287,18 @@ export default function RotinasGestorPage() {
                     </div>
                   )}
 
-                  {/* FORMULÁRIO INLINE */}
                   {formularioAberto?.tipo === 'GERADOR_SEMANAL' && formularioAberto.semana === hist.semana && (
-                    <form onSubmit={handleSubmit(onSubmit)} className="mt-4 pt-4 border-t border-[color:var(--color-border)] bg-[color:var(--color-surface-700)]/40 -mx-4 -mb-4 px-4 pb-4">
-                      <div className="flex justify-between items-center mb-3">
-                        <h4 className="text-sm font-semibold text-[color:var(--color-text-primary)]">Registrar Checklist</h4>
-                        <button type="button" onClick={() => setFormularioAberto(null)} className="text-[color:var(--color-text-muted)] hover:text-[color:var(--color-text-secondary)] cursor-pointer">
-                          <X size={16} />
-                        </button>
-                      </div>
-
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-[color:var(--color-text-secondary)] mb-1">Status Operacional</label>
-                          <div className="flex gap-4">
-                            <label className="flex items-center gap-2 cursor-pointer text-sm text-[color:var(--color-text-primary)]">
-                              <input type="radio" value="true" {...register('conforme')} className="w-4 h-4 text-[color:var(--color-brand-500)] border-[color:var(--color-border)] bg-[color:var(--color-surface-700)] focus:ring-[color:var(--color-brand-500)]" />
-                              Operacional (OK)
-                            </label>
-                            <label className="flex items-center gap-2 cursor-pointer text-sm text-[color:var(--color-danger)]">
-                              <input type="radio" value="false" {...register('conforme')} className="w-4 h-4 text-[color:var(--color-danger)] border-[color:var(--color-border)] bg-[color:var(--color-surface-700)] focus:ring-[color:var(--color-danger)]" />
-                              Apresentou Falha
-                            </label>
-                          </div>
-                        </div>
-
-                        {conformeValue === 'false' && (
-                          <div>
-                            <label className="block text-sm font-medium text-[color:var(--color-text-secondary)] mb-1">Descrição do Problema</label>
-                            <textarea
-                              {...register('descricao', { required: 'Descreva o problema' })}
-                              rows={2}
-                              className="w-full rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface-700)] px-3 py-2 text-sm text-[color:var(--color-text-primary)] focus:border-[color:var(--color-brand-500)] outline-none focus:ring-1 focus:ring-[color:var(--color-brand-500)]"
-                              placeholder="Detalhes da falha observada..."
-                            />
-                            {errors.descricao && <span className="text-xs text-[color:var(--color-danger)] mt-1">{errors.descricao.message}</span>}
-                          </div>
-                        )}
-
-                        <div className="flex justify-end">
-                          <button
-                            type="submit"
-                            disabled={criarMutation.isPending}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-[color:var(--color-brand-600)] text-white rounded-lg text-sm font-medium hover:bg-[color:var(--color-brand-500)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--color-brand-500)] disabled:opacity-50 cursor-pointer"
-                          >
-                            {criarMutation.isPending ? <Loader2 className="animate-spin w-4 h-4" /> : <Save className="w-4 h-4" />}
-                            Salvar Registro
-                          </button>
-                        </div>
-                      </div>
-                    </form>
+                    <FormularioInline
+                      titulo="Registrar Checklist do Gerador"
+                      placeholder="Detalhes da falha observada..."
+                      register={register}
+                      handleSubmit={handleSubmit}
+                      onSubmit={onSubmit}
+                      errors={errors}
+                      conformeValue={conformeValue}
+                      isPending={criarMutation.isPending}
+                      onClose={() => setFormularioAberto(null)}
+                    />
                   )}
                 </div>
               ))}
@@ -297,26 +309,27 @@ export default function RotinasGestorPage() {
           <div className="space-y-4">
             <h2 className="text-lg font-semibold text-[color:var(--color-text-primary)] flex items-center gap-2">
               <CalendarDays className="text-[color:var(--color-text-secondary)]" size={20} />
-              Sistema de Incêndio (Mensal)
+              Sistema de Incêndio
             </h2>
 
-            <div className={`bg-[color:var(--color-surface-800)] rounded-xl border border-[color:var(--color-border)] p-4 shadow-sm relative overflow-hidden ${lojaConformidade.status.includes('VENCIDO') ? 'border-l-4 border-l-[color:var(--color-danger)]' : 'border-l-4 border-l-[color:var(--color-brand-500)]'}`}>
+            {/* CARD: INSPEÇÃO VISUAL MENSAL */}
+            <div className={`bg-[color:var(--color-surface-800)] rounded-xl border border-[color:var(--color-border)] p-4 shadow-sm relative overflow-hidden ${lojaConformidade.statusVisual?.includes('VENCIDO') ? 'border-l-4 border-l-[color:var(--color-danger)]' : 'border-l-4 border-l-[color:var(--color-brand-500)]'}`}>
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <h3 className="font-semibold text-[color:var(--color-text-primary)]">Checklist Visual — {format(new Date(), 'MMMM / yyyy', { locale: ptBR }).replace(/^\w/, (c) => c.toUpperCase())}</h3>
-                  <p className="text-sm text-[color:var(--color-text-muted)] mt-0.5">Prazo limite: 20/{String(mesAtual).padStart(2, '0')}</p>
+                  <h3 className="font-semibold text-[color:var(--color-text-primary)]">Inspeção Visual — {format(new Date(), 'MMMM / yyyy', { locale: ptBR }).replace(/^\w/, (c) => c.toUpperCase())}</h3>
+                  <p className="text-sm text-[color:var(--color-text-muted)] mt-0.5">Mensal · Prazo: 20/{String(mesAtual).padStart(2, '0')}</p>
                 </div>
-                <div>{getStatusBadge(lojaConformidade.status)}</div>
+                <div>{getStatusBadge(lojaConformidade.statusVisual || lojaConformidade.status)}</div>
               </div>
 
-              {lojaConformidade.preenchidoEm && (
+              {lojaConformidade.preenchidoEmVisual && (
                 <p className="text-sm text-[color:var(--color-text-secondary)] mb-3">
                   <CheckCircle2 size={16} className="inline mr-1 text-[color:var(--color-success)]" />
-                  Realizado em {format(new Date(lojaConformidade.preenchidoEm), "dd/MM/yyyy")}
+                  Realizado em {format(new Date(lojaConformidade.preenchidoEmVisual), "dd/MM/yyyy")}
                 </p>
               )}
 
-              {(lojaConformidade.status.includes('PENDENTE') || lojaConformidade.status === 'NAO_REALIZADO_VENCIDO') && (
+              {(lojaConformidade.statusVisual?.includes('PENDENTE') || lojaConformidade.statusVisual === 'NAO_REALIZADO_VENCIDO') && (
                 <div className="pt-3 border-t border-[color:var(--color-border)] flex justify-end">
                   <button
                     onClick={() => handleOpenForm('INCENDIO_MENSAL_VISUAL', null, mesAtual, anoAtual, lojaConformidade.unidade, lojaConformidade.regiao)}
@@ -327,59 +340,79 @@ export default function RotinasGestorPage() {
                 </div>
               )}
 
-              {/* FORMULÁRIO INLINE INCÊNDIO */}
               {formularioAberto?.tipo === 'INCENDIO_MENSAL_VISUAL' && formularioAberto.mes === mesAtual && (
-                <form onSubmit={handleSubmit(onSubmit)} className="mt-4 pt-4 border-t border-[color:var(--color-border)] bg-[color:var(--color-surface-700)]/40 -mx-4 -mb-4 px-4 pb-4">
-                  <div className="flex justify-between items-center mb-3">
-                    <h4 className="text-sm font-semibold text-[color:var(--color-text-primary)]">Registrar Checklist de Incêndio</h4>
-                    <button type="button" onClick={() => setFormularioAberto(null)} className="text-[color:var(--color-text-muted)] hover:text-[color:var(--color-text-secondary)] cursor-pointer">
-                      <X size={16} />
-                    </button>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-[color:var(--color-text-secondary)] mb-1">Status de Conformidade</label>
-                      <div className="flex gap-4">
-                        <label className="flex items-center gap-2 cursor-pointer text-sm text-[color:var(--color-text-primary)]">
-                          <input type="radio" value="true" {...register('conforme')} className="w-4 h-4 text-[color:var(--color-brand-500)] border-[color:var(--color-border)] bg-[color:var(--color-surface-700)] focus:ring-[color:var(--color-brand-500)]" />
-                          Conforme (OK)
-                        </label>
-                        <label className="flex items-center gap-2 cursor-pointer text-sm text-[color:var(--color-danger)]">
-                          <input type="radio" value="false" {...register('conforme')} className="w-4 h-4 text-[color:var(--color-danger)] border-[color:var(--color-border)] bg-[color:var(--color-surface-700)] focus:ring-[color:var(--color-danger)]" />
-                          Não Conforme
-                        </label>
-                      </div>
-                    </div>
-
-                    {conformeValue === 'false' && (
-                      <div>
-                        <label className="block text-sm font-medium text-[color:var(--color-text-secondary)] mb-1">Motivo da Não Conformidade</label>
-                        <textarea
-                          {...register('descricao', { required: 'Justifique a não conformidade' })}
-                          rows={2}
-                          className="w-full rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface-700)] px-3 py-2 text-sm text-[color:var(--color-text-primary)] focus:border-[color:var(--color-brand-500)] outline-none focus:ring-1 focus:ring-[color:var(--color-brand-500)]"
-                          placeholder="Extintor descarregado, mangueira danificada, etc..."
-                        />
-                        {errors.descricao && <span className="text-xs text-[color:var(--color-danger)] mt-1">{errors.descricao.message}</span>}
-                      </div>
-                    )}
-
-                    <div className="flex justify-end">
-                      <button
-                        type="submit"
-                        disabled={criarMutation.isPending}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-[color:var(--color-brand-600)] text-white rounded-lg text-sm font-medium hover:bg-[color:var(--color-brand-500)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--color-brand-500)] disabled:opacity-50 cursor-pointer"
-                      >
-                        {criarMutation.isPending ? <Loader2 className="animate-spin w-4 h-4" /> : <Save className="w-4 h-4" />}
-                        Salvar Registro
-                      </button>
-                    </div>
-                  </div>
-                </form>
+                <FormularioInline
+                  titulo="Registrar Inspeção Visual"
+                  placeholder="Extintor descarregado, mangueira danificada, etc..."
+                  register={register}
+                  handleSubmit={handleSubmit}
+                  onSubmit={onSubmit}
+                  errors={errors}
+                  conformeValue={conformeValue}
+                  isPending={criarMutation.isPending}
+                  onClose={() => setFormularioAberto(null)}
+                />
               )}
             </div>
-            
+
+            {/* CARD: TESTE DE BOMBA BIMESTRAL */}
+            <div className={`bg-[color:var(--color-surface-800)] rounded-xl border border-[color:var(--color-border)] p-4 shadow-sm relative overflow-hidden ${
+              lojaConformidade.statusBimestral === 'NAO_REALIZADO_VENCIDO' ? 'border-l-4 border-l-[color:var(--color-danger)]' :
+              lojaConformidade.statusBimestral === 'NAO_APLICAVEL' ? 'border-l-4 border-l-[color:var(--color-border)]' :
+              'border-l-4 border-l-[color:var(--color-brand-500)]'
+            }`}>
+              <div className="flex justify-between items-start mb-3">
+                <div>
+                  <h3 className="font-semibold text-[color:var(--color-text-primary)]">Teste de Bomba — {format(new Date(), 'MMMM / yyyy', { locale: ptBR }).replace(/^\w/, (c) => c.toUpperCase())}</h3>
+                  <p className="text-sm text-[color:var(--color-text-muted)] mt-0.5">Bimestral (meses pares) · Prazo: 20/{String(mesAtual).padStart(2, '0')}</p>
+                </div>
+                <div>
+                  {lojaConformidade.statusBimestral === 'NAO_APLICAVEL'
+                    ? <span className="badge badge-neutral" style={{ opacity: 0.6 }}>Não aplicável</span>
+                    : getStatusBadge(lojaConformidade.statusBimestral)
+                  }
+                </div>
+              </div>
+
+              {lojaConformidade.preenchidoEmBimestral && (
+                <p className="text-sm text-[color:var(--color-text-secondary)] mb-3">
+                  <CheckCircle2 size={16} className="inline mr-1 text-[color:var(--color-success)]" />
+                  Realizado em {format(new Date(lojaConformidade.preenchidoEmBimestral), "dd/MM/yyyy")}
+                </p>
+              )}
+
+              {lojaConformidade.statusBimestral === 'NAO_APLICAVEL' && (
+                <p className="text-sm text-[color:var(--color-text-muted)]">
+                  O teste de bomba é obrigatório nos meses pares (Fev, Abr, Jun, Ago, Out, Dez).
+                </p>
+              )}
+
+              {(lojaConformidade.statusBimestral?.includes('PENDENTE') || lojaConformidade.statusBimestral === 'NAO_REALIZADO_VENCIDO') && (
+                <div className="pt-3 border-t border-[color:var(--color-border)] flex justify-end">
+                  <button
+                    onClick={() => handleOpenForm('INCENDIO_BIMESTRAL_BOMBA', null, mesAtual, anoAtual, lojaConformidade.unidade, lojaConformidade.regiao)}
+                    className="text-sm font-medium text-[color:var(--color-brand-400)] hover:text-[color:var(--color-brand-500)] flex items-center gap-1.5 cursor-pointer"
+                  >
+                    Preencher Agora →
+                  </button>
+                </div>
+              )}
+
+              {formularioAberto?.tipo === 'INCENDIO_BIMESTRAL_BOMBA' && formularioAberto.mes === mesAtual && (
+                <FormularioInline
+                  titulo="Registrar Teste de Bomba"
+                  placeholder="Pressão fora do padrão, falha no acionamento automático, etc..."
+                  register={register}
+                  handleSubmit={handleSubmit}
+                  onSubmit={onSubmit}
+                  errors={errors}
+                  conformeValue={conformeValue}
+                  isPending={criarMutation.isPending}
+                  onClose={() => setFormularioAberto(null)}
+                />
+              )}
+            </div>
+
           </div>
         </div>
       )}

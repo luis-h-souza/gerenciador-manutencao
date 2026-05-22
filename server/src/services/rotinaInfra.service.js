@@ -179,24 +179,47 @@ const conformidadeIncendio = async (user, query) => {
 
   const dataLimite = dayjs(`${ano}-${String(mes).padStart(2, '0')}-20`).endOf('day');
   const isVencido = referenceDate.isAfter(dataLimite);
+  const MESES_BIMESTRAIS = [2, 4, 6, 8, 10, 12];
+  const isMesBimestral = MESES_BIMESTRAIS.includes(parseInt(mes));
 
   return lojas.map(loja => {
-    const rotina = rotinas.find(r => r.unidade === String(loja.numero));
-    let status = 'PENDENTE';
-    
-    if (rotina) {
-      status = rotina.preenchidoComAtraso ? 'CONCLUIDO_COM_ATRASO' : 'CONCLUIDO_NO_PRAZO';
+    const rotinaVisual = rotinas.find(r => r.unidade === String(loja.numero) && r.tipo === 'INCENDIO_MENSAL_VISUAL');
+    const rotinaBimestral = rotinas.find(r => r.unidade === String(loja.numero) && r.tipo === 'INCENDIO_BIMESTRAL_BOMBA');
+
+    let statusVisual = 'PENDENTE';
+    if (rotinaVisual) {
+      statusVisual = rotinaVisual.preenchidoComAtraso ? 'CONCLUIDO_COM_ATRASO' : 'CONCLUIDO_NO_PRAZO';
     } else if (isVencido) {
-      status = 'NAO_REALIZADO_VENCIDO';
+      statusVisual = 'NAO_REALIZADO_VENCIDO';
+    }
+
+    let statusBimestral = isMesBimestral ? 'PENDENTE' : 'NAO_APLICAVEL';
+    if (isMesBimestral) {
+      if (rotinaBimestral) {
+        statusBimestral = rotinaBimestral.preenchidoComAtraso ? 'CONCLUIDO_COM_ATRASO' : 'CONCLUIDO_NO_PRAZO';
+      } else if (isVencido) {
+        statusBimestral = 'NAO_REALIZADO_VENCIDO';
+      }
     }
 
     return {
       unidade: String(loja.numero),
       regiao: loja.regiao,
-      status,
-      rotinaId: rotina?.id || null,
-      preenchidoEm: rotina?.preenchidoEm || null,
-      conforme: rotina?.conforme ?? null
+      isMesBimestral,
+      // Visual
+      statusVisual,
+      status: statusVisual, // backwards compat
+      rotinaVisualId: rotinaVisual?.id || null,
+      rotinaId: rotinaVisual?.id || null, // backwards compat
+      preenchidoEmVisual: rotinaVisual?.preenchidoEm || null,
+      preenchidoEm: rotinaVisual?.preenchidoEm || null, // backwards compat
+      conformeVisual: rotinaVisual?.conforme ?? null,
+      conforme: rotinaVisual?.conforme ?? null, // backwards compat
+      // Bimestral
+      statusBimestral,
+      rotinaBimestralId: rotinaBimestral?.id || null,
+      preenchidoEmBimestral: rotinaBimestral?.preenchidoEm || null,
+      conformeBimestral: rotinaBimestral?.conforme ?? null,
     };
   });
 };

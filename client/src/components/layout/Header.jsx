@@ -1,7 +1,7 @@
 // src/components/layout/Header.jsx
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Menu, Bell, LogOut } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Menu, Bell, LogOut, HelpCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { notificacoesService } from '../../services';
@@ -14,11 +14,13 @@ const PAGE_TITLES = {
   '/estoque':      'Estoque de Peças',
   '/fornecedores': 'Fornecedores',
   '/usuarios':     'Usuários',
+  '/ajuda':        'Centro de Ajuda',
 };
 
 export default function Header({ onMenuClick }) {
   const { logout } = useAuth();
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const [showNotif, setShowNotif] = useState(false);
   const qc = useQueryClient();
 
@@ -129,6 +131,16 @@ export default function Header({ onMenuClick }) {
             </div>
           )}
         </div>
+
+        {/* Ajuda */}
+        <button
+          className="btn btn-ghost btn-sm"
+          onClick={() => navigate('/ajuda')}
+          style={{ padding: '6px' }}
+          title="Centro de Ajuda"
+        >
+          <HelpCircle size={18} />
+        </button>
 
         {/* Logout */}
         <button className="btn btn-ghost btn-sm" onClick={handleLogout} style={{ padding: '6px' }} title="Sair">
