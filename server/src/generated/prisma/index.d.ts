@@ -260,7 +260,10 @@ export const TipoCarrinho: {
   PRANCHA: 'PRANCHA',
   PRANCHA_PERECIVEIS: 'PRANCHA_PERECIVEIS',
   CARRINHO_ABASTECIMENTO: 'CARRINHO_ABASTECIMENTO',
-  ESCADA: 'ESCADA'
+  ESCADA: 'ESCADA',
+  BEBE_CONFORTO: 'BEBE_CONFORTO',
+  CARRINHO_MOTORIZADO: 'CARRINHO_MOTORIZADO',
+  ESCADA_ABASTECIMENTO: 'ESCADA_ABASTECIMENTO'
 };
 
 export type TipoCarrinho = (typeof TipoCarrinho)[keyof typeof TipoCarrinho]
@@ -20709,6 +20712,7 @@ export namespace Prisma {
     id: string | null
     checklistId: string | null
     tipoEquipamento: $Enums.TipoEquipamento | null
+    nomeEquipamento: string | null
     operacional: boolean | null
     quantidade: number | null
     quantidadeQuebrada: number | null
@@ -20723,6 +20727,7 @@ export namespace Prisma {
     id: string | null
     checklistId: string | null
     tipoEquipamento: $Enums.TipoEquipamento | null
+    nomeEquipamento: string | null
     operacional: boolean | null
     quantidade: number | null
     quantidadeQuebrada: number | null
@@ -20737,6 +20742,7 @@ export namespace Prisma {
     id: number
     checklistId: number
     tipoEquipamento: number
+    nomeEquipamento: number
     operacional: number
     quantidade: number
     quantidadeQuebrada: number
@@ -20765,6 +20771,7 @@ export namespace Prisma {
     id?: true
     checklistId?: true
     tipoEquipamento?: true
+    nomeEquipamento?: true
     operacional?: true
     quantidade?: true
     quantidadeQuebrada?: true
@@ -20779,6 +20786,7 @@ export namespace Prisma {
     id?: true
     checklistId?: true
     tipoEquipamento?: true
+    nomeEquipamento?: true
     operacional?: true
     quantidade?: true
     quantidadeQuebrada?: true
@@ -20793,6 +20801,7 @@ export namespace Prisma {
     id?: true
     checklistId?: true
     tipoEquipamento?: true
+    nomeEquipamento?: true
     operacional?: true
     quantidade?: true
     quantidadeQuebrada?: true
@@ -20893,7 +20902,8 @@ export namespace Prisma {
   export type ChecklistEquipamentoItemGroupByOutputType = {
     id: string
     checklistId: string
-    tipoEquipamento: $Enums.TipoEquipamento
+    tipoEquipamento: $Enums.TipoEquipamento | null
+    nomeEquipamento: string | null
     operacional: boolean
     quantidade: number
     quantidadeQuebrada: number
@@ -20927,6 +20937,7 @@ export namespace Prisma {
     id?: boolean
     checklistId?: boolean
     tipoEquipamento?: boolean
+    nomeEquipamento?: boolean
     operacional?: boolean
     quantidade?: boolean
     quantidadeQuebrada?: boolean
@@ -20943,6 +20954,7 @@ export namespace Prisma {
     id?: boolean
     checklistId?: boolean
     tipoEquipamento?: boolean
+    nomeEquipamento?: boolean
     operacional?: boolean
     quantidade?: boolean
     quantidadeQuebrada?: boolean
@@ -20959,6 +20971,7 @@ export namespace Prisma {
     id?: boolean
     checklistId?: boolean
     tipoEquipamento?: boolean
+    nomeEquipamento?: boolean
     operacional?: boolean
     quantidade?: boolean
     quantidadeQuebrada?: boolean
@@ -20975,6 +20988,7 @@ export namespace Prisma {
     id?: boolean
     checklistId?: boolean
     tipoEquipamento?: boolean
+    nomeEquipamento?: boolean
     operacional?: boolean
     quantidade?: boolean
     quantidadeQuebrada?: boolean
@@ -20985,7 +20999,7 @@ export namespace Prisma {
     ativoId?: boolean
   }
 
-  export type ChecklistEquipamentoItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "checklistId" | "tipoEquipamento" | "operacional" | "quantidade" | "quantidadeQuebrada" | "numeroSerie" | "numeroChamado" | "descricaoProblema" | "valor" | "ativoId", ExtArgs["result"]["checklistEquipamentoItem"]>
+  export type ChecklistEquipamentoItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "checklistId" | "tipoEquipamento" | "nomeEquipamento" | "operacional" | "quantidade" | "quantidadeQuebrada" | "numeroSerie" | "numeroChamado" | "descricaoProblema" | "valor" | "ativoId", ExtArgs["result"]["checklistEquipamentoItem"]>
   export type ChecklistEquipamentoItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     checklist?: boolean | ChecklistEquipamentoDefaultArgs<ExtArgs>
     ativo?: boolean | ChecklistEquipamentoItem$ativoArgs<ExtArgs>
@@ -21008,7 +21022,8 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       checklistId: string
-      tipoEquipamento: $Enums.TipoEquipamento
+      tipoEquipamento: $Enums.TipoEquipamento | null
+      nomeEquipamento: string | null
       operacional: boolean
       quantidade: number
       quantidadeQuebrada: number
@@ -21445,6 +21460,7 @@ export namespace Prisma {
     readonly id: FieldRef<"ChecklistEquipamentoItem", 'String'>
     readonly checklistId: FieldRef<"ChecklistEquipamentoItem", 'String'>
     readonly tipoEquipamento: FieldRef<"ChecklistEquipamentoItem", 'TipoEquipamento'>
+    readonly nomeEquipamento: FieldRef<"ChecklistEquipamentoItem", 'String'>
     readonly operacional: FieldRef<"ChecklistEquipamentoItem", 'Boolean'>
     readonly quantidade: FieldRef<"ChecklistEquipamentoItem", 'Int'>
     readonly quantidadeQuebrada: FieldRef<"ChecklistEquipamentoItem", 'Int'>
@@ -29259,6 +29275,7 @@ export namespace Prisma {
     id: 'id',
     checklistId: 'checklistId',
     tipoEquipamento: 'tipoEquipamento',
+    nomeEquipamento: 'nomeEquipamento',
     operacional: 'operacional',
     quantidade: 'quantidade',
     quantidadeQuebrada: 'quantidadeQuebrada',
@@ -30844,7 +30861,8 @@ export namespace Prisma {
     NOT?: ChecklistEquipamentoItemWhereInput | ChecklistEquipamentoItemWhereInput[]
     id?: StringFilter<"ChecklistEquipamentoItem"> | string
     checklistId?: StringFilter<"ChecklistEquipamentoItem"> | string
-    tipoEquipamento?: EnumTipoEquipamentoFilter<"ChecklistEquipamentoItem"> | $Enums.TipoEquipamento
+    tipoEquipamento?: EnumTipoEquipamentoNullableFilter<"ChecklistEquipamentoItem"> | $Enums.TipoEquipamento | null
+    nomeEquipamento?: StringNullableFilter<"ChecklistEquipamentoItem"> | string | null
     operacional?: BoolFilter<"ChecklistEquipamentoItem"> | boolean
     quantidade?: IntFilter<"ChecklistEquipamentoItem"> | number
     quantidadeQuebrada?: IntFilter<"ChecklistEquipamentoItem"> | number
@@ -30860,7 +30878,8 @@ export namespace Prisma {
   export type ChecklistEquipamentoItemOrderByWithRelationInput = {
     id?: SortOrder
     checklistId?: SortOrder
-    tipoEquipamento?: SortOrder
+    tipoEquipamento?: SortOrderInput | SortOrder
+    nomeEquipamento?: SortOrderInput | SortOrder
     operacional?: SortOrder
     quantidade?: SortOrder
     quantidadeQuebrada?: SortOrder
@@ -30879,7 +30898,8 @@ export namespace Prisma {
     OR?: ChecklistEquipamentoItemWhereInput[]
     NOT?: ChecklistEquipamentoItemWhereInput | ChecklistEquipamentoItemWhereInput[]
     checklistId?: StringFilter<"ChecklistEquipamentoItem"> | string
-    tipoEquipamento?: EnumTipoEquipamentoFilter<"ChecklistEquipamentoItem"> | $Enums.TipoEquipamento
+    tipoEquipamento?: EnumTipoEquipamentoNullableFilter<"ChecklistEquipamentoItem"> | $Enums.TipoEquipamento | null
+    nomeEquipamento?: StringNullableFilter<"ChecklistEquipamentoItem"> | string | null
     operacional?: BoolFilter<"ChecklistEquipamentoItem"> | boolean
     quantidade?: IntFilter<"ChecklistEquipamentoItem"> | number
     quantidadeQuebrada?: IntFilter<"ChecklistEquipamentoItem"> | number
@@ -30895,7 +30915,8 @@ export namespace Prisma {
   export type ChecklistEquipamentoItemOrderByWithAggregationInput = {
     id?: SortOrder
     checklistId?: SortOrder
-    tipoEquipamento?: SortOrder
+    tipoEquipamento?: SortOrderInput | SortOrder
+    nomeEquipamento?: SortOrderInput | SortOrder
     operacional?: SortOrder
     quantidade?: SortOrder
     quantidadeQuebrada?: SortOrder
@@ -30917,7 +30938,8 @@ export namespace Prisma {
     NOT?: ChecklistEquipamentoItemScalarWhereWithAggregatesInput | ChecklistEquipamentoItemScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"ChecklistEquipamentoItem"> | string
     checklistId?: StringWithAggregatesFilter<"ChecklistEquipamentoItem"> | string
-    tipoEquipamento?: EnumTipoEquipamentoWithAggregatesFilter<"ChecklistEquipamentoItem"> | $Enums.TipoEquipamento
+    tipoEquipamento?: EnumTipoEquipamentoNullableWithAggregatesFilter<"ChecklistEquipamentoItem"> | $Enums.TipoEquipamento | null
+    nomeEquipamento?: StringNullableWithAggregatesFilter<"ChecklistEquipamentoItem"> | string | null
     operacional?: BoolWithAggregatesFilter<"ChecklistEquipamentoItem"> | boolean
     quantidade?: IntWithAggregatesFilter<"ChecklistEquipamentoItem"> | number
     quantidadeQuebrada?: IntWithAggregatesFilter<"ChecklistEquipamentoItem"> | number
@@ -32807,7 +32829,8 @@ export namespace Prisma {
 
   export type ChecklistEquipamentoItemCreateInput = {
     id?: string
-    tipoEquipamento: $Enums.TipoEquipamento
+    tipoEquipamento?: $Enums.TipoEquipamento | null
+    nomeEquipamento?: string | null
     operacional?: boolean
     quantidade?: number
     quantidadeQuebrada?: number
@@ -32822,7 +32845,8 @@ export namespace Prisma {
   export type ChecklistEquipamentoItemUncheckedCreateInput = {
     id?: string
     checklistId: string
-    tipoEquipamento: $Enums.TipoEquipamento
+    tipoEquipamento?: $Enums.TipoEquipamento | null
+    nomeEquipamento?: string | null
     operacional?: boolean
     quantidade?: number
     quantidadeQuebrada?: number
@@ -32835,7 +32859,8 @@ export namespace Prisma {
 
   export type ChecklistEquipamentoItemUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    tipoEquipamento?: EnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento
+    tipoEquipamento?: NullableEnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento | null
+    nomeEquipamento?: NullableStringFieldUpdateOperationsInput | string | null
     operacional?: BoolFieldUpdateOperationsInput | boolean
     quantidade?: IntFieldUpdateOperationsInput | number
     quantidadeQuebrada?: IntFieldUpdateOperationsInput | number
@@ -32850,7 +32875,8 @@ export namespace Prisma {
   export type ChecklistEquipamentoItemUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     checklistId?: StringFieldUpdateOperationsInput | string
-    tipoEquipamento?: EnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento
+    tipoEquipamento?: NullableEnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento | null
+    nomeEquipamento?: NullableStringFieldUpdateOperationsInput | string | null
     operacional?: BoolFieldUpdateOperationsInput | boolean
     quantidade?: IntFieldUpdateOperationsInput | number
     quantidadeQuebrada?: IntFieldUpdateOperationsInput | number
@@ -32864,7 +32890,8 @@ export namespace Prisma {
   export type ChecklistEquipamentoItemCreateManyInput = {
     id?: string
     checklistId: string
-    tipoEquipamento: $Enums.TipoEquipamento
+    tipoEquipamento?: $Enums.TipoEquipamento | null
+    nomeEquipamento?: string | null
     operacional?: boolean
     quantidade?: number
     quantidadeQuebrada?: number
@@ -32877,7 +32904,8 @@ export namespace Prisma {
 
   export type ChecklistEquipamentoItemUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    tipoEquipamento?: EnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento
+    tipoEquipamento?: NullableEnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento | null
+    nomeEquipamento?: NullableStringFieldUpdateOperationsInput | string | null
     operacional?: BoolFieldUpdateOperationsInput | boolean
     quantidade?: IntFieldUpdateOperationsInput | number
     quantidadeQuebrada?: IntFieldUpdateOperationsInput | number
@@ -32890,7 +32918,8 @@ export namespace Prisma {
   export type ChecklistEquipamentoItemUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     checklistId?: StringFieldUpdateOperationsInput | string
-    tipoEquipamento?: EnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento
+    tipoEquipamento?: NullableEnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento | null
+    nomeEquipamento?: NullableStringFieldUpdateOperationsInput | string | null
     operacional?: BoolFieldUpdateOperationsInput | boolean
     quantidade?: IntFieldUpdateOperationsInput | number
     quantidadeQuebrada?: IntFieldUpdateOperationsInput | number
@@ -34688,11 +34717,11 @@ export namespace Prisma {
     ano?: SortOrder
   }
 
-  export type EnumTipoEquipamentoFilter<$PrismaModel = never> = {
-    equals?: $Enums.TipoEquipamento | EnumTipoEquipamentoFieldRefInput<$PrismaModel>
-    in?: $Enums.TipoEquipamento[] | ListEnumTipoEquipamentoFieldRefInput<$PrismaModel>
-    notIn?: $Enums.TipoEquipamento[] | ListEnumTipoEquipamentoFieldRefInput<$PrismaModel>
-    not?: NestedEnumTipoEquipamentoFilter<$PrismaModel> | $Enums.TipoEquipamento
+  export type EnumTipoEquipamentoNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.TipoEquipamento | EnumTipoEquipamentoFieldRefInput<$PrismaModel> | null
+    in?: $Enums.TipoEquipamento[] | ListEnumTipoEquipamentoFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.TipoEquipamento[] | ListEnumTipoEquipamentoFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumTipoEquipamentoNullableFilter<$PrismaModel> | $Enums.TipoEquipamento | null
   }
 
   export type ChecklistEquipamentoScalarRelationFilter = {
@@ -34709,6 +34738,7 @@ export namespace Prisma {
     id?: SortOrder
     checklistId?: SortOrder
     tipoEquipamento?: SortOrder
+    nomeEquipamento?: SortOrder
     operacional?: SortOrder
     quantidade?: SortOrder
     quantidadeQuebrada?: SortOrder
@@ -34729,6 +34759,7 @@ export namespace Prisma {
     id?: SortOrder
     checklistId?: SortOrder
     tipoEquipamento?: SortOrder
+    nomeEquipamento?: SortOrder
     operacional?: SortOrder
     quantidade?: SortOrder
     quantidadeQuebrada?: SortOrder
@@ -34743,6 +34774,7 @@ export namespace Prisma {
     id?: SortOrder
     checklistId?: SortOrder
     tipoEquipamento?: SortOrder
+    nomeEquipamento?: SortOrder
     operacional?: SortOrder
     quantidade?: SortOrder
     quantidadeQuebrada?: SortOrder
@@ -34759,14 +34791,14 @@ export namespace Prisma {
     valor?: SortOrder
   }
 
-  export type EnumTipoEquipamentoWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.TipoEquipamento | EnumTipoEquipamentoFieldRefInput<$PrismaModel>
-    in?: $Enums.TipoEquipamento[] | ListEnumTipoEquipamentoFieldRefInput<$PrismaModel>
-    notIn?: $Enums.TipoEquipamento[] | ListEnumTipoEquipamentoFieldRefInput<$PrismaModel>
-    not?: NestedEnumTipoEquipamentoWithAggregatesFilter<$PrismaModel> | $Enums.TipoEquipamento
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumTipoEquipamentoFilter<$PrismaModel>
-    _max?: NestedEnumTipoEquipamentoFilter<$PrismaModel>
+  export type EnumTipoEquipamentoNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TipoEquipamento | EnumTipoEquipamentoFieldRefInput<$PrismaModel> | null
+    in?: $Enums.TipoEquipamento[] | ListEnumTipoEquipamentoFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.TipoEquipamento[] | ListEnumTipoEquipamentoFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumTipoEquipamentoNullableWithAggregatesFilter<$PrismaModel> | $Enums.TipoEquipamento | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumTipoEquipamentoNullableFilter<$PrismaModel>
+    _max?: NestedEnumTipoEquipamentoNullableFilter<$PrismaModel>
   }
 
   export type ChecklistCarrinhoItemListRelationFilter = {
@@ -36148,8 +36180,8 @@ export namespace Prisma {
     connect?: AtivoLojaWhereUniqueInput
   }
 
-  export type EnumTipoEquipamentoFieldUpdateOperationsInput = {
-    set?: $Enums.TipoEquipamento
+  export type NullableEnumTipoEquipamentoFieldUpdateOperationsInput = {
+    set?: $Enums.TipoEquipamento | null
   }
 
   export type ChecklistEquipamentoUpdateOneRequiredWithoutItensNestedInput = {
@@ -36751,21 +36783,21 @@ export namespace Prisma {
     _max?: NestedEnumStatusMovimentacaoFilter<$PrismaModel>
   }
 
-  export type NestedEnumTipoEquipamentoFilter<$PrismaModel = never> = {
-    equals?: $Enums.TipoEquipamento | EnumTipoEquipamentoFieldRefInput<$PrismaModel>
-    in?: $Enums.TipoEquipamento[] | ListEnumTipoEquipamentoFieldRefInput<$PrismaModel>
-    notIn?: $Enums.TipoEquipamento[] | ListEnumTipoEquipamentoFieldRefInput<$PrismaModel>
-    not?: NestedEnumTipoEquipamentoFilter<$PrismaModel> | $Enums.TipoEquipamento
+  export type NestedEnumTipoEquipamentoNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.TipoEquipamento | EnumTipoEquipamentoFieldRefInput<$PrismaModel> | null
+    in?: $Enums.TipoEquipamento[] | ListEnumTipoEquipamentoFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.TipoEquipamento[] | ListEnumTipoEquipamentoFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumTipoEquipamentoNullableFilter<$PrismaModel> | $Enums.TipoEquipamento | null
   }
 
-  export type NestedEnumTipoEquipamentoWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.TipoEquipamento | EnumTipoEquipamentoFieldRefInput<$PrismaModel>
-    in?: $Enums.TipoEquipamento[] | ListEnumTipoEquipamentoFieldRefInput<$PrismaModel>
-    notIn?: $Enums.TipoEquipamento[] | ListEnumTipoEquipamentoFieldRefInput<$PrismaModel>
-    not?: NestedEnumTipoEquipamentoWithAggregatesFilter<$PrismaModel> | $Enums.TipoEquipamento
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumTipoEquipamentoFilter<$PrismaModel>
-    _max?: NestedEnumTipoEquipamentoFilter<$PrismaModel>
+  export type NestedEnumTipoEquipamentoNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TipoEquipamento | EnumTipoEquipamentoFieldRefInput<$PrismaModel> | null
+    in?: $Enums.TipoEquipamento[] | ListEnumTipoEquipamentoFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.TipoEquipamento[] | ListEnumTipoEquipamentoFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumTipoEquipamentoNullableWithAggregatesFilter<$PrismaModel> | $Enums.TipoEquipamento | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumTipoEquipamentoNullableFilter<$PrismaModel>
+    _max?: NestedEnumTipoEquipamentoNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumTipoCarrinhoFilter<$PrismaModel = never> = {
@@ -38861,7 +38893,8 @@ export namespace Prisma {
 
   export type ChecklistEquipamentoItemCreateWithoutChecklistInput = {
     id?: string
-    tipoEquipamento: $Enums.TipoEquipamento
+    tipoEquipamento?: $Enums.TipoEquipamento | null
+    nomeEquipamento?: string | null
     operacional?: boolean
     quantidade?: number
     quantidadeQuebrada?: number
@@ -38874,7 +38907,8 @@ export namespace Prisma {
 
   export type ChecklistEquipamentoItemUncheckedCreateWithoutChecklistInput = {
     id?: string
-    tipoEquipamento: $Enums.TipoEquipamento
+    tipoEquipamento?: $Enums.TipoEquipamento | null
+    nomeEquipamento?: string | null
     operacional?: boolean
     quantidade?: number
     quantidadeQuebrada?: number
@@ -38968,7 +39002,8 @@ export namespace Prisma {
     NOT?: ChecklistEquipamentoItemScalarWhereInput | ChecklistEquipamentoItemScalarWhereInput[]
     id?: StringFilter<"ChecklistEquipamentoItem"> | string
     checklistId?: StringFilter<"ChecklistEquipamentoItem"> | string
-    tipoEquipamento?: EnumTipoEquipamentoFilter<"ChecklistEquipamentoItem"> | $Enums.TipoEquipamento
+    tipoEquipamento?: EnumTipoEquipamentoNullableFilter<"ChecklistEquipamentoItem"> | $Enums.TipoEquipamento | null
+    nomeEquipamento?: StringNullableFilter<"ChecklistEquipamentoItem"> | string | null
     operacional?: BoolFilter<"ChecklistEquipamentoItem"> | boolean
     quantidade?: IntFilter<"ChecklistEquipamentoItem"> | number
     quantidadeQuebrada?: IntFilter<"ChecklistEquipamentoItem"> | number
@@ -39544,7 +39579,8 @@ export namespace Prisma {
 
   export type ChecklistEquipamentoItemCreateWithoutAtivoInput = {
     id?: string
-    tipoEquipamento: $Enums.TipoEquipamento
+    tipoEquipamento?: $Enums.TipoEquipamento | null
+    nomeEquipamento?: string | null
     operacional?: boolean
     quantidade?: number
     quantidadeQuebrada?: number
@@ -39558,7 +39594,8 @@ export namespace Prisma {
   export type ChecklistEquipamentoItemUncheckedCreateWithoutAtivoInput = {
     id?: string
     checklistId: string
-    tipoEquipamento: $Enums.TipoEquipamento
+    tipoEquipamento?: $Enums.TipoEquipamento | null
+    nomeEquipamento?: string | null
     operacional?: boolean
     quantidade?: number
     quantidadeQuebrada?: number
@@ -40819,7 +40856,8 @@ export namespace Prisma {
 
   export type ChecklistEquipamentoItemCreateManyChecklistInput = {
     id?: string
-    tipoEquipamento: $Enums.TipoEquipamento
+    tipoEquipamento?: $Enums.TipoEquipamento | null
+    nomeEquipamento?: string | null
     operacional?: boolean
     quantidade?: number
     quantidadeQuebrada?: number
@@ -40832,7 +40870,8 @@ export namespace Prisma {
 
   export type ChecklistEquipamentoItemUpdateWithoutChecklistInput = {
     id?: StringFieldUpdateOperationsInput | string
-    tipoEquipamento?: EnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento
+    tipoEquipamento?: NullableEnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento | null
+    nomeEquipamento?: NullableStringFieldUpdateOperationsInput | string | null
     operacional?: BoolFieldUpdateOperationsInput | boolean
     quantidade?: IntFieldUpdateOperationsInput | number
     quantidadeQuebrada?: IntFieldUpdateOperationsInput | number
@@ -40845,7 +40884,8 @@ export namespace Prisma {
 
   export type ChecklistEquipamentoItemUncheckedUpdateWithoutChecklistInput = {
     id?: StringFieldUpdateOperationsInput | string
-    tipoEquipamento?: EnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento
+    tipoEquipamento?: NullableEnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento | null
+    nomeEquipamento?: NullableStringFieldUpdateOperationsInput | string | null
     operacional?: BoolFieldUpdateOperationsInput | boolean
     quantidade?: IntFieldUpdateOperationsInput | number
     quantidadeQuebrada?: IntFieldUpdateOperationsInput | number
@@ -40858,7 +40898,8 @@ export namespace Prisma {
 
   export type ChecklistEquipamentoItemUncheckedUpdateManyWithoutChecklistInput = {
     id?: StringFieldUpdateOperationsInput | string
-    tipoEquipamento?: EnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento
+    tipoEquipamento?: NullableEnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento | null
+    nomeEquipamento?: NullableStringFieldUpdateOperationsInput | string | null
     operacional?: BoolFieldUpdateOperationsInput | boolean
     quantidade?: IntFieldUpdateOperationsInput | number
     quantidadeQuebrada?: IntFieldUpdateOperationsInput | number
@@ -40920,7 +40961,8 @@ export namespace Prisma {
   export type ChecklistEquipamentoItemCreateManyAtivoInput = {
     id?: string
     checklistId: string
-    tipoEquipamento: $Enums.TipoEquipamento
+    tipoEquipamento?: $Enums.TipoEquipamento | null
+    nomeEquipamento?: string | null
     operacional?: boolean
     quantidade?: number
     quantidadeQuebrada?: number
@@ -40968,7 +41010,8 @@ export namespace Prisma {
 
   export type ChecklistEquipamentoItemUpdateWithoutAtivoInput = {
     id?: StringFieldUpdateOperationsInput | string
-    tipoEquipamento?: EnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento
+    tipoEquipamento?: NullableEnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento | null
+    nomeEquipamento?: NullableStringFieldUpdateOperationsInput | string | null
     operacional?: BoolFieldUpdateOperationsInput | boolean
     quantidade?: IntFieldUpdateOperationsInput | number
     quantidadeQuebrada?: IntFieldUpdateOperationsInput | number
@@ -40982,7 +41025,8 @@ export namespace Prisma {
   export type ChecklistEquipamentoItemUncheckedUpdateWithoutAtivoInput = {
     id?: StringFieldUpdateOperationsInput | string
     checklistId?: StringFieldUpdateOperationsInput | string
-    tipoEquipamento?: EnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento
+    tipoEquipamento?: NullableEnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento | null
+    nomeEquipamento?: NullableStringFieldUpdateOperationsInput | string | null
     operacional?: BoolFieldUpdateOperationsInput | boolean
     quantidade?: IntFieldUpdateOperationsInput | number
     quantidadeQuebrada?: IntFieldUpdateOperationsInput | number
@@ -40995,7 +41039,8 @@ export namespace Prisma {
   export type ChecklistEquipamentoItemUncheckedUpdateManyWithoutAtivoInput = {
     id?: StringFieldUpdateOperationsInput | string
     checklistId?: StringFieldUpdateOperationsInput | string
-    tipoEquipamento?: EnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento
+    tipoEquipamento?: NullableEnumTipoEquipamentoFieldUpdateOperationsInput | $Enums.TipoEquipamento | null
+    nomeEquipamento?: NullableStringFieldUpdateOperationsInput | string | null
     operacional?: BoolFieldUpdateOperationsInput | boolean
     quantidade?: IntFieldUpdateOperationsInput | number
     quantidadeQuebrada?: IntFieldUpdateOperationsInput | number

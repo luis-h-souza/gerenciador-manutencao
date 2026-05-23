@@ -19,6 +19,7 @@ model Loja {
   atualizadoEm DateTime  @updatedAt
   usuarios     Usuario[]
 
+  @@index([regiao, ativo])
   @@map("lojas")
 }
 
@@ -58,6 +59,8 @@ model RefreshToken {
   criadoEm  DateTime @default(now())
   usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
 
+  @@index([usuarioId])
+  @@index([expiresAt, revogado])
   @@map("refresh_tokens")
 }
 
@@ -72,6 +75,8 @@ model Sessao {
   criadoEm  DateTime @default(now())
   usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
 
+  @@index([usuarioId])
+  @@index([expiresAt, ativo])
   @@map("sessoes")
 }
 
@@ -92,6 +97,9 @@ model Tarefa {
   atribuidoPara   Usuario?         @relation("TarefaAtribuida", fields: [atribuidoParaId], references: [id])
   criadoPor       Usuario          @relation("TarefaCriada", fields: [criadoPorId], references: [id])
 
+  @@index([atribuidoParaId])
+  @@index([regiao, status])
+  @@index([criadoEm])
   @@map("tarefas")
 }
 
@@ -106,6 +114,7 @@ model Notificacao {
   tarefa    Tarefa?  @relation(fields: [tarefaId], references: [id])
   usuario   Usuario? @relation(fields: [usuarioId], references: [id])
 
+  @@index([usuarioId, lida])
   @@map("notificacoes")
 }
 
@@ -144,6 +153,10 @@ model ControleChamado {
   criadoEm        DateTime        @default(now())
   atualizadoEm    DateTime        @updatedAt
 
+  @@index([regiao, dataAbertura])
+  @@index([unidade, dataAbertura])
+  @@index([status])
+  @@index([segmento])
   @@map("controle_chamados")
 }
 
@@ -161,6 +174,7 @@ model Fornecedor {
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
 
+  @@index([regiao, ativo])
   @@map("fornecedores")
 }
 
@@ -204,6 +218,7 @@ model EntradaPeca {
   criadoEm         DateTime @default(now())
   peca             Peca     @relation(fields: [pecaId], references: [id])
 
+  @@index([pecaId, dataEntrada])
   @@map("entradas_pecas")
 }
 
@@ -218,6 +233,7 @@ model MovimentacaoPeca {
   criadoEm         DateTime           @default(now())
   peca             Peca               @relation(fields: [pecaId], references: [id])
 
+  @@index([pecaId, status])
   @@map("movimentacoes_pecas")
 }
 
@@ -232,6 +248,7 @@ model SaidaPeca {
   criadoEm    DateTime @default(now())
   peca        Peca     @relation(fields: [pecaId], references: [id])
 
+  @@index([pecaId])
   @@map("saidas_pecas")
 }
 
@@ -249,13 +266,15 @@ model ChecklistEquipamento {
   criadoPor    Usuario                    @relation(fields: [criadoPorId], references: [id])
 
   @@unique([semana, ano, unidade], name: "semana_ano_unidade")
+  @@index([regiao, ano])
   @@map("checklists_equipamento")
 }
 
 model ChecklistEquipamentoItem {
   id                 String               @id @default(uuid())
   checklistId        String
-  tipoEquipamento    TipoEquipamento
+  tipoEquipamento    TipoEquipamento? // nullable: itens dinâmicos via ativos não usam enum
+  nomeEquipamento    String? // nome livre do ativo (para itens dinâmicos)
   operacional        Boolean              @default(true)
   quantidade         Int                  @default(1)
   quantidadeQuebrada Int                  @default(0)
@@ -263,7 +282,7 @@ model ChecklistEquipamentoItem {
   numeroChamado      String?
   descricaoProblema  String?
   valor              Decimal?             @db.Decimal(12, 2)
-  ativoId            String? // Vínculo opcional com AtivoLoja
+  ativoId            String? // Vínculo com AtivoLoja (obrigatório nos itens dinâmicos)
   checklist          ChecklistEquipamento @relation(fields: [checklistId], references: [id], onDelete: Cascade)
   ativo              AtivoLoja?           @relation(fields: [ativoId], references: [id])
 
@@ -284,6 +303,7 @@ model ChecklistCarrinho {
   criadoPor    Usuario                 @relation(fields: [criadoPorId], references: [id])
 
   @@unique([semana, ano, unidade], name: "semana_ano_unidade")
+  @@index([regiao, ano])
   @@map("checklists_carrinho")
 }
 
@@ -349,6 +369,7 @@ model AtivoLoja {
   @@index([unidade])
   @@index([categoria])
   @@index([status])
+  @@index([ativo])
   @@map("ativos_loja")
 }
 
@@ -367,6 +388,7 @@ model RegistroFalhaAtivo {
   resolvidoPor    Usuario?  @relation("FalhaResolvidaPor", fields: [resolvidoPorId], references: [id])
 
   @@index([ativoId, dataDeteccao])
+  @@index([ativoId, dataResolucao])
   @@map("registros_falha_ativos")
 }
 
@@ -389,6 +411,8 @@ model ChecklistRotinaInfra {
 
   @@unique([tipo, unidade, semana, mes, ano], name: "rotina_unica")
   @@index([unidade, mes, ano])
+  @@index([regiao, mes, ano])
+  @@index([tipo, mes, ano])
   @@map("checklists_rotina_infra")
 }
 
@@ -501,4 +525,7 @@ enum TipoCarrinho {
   PRANCHA_PERECIVEIS
   CARRINHO_ABASTECIMENTO
   ESCADA
+  BEBE_CONFORTO
+  CARRINHO_MOTORIZADO
+  ESCADA_ABASTECIMENTO
 }

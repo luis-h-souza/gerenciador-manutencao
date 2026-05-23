@@ -138,22 +138,59 @@ const buscarEquipamentoPorSemana = async (user, query) => {
   if (!unidade && user.role === 'GESTOR') where.unidade = user.loja?.nome;
   if (criadoPorId) where.criadoPorId = criadoPorId;
 
-  return prisma.checklistEquipamento.findFirst({
+  // Tenta buscar o checklist exato para a semana/ano solicitados
+  const exact = await prisma.checklistEquipamento.findFirst({
     where,
     include: { itens: true, criadoPor: { select: { id: true, nome: true } } },
   });
+
+  if (exact) return exact;
+
+  // Se não existir checklist para a semana solicitada, buscar o último checklist existente
+  // (mais recente por ano/semana) para a mesma unidade/região/escopo de acesso
+  const baseWhere = { ...getAccessFilter(user) };
+  if (unidade) baseWhere.unidade = unidade;
+  if (regiao) baseWhere.regiao = regiao;
+
+  const last = await prisma.checklistEquipamento.findFirst({
+    where: baseWhere,
+    include: { itens: true },
+    orderBy: [{ ano: 'desc' }, { semana: 'desc' }],
+  });
+
+  if (!last) return null;
+
+  // Determina se o último checklist é exatamente a semana anterior
+  const isSemanaAnterior = last.ano === a && last.semana === s - 1;
+
+  // Retornar um objeto que o frontend pode usar como fallback:
+  // - mantém o formato de ChecklistEquipamento, porém com itens vazios para evitar confusão
+  return {
+    id: null,
+    semana: s,
+    ano: a,
+    regiao: last.regiao,
+    unidade: last.unidade,
+    criadoEm: last.criadoEm,
+    atualizadoEm: last.atualizadoEm,
+    itens: [],
+    observacoes: last.observacoes || null,
+    ultimoPreenchimentoNote: isSemanaAnterior ? '*semana anterior' : null,
+  };
 };
 
 const mapItemEquipamento = (item) => ({
-  tipoEquipamento: item.tipoEquipamento,
-  operacional:     item.operacional ?? true,
-  quantidade:      parseInt(item.quantidade) || 1,
+  // tipoEquipamento: null para itens dinâmicos via ativo; preenchido apenas para itens legados
+  tipoEquipamento:    item.tipoEquipamento || item.tipo || null,
+  nomeEquipamento:    item.nomeEquipamento || null,
+  operacional:        item.operacional ?? true,
+  quantidade:         parseInt(item.quantidade) || 1,
   quantidadeQuebrada: parseInt(item.quantidadeQuebrada) || 0,
-  numeroSerie:     item.numeroSerie || null,
-  numeroChamado:   item.numeroChamado || null,
-  descricaoProblema: item.descricaoProblema || null,
-  valor:           item.valor ? parseFloat(item.valor) : null,
-  ativoId:         item.ativoId || null,
+  numeroSerie:        item.numeroSerie || null,
+  numeroChamado:      item.numeroChamado || null,
+  descricaoProblema:  item.descricaoProblema || null,
+  valor:              item.valor ? parseFloat(item.valor) : null,
+  ativoId:            item.ativoId || null,
 });
 
 const salvarEquipamento = async (user, body) => {
@@ -428,11 +465,11 @@ const kpiMensal = async (user, query) => {
   const { getWeek, startOfMonth, endOfMonth } = require('date-fns');
   const inicioMes = startOfMonth(new Date(qAno, qMes - 1));
   const fimMes    = endOfMonth(new Date(qAno, qMes - 1));
-  
+
   const isMesAtual = qMes === agora.getMonth() + 1 && qAno === agora.getFullYear();
-  
+
   const semanaInicio = getWeek(inicioMes, { weekStartsOn: 5 });
-  const semanaFim    = isMesAtual 
+  const semanaFim    = isMesAtual
     ? getWeek(agora, { weekStartsOn: 5 })
     : getWeek(fimMes, { weekStartsOn: 5 });
 

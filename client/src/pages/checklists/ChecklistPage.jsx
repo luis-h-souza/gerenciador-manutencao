@@ -4,7 +4,11 @@ import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../contexts/AuthContext";
 import api from "../../services/api";
-import { usuariosService, checklistService, ativosService } from "../../services";
+import {
+  usuariosService,
+  checklistService,
+  ativosService,
+} from "../../services";
 import {
   getWeek,
   getYear,
@@ -77,7 +81,9 @@ const normalizarTexto = (valor) =>
     .toUpperCase();
 
 const resolverTipoCarrinhoAtivo = (ativo) => {
-  const candidatos = [ativo.tipo, ativo.nome].map(normalizarTexto).filter(Boolean);
+  const candidatos = [ativo.tipo, ativo.nome]
+    .map(normalizarTexto)
+    .filter(Boolean);
 
   const aliases = {
     MARIA_GORDA: "MARIA_GORDA",
@@ -114,16 +120,19 @@ const resolverTipoCarrinhoAtivo = (ativo) => {
 
   // 2ª passagem: match por substring — útil para nomes como "Maria Gorda 01" ou "Supercar - Grande"
   const PADROES = [
-    { key: "MARIA_GORDA",            tokens: ["MARIA_GORDA", "MARIA"] },
-    { key: "SUPERCAR",               tokens: ["SUPERCAR"] },
-    { key: "DOIS_ANDARES",           tokens: ["DOIS_ANDARES", "DOIS_ANDAR", "2_ANDARES", "2_ANDAR"] },
-    { key: "PRANCHA_PERECIVEIS",     tokens: ["PRANCHA_PERECIV", "PERECIV"] },
-    { key: "PRANCHA",                tokens: ["PRANCHA"] },
+    { key: "MARIA_GORDA", tokens: ["MARIA_GORDA", "MARIA"] },
+    { key: "SUPERCAR", tokens: ["SUPERCAR"] },
+    {
+      key: "DOIS_ANDARES",
+      tokens: ["DOIS_ANDARES", "DOIS_ANDAR", "2_ANDARES", "2_ANDAR"],
+    },
+    { key: "PRANCHA_PERECIVEIS", tokens: ["PRANCHA_PERECIV", "PERECIV"] },
+    { key: "PRANCHA", tokens: ["PRANCHA"] },
     { key: "CARRINHO_ABASTECIMENTO", tokens: ["ABASTECIMENTO"] },
-    { key: "ESCADA",                 tokens: ["ESCADA"] },
-    { key: "BEBE_CONFORTO",          tokens: ["BEBE_CONFORTO", "BEBE", "CONFORTO"] },
-    { key: "CARRINHO_MOTORIZADO",    tokens: ["MOTORIZADO"] },
-    { key: "ESCADA_ABASTECIMENTO",   tokens: ["ESCADA_ABASTECIMENTO"] },
+    { key: "ESCADA", tokens: ["ESCADA"] },
+    { key: "BEBE_CONFORTO", tokens: ["BEBE_CONFORTO", "BEBE", "CONFORTO"] },
+    { key: "CARRINHO_MOTORIZADO", tokens: ["MOTORIZADO"] },
+    { key: "ESCADA_ABASTECIMENTO", tokens: ["ESCADA_ABASTECIMENTO"] },
   ];
 
   for (const candidato of candidatos) {
@@ -148,7 +157,13 @@ const montarFrotaCarrinhosPorAtivos = (ativos) =>
 
 // ─── Componente de linha do equipamento ─────────────────────────────────────
 
-function LinhaEquipamento({ equip, value, onChange, readOnly, ativosUnidade = [] }) {
+function LinhaEquipamento({
+  equip,
+  value,
+  onChange,
+  readOnly,
+  ativosUnidade = [],
+}) {
   const [expanded, setExpanded] = useState(!value.operacional);
 
   const set = (field, val) => onChange({ ...value, [field]: val });
@@ -177,15 +192,28 @@ function LinhaEquipamento({ equip, value, onChange, readOnly, ativosUnidade = []
               style={{ color: "var(--color-danger)", flexShrink: 0 }}
             />
           )}
-          <span
-            style={{
-              fontWeight: 600,
-              fontSize: "0.875rem",
-              color: "var(--color-text-primary)",
-            }}
-          >
-            {equip.label}
-          </span>
+          <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
+            <span
+              style={{
+                fontWeight: 600,
+                fontSize: "0.875rem",
+                color: "var(--color-text-primary)",
+              }}
+            >
+              {equip.label}
+            </span>
+            {equip.identificador && (
+              <span
+                style={{
+                  fontSize: "0.75rem",
+                  color: "var(--color-text-muted)",
+                  fontWeight: 400,
+                }}
+              >
+                {equip.identificador}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Toggle operacional */}
@@ -321,9 +349,10 @@ function LinhaEquipamento({ equip, value, onChange, readOnly, ativosUnidade = []
               disabled={readOnly}
             >
               <option value="">Selecione um ativo...</option>
-              {ativosUnidade.map(a => (
+              {ativosUnidade.map((a) => (
                 <option key={a.id} value={a.id}>
-                  {a.nome} {a.patrimonio ? `(${a.patrimonio})` : ''} - {a.categoria}
+                  {a.nome} {a.patrimonio ? `(${a.patrimonio})` : ""} -{" "}
+                  {a.categoria}
                 </option>
               ))}
             </select>
@@ -476,23 +505,11 @@ function TabEquipamentos({ semana, ano, usuario, canEdit }) {
     enabled: !!usuario.unidade,
   });
 
-  const defaultItens = () =>
-    EQUIPAMENTOS.map((e) => ({
-      tipoEquipamento: e.key,
-      operacional: true,
-      quantidade: 1,
-      quantidadeQuebrada: 0,
-      numeroSerie: "",
-      numeroChamado: "",
-      descricaoProblema: "",
-      valor: "",
-      ativoId: "",
-    }));
-
-  const [itens, setItens] = useState(defaultItens());
+  const [itens, setItens] = useState([]);
   const [observacoes, setObservacoes] = useState("");
 
-  const { data: ativosUnidade } = useQuery({
+  // Ativos da unidade — base para montar os itens dinamicamente
+  const { data: ativosUnidade = [], isLoading: isLoadingAtivos } = useQuery({
     queryKey: ["ativos-equipamentos-checklist", usuario.unidade],
     queryFn: () =>
       ativosService
@@ -501,29 +518,41 @@ function TabEquipamentos({ semana, ano, usuario, canEdit }) {
     enabled: !!usuario.unidade,
   });
 
+  // Monta os itens assim que ativos e checklist existente estiverem disponíveis
   useEffect(() => {
+    if (isLoadingAtivos) return;
+
     if (checklistExistente?.itens?.length) {
-      setItens(
-        EQUIPAMENTOS.map((e) => {
-          const found = checklistExistente.itens.find(
-            (i) => i.tipoEquipamento === e.key,
-          );
-          return (
-            found || {
-              tipoEquipamento: e.key,
-              operacional: true,
-              quantidade: 1,
-              quantidadeQuebrada: 0,
-            }
-          );
-        }),
-      );
+      // Checklist já existente: usar os itens salvos como base
+      // Suporte a itens antigos (tipoEquipamento) e novos (ativoId)
+      setItens(checklistExistente.itens);
       setObservacoes(checklistExistente.observacoes || "");
+    } else if (ativosUnidade.length > 0) {
+      // Sem checklist salvo: montar um item por ativo cadastrado
+      // Filtra ativos que representam carrinhos (pois estes têm checklist próprio)
+      const ativosSomenteEquip = ativosUnidade.filter(
+        (a) => !resolverTipoCarrinhoAtivo(a),
+      );
+      setItens(
+        ativosSomenteEquip.map((ativo) => ({
+          ativoId: ativo.id,
+          nomeEquipamento: ativo.nome,
+          tipoEquipamento: null,
+          operacional: true,
+          quantidade: ativo.quantidade || 1,
+          quantidadeQuebrada: 0,
+          numeroSerie: ativo.numeroSerie || "",
+          numeroChamado: "",
+          descricaoProblema: "",
+          valor: "",
+        })),
+      );
+      setObservacoes("");
     } else {
-      setItens(defaultItens());
+      setItens([]);
       setObservacoes("");
     }
-  }, [checklistExistente]);
+  }, [checklistExistente, ativosUnidade, isLoadingAtivos]);
 
   const mutation = useMutation({
     mutationFn: () =>
@@ -535,11 +564,13 @@ function TabEquipamentos({ semana, ano, usuario, canEdit }) {
     onError: (e) => toast.error(e.response?.data?.error || "Erro ao salvar"),
   });
 
+  // Identifica um item por ativoId (novo) ou tipoEquipamento (legado)
+  const itemKey = (i) => i.ativoId || i.tipoEquipamento;
   const setItem = (key, val) =>
-    setItens((prev) => prev.map((i) => (i.tipoEquipamento === key ? val : i)));
+    setItens((prev) => prev.map((i) => (itemKey(i) === key ? val : i)));
   const problemCount = itens.filter((i) => !i.operacional).length;
 
-  if (isLoading)
+  if (isLoading || isLoadingAtivos)
     return (
       <div className="flex justify-center py-12">
         <Loader2
@@ -547,6 +578,16 @@ function TabEquipamentos({ semana, ano, usuario, canEdit }) {
           className="animate-spin"
           style={{ color: "var(--color-brand-500)" }}
         />
+      </div>
+    );
+
+  if (!isLoading && !isLoadingAtivos && ativosUnidade.length === 0)
+    return (
+      <div className="card" style={{ padding: "32px", textAlign: "center" }}>
+        <p style={{ color: "var(--color-text-muted)", fontSize: "0.875rem" }}>
+          Nenhum ativo cadastrado para esta unidade. Cadastre os equipamentos na
+          página de <strong>Ativos da Loja</strong> para habilitar o checklist.
+        </p>
       </div>
     );
 
@@ -617,8 +658,22 @@ function TabEquipamentos({ semana, ano, usuario, canEdit }) {
                 color: "var(--color-text-primary)",
               }}
             >
-              {new Date(checklistExistente.criadoEm).toLocaleDateString(
-                "pt-BR",
+              {(() => {
+                const raw = checklistExistente?.criadoEm;
+                if (!raw) return "-";
+                const d = new Date(raw);
+                return isNaN(d.getTime()) ? "-" : d.toLocaleDateString("pt-BR");
+              })()}
+              {checklistExistente?.ultimoPreenchimentoNote && (
+                <div
+                  style={{
+                    fontSize: "0.75rem",
+                    color: "var(--color-text-muted)",
+                    marginTop: 4,
+                  }}
+                >
+                  {checklistExistente.ultimoPreenchimentoNote}
+                </div>
               )}
             </p>
           </div>
@@ -641,15 +696,36 @@ function TabEquipamentos({ semana, ano, usuario, canEdit }) {
           /{ano}
         </div>
         {itens.map((item) => {
-          const equip = EQUIPAMENTOS.find(
-            (e) => e.key === item.tipoEquipamento,
-          );
+          // Legado: item do enum fixo
+          const equipLegado = item.tipoEquipamento
+            ? EQUIPAMENTOS.find((e) => e.key === item.tipoEquipamento)
+            : null;
+          // Label: nome do ativo (novo) ou label do enum (legado) ou o próprio key
+          const label =
+            item.nomeEquipamento ||
+            equipLegado?.label ||
+            item.tipoEquipamento ||
+            "Equipamento";
+          // Identificador: patrimônio ou número de série do ativo vinculado
+          const ativoVinculado = item.ativoId
+            ? ativosUnidade.find((a) => a.id === item.ativoId)
+            : null;
+          const identificador = ativoVinculado
+            ? ativoVinculado.patrimonio
+              ? `Patrimônio: ${ativoVinculado.patrimonio}`
+              : ativoVinculado.numeroSerie
+                ? `Nº Série: ${ativoVinculado.numeroSerie}`
+                : null
+            : item.numeroSerie
+              ? `S/N ${item.numeroSerie}`
+              : null;
+          const key = itemKey(item);
           return (
             <LinhaEquipamento
-              key={item.tipoEquipamento}
-              equip={equip}
+              key={key}
+              equip={{ label, identificador }}
               value={item}
-              onChange={(val) => setItem(item.tipoEquipamento, val)}
+              onChange={(val) => setItem(key, val)}
               readOnly={!canEdit}
               ativosUnidade={ativosUnidade || []}
             />
@@ -809,7 +885,12 @@ function TabCarrinhos({ semana, ano, usuario, canEdit }) {
     queryKey: ["ativos-carrinhos-checklist", usuario.unidade],
     queryFn: () =>
       ativosService
-        .listar({ categoria: "Carrinho,Escada", unidade: usuario.unidade, status: "ATIVO", limit: 500 })
+        .listar({
+          categoria: "Carrinho,Escada",
+          unidade: usuario.unidade,
+          status: "ATIVO",
+          limit: 500,
+        })
         .then((r) => r.data.data || []),
     enabled: !!usuario.unidade,
   });
@@ -840,9 +921,13 @@ function TabCarrinhos({ semana, ano, usuario, canEdit }) {
           const found = checklistExistente.itens.find(
             (i) => i.tipoCarrinho === base.tipoCarrinho,
           );
-          return (
-            found ? { ...found, total: base.total } : { tipoCarrinho: base.tipoCarrinho, total: base.total, quebrados: 0 }
-          );
+          return found
+            ? { ...found, total: base.total }
+            : {
+                tipoCarrinho: base.tipoCarrinho,
+                total: base.total,
+                quebrados: 0,
+              };
         }),
       );
       setObservacoes(checklistExistente.observacoes || "");
@@ -891,13 +976,34 @@ function TabCarrinhos({ semana, ano, usuario, canEdit }) {
 
   if (!hasAtivosCarrinhos && canEdit) {
     return (
-      <div className="card animate-fade-in" style={{ padding: "28px", textAlign: "center" }}>
-        <ShoppingCart size={34} style={{ color: "var(--color-brand-500)", margin: "0 auto 12px" }} />
-        <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--color-text-primary)", marginBottom: "8px" }}>
+      <div
+        className="card animate-fade-in"
+        style={{ padding: "28px", textAlign: "center" }}
+      >
+        <ShoppingCart
+          size={34}
+          style={{ color: "var(--color-brand-500)", margin: "0 auto 12px" }}
+        />
+        <h3
+          style={{
+            fontSize: "1rem",
+            fontWeight: 700,
+            color: "var(--color-text-primary)",
+            marginBottom: "8px",
+          }}
+        >
           Cadastre os carrinhos em Ativos da Loja
         </h3>
-        <p style={{ fontSize: "0.875rem", color: "var(--color-text-secondary)", maxWidth: "520px", margin: "0 auto 18px" }}>
-          O checklist usa os ativos cadastrados na categoria Carrinhos para montar a frota semanal da loja.
+        <p
+          style={{
+            fontSize: "0.875rem",
+            color: "var(--color-text-secondary)",
+            maxWidth: "520px",
+            margin: "0 auto 18px",
+          }}
+        >
+          O checklist usa os ativos cadastrados na categoria Carrinhos para
+          montar a frota semanal da loja.
         </p>
         <Link className="btn btn-primary" to="/ativos">
           Abrir Ativos da Loja
@@ -1046,18 +1152,45 @@ function TabCarrinhos({ semana, ano, usuario, canEdit }) {
             background: "rgba(245,158,11,0.06)",
           }}
         >
-          <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-warning)", marginBottom: "6px" }}>
-            {ativosNaoResolvidos.length} ativo(s) não puderam ser mapeados para o checklist:
+          <p
+            style={{
+              fontSize: "0.8125rem",
+              fontWeight: 600,
+              color: "var(--color-warning)",
+              marginBottom: "6px",
+            }}
+          >
+            {ativosNaoResolvidos.length} ativo(s) não puderam ser mapeados para
+            o checklist:
           </p>
           <ul style={{ listStyle: "disc", paddingLeft: "18px" }}>
             {ativosNaoResolvidos.map((a) => (
-              <li key={a.id} style={{ fontSize: "0.8125rem", color: "var(--color-text-secondary)" }}>
-                <strong>{a.nome}</strong>{a.tipo ? ` — tipo: "${a.tipo}"` : " — tipo não preenchido"}
+              <li
+                key={a.id}
+                style={{
+                  fontSize: "0.8125rem",
+                  color: "var(--color-text-secondary)",
+                }}
+              >
+                <strong>{a.nome}</strong>
+                {a.tipo ? ` — tipo: "${a.tipo}"` : " — tipo não preenchido"}
               </li>
             ))}
           </ul>
-          <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginTop: "8px" }}>
-            Acesse <Link to="/ativos" style={{ color: "var(--color-brand-400)" }}>Ativos da Loja</Link> e defina o campo <strong>Tipo</strong> como: Maria Gorda, Supercar, Dois Andares, Prancha, Prancha Perecíveis, Carrinho de Abastecimento ou Escada.
+          <p
+            style={{
+              fontSize: "0.75rem",
+              color: "var(--color-text-muted)",
+              marginTop: "8px",
+            }}
+          >
+            Acesse{" "}
+            <Link to="/ativos" style={{ color: "var(--color-brand-400)" }}>
+              Ativos da Loja
+            </Link>{" "}
+            e defina o campo <strong>Tipo</strong> como: Maria Gorda, Supercar,
+            Dois Andares, Prancha, Prancha Perecíveis, Carrinho de Abastecimento
+            ou Escada.
           </p>
         </div>
       )}
@@ -1088,7 +1221,9 @@ function GerenteList({ onSelect }) {
   const { data: gerentesRes, isLoading } = useQuery({
     queryKey: ["usuario-gerentes"],
     queryFn: () =>
-      usuariosService.listar({ role: "GERENTE", limit: 100, ativo: true }).then((r) => r.data),
+      usuariosService
+        .listar({ role: "GERENTE", limit: 100, ativo: true })
+        .then((r) => r.data),
   });
 
   if (isLoading)
@@ -1108,7 +1243,7 @@ function GerenteList({ onSelect }) {
     );
 
   const todosGerentes = gerentesRes?.data || [];
-  const gerentes = todosGerentes.filter(u => u.role === "GERENTE");
+  const gerentes = todosGerentes.filter((u) => u.role === "GERENTE");
 
   return (
     <div className="flex flex-col gap-5 animate-fade-in">
@@ -1531,7 +1666,12 @@ function MonthCard({ mesNome, mesIdx, ano, gestorId, onClick }) {
     queryKey: ["kpi-mensal-gestor", gestorId, mesIdx, ano, semanasNoMes],
     queryFn: () =>
       checklistService
-        .kpiMensal({ usuarioId: gestorId, mes: mesIdx, ano, weeksToShow: semanasNoMes })
+        .kpiMensal({
+          usuarioId: gestorId,
+          mes: mesIdx,
+          ano,
+          weeksToShow: semanasNoMes,
+        })
         .then((r) => r.data),
     enabled: !!gestorId,
   });
@@ -1558,7 +1698,9 @@ function MonthCard({ mesNome, mesIdx, ano, gestorId, onClick }) {
           : equipSemanas > 0 || carrinhoSemanas > 0
             ? "rgba(59,130,246,0.04)"
             : "rgba(0,0,0,0.02)",
-        border: tudoCompleto ? "1px solid rgba(16,185,129,0.2)" : "1px solid var(--color-border)",
+        border: tudoCompleto
+          ? "1px solid rgba(16,185,129,0.2)"
+          : "1px solid var(--color-border)",
         transition: "all 0.2s ease",
       }}
     >
@@ -1995,16 +2137,18 @@ export default function ChecklistPage() {
     // GERENTE -> começa nos coordenadores (filtrado pelas suas regionais)
     // COORDENADOR -> começa nos gestores
     // GESTOR -> começa direto nos meses
-    mode: usuario?.role === "DIRETOR" || usuario?.role === "ADMINISTRADOR"
-      ? "GERENTE_LIST"
-      : ["GERENTE"].includes(usuario?.role)
-        ? "COORDENADOR_LIST"
-        : usuario?.role === "COORDENADOR"
-          ? "GESTOR_LIST"
-          : "MONTHS",
+    mode:
+      usuario?.role === "DIRETOR" || usuario?.role === "ADMINISTRADOR"
+        ? "GERENTE_LIST"
+        : ["GERENTE"].includes(usuario?.role)
+          ? "COORDENADOR_LIST"
+          : usuario?.role === "COORDENADOR"
+            ? "GESTOR_LIST"
+            : "MONTHS",
     gestor: usuario?.role === "GESTOR" ? usuario : null,
-    gerenteSelecionado: null,     // guarda o gerente clicado (para filtrar coords)
-    regiaoSelecionada: usuario?.role === "GERENTE" ? (usuario?.regiao || null) : null,
+    gerenteSelecionado: null, // guarda o gerente clicado (para filtrar coords)
+    regiaoSelecionada:
+      usuario?.role === "GERENTE" ? usuario?.regiao || null : null,
     mes: agora.getMonth() + 1,
     ano: agora.getFullYear(),
     week: null,
@@ -2058,11 +2202,11 @@ export default function ChecklistPage() {
           // COORDENADOR não tem voltar (é a tela inicial)
           ["ADMINISTRADOR", "DIRETOR", "GERENTE"].includes(usuario?.role)
             ? () =>
-              setViewState((p) => ({
-                ...p,
-                mode: "COORDENADOR_LIST",
-                regiaoSelecionada: null,
-              }))
+                setViewState((p) => ({
+                  ...p,
+                  mode: "COORDENADOR_LIST",
+                  regiaoSelecionada: null,
+                }))
             : null
         }
         onSelect={(g) =>

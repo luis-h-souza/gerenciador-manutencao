@@ -306,6 +306,7 @@ exports.Prisma.ChecklistEquipamentoItemScalarFieldEnum = {
   id: 'id',
   checklistId: 'checklistId',
   tipoEquipamento: 'tipoEquipamento',
+  nomeEquipamento: 'nomeEquipamento',
   operacional: 'operacional',
   quantidade: 'quantidade',
   quantidadeQuebrada: 'quantidadeQuebrada',
@@ -530,7 +531,10 @@ exports.TipoCarrinho = exports.$Enums.TipoCarrinho = {
   PRANCHA: 'PRANCHA',
   PRANCHA_PERECIVEIS: 'PRANCHA_PERECIVEIS',
   CARRINHO_ABASTECIMENTO: 'CARRINHO_ABASTECIMENTO',
-  ESCADA: 'ESCADA'
+  ESCADA: 'ESCADA',
+  BEBE_CONFORTO: 'BEBE_CONFORTO',
+  CARRINHO_MOTORIZADO: 'CARRINHO_MOTORIZADO',
+  ESCADA_ABASTECIMENTO: 'ESCADA_ABASTECIMENTO'
 };
 
 exports.TipoRotinaInfra = exports.$Enums.TipoRotinaInfra = {
