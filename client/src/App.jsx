@@ -21,7 +21,6 @@ import ChecklistConsolidadoPage from "./pages/checklists/ChecklistConsolidadoPag
 import LojasPage from "./pages/lojas/LojasPage";
 import LogsPage from "./pages/admin/LogsPage";
 import ConfiguracaoPage from "./pages/configuracoes/ConfiguracaoPage";
-import AjudaPage from "./pages/ajuda/AjudaPage";
 
 // Rota protegida
 const ProtectedRoute = ({ children, roles }) => {
@@ -225,11 +224,7 @@ function AppRoutes() {
 
         <Route
           path="ajuda"
-          element={
-            <ProtectedRoute roles={ROLES.TODOS}>
-              <AjudaPage />
-            </ProtectedRoute>
-          }
+          element={<Navigate to="/configuracoes?tab=ajuda" replace />}
         />
       </Route>
 

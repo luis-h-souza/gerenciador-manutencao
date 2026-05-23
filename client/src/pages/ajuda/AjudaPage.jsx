@@ -243,23 +243,38 @@ export default function AjudaPage() {
                     {artigo.description}
                   </p>
                 </div>
-                <div style={{ color: 'var(--color-text-muted)', flexShrink: 0, marginTop: '2px' }}>
-                  {abertos[artigo.id] ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                <div style={{
+                  color: 'var(--color-text-muted)',
+                  flexShrink: 0,
+                  marginTop: '2px',
+                  transform: abertos[artigo.id] ? 'rotate(180deg)' : 'rotate(0deg)',
+                  transition: 'transform 0.3s ease'
+                }}>
+                  <ChevronDown size={18} />
                 </div>
               </button>
 
-              {abertos[artigo.id] && (
-                <div style={{
-                  padding: '0 20px 20px',
-                  borderTop: '1px solid var(--color-border)',
-                  paddingTop: '16px',
-                  marginLeft: '16px'
-                }}>
-                  <div style={{ fontSize: '0.875rem', lineHeight: 1.7 }}>
-                    {renderConteudo(artigo.content)}
+              <div style={{
+                display: 'grid',
+                gridTemplateRows: abertos[artigo.id] ? '1fr' : '0fr',
+                transition: 'grid-template-rows 0.3s ease',
+              }}>
+                <div style={{ overflow: 'hidden' }}>
+                  <div style={{
+                    padding: '0 20px 20px',
+                    borderTop: '1px solid var(--color-border)',
+                    paddingTop: '16px',
+                    marginLeft: '16px',
+                    opacity: abertos[artigo.id] ? 1 : 0,
+                    transition: 'opacity 0.3s ease',
+                    visibility: abertos[artigo.id] ? 'visible' : 'hidden'
+                  }}>
+                    <div style={{ fontSize: '0.875rem', lineHeight: 1.7 }}>
+                      {renderConteudo(artigo.content)}
+                    </div>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           ))
         )}

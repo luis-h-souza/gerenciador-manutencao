@@ -135,7 +135,7 @@ export default function Header({ onMenuClick }) {
         {/* Ajuda */}
         <button
           className="btn btn-ghost btn-sm"
-          onClick={() => navigate('/ajuda')}
+          onClick={() => navigate('/configuracoes?tab=ajuda')}
           style={{ padding: '6px' }}
           title="Centro de Ajuda"
         >

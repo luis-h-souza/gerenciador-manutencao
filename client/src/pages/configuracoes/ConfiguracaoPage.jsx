@@ -1,5 +1,6 @@
 // src/pages/configuracoes/ConfiguracaoPage.jsx
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   Sun,
   Moon,
@@ -14,6 +15,8 @@ import {
   Phone,
   Lightbulb,
   Loader2,
+  HelpCircle,
+  X,
 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -21,6 +24,7 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../hooks/useTheme';
 import { authService, usuariosService, lojasService } from '../../services';
+import AjudaPage from '../ajuda/AjudaPage';
 
 const ROLE_LABELS = {
   ADMINISTRADOR: 'Administrador',
@@ -86,10 +90,23 @@ export default function ConfiguracaoPage() {
     ];
     if (isGestor) list.push({ id: 'loja', label: 'Minha loja', icon: Store });
     if (isAdmin) list.push({ id: 'equipe', label: 'Novo usuário', icon: UserPlus });
+    list.push({ id: 'ajuda', label: 'Ajuda', icon: HelpCircle });
     return list;
   }, [isAdmin, isGestor]);
 
-  const [activeSection, setActiveSection] = useState('conta');
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const initialTab = searchParams.get('tab') || 'conta';
+  
+  const [activeSection, setActiveSection] = useState(initialTab);
+
+  // Update active section if query param changes
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab && sections.some(s => s.id === tab)) {
+      setActiveSection(tab);
+    }
+  }, [location.search, sections]);
 
   const current = sections.find((s) => s.id === activeSection)?.id ?? sections[0]?.id;
 
@@ -142,6 +159,7 @@ export default function ConfiguracaoPage() {
           {current === 'seguranca' && <SegurancaSection />}
           {current === 'loja' && isGestor && <MinhaLojaSection />}
           {current === 'equipe' && isAdmin && <NovoUsuarioSection />}
+          {current === 'ajuda' && <AjudaPage />}
           <SugestoesSection />
         </div>
       </div>
@@ -558,8 +576,33 @@ function NovoUsuarioSection() {
 }
 
 function SugestoesSection() {
+  const [isVisible, setIsVisible] = useState(() => {
+    return localStorage.getItem('hideConfigSuggestions') !== 'true';
+  });
+
+  if (!isVisible) return null;
+
   return (
-    <aside className="settings-suggestions">
+    <aside className="settings-suggestions" style={{ position: 'relative' }}>
+      <button 
+        onClick={() => {
+          setIsVisible(false);
+          localStorage.setItem('hideConfigSuggestions', 'true');
+        }}
+        style={{
+          position: 'absolute',
+          top: '12px',
+          right: '12px',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          color: 'var(--color-text-muted)',
+          padding: '4px',
+        }}
+        aria-label="Fechar"
+      >
+        <X size={16} />
+      </button>
       <div className="flex items-start gap-2">
         <Lightbulb size={18} style={{ color: 'var(--color-warning)', flexShrink: 0, marginTop: 2 }} />
         <div>

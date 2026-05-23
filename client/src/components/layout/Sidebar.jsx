@@ -107,12 +107,7 @@ const NAV = [
     label: "Auditoria (Logs)",
     roles: ["ADMINISTRADOR"],
   },
-  {
-    to: "/ajuda",
-    icon: HelpCircle,
-    label: "Ajuda",
-    roles: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR", "TECNICO"],
-  },
+
 ];
 
 export default function Sidebar({ open, onClose }) {
