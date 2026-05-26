@@ -635,7 +635,13 @@ function RegionalDrilldown({
   );
 }
 
-function MonthFilterBar({ filtro, setFiltro, showRegional = false, opcoesRegionais = [], compact = false }) {
+function MonthFilterBar({
+  filtro,
+  setFiltro,
+  showRegional = false,
+  opcoesRegionais = [],
+  compact = false,
+}) {
   const hoje = new Date();
   const mesAtual = hoje.getMonth() + 1;
   const anoAtual = hoje.getFullYear();
@@ -651,9 +657,20 @@ function MonthFilterBar({ filtro, setFiltro, showRegional = false, opcoesRegiona
       }}
     >
       <div className="flex items-center gap-3 flex-wrap">
-        <div className="flex items-center gap-2" style={{ color: "var(--color-brand-500)" }}>
+        <div
+          className="flex items-center gap-2"
+          style={{ color: "var(--color-brand-500)" }}
+        >
           <Calendar size={16} />
-          <span style={{ fontSize: "0.78rem", fontWeight: 600, color: "var(--color-text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+          <span
+            style={{
+              fontSize: "0.78rem",
+              fontWeight: 600,
+              color: "var(--color-text-secondary)",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+            }}
+          >
             Filtros
           </span>
         </div>
@@ -667,21 +684,32 @@ function MonthFilterBar({ filtro, setFiltro, showRegional = false, opcoesRegiona
             value={valorSelect}
             onChange={(e) => {
               const opt = OPCOES_MES.find((o) => o.value === e.target.value);
-              if (opt) setFiltro((prev) => ({ ...prev, mes: opt.mes, ano: opt.ano }));
+              if (opt)
+                setFiltro((prev) => ({ ...prev, mes: opt.mes, ano: opt.ano }));
             }}
           >
             {OPCOES_MES.map((opt) => (
               <option key={opt.value} value={opt.value}>
-                {opt.label}{opt.value === `${anoAtual}-${String(mesAtual).padStart(2, "00")}` ? " (atual)" : ""}
+                {opt.label}
+                {opt.value ===
+                `${anoAtual}-${String(mesAtual).padStart(2, "00")}`
+                  ? " (atual)"
+                  : ""}
               </option>
             ))}
           </select>
           {!isCurrentMonth && (
             <button
               className="btn btn-ghost btn-sm"
-              onClick={() => setFiltro((prev) => ({ ...prev, mes: mesAtual, ano: anoAtual }))}
+              onClick={() =>
+                setFiltro((prev) => ({ ...prev, mes: mesAtual, ano: anoAtual }))
+              }
               title="Voltar ao mês atual"
-              style={{ gap: "4px", fontSize: "0.75rem", border: "1px solid var(--color-border)" }}
+              style={{
+                gap: "4px",
+                fontSize: "0.75rem",
+                border: "1px solid var(--color-border)",
+              }}
             >
               Mês atual
             </button>
@@ -690,24 +718,34 @@ function MonthFilterBar({ filtro, setFiltro, showRegional = false, opcoesRegiona
 
         {/* Filtro Regional (opcional) */}
         {showRegional && (
-          <div className="flex items-center gap-2" style={{ marginLeft: "8px" }}>
+          <div
+            className="flex items-center gap-2"
+            style={{ marginLeft: "8px" }}
+          >
             <select
               id="dashboard-filtro-regional"
               className="select"
               style={{ minWidth: "200px" }}
               value={filtro.regiao || ""}
-              onChange={(e) => setFiltro((prev) => ({ ...prev, regiao: e.target.value }))}
+              onChange={(e) =>
+                setFiltro((prev) => ({ ...prev, regiao: e.target.value }))
+              }
             >
               <option value="">Todas as regionais</option>
               {opcoesRegionais.map((regiao) => (
-                <option key={regiao} value={regiao}>{regiao}</option>
+                <option key={regiao} value={regiao}>
+                  {regiao}
+                </option>
               ))}
             </select>
             {filtro.regiao && (
               <button
                 className="btn btn-ghost btn-sm"
                 onClick={() => setFiltro((prev) => ({ ...prev, regiao: "" }))}
-                style={{ fontSize: "0.75rem", border: "1px solid var(--color-border)" }}
+                style={{
+                  fontSize: "0.75rem",
+                  border: "1px solid var(--color-border)",
+                }}
               >
                 Limpar
               </button>
@@ -743,9 +781,12 @@ function CorporativoDashboard({ filtro, setFiltro }) {
   const [rankingHelpOpen, setRankingHelpOpen] = useState(false);
 
   // Controle de Drill-down (Gerentes -> Coordenadores -> Regionais)
-  const roleInicial = (usuario?.role === "DIRETOR" || usuario?.role === "ADMINISTRADOR")
-    ? "gerentes"
-    : (usuario?.role === "GERENTE" ? "coordenadores" : "regionais");
+  const roleInicial =
+    usuario?.role === "DIRETOR" || usuario?.role === "ADMINISTRADOR"
+      ? "gerentes"
+      : usuario?.role === "GERENTE"
+        ? "coordenadores"
+        : "regionais";
 
   const [dashboardEtapa, setDashboardEtapa] = useState(roleInicial);
   const [gerenteDrill, setGerenteDrill] = useState(null);
@@ -766,7 +807,8 @@ function CorporativoDashboard({ filtro, setFiltro }) {
 
   const { data: historicoMacro = [], isLoading: l3 } = useQuery({
     queryKey: ["dashboard-historico-macro", filtroHistorico],
-    queryFn: () => dashboardService.historicoMensal(filtroHistorico).then((r) => r.data),
+    queryFn: () =>
+      dashboardService.historicoMensal(filtroHistorico).then((r) => r.data),
   });
 
   const { data: porSegmentoMacro = [], isLoading: l4 } = useQuery({
@@ -786,28 +828,43 @@ function CorporativoDashboard({ filtro, setFiltro }) {
   // Dados de Checklist para o card de Adesão
   const { data: checklistData } = useQuery({
     queryKey: ["checklist-consolidado-regional-all", filtro.mes, filtro.ano],
-    queryFn: () => checklistService.consolidadoRegional({ mes: filtro.mes, ano: filtro.ano }).then((res) => res.data),
+    queryFn: () =>
+      checklistService
+        .consolidadoRegional({ mes: filtro.mes, ano: filtro.ano })
+        .then((res) => res.data),
   });
 
   const checklistStats = useMemo(() => {
-    if (!checklistData?.lojas) return { taxaAdesao: 0, lojasComPreenchimento: 0, totalLojas: 0 };
+    if (!checklistData?.lojas)
+      return { taxaAdesao: 0, lojasComPreenchimento: 0, totalLojas: 0 };
     const lojas = checklistData.lojas;
     const totalLojas = lojas.length;
-    const lojasComPreenchimento = lojas.filter(l => Object.keys(l.consolidado || {}).length > 0).length;
-    const taxaAdesao = totalLojas > 0 ? Math.round((lojasComPreenchimento / totalLojas) * 100) : 0;
+    const lojasComPreenchimento = lojas.filter(
+      (l) => Object.keys(l.consolidado || {}).length > 0,
+    ).length;
+    const taxaAdesao =
+      totalLojas > 0
+        ? Math.round((lojasComPreenchimento / totalLojas) * 100)
+        : 0;
     return { taxaAdesao, lojasComPreenchimento, totalLojas };
   }, [checklistData]);
 
   // Queries para Hierarquia (Gerentes e Coordenadores)
   const { data: gerentesData, isLoading: lG } = useQuery({
     queryKey: ["users-gerentes"],
-    queryFn: () => usuariosService.listar({ role: "GERENTE", limit: 100, ativo: true }).then(r => r.data?.data || []),
+    queryFn: () =>
+      usuariosService
+        .listar({ role: "GERENTE", limit: 100, ativo: true })
+        .then((r) => r.data?.data || []),
     enabled: ["ADMINISTRADOR", "DIRETOR"].includes(usuario?.role),
   });
 
   const { data: coordenadoresData, isLoading: lC } = useQuery({
     queryKey: ["users-coordenadores"],
-    queryFn: () => usuariosService.listar({ role: "COORDENADOR", limit: 100, ativo: true }).then(r => r.data?.data || []),
+    queryFn: () =>
+      usuariosService
+        .listar({ role: "COORDENADOR", limit: 100, ativo: true })
+        .then((r) => r.data?.data || []),
     enabled: ["ADMINISTRADOR", "DIRETOR", "GERENTE"].includes(usuario?.role),
   });
 
@@ -822,7 +879,13 @@ function CorporativoDashboard({ filtro, setFiltro }) {
 
   // ─── LÓGICA DE AGREGAÇÃO PARA HIERARQUIA ────────────────────────────────────
 
-  const splitRegions = (r) => (r ? r.split(',').map(s => s.trim().toUpperCase()).filter(Boolean) : []);
+  const splitRegions = (r) =>
+    r
+      ? r
+          .split(",")
+          .map((s) => s.trim().toUpperCase())
+          .filter(Boolean)
+      : [];
 
   // Agrega dados para Gerentes
   const gerentesAgregados = useMemo(() => {
@@ -830,17 +893,26 @@ function CorporativoDashboard({ filtro, setFiltro }) {
     const regionalData = regionalRes.data;
     // Filtro explícito por role GERENTE
     return gerentesData
-      .filter(u => u.role === "GERENTE")
-      .map(g => {
-      const regioesG = splitRegions(g.regiao);
-      const regionaisAtreladas = regionalData.filter(r => regioesG.includes(r.regiao.toUpperCase()));
-      return {
-        ...g,
-        gastosMes: regionaisAtreladas.reduce((sum, r) => sum + (r.gastosMes || 0), 0),
-        totalLojas: regionaisAtreladas.reduce((sum, r) => sum + (r.totalLojas || 0), 0),
-        numRegionais: regionaisAtreladas.length
-      };
-    }).sort((a, b) => b.gastosMes - a.gastosMes);
+      .filter((u) => u.role === "GERENTE")
+      .map((g) => {
+        const regioesG = splitRegions(g.regiao);
+        const regionaisAtreladas = regionalData.filter((r) =>
+          regioesG.includes(r.regiao.toUpperCase()),
+        );
+        return {
+          ...g,
+          gastosMes: regionaisAtreladas.reduce(
+            (sum, r) => sum + (r.gastosMes || 0),
+            0,
+          ),
+          totalLojas: regionaisAtreladas.reduce(
+            (sum, r) => sum + (r.totalLojas || 0),
+            0,
+          ),
+          numRegionais: regionaisAtreladas.length,
+        };
+      })
+      .sort((a, b) => b.gastosMes - a.gastosMes);
   }, [gerentesData, regionalRes?.data]);
 
   // Agrega dados para Coordenadores
@@ -849,35 +921,44 @@ function CorporativoDashboard({ filtro, setFiltro }) {
     const regionalData = regionalRes.data;
 
     // Se houver um gerente selecionado, filtra apenas os coordenadores que têm interseção de regional
-    let baseCoords = coordenadoresData.filter(c => c.id !== usuario?.id);
+    let baseCoords = coordenadoresData.filter((c) => c.id !== usuario?.id);
     if (gerenteDrill) {
       const regioesGerente = splitRegions(gerenteDrill.regiao);
-      baseCoords = baseCoords.filter(c => {
+      baseCoords = baseCoords.filter((c) => {
         const regioesC = splitRegions(c.regiao);
-        return regioesC.some(r => regioesGerente.includes(r));
+        return regioesC.some((r) => regioesGerente.includes(r));
       });
     } else if (usuario?.role === "GERENTE") {
       // Se for gerente logado, filtra seus coordenadores
       const regioesG = splitRegions(usuario.regiao);
-      baseCoords = coordenadoresData.filter(c => {
+      baseCoords = coordenadoresData.filter((c) => {
         if (c.id === usuario?.id) return false;
         const regioesC = splitRegions(c.regiao);
-        return regioesC.some(r => regioesG.includes(r));
+        return regioesC.some((r) => regioesG.includes(r));
       });
     }
 
     return baseCoords
-      .filter(u => u.role === "COORDENADOR")
-      .map(c => {
-      const regioesC = splitRegions(c.regiao);
-      const regionaisAtreladas = regionalData.filter(r => regioesC.includes(r.regiao.toUpperCase()));
-      return {
-        ...c,
-        gastosMes: regionaisAtreladas.reduce((sum, r) => sum + (r.gastosMes || 0), 0),
-        totalLojas: regionaisAtreladas.reduce((sum, r) => sum + (r.totalLojas || 0), 0),
-        numRegionais: regionaisAtreladas.length
-      };
-    }).sort((a, b) => b.gastosMes - a.gastosMes);
+      .filter((u) => u.role === "COORDENADOR")
+      .map((c) => {
+        const regioesC = splitRegions(c.regiao);
+        const regionaisAtreladas = regionalData.filter((r) =>
+          regioesC.includes(r.regiao.toUpperCase()),
+        );
+        return {
+          ...c,
+          gastosMes: regionaisAtreladas.reduce(
+            (sum, r) => sum + (r.gastosMes || 0),
+            0,
+          ),
+          totalLojas: regionaisAtreladas.reduce(
+            (sum, r) => sum + (r.totalLojas || 0),
+            0,
+          ),
+          numRegionais: regionaisAtreladas.length,
+        };
+      })
+      .sort((a, b) => b.gastosMes - a.gastosMes);
   }, [coordenadoresData, regionalRes?.data, gerenteDrill, usuario]);
 
   const regionalOrdenado = useMemo(() => {
@@ -889,7 +970,9 @@ function CorporativoDashboard({ filtro, setFiltro }) {
   const regionaisFiltradas = useMemo(() => {
     if (coordenadorDrill) {
       const regioesC = splitRegions(coordenadorDrill.regiao);
-      return regionalOrdenado.filter(r => regioesC.includes(r.regiao.toUpperCase()));
+      return regionalOrdenado.filter((r) =>
+        regioesC.includes(r.regiao.toUpperCase()),
+      );
     }
     return regionalOrdenado;
   }, [regionalOrdenado, coordenadorDrill]);
@@ -906,7 +989,14 @@ function CorporativoDashboard({ filtro, setFiltro }) {
     }
   };
 
-  const isLoading = l1 || l2 || l3 || l4 || l5 || (dashboardEtapa === "gerentes" && lG) || (dashboardEtapa === "coordenadores" && lC);
+  const isLoading =
+    l1 ||
+    l2 ||
+    l3 ||
+    l4 ||
+    l5 ||
+    (dashboardEtapa === "gerentes" && lG) ||
+    (dashboardEtapa === "coordenadores" && lC);
 
   if (isLoading) {
     return (
@@ -1006,9 +1096,10 @@ function CorporativoDashboard({ filtro, setFiltro }) {
                 Exibindo:{" "}
                 <strong style={{ color: "var(--color-brand-400)" }}>
                   {periodoAtual}
-                </strong>
-                {" "}• Escopo: {escopoAtual}
-                {filtro.mes !== new Date().getMonth() + 1 || filtro.ano !== new Date().getFullYear() ? (
+                </strong>{" "}
+                • Escopo: {escopoAtual}
+                {filtro.mes !== new Date().getMonth() + 1 ||
+                filtro.ano !== new Date().getFullYear() ? (
                   <span
                     style={{
                       marginLeft: "8px",
@@ -1031,23 +1122,41 @@ function CorporativoDashboard({ filtro, setFiltro }) {
                 style={{ minWidth: "185px" }}
                 value={`${filtro.ano}-${String(filtro.mes).padStart(2, "0")}`}
                 onChange={(e) => {
-                  const opt = OPCOES_MES.find((o) => o.value === e.target.value);
-                  if (opt) setFiltro((prev) => ({ ...prev, mes: opt.mes, ano: opt.ano }));
+                  const opt = OPCOES_MES.find(
+                    (o) => o.value === e.target.value,
+                  );
+                  if (opt)
+                    setFiltro((prev) => ({
+                      ...prev,
+                      mes: opt.mes,
+                      ano: opt.ano,
+                    }));
                 }}
               >
                 {OPCOES_MES.map((opt) => {
                   const hoje = new Date();
-                  const isAtual = opt.mes === hoje.getMonth() + 1 && opt.ano === hoje.getFullYear();
+                  const isAtual =
+                    opt.mes === hoje.getMonth() + 1 &&
+                    opt.ano === hoje.getFullYear();
                   return (
                     <option key={opt.value} value={opt.value}>
-                      {opt.label}{isAtual ? " (atual)" : ""}
+                      {opt.label}
+                      {isAtual ? " (atual)" : ""}
                     </option>
                   );
                 })}
               </select>
 
               {/* Divisor */}
-              <span style={{ color: "var(--color-border)", fontSize: "1.2rem", lineHeight: 1 }}>|</span>
+              <span
+                style={{
+                  color: "var(--color-border)",
+                  fontSize: "1.2rem",
+                  lineHeight: 1,
+                }}
+              >
+                |
+              </span>
 
               {/* Filtro Regional */}
               <select
@@ -1099,8 +1208,8 @@ function CorporativoDashboard({ filtro, setFiltro }) {
             />
           </div>
           <div
-            style={{ flex: "1 1 300px", cursor: 'pointer' }}
-            onClick={() => navigate('/checklists-consolidado')}
+            style={{ flex: "1 1 300px", cursor: "pointer" }}
+            onClick={() => navigate("/checklists-consolidado")}
           >
             <StatCard
               label="Adesão Checklists"
@@ -1345,7 +1454,7 @@ function CorporativoDashboard({ filtro, setFiltro }) {
               <button
                 className="btn btn-ghost btn-sm"
                 onClick={handleBack}
-                style={{ padding: '8px' }}
+                style={{ padding: "8px" }}
               >
                 <ChevronUp className="rotate-270" size={18} />
               </button>
@@ -1364,15 +1473,25 @@ function CorporativoDashboard({ filtro, setFiltro }) {
                 }}
               >
                 {dashboardEtapa === "gerentes" && "Status por Gerente Regional"}
-                {dashboardEtapa === "coordenadores" && (gerenteDrill ? `Coordenadores de ${gerenteDrill.nome}` : "Status por Coordenador")}
-                {dashboardEtapa === "regionais" && (coordenadorDrill ? `Regionais de ${coordenadorDrill.nome}` : "Status por Regional")}
+                {dashboardEtapa === "coordenadores" &&
+                  (gerenteDrill
+                    ? `Coordenadores de ${gerenteDrill.nome}`
+                    : "Status por Coordenador")}
+                {dashboardEtapa === "regionais" &&
+                  (coordenadorDrill
+                    ? `Regionais de ${coordenadorDrill.nome}`
+                    : "Status por Regional")}
               </h2>
             </div>
           </div>
 
-          <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
-            {dashboardEtapa === "gerentes" && "Clique em um gerente para detalhar coordenadores"}
-            {dashboardEtapa === "coordenadores" && "Clique em um coordenador para detalhar regionais"}
+          <p
+            style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}
+          >
+            {dashboardEtapa === "gerentes" &&
+              "Clique em um gerente para detalhar coordenadores"}
+            {dashboardEtapa === "coordenadores" &&
+              "Clique em um coordenador para detalhar regionais"}
             {dashboardEtapa === "regionais" && "Visão analítica por regional"}
           </p>
         </div>
@@ -1384,263 +1503,340 @@ function CorporativoDashboard({ filtro, setFiltro }) {
           }}
         >
           {/* CARDS DE GERENTES */}
-          {dashboardEtapa === "gerentes" && gerentesAgregados.map((ger) => (
-            <div
-              key={ger.id}
-              className="card hover-scale pointer"
-              onClick={() => {
-                setGerenteDrill(ger);
-                setDashboardEtapa("coordenadores");
-              }}
-              style={{ padding: "20px" }}
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div
-                    className="flex items-center justify-center w-10 h-10 rounded-full"
-                    style={{
-                      background: "var(--color-brand-100)",
-                      color: "var(--color-brand-600)",
-                    }}
-                  >
-                    <UserRound size={20} />
-                  </div>
-                  <div>
-                    <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
-                      {ger.nome}
-                    </h3>
-                    <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
-                      Gerente Regional • {ger.numRegionais} regionais
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "12px", marginTop: "8px" }}>
-                <div className="flex justify-between items-center">
-                  <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 600 }}>Gastos Gerenciados</span>
-                  <span style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--color-brand-500)" }}>{fmt(ger.gastosMes)}</span>
-                </div>
-                <p style={{ fontSize: "0.7rem", color: "var(--color-text-muted)", marginTop: "4px" }}>
-                  Engloba {ger.totalLojas} lojas ativas
-                </p>
-              </div>
-            </div>
-          ))}
-
-          {/* CARDS DE COORDENADORES */}
-          {dashboardEtapa === "coordenadores" && coordenadoresAgregados.map((coord) => (
-            <div
-              key={coord.id}
-              className="card hover-scale pointer"
-              onClick={() => {
-                setCoordenadorDrill(coord);
-                setDashboardEtapa("regionais");
-              }}
-              style={{ padding: "20px" }}
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div
-                    className="flex items-center justify-center w-10 h-10 rounded-full"
-                    style={{
-                      background: "var(--color-surface-600)",
-                      color: "var(--color-text-primary)",
-                    }}
-                  >
-                    <Users size={20} />
-                  </div>
-                  <div>
-                    <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
-                      {coord.nome}
-                    </h3>
-                    <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
-                      Coordenador • {coord.numRegionais} regionais
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "12px", marginTop: "8px" }}>
-                <div className="flex justify-between items-center">
-                  <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 600 }}>Gastos Coordenados</span>
-                  <span style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--color-text-primary)" }}>{fmt(coord.gastosMes)}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-
-          {/* CARDS DE REGIONAIS (ORIGINAL) */}
-          {dashboardEtapa === "regionais" && regionaisFiltradas.map((reg) => (
-            <div
-              key={reg.regiao}
-              className="card hover-scale"
-              style={{ padding: "20px", cursor: "default" }}
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div
-                    className="flex items-center justify-center w-10 h-10 rounded-full"
-                    style={{
-                      background: "var(--color-brand-100)",
-                      color: "var(--color-brand-600)",
-                    }}
-                  >
-                    <MapPin size={20} />
-                  </div>
-                  <div>
-                    <h3
+          {dashboardEtapa === "gerentes" &&
+            gerentesAgregados.map((ger) => (
+              <div
+                key={ger.id}
+                className="card hover-scale pointer"
+                onClick={() => {
+                  setGerenteDrill(ger);
+                  setDashboardEtapa("coordenadores");
+                }}
+                style={{ padding: "20px" }}
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="flex items-center justify-center w-10 h-10 rounded-full"
                       style={{
-                        fontSize: "1.125rem",
-                        fontWeight: 700,
-                        color: "var(--color-text-primary)",
+                        background: "var(--color-brand-100)",
+                        color: "var(--color-brand-600)",
                       }}
                     >
-                      {reg.regiao}
-                    </h3>
-                    <p
+                      <UserRound size={20} />
+                    </div>
+                    <div>
+                      <h3
+                        style={{
+                          fontSize: "1.125rem",
+                          fontWeight: 700,
+                          color: "var(--color-text-primary)",
+                        }}
+                      >
+                        {ger.nome}
+                      </h3>
+                      <p
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "var(--color-text-muted)",
+                        }}
+                      >
+                        Gerente Regional • {ger.numRegionais} regionais
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    borderTop: "1px solid var(--color-border)",
+                    paddingTop: "12px",
+                    marginTop: "8px",
+                  }}
+                >
+                  <div className="flex justify-between items-center">
+                    <span
                       style={{
                         fontSize: "0.75rem",
                         color: "var(--color-text-muted)",
+                        textTransform: "uppercase",
+                        fontWeight: 600,
                       }}
                     >
-                      {periodoAtual} • {reg.totalLojas || 0} lojas ativas
-                    </p>
+                      Gastos Gerenciados
+                    </span>
+                    <span
+                      style={{
+                        fontSize: "1.125rem",
+                        fontWeight: 800,
+                        color: "var(--color-brand-500)",
+                      }}
+                    >
+                      {fmt(ger.gastosMes)}
+                    </span>
+                  </div>
+                  <p
+                    style={{
+                      fontSize: "0.7rem",
+                      color: "var(--color-text-muted)",
+                      marginTop: "4px",
+                    }}
+                  >
+                    Engloba {ger.totalLojas} lojas ativas
+                  </p>
+                </div>
+              </div>
+            ))}
+
+          {/* CARDS DE COORDENADORES */}
+          {dashboardEtapa === "coordenadores" &&
+            coordenadoresAgregados.map((coord) => (
+              <div
+                key={coord.id}
+                className="card hover-scale pointer"
+                onClick={() => {
+                  setCoordenadorDrill(coord);
+                  setDashboardEtapa("regionais");
+                }}
+                style={{ padding: "20px" }}
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="flex items-center justify-center w-10 h-10 rounded-full"
+                      style={{
+                        background: "var(--color-surface-600)",
+                        color: "var(--color-text-primary)",
+                      }}
+                    >
+                      <Users size={20} />
+                    </div>
+                    <div>
+                      <h3
+                        style={{
+                          fontSize: "1.125rem",
+                          fontWeight: 700,
+                          color: "var(--color-text-primary)",
+                        }}
+                      >
+                        {coord.nome}
+                      </h3>
+                      <p
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "var(--color-text-muted)",
+                        }}
+                      >
+                        Coordenador • {coord.numRegionais} regionais
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    borderTop: "1px solid var(--color-border)",
+                    paddingTop: "12px",
+                    marginTop: "8px",
+                  }}
+                >
+                  <div className="flex justify-between items-center">
+                    <span
+                      style={{
+                        fontSize: "0.75rem",
+                        color: "var(--color-text-muted)",
+                        textTransform: "uppercase",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Gastos Coordenados
+                    </span>
+                    <span
+                      style={{
+                        fontSize: "1.125rem",
+                        fontWeight: 800,
+                        color: "var(--color-text-primary)",
+                      }}
+                    >
+                      {fmt(coord.gastosMes)}
+                    </span>
                   </div>
                 </div>
               </div>
+            ))}
 
+          {/* CARDS DE REGIONAIS (ORIGINAL) */}
+          {dashboardEtapa === "regionais" &&
+            regionaisFiltradas.map((reg) => (
               <div
-                className="grid gap-4"
-                style={{
-                  gridTemplateColumns: "1fr 1fr",
-                  borderTop: "1px solid var(--color-border)",
-                  borderBottom: "1px solid var(--color-border)",
-                  padding: "12px 0",
-                  margin: "8px 0",
-                }}
+                key={reg.regiao}
+                className="card hover-scale"
+                style={{ padding: "20px", cursor: "default" }}
               >
-                <div className="text-center">
-                  <p
-                    style={{
-                      fontSize: "0.625rem",
-                      fontWeight: 600,
-                      color: "var(--color-text-muted)",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    Gastos Mensais
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "1rem",
-                      fontWeight: 700,
-                      color: "var(--color-success)",
-                      marginTop: "4px",
-                    }}
-                  >
-                    {fmt(reg.gastosMes)}
-                  </p>
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="flex items-center justify-center w-10 h-10 rounded-full"
+                      style={{
+                        background: "var(--color-brand-100)",
+                        color: "var(--color-brand-600)",
+                      }}
+                    >
+                      <MapPin size={20} />
+                    </div>
+                    <div>
+                      <h3
+                        style={{
+                          fontSize: "1.125rem",
+                          fontWeight: 700,
+                          color: "var(--color-text-primary)",
+                        }}
+                      >
+                        {reg.regiao}
+                      </h3>
+                      <p
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "var(--color-text-muted)",
+                        }}
+                      >
+                        {periodoAtual} • {reg.totalLojas || 0} lojas ativas
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div
-                  className="text-center"
-                  style={{ borderLeft: "1px solid var(--color-border)" }}
-                >
-                  <p
-                    style={{
-                      fontSize: "0.625rem",
-                      fontWeight: 600,
-                      color: "var(--color-text-muted)",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    Chamados Abertos
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "1rem",
-                      fontWeight: 700,
-                      color: "var(--color-text-primary)",
-                      marginTop: "4px",
-                    }}
-                  >
-                    {reg.chamadosMes}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p
-                    style={{
-                      fontSize: "0.625rem",
-                      fontWeight: 600,
-                      color: "var(--color-text-muted)",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    Tarefas ativas
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "1rem",
-                      fontWeight: 700,
-                      color: "var(--color-text-primary)",
-                      marginTop: "4px",
-                    }}
-                  >
-                    {reg.tarefasAtivas}
-                  </p>
-                </div>
-                <div
-                  className="text-center"
-                  style={{ borderLeft: "1px solid var(--color-border)" }}
-                >
-                  <p
-                    style={{
-                      fontSize: "0.625rem",
-                      fontWeight: 600,
-                      color: "var(--color-text-muted)",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    Lojas
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "1rem",
-                      fontWeight: 700,
-                      color: "var(--color-text-primary)",
-                      marginTop: "4px",
-                    }}
-                  >
-                    {reg.totalLojas || 0}
-                  </p>
-                </div>
-              </div>
 
-              <div className="mt-4 flex justify-between gap-2 flex-wrap">
-                <button
-                  className="btn btn-primary btn-sm"
-                  style={{ fontSize: "0.75rem" }}
-                  onClick={() => setRegionalSelecionada(reg.regiao)}
-                >
-                  Drill-down
-                </button>
-                <button
-                  className="btn btn-ghost btn-sm"
+                <div
+                  className="grid gap-4"
                   style={{
-                    fontSize: "0.75rem",
-                    gap: "4px",
-                    border: "1px solid var(--color-border)",
-                    background: "var(--color-surface-700)",
+                    gridTemplateColumns: "1fr 1fr",
+                    borderTop: "1px solid var(--color-border)",
+                    borderBottom: "1px solid var(--color-border)",
+                    padding: "12px 0",
+                    margin: "8px 0",
                   }}
-                  onClick={() =>
-                    navigate(
-                      `/chamados?regiao=${reg.regiao}&mes=${filtro.mes}&ano=${filtro.ano}&view=regional-bi`,
-                    )
-                  }
                 >
-                  BI Regional <ChevronRight size={14} />
-                </button>
+                  <div className="text-center">
+                    <p
+                      style={{
+                        fontSize: "0.625rem",
+                        fontWeight: 600,
+                        color: "var(--color-text-muted)",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Gastos Mensais
+                    </p>
+                    <p
+                      style={{
+                        fontSize: "1rem",
+                        fontWeight: 700,
+                        color: "var(--color-success)",
+                        marginTop: "4px",
+                      }}
+                    >
+                      {fmt(reg.gastosMes)}
+                    </p>
+                  </div>
+                  <div
+                    className="text-center"
+                    style={{ borderLeft: "1px solid var(--color-border)" }}
+                  >
+                    <p
+                      style={{
+                        fontSize: "0.625rem",
+                        fontWeight: 600,
+                        color: "var(--color-text-muted)",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Chamados Abertos
+                    </p>
+                    <p
+                      style={{
+                        fontSize: "1rem",
+                        fontWeight: 700,
+                        color: "var(--color-text-primary)",
+                        marginTop: "4px",
+                      }}
+                    >
+                      {reg.chamadosMes}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p
+                      style={{
+                        fontSize: "0.625rem",
+                        fontWeight: 600,
+                        color: "var(--color-text-muted)",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Tarefas ativas
+                    </p>
+                    <p
+                      style={{
+                        fontSize: "1rem",
+                        fontWeight: 700,
+                        color: "var(--color-text-primary)",
+                        marginTop: "4px",
+                      }}
+                    >
+                      {reg.tarefasAtivas}
+                    </p>
+                  </div>
+                  <div
+                    className="text-center"
+                    style={{ borderLeft: "1px solid var(--color-border)" }}
+                  >
+                    <p
+                      style={{
+                        fontSize: "0.625rem",
+                        fontWeight: 600,
+                        color: "var(--color-text-muted)",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Lojas
+                    </p>
+                    <p
+                      style={{
+                        fontSize: "1rem",
+                        fontWeight: 700,
+                        color: "var(--color-text-primary)",
+                        marginTop: "4px",
+                      }}
+                    >
+                      {reg.totalLojas || 0}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-4 flex justify-between gap-2 flex-wrap">
+                  <button
+                    className="btn btn-primary btn-sm"
+                    style={{ fontSize: "0.75rem" }}
+                    onClick={() => setRegionalSelecionada(reg.regiao)}
+                  >
+                    Drill-down
+                  </button>
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    style={{
+                      fontSize: "0.75rem",
+                      gap: "4px",
+                      border: "1px solid var(--color-border)",
+                      background: "var(--color-surface-700)",
+                    }}
+                    onClick={() =>
+                      navigate(
+                        `/chamados?regiao=${reg.regiao}&mes=${filtro.mes}&ano=${filtro.ano}&view=regional-bi`,
+                      )
+                    }
+                  >
+                    BI Regional <ChevronRight size={14} />
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </section>
 
@@ -2053,7 +2249,8 @@ function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [] }) {
   const filtroHistorico = { regiao: filtro.regiao };
   const { data: historico = [], isLoading: l2 } = useQuery({
     queryKey: ["dashboard-historico", filtroHistorico],
-    queryFn: () => dashboardService.historicoMensal(filtroHistorico).then((r) => r.data),
+    queryFn: () =>
+      dashboardService.historicoMensal(filtroHistorico).then((r) => r.data),
   });
   const { data: porSegmento = [], isLoading: l3 } = useQuery({
     queryKey: ["dashboard-segmento", filtro],
@@ -2126,13 +2323,29 @@ function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [] }) {
             >
               <MapPin size={13} /> {usuario?.unidade} {usuario?.regiao}
             </p>
-            <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginTop: "6px" }}>
+            <p
+              style={{
+                fontSize: "0.75rem",
+                color: "var(--color-text-muted)",
+                marginTop: "6px",
+              }}
+            >
               Exibindo:{" "}
               <strong style={{ color: "var(--color-brand-400)" }}>
-                {new Date(filtro.ano, filtro.mes - 1, 1).toLocaleString("pt-BR", { month: "long", year: "numeric" })}
+                {new Date(filtro.ano, filtro.mes - 1, 1).toLocaleString(
+                  "pt-BR",
+                  { month: "long", year: "numeric" },
+                )}
               </strong>
-              {filtro.mes !== new Date().getMonth() + 1 || filtro.ano !== new Date().getFullYear() ? (
-                <span style={{ marginLeft: "6px", color: "var(--color-warning)", fontSize: "0.68rem" }}>
+              {filtro.mes !== new Date().getMonth() + 1 ||
+              filtro.ano !== new Date().getFullYear() ? (
+                <span
+                  style={{
+                    marginLeft: "6px",
+                    color: "var(--color-warning)",
+                    fontSize: "0.68rem",
+                  }}
+                >
                   ⚠ Histórico 6 meses não é afetado
                 </span>
               ) : null}
@@ -2149,15 +2362,23 @@ function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [] }) {
               value={`${filtro.ano}-${String(filtro.mes).padStart(2, "0")}`}
               onChange={(e) => {
                 const opt = OPCOES_MES.find((o) => o.value === e.target.value);
-                if (opt) setFiltro((prev) => ({ ...prev, mes: opt.mes, ano: opt.ano }));
+                if (opt)
+                  setFiltro((prev) => ({
+                    ...prev,
+                    mes: opt.mes,
+                    ano: opt.ano,
+                  }));
               }}
             >
               {OPCOES_MES.map((opt) => {
                 const hoje = new Date();
-                const isAtual = opt.mes === hoje.getMonth() + 1 && opt.ano === hoje.getFullYear();
+                const isAtual =
+                  opt.mes === hoje.getMonth() + 1 &&
+                  opt.ano === hoje.getFullYear();
                 return (
                   <option key={opt.value} value={opt.value}>
-                    {opt.label}{isAtual ? " (atual)" : ""}
+                    {opt.label}
+                    {isAtual ? " (atual)" : ""}
                   </option>
                 );
               })}
@@ -2166,24 +2387,41 @@ function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [] }) {
             {/* Filtro Regional — só para Coordenador */}
             {isCoordenador && (
               <>
-                <span style={{ color: "var(--color-border)", fontSize: "1.2rem", lineHeight: 1 }}>|</span>
+                <span
+                  style={{
+                    color: "var(--color-border)",
+                    fontSize: "1.2rem",
+                    lineHeight: 1,
+                  }}
+                >
+                  |
+                </span>
                 <select
                   id="dashboard-filtro-regional"
                   className="select"
                   style={{ minWidth: "185px" }}
                   value={filtro.regiao || ""}
-                  onChange={(e) => setFiltro((prev) => ({ ...prev, regiao: e.target.value }))}
+                  onChange={(e) =>
+                    setFiltro((prev) => ({ ...prev, regiao: e.target.value }))
+                  }
                 >
                   <option value="">Todas as regionais</option>
                   {opcoesRegionais.map((regiao) => (
-                    <option key={regiao} value={regiao}>{regiao}</option>
+                    <option key={regiao} value={regiao}>
+                      {regiao}
+                    </option>
                   ))}
                 </select>
                 {filtro.regiao && (
                   <button
                     className="btn btn-ghost btn-sm"
-                    onClick={() => setFiltro((prev) => ({ ...prev, regiao: "" }))}
-                    style={{ fontSize: "0.75rem", border: "1px solid var(--color-border)" }}
+                    onClick={() =>
+                      setFiltro((prev) => ({ ...prev, regiao: "" }))
+                    }
+                    style={{
+                      fontSize: "0.75rem",
+                      border: "1px solid var(--color-border)",
+                    }}
                   >
                     Limpar
                   </button>
@@ -2872,20 +3110,23 @@ function TecnicoDashboard() {
 function ConformidadeDashboard({ filtro }) {
   const { data: conformidadeRes, isLoading } = useQuery({
     queryKey: ["dashboard-conformidade", filtro.mes, filtro.ano],
-    queryFn: () => dashboardService.conformidade({ mes: filtro.mes, ano: filtro.ano }).then(r => r.data),
+    queryFn: () =>
+      dashboardService
+        .conformidade({ mes: filtro.mes, ano: filtro.ano })
+        .then((r) => r.data),
   });
 
   const [collapsedRegions, setCollapsedRegions] = useState({});
 
   const toggleRegion = (reg) => {
-    setCollapsedRegions(prev => ({ ...prev, [reg]: !prev[reg] }));
+    setCollapsedRegions((prev) => ({ ...prev, [reg]: !prev[reg] }));
   };
 
   const items = conformidadeRes || [];
 
   const grouped = useMemo(() => {
     const groups = {};
-    items.forEach(loja => {
+    items.forEach((loja) => {
       const reg = loja.regiao || "Sem Regional";
       if (!groups[reg]) groups[reg] = [];
       groups[reg].push(loja);
@@ -2895,7 +3136,10 @@ function ConformidadeDashboard({ filtro }) {
 
   if (isLoading) {
     return (
-      <div className="skeleton" style={{ height: "400px", borderRadius: "12px" }} />
+      <div
+        className="skeleton"
+        style={{ height: "400px", borderRadius: "12px" }}
+      />
     );
   }
 
@@ -2903,7 +3147,14 @@ function ConformidadeDashboard({ filtro }) {
     <div className="flex flex-col gap-6 animate-fade-in">
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
-          <h3 style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--color-text-primary)", margin: 0 }}>
+          <h3
+            style={{
+              fontSize: "1.05rem",
+              fontWeight: 700,
+              color: "var(--color-text-primary)",
+              margin: 0,
+            }}
+          >
             Conformidade Operacional
           </h3>
           <InfoTooltip
@@ -2912,8 +3163,15 @@ function ConformidadeDashboard({ filtro }) {
             balloonStyle={{ right: "auto", left: -100 }}
           />
         </div>
-        <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", margin: 0 }}>
-          Visão por unidade da aderência às rotinas, preventivas e vencimentos críticos.
+        <p
+          style={{
+            fontSize: "0.8125rem",
+            color: "var(--color-text-muted)",
+            margin: 0,
+          }}
+        >
+          Visão por unidade da aderência às rotinas, preventivas e vencimentos
+          críticos.
         </p>
       </div>
 
@@ -2934,7 +3192,13 @@ function ConformidadeDashboard({ filtro }) {
         />
         <StatCard
           label="Sistemas Críticos Vencidos"
-          value={items.reduce((acc, curr) => acc + (curr.statusBaterias === 'VENCIDO' ? 1 : 0) + (curr.statusCabine === 'VENCIDO' ? 1 : 0), 0)}
+          value={items.reduce(
+            (acc, curr) =>
+              acc +
+              (curr.statusBaterias === "VENCIDO" ? 1 : 0) +
+              (curr.statusCabine === "VENCIDO" ? 1 : 0),
+            0,
+          )}
           sub="Baterias ou laudos pendentes"
           icon={AlertTriangle}
           accent="var(--color-danger)"
@@ -2942,102 +3206,319 @@ function ConformidadeDashboard({ filtro }) {
       </div>
 
       <div className="flex flex-col gap-4">
-        <h3 style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--color-text-primary)", marginBottom: "4px" }}>
+        <h3
+          style={{
+            fontSize: "1.05rem",
+            fontWeight: 700,
+            color: "var(--color-text-primary)",
+            marginBottom: "4px",
+          }}
+        >
           Matriz de Conformidade por Regional
         </h3>
 
         {items.length === 0 ? (
-          <div className="card" style={{ padding: "24px", textAlign: "center", color: "var(--color-text-muted)" }}>
+          <div
+            className="card"
+            style={{
+              padding: "24px",
+              textAlign: "center",
+              color: "var(--color-text-muted)",
+            }}
+          >
             Nenhuma loja cadastrada ou com dados no período.
           </div>
         ) : (
           Object.entries(grouped).map(([regiao, lojas]) => {
             const isCollapsed = !!collapsedRegions[regiao];
-            const totalAlerts = lojas.reduce((acc, curr) => acc + (curr.checklistCoverage < 100 ? 1 : 0) + (curr.preventivaAdherence < 100 ? 1 : 0) + (curr.statusBaterias === 'VENCIDO' ? 1 : 0) + (curr.statusCabine === 'VENCIDO' ? 1 : 0), 0);
+            const totalAlerts = lojas.reduce(
+              (acc, curr) =>
+                acc +
+                (curr.checklistCoverage < 100 ? 1 : 0) +
+                (curr.preventivaAdherence < 100 ? 1 : 0) +
+                (curr.statusBaterias === "VENCIDO" ? 1 : 0) +
+                (curr.statusCabine === "VENCIDO" ? 1 : 0),
+              0,
+            );
 
             return (
-              <div key={regiao} className="card" style={{ background: "var(--color-surface-800)", padding: "16px", display: "flex", flexDirection: "column", gap: "12px", border: "1px solid var(--color-border)" }}>
+              <div
+                key={regiao}
+                className="card"
+                style={{
+                  background: "var(--color-surface-800)",
+                  padding: "16px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "12px",
+                  border: "1px solid var(--color-border)",
+                }}
+              >
                 <div
                   className="flex items-center justify-between pointer"
                   onClick={() => toggleRegion(regiao)}
                   style={{ userSelect: "none" }}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(var(--color-brand-rgb), 0.1)", color: "var(--color-brand-400)" }}>
+                    <div
+                      className="w-8 h-8 rounded-lg flex items-center justify-center"
+                      style={{
+                        background: "rgba(var(--color-brand-rgb), 0.1)",
+                        color: "var(--color-brand-400)",
+                      }}
+                    >
                       <MapPin size={16} />
                     </div>
                     <div>
-                      <h4 style={{ fontSize: "0.9375rem", fontWeight: 700, margin: 0, color: "var(--color-text-primary)" }}>
+                      <h4
+                        style={{
+                          fontSize: "0.9375rem",
+                          fontWeight: 700,
+                          margin: 0,
+                          color: "var(--color-text-primary)",
+                        }}
+                      >
                         Regional {regiao}
                       </h4>
-                      <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", margin: 0 }}>
-                        {lojas.length} {lojas.length === 1 ? "loja" : "lojas"} sob gestão • {totalAlerts === 0 ? "100% em dia" : `${totalAlerts} pendências de conformidade`}
+                      <p
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "var(--color-text-muted)",
+                          margin: 0,
+                        }}
+                      >
+                        {lojas.length} {lojas.length === 1 ? "loja" : "lojas"}{" "}
+                        sob gestão •{" "}
+                        {totalAlerts === 0
+                          ? "100% em dia"
+                          : `${totalAlerts} pendências de conformidade`}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     {totalAlerts > 0 && (
-                      <span className="badge badge-danger" style={{ fontSize: "0.6875rem", fontWeight: 700 }}>Atenção</span>
+                      <span
+                        className="badge badge-danger"
+                        style={{ fontSize: "0.6875rem", fontWeight: 700 }}
+                      >
+                        Atenção
+                      </span>
                     )}
-                    {isCollapsed ? <ChevronDown size={18} style={{ color: "var(--color-text-muted)" }} /> : <ChevronUp size={18} style={{ color: "var(--color-text-muted)" }} />}
+                    {isCollapsed ? (
+                      <ChevronDown
+                        size={18}
+                        style={{ color: "var(--color-text-muted)" }}
+                      />
+                    ) : (
+                      <ChevronUp
+                        size={18}
+                        style={{ color: "var(--color-text-muted)" }}
+                      />
+                    )}
                   </div>
                 </div>
 
                 {!isCollapsed && (
-                  <div style={{ overflowX: "auto", borderTop: "1px solid var(--color-border)", paddingTop: "12px", marginTop: "4px" }}>
-                    <table className="table" style={{ width: "100%", borderCollapse: "collapse" }}>
+                  <div
+                    style={{
+                      overflowX: "auto",
+                      borderTop: "1px solid var(--color-border)",
+                      paddingTop: "12px",
+                      marginTop: "4px",
+                    }}
+                  >
+                    <table
+                      className="table"
+                      style={{ width: "100%", borderCollapse: "collapse" }}
+                    >
                       <thead>
-                        <tr style={{ borderBottom: "1px solid var(--color-border)", textAlign: "left" }}>
-                          <th style={{ padding: "12px 8px", color: "var(--color-text-muted)", fontSize: "0.75rem", textTransform: "uppercase", fontWeight: 600 }}>Unidade</th>
-                          <th style={{ padding: "12px 8px", color: "var(--color-text-muted)", fontSize: "0.75rem", textTransform: "uppercase", fontWeight: 600 }}>Cobertura Checklists</th>
-                          <th style={{ padding: "12px 8px", color: "var(--color-text-muted)", fontSize: "0.75rem", textTransform: "uppercase", fontWeight: 600 }}>Adesão Preventivas</th>
-                          <th style={{ padding: "12px 8px", color: "var(--color-text-muted)", fontSize: "0.75rem", textTransform: "uppercase", fontWeight: 600 }}>Status Baterias</th>
-                          <th style={{ padding: "12px 8px", color: "var(--color-text-muted)", fontSize: "0.75rem", textTransform: "uppercase", fontWeight: 600 }}>Laudo Cabine Primária</th>
-                          <th style={{ padding: "12px 8px", color: "var(--color-text-muted)", fontSize: "0.75rem", textTransform: "uppercase", fontWeight: 600 }}>Ações</th>
+                        <tr
+                          style={{
+                            borderBottom: "1px solid var(--color-border)",
+                            textAlign: "left",
+                          }}
+                        >
+                          <th
+                            style={{
+                              padding: "12px 8px",
+                              color: "var(--color-text-muted)",
+                              fontSize: "0.75rem",
+                              textTransform: "uppercase",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Unidade
+                          </th>
+                          <th
+                            style={{
+                              padding: "12px 8px",
+                              color: "var(--color-text-muted)",
+                              fontSize: "0.75rem",
+                              textTransform: "uppercase",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Cobertura Checklists
+                          </th>
+                          <th
+                            style={{
+                              padding: "12px 8px",
+                              color: "var(--color-text-muted)",
+                              fontSize: "0.75rem",
+                              textTransform: "uppercase",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Adesão Preventivas
+                          </th>
+                          <th
+                            style={{
+                              padding: "12px 8px",
+                              color: "var(--color-text-muted)",
+                              fontSize: "0.75rem",
+                              textTransform: "uppercase",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Status Baterias
+                          </th>
+                          <th
+                            style={{
+                              padding: "12px 8px",
+                              color: "var(--color-text-muted)",
+                              fontSize: "0.75rem",
+                              textTransform: "uppercase",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Laudo Cabine Primária
+                          </th>
+                          <th
+                            style={{
+                              padding: "12px 8px",
+                              color: "var(--color-text-muted)",
+                              fontSize: "0.75rem",
+                              textTransform: "uppercase",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Ações
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
                         {lojas.map((loja, idx) => (
-                          <tr key={idx} style={{ borderBottom: "1px solid var(--color-border)", fontSize: "0.875rem" }}>
-                            <td style={{ padding: "12px 8px", fontWeight: 600, color: "var(--color-text-primary)" }}>{loja.unidade}</td>
+                          <tr
+                            key={idx}
+                            style={{
+                              borderBottom: "1px solid var(--color-border)",
+                              fontSize: "0.875rem",
+                            }}
+                          >
+                            <td
+                              style={{
+                                padding: "12px 8px",
+                                fontWeight: 600,
+                                color: "var(--color-text-primary)",
+                              }}
+                            >
+                              {loja.unidade}
+                            </td>
                             <td style={{ padding: "12px 8px" }}>
                               <div className="flex items-center gap-2">
-                                <span className={`badge ${loja.checklistCoverage >= 90 ? 'badge-success' : loja.checklistCoverage >= 70 ? 'badge-warning' : 'badge-danger'}`}>
+                                <span
+                                  className={`badge ${loja.checklistCoverage >= 90 ? "badge-success" : loja.checklistCoverage >= 70 ? "badge-warning" : "badge-danger"}`}
+                                >
                                   {loja.checklistCoverage}%
                                 </span>
-                                <div style={{ width: "60px", height: "6px", background: "var(--color-surface-600)", borderRadius: "3px", overflow: "hidden" }}>
-                                  <div style={{ width: `${loja.checklistCoverage}%`, height: "100%", background: loja.checklistCoverage >= 90 ? "var(--color-success)" : loja.checklistCoverage >= 70 ? "var(--color-warning)" : "var(--color-danger)" }} />
+                                <div
+                                  style={{
+                                    width: "60px",
+                                    height: "6px",
+                                    background: "var(--color-surface-600)",
+                                    borderRadius: "3px",
+                                    overflow: "hidden",
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      width: `${loja.checklistCoverage}%`,
+                                      height: "100%",
+                                      background:
+                                        loja.checklistCoverage >= 90
+                                          ? "var(--color-success)"
+                                          : loja.checklistCoverage >= 70
+                                            ? "var(--color-warning)"
+                                            : "var(--color-danger)",
+                                    }}
+                                  />
                                 </div>
                               </div>
                             </td>
                             <td style={{ padding: "12px 8px" }}>
                               <div className="flex items-center gap-2">
-                                <span className={`badge ${loja.preventivaAdherence >= 90 ? 'badge-success' : loja.preventivaAdherence >= 70 ? 'badge-warning' : 'badge-danger'}`}>
+                                <span
+                                  className={`badge ${loja.preventivaAdherence >= 90 ? "badge-success" : loja.preventivaAdherence >= 70 ? "badge-warning" : "badge-danger"}`}
+                                >
                                   {loja.preventivaAdherence}%
                                 </span>
-                                <div style={{ width: "60px", height: "6px", background: "var(--color-surface-600)", borderRadius: "3px", overflow: "hidden" }}>
-                                  <div style={{ width: `${loja.preventivaAdherence}%`, height: "100%", background: loja.preventivaAdherence >= 90 ? "var(--color-success)" : loja.preventivaAdherence >= 70 ? "var(--color-warning)" : "var(--color-danger)" }} />
+                                <div
+                                  style={{
+                                    width: "60px",
+                                    height: "6px",
+                                    background: "var(--color-surface-600)",
+                                    borderRadius: "3px",
+                                    overflow: "hidden",
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      width: `${loja.preventivaAdherence}%`,
+                                      height: "100%",
+                                      background:
+                                        loja.preventivaAdherence >= 90
+                                          ? "var(--color-success)"
+                                          : loja.preventivaAdherence >= 70
+                                            ? "var(--color-warning)"
+                                            : "var(--color-danger)",
+                                    }}
+                                  />
                                 </div>
                               </div>
                             </td>
                             <td style={{ padding: "12px 8px" }}>
-                              <span className={`badge ${loja.statusBaterias === 'OK' ? 'badge-success' : 'badge-danger'}`}>
+                              <span
+                                className={`badge ${loja.statusBaterias === "OK" ? "badge-success" : "badge-danger"}`}
+                              >
                                 {loja.statusBaterias}
                               </span>
                             </td>
                             <td style={{ padding: "12px 8px" }}>
-                              <span className={`badge ${loja.statusCabine === 'OK' ? 'badge-success' : loja.statusCabine === 'VENCIDO' ? 'badge-danger' : 'badge-neutral'}`}>
+                              <span
+                                className={`badge ${loja.statusCabine === "OK" ? "badge-success" : loja.statusCabine === "VENCIDO" ? "badge-danger" : "badge-neutral"}`}
+                              >
                                 {loja.statusCabine}
                               </span>
                             </td>
                             <td style={{ padding: "12px 8px" }}>
                               <button
                                 className="btn btn-ghost btn-sm"
-                                disabled={loja.checklistCoverage >= 100 && loja.preventivaAdherence >= 100 && loja.statusBaterias === 'OK' && loja.statusCabine !== 'VENCIDO'}
+                                disabled={
+                                  loja.checklistCoverage >= 100 &&
+                                  loja.preventivaAdherence >= 100 &&
+                                  loja.statusBaterias === "OK" &&
+                                  loja.statusCabine !== "VENCIDO"
+                                }
                                 onClick={() => {
-                                  toast.success(`Tarefa de conformidade delegada com sucesso para a unidade ${loja.unidade}!`);
+                                  toast.success(
+                                    `Tarefa de conformidade delegada com sucesso para a unidade ${loja.unidade}!`,
+                                  );
                                 }}
-                                style={{ padding: "4px 8px", fontSize: "0.75rem", border: "1px solid var(--color-border)" }}
+                                style={{
+                                  padding: "4px 8px",
+                                  fontSize: "0.75rem",
+                                  border: "1px solid var(--color-border)",
+                                }}
                               >
                                 Delegar Tarefa
                               </button>
@@ -3054,26 +3535,77 @@ function ConformidadeDashboard({ filtro }) {
         )}
       </div>
 
-      <div className="card" style={{ borderLeft: "4px solid var(--color-danger)" }}>
-        <h4 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--color-danger)", display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+      <div
+        className="card"
+        style={{ borderLeft: "4px solid var(--color-danger)" }}
+      >
+        <h4
+          style={{
+            fontSize: "0.9375rem",
+            fontWeight: 700,
+            color: "var(--color-danger)",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            marginBottom: "12px",
+          }}
+        >
           <AlertTriangle size={18} />
           Alertas Críticos de Infraestrutura
         </h4>
         <div className="flex flex-col gap-2">
-          {items.flatMap(l => l.alertas.map(a => ({ loja: l.unidade, msg: a }))).length === 0 ? (
-            <p style={{ color: "var(--color-text-muted)", fontSize: "0.875rem" }}>
-              Nenhum alerta crítico ativo no momento. Toda a infraestrutura está em conformidade!
+          {items.flatMap((l) =>
+            l.alertas.map((a) => ({ loja: l.unidade, msg: a })),
+          ).length === 0 ? (
+            <p
+              style={{ color: "var(--color-text-muted)", fontSize: "0.875rem" }}
+            >
+              Nenhum alerta crítico ativo no momento. Toda a infraestrutura está
+              em conformidade!
             </p>
           ) : (
-            items.flatMap(l => l.alertas.map(a => ({ loja: l.unidade, msg: a }))).map((alerta, idx) => (
-              <div key={idx} style={{ background: "rgba(239, 68, 68, 0.05)", border: "1px solid rgba(239, 68, 68, 0.1)", borderRadius: "8px", padding: "10px 14px", display: "flex", justifyContext: "space-between", alignItems: "center" }}>
-                <div>
-                  <span style={{ fontWeight: 700, marginRight: "8px", color: "var(--color-text-primary)" }}>[{alerta.loja}]</span>
-                  <span style={{ color: "var(--color-text-secondary)" }}>{alerta.msg}</span>
+            items
+              .flatMap((l) =>
+                l.alertas.map((a) => ({ loja: l.unidade, msg: a })),
+              )
+              .map((alerta, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    background: "rgba(239, 68, 68, 0.05)",
+                    border: "1px solid rgba(239, 68, 68, 0.1)",
+                    borderRadius: "8px",
+                    padding: "10px 14px",
+                    display: "flex",
+                    justifyContext: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <div>
+                    <span
+                      style={{
+                        fontWeight: 700,
+                        marginRight: "8px",
+                        color: "var(--color-text-primary)",
+                      }}
+                    >
+                      [{alerta.loja}]
+                    </span>
+                    <span style={{ color: "var(--color-text-secondary)" }}>
+                      {alerta.msg}
+                    </span>
+                  </div>
+                  <span
+                    className="badge badge-danger"
+                    style={{
+                      textTransform: "uppercase",
+                      fontSize: "0.6875rem",
+                    }}
+                  >
+                    Vencido
+                  </span>
                 </div>
-                <span className="badge badge-danger" style={{ textTransform: "uppercase", fontSize: "0.6875rem" }}>Vencido</span>
-              </div>
-            ))
+              ))
           )}
         </div>
       </div>
@@ -3084,30 +3616,117 @@ function ConformidadeDashboard({ filtro }) {
 function BuyVsMaintainDashboard() {
   const { data: assetsRes, isLoading } = useQuery({
     queryKey: ["dashboard-buy-vs-maintain"],
-    queryFn: () => dashboardService.buyVsMaintain().then(r => r.data),
+    queryFn: () => dashboardService.buyVsMaintain().then((r) => r.data),
   });
 
-  const [collapsedRegions, setCollapsedRegions] = useState({});
+  const [expandedRegions, setExpandedRegions] = useState({});
+  const [selectedStore, setSelectedStore] = useState(null);
+  const [selectedAtivo, setSelectedAtivo] = useState(null);
 
-  const toggleRegion = (reg) => {
-    setCollapsedRegions(prev => ({ ...prev, [reg]: !prev[reg] }));
-  };
-
-  const items = assetsRes || [];
+  const filteredItems = useMemo(() => {
+    return (assetsRes || []).filter((asset) => {
+      const cat = (asset.categoria || "").toLowerCase();
+      const nome = (asset.nome || "").toLowerCase();
+      return !/(carrinho|escada|cart|trolley)/i.test(`${cat} ${nome}`);
+    });
+  }, [assetsRes]);
 
   const grouped = useMemo(() => {
-    const groups = {};
-    items.forEach(asset => {
+    const regions = {};
+    filteredItems.forEach((asset) => {
       const reg = asset.regiao || "Sem Regional";
-      if (!groups[reg]) groups[reg] = [];
-      groups[reg].push(asset);
+      const store = asset.unidade || "Sem Unidade";
+      if (!regions[reg]) regions[reg] = {};
+      if (!regions[reg][store]) regions[reg][store] = [];
+      regions[reg][store].push(asset);
     });
-    return groups;
-  }, [items]);
+    return regions;
+  }, [filteredItems]);
+
+  const totals = useMemo(
+    () => ({
+      total: filteredItems.length,
+      buy: filteredItems.filter((i) => i.recomendacao === "BUY").length,
+      maintain: filteredItems.filter((i) => i.recomendacao === "MAINTAIN")
+        .length,
+      repairCost: fmt(
+        filteredItems.reduce((acc, curr) => acc + curr.custoAcumulado, 0),
+      ),
+    }),
+    [filteredItems],
+  );
+
+  const toggleRegion = (reg) => {
+    setExpandedRegions((prev) => ({ ...prev, [reg]: !prev[reg] }));
+  };
+
+  const renderStoreTable = (assets) => {
+    const sorted = [...assets].sort(
+      (a, b) =>
+        a.categoria.localeCompare(b.categoria || "") ||
+        a.nome.localeCompare(b.nome || ""),
+    );
+    return (
+      <div style={{ overflowX: "auto" }}>
+        <table className="table" style={{ minWidth: "1000px" }}>
+          <thead>
+            <tr>
+              <th>Ativo</th>
+              <th>Categoria</th>
+              <th>Recomendação</th>
+              <th>MTBF</th>
+              <th>MTTR</th>
+              <th>Custo Reparo</th>
+              <th>Custo Subst.</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sorted.map((ativo) => (
+              <tr
+                key={ativo.ativoId}
+                className="pointer"
+                onClick={() => setSelectedAtivo(ativo)}
+              >
+                <td>{ativo.nome}</td>
+                <td>{ativo.categoria || "Sem categoria"}</td>
+                <td>
+                  <span
+                    className={`badge ${ativo.recomendacao === "BUY" ? "badge-danger" : "badge-success"}`}
+                  >
+                    {ativo.recomendacao === "BUY" ? "SUBSTITUIR" : "MANTER"}
+                  </span>
+                </td>
+                <td>{ativo.mtbfDias} dias</td>
+                <td>{ativo.mttrHoras} h</td>
+                <td>{fmt(ativo.custoAcumulado)}</td>
+                <td>{fmt(ativo.custoSubstituicao)}</td>
+                <td>
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-xs"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedAtivo(ativo);
+                    }}
+                  >
+                    Ver
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
 
   if (isLoading) {
     return (
-      <div className="skeleton" style={{ height: "400px", borderRadius: "12px" }} />
+      <div
+        className="skeleton"
+        style={{ height: "400px", borderRadius: "12px" }}
+      />
     );
   }
 
@@ -3115,7 +3734,14 @@ function BuyVsMaintainDashboard() {
     <div className="flex flex-col gap-6 animate-fade-in">
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
-          <h3 style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--color-text-primary)", margin: 0 }}>
+          <h3
+            style={{
+              fontSize: "1.05rem",
+              fontWeight: 700,
+              color: "var(--color-text-primary)",
+              margin: 0,
+            }}
+          >
             Decisão Comprar x Manter
           </h3>
           <InfoTooltip
@@ -3124,175 +3750,239 @@ function BuyVsMaintainDashboard() {
             balloonStyle={{ right: "auto", left: -100 }}
           />
         </div>
-        <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", margin: 0 }}>
-          Inteligência de ativos para priorizar substituições, reparos e abertura de chamados.
+        <p
+          style={{
+            fontSize: "0.8125rem",
+            color: "var(--color-text-muted)",
+            margin: 0,
+          }}
+        >
+          Inteligência de ativos para priorizar substituições, reparos e
+          abertura de chamados.
         </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
         <StatCard
           label="Total de Ativos Analisados"
-          value={items.length}
+          value={totals.total}
           sub="Monitoramento contínuo"
           icon={Package}
           accent="var(--color-brand-500)"
         />
         <StatCard
           label="Recomendação: Substituir"
-          value={items.filter(i => i.recomendacao === 'BUY').length}
+          value={totals.buy}
           sub="Badge vermelho de criticidade"
           icon={AlertTriangle}
           accent="var(--color-danger)"
         />
         <StatCard
           label="Recomendação: Manter"
-          value={items.filter(i => i.recomendacao === 'MAINTAIN').length}
+          value={totals.maintain}
           sub="Saúde operacional estável"
           icon={ClipboardCheck}
           accent="var(--color-success)"
         />
         <StatCard
           label="Custo Total de Reparos"
-          value={fmt(items.reduce((acc, curr) => acc + curr.custoAcumulado, 0))}
+          value={totals.repairCost}
           sub="Acumulado histórico na rede"
           icon={DollarSign}
           accent="var(--color-warning)"
         />
       </div>
 
-      <div className="flex flex-col gap-6">
-        <h3 style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--color-text-primary)", marginBottom: "4px" }}>
-          Inteligência de Ativos e Decisão Financeira por Regional
+      <div className="flex flex-col gap-4">
+        <h3
+          style={{
+            fontSize: "1.05rem",
+            fontWeight: 700,
+            color: "var(--color-text-primary)",
+            marginBottom: "4px",
+          }}
+        >
+          Estrutura de Regional → Loja → Categoria
         </h3>
-
-        {items.length === 0 ? (
-          <div className="card" style={{ textAlign: "center", padding: "40px", color: "var(--color-text-muted)" }}>
-            Nenhum ativo cadastrado ou com falhas históricas.
+        {totals.total === 0 ? (
+          <div
+            className="card"
+            style={{
+              textAlign: "center",
+              padding: "40px",
+              color: "var(--color-text-muted)",
+            }}
+          >
+            Nenhum ativo encontrado para análise Comprar vs Manter.
           </div>
         ) : (
-          Object.entries(grouped).map(([regiao, assets]) => {
-            const isCollapsed = !!collapsedRegions[regiao];
-            const buyCount = assets.filter(a => a.recomendacao === 'BUY').length;
+          Object.entries(grouped).map(([regiao, stores]) => {
+            const isRegionOpen = !!expandedRegions[regiao];
+            const regionAssets = Object.values(stores).flat();
+            const regionBuyCount = regionAssets.filter(
+              (a) => a.recomendacao === "BUY",
+            ).length;
 
             return (
               <div key={regiao} className="flex flex-col gap-4">
                 <div
-                  className="flex items-center justify-between pointer"
+                  className="card pointer"
                   onClick={() => toggleRegion(regiao)}
-                  style={{ userSelect: "none", background: "var(--color-surface-700)", padding: "12px 18px", borderRadius: "12px", border: "1px solid var(--color-border)" }}
+                  style={{
+                    padding: "18px",
+                    borderRadius: "14px",
+                    border: "1px solid var(--color-border)",
+                    background: "var(--color-surface-700)",
+                  }}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(var(--color-brand-rgb), 0.1)", color: "var(--color-brand-400)" }}>
-                      <MapPin size={16} />
-                    </div>
+                  <div className="flex items-center justify-between gap-4">
                     <div>
-                      <h4 style={{ fontSize: "0.9375rem", fontWeight: 700, margin: 0, color: "var(--color-text-primary)" }}>
-                        Regional {regiao}
-                      </h4>
-                      <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", margin: 0 }}>
-                        {assets.length} {assets.length === 1 ? "ativo monitorado" : "ativos monitorados"} • {buyCount === 0 ? "Nenhuma recomendação de substituição" : `${buyCount} recomendação(ões) de substituição`}
+                      <p
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "var(--color-text-muted)",
+                          margin: 0,
+                        }}
+                      >
+                        Regional
                       </p>
+                      <h4
+                        style={{
+                          fontSize: "1.125rem",
+                          fontWeight: 700,
+                          margin: 0,
+                          color: "var(--color-text-primary)",
+                        }}
+                      >
+                        {regiao}
+                      </h4>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {buyCount > 0 && (
-                      <span className="badge badge-danger" style={{ fontSize: "0.6875rem", fontWeight: 700 }}>Substituir</span>
-                    )}
-                    {isCollapsed ? <ChevronDown size={18} style={{ color: "var(--color-text-muted)" }} /> : <ChevronUp size={18} style={{ color: "var(--color-text-muted)" }} />}
+                    <div className="flex items-center gap-3">
+                      <div style={{ textAlign: "right" }}>
+                        <div style={{ fontSize: "0.875rem", fontWeight: 700 }}>
+                          {regionAssets.length}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: "0.75rem",
+                            color: "var(--color-text-muted)",
+                          }}
+                        >
+                          ativos
+                        </div>
+                      </div>
+                      <div>
+                        <span
+                          className="badge badge-outline"
+                          style={{ fontSize: "0.75rem" }}
+                        >
+                          {regionBuyCount} SUBSTITUIR
+                        </span>
+                      </div>
+                      {isRegionOpen ? (
+                        <ChevronUp size={18} />
+                      ) : (
+                        <ChevronDown size={18} />
+                      )}
+                    </div>
                   </div>
                 </div>
 
-                {!isCollapsed && (
-                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 animate-fade-in" style={{ paddingBottom: "12px" }}>
-                    {assets.map((ativo, idx) => (
-                      <div
-                        key={idx}
-                        className="card flex flex-col justify-between"
-                        style={{
-                          borderTop: ativo.recomendacao === 'BUY' ? "4px solid var(--color-danger)" : "4px solid var(--color-success)",
-                          gap: "16px",
-                          background: "var(--color-surface-800)",
-                        }}
-                      >
-                        <div>
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="badge badge-neutral" style={{ fontSize: "0.6875rem", textTransform: "uppercase" }}>
-                              {ativo.categoria}
-                            </span>
-                            <span className={`badge ${ativo.recomendacao === 'BUY' ? 'badge-danger' : 'badge-success'}`} style={{ fontWeight: 700 }}>
-                              {ativo.recomendacao === 'BUY' ? 'SUBSTITUIR' : 'MANTER'}
-                            </span>
+                {isRegionOpen && (
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {Object.entries(stores).map(([store, assets]) => {
+                      const storeBuyCount = assets.filter(
+                        (a) => a.recomendacao === "BUY",
+                      ).length;
+                      const categories = [
+                        ...new Set(
+                          assets.map((a) => a.categoria || "Sem categoria"),
+                        ),
+                      ];
+
+                      return (
+                        <div
+                          key={store}
+                          className="card"
+                          style={{ borderRadius: "14px", padding: "16px" }}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p
+                                style={{
+                                  fontSize: "0.75rem",
+                                  color: "var(--color-text-muted)",
+                                  margin: 0,
+                                }}
+                              >
+                                Loja
+                              </p>
+                              <h5
+                                style={{
+                                  fontSize: "1rem",
+                                  fontWeight: 700,
+                                  margin: 0,
+                                  color: "var(--color-text-primary)",
+                                }}
+                              >
+                                {store}
+                              </h5>
+                            </div>
+                            <button
+                              type="button"
+                              className="btn btn-ghost btn-sm"
+                              onClick={() =>
+                                setSelectedStore({ regiao, store, assets })
+                              }
+                            >
+                              Abrir
+                            </button>
                           </div>
-
-                          <h4 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--color-text-primary)" }}>{ativo.nome}</h4>
-                          <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginBottom: "12px" }}>
-                            Unidade: <strong style={{ color: "var(--color-text-secondary)" }}>{ativo.unidade}</strong> • Patr.: {ativo.patrimonio || "N/A"}
-                          </p>
-
-                          <hr style={{ border: 0, borderTop: "1px solid var(--color-border)", margin: "12px 0" }} />
-
-                          <div className="grid grid-cols-2 gap-3 text-sm">
-                            <div>
-                              <p style={{ fontSize: "0.6875rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 600 }}>MTBF</p>
-                              <p style={{ fontWeight: 700, color: "var(--color-text-primary)" }}>
-                                {ativo.mtbfDias} dias
-                              </p>
+                          <div
+                            style={{
+                              marginTop: "10px",
+                              display: "grid",
+                              gap: "8px",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                gap: "8px",
+                                flexWrap: "wrap",
+                              }}
+                            >
+                              <span className="badge badge-neutral">
+                                {assets.length} ativos
+                              </span>
+                              <span className="badge badge-danger">
+                                {storeBuyCount} SUBSTITUIR
+                              </span>
+                              <span className="badge badge-success">
+                                {assets.length - storeBuyCount} MANTER
+                              </span>
                             </div>
-                            <div>
-                              <p style={{ fontSize: "0.6875rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 600 }}>MTTR</p>
-                              <p style={{ fontWeight: 700, color: "var(--color-text-primary)" }}>
-                                {ativo.mttrHoras} horas
-                              </p>
-                            </div>
-                            <div>
-                              <p style={{ fontSize: "0.6875rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 600 }}>Custo Reparo</p>
-                              <p style={{ fontWeight: 700, color: "var(--color-warning)" }}>
-                                {fmt(ativo.custoAcumulado)}
-                              </p>
-                            </div>
-                            <div>
-                              <p style={{ fontSize: "0.6875rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 600 }}>Custo Subst.</p>
-                              <p style={{ fontWeight: 700, color: "var(--color-text-secondary)" }}>
-                                {fmt(ativo.custoSubstituicao)}
-                              </p>
+                            <div
+                              style={{
+                                display: "flex",
+                                gap: "6px",
+                                flexWrap: "wrap",
+                              }}
+                            >
+                              {categories.map((cat) => (
+                                <span
+                                  key={cat}
+                                  className="badge badge-outline"
+                                  style={{ fontSize: "0.7rem" }}
+                                >
+                                  {cat}
+                                </span>
+                              ))}
                             </div>
                           </div>
-
-                          {ativo.razoes && ativo.razoes.length > 0 && (
-                            <div style={{ marginTop: "14px", padding: "10px", borderRadius: "8px", background: "rgba(239, 68, 68, 0.04)", border: "1px solid rgba(239, 68, 68, 0.08)" }}>
-                              <p style={{ fontSize: "0.6875rem", fontWeight: 700, color: "var(--color-danger)", textTransform: "uppercase", marginBottom: "4px" }}>Justificativa</p>
-                              <ul style={{ margin: 0, paddingLeft: "12px", fontSize: "0.75rem", color: "var(--color-text-secondary)", listStyleType: "disc" }}>
-                                {ativo.razoes.map((raz, rIdx) => <li key={rIdx}>{raz}</li>)}
-                              </ul>
-                            </div>
-                          )}
                         </div>
-
-                        <div className="flex gap-2 mt-4 pt-3" style={{ borderTop: "1px solid var(--color-border)" }}>
-                          <button
-                            className="btn btn-secondary btn-sm flex-1"
-                            onClick={() => {
-                              const toast = require("react-hot-toast").default;
-                              toast.success(`Chamado CSA aberto para ${ativo.nome}!`);
-                            }}
-                            style={{ fontSize: "0.75rem", padding: "6px" }}
-                          >
-                            Abrir Chamado
-                          </button>
-                          <button
-                            className="btn btn-primary btn-sm flex-1"
-                            disabled={ativo.recomendacao !== 'BUY'}
-                            onClick={() => {
-                              const toast = require("react-hot-toast").default;
-                              toast.success(`Cotação de substituição iniciada para ${ativo.nome}!`);
-                            }}
-                            style={{ fontSize: "0.75rem", padding: "6px" }}
-                          >
-                            Cotar Troca
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -3300,6 +3990,281 @@ function BuyVsMaintainDashboard() {
           })
         )}
       </div>
+
+      {selectedStore && (
+        <div
+          className="modal-backdrop"
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.35)",
+            zIndex: 50,
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "center",
+            padding: "24px",
+            overflowY: "auto",
+          }}
+        >
+          <div
+            className="card"
+            style={{
+              width: "100%",
+              maxWidth: "1120px",
+              minHeight: "80vh",
+              borderRadius: "16px",
+              padding: "24px",
+              position: "relative",
+              background: "var(--color-surface-800)",
+              boxShadow: "0 18px 50px rgba(0,0,0,0.25)",
+            }}
+          >
+            <button
+              type="button"
+              className="btn btn-ghost btn-sm"
+              onClick={() => setSelectedStore(null)}
+              style={{ position: "absolute", top: "16px", right: "16px" }}
+            >
+              Fechar
+            </button>
+            <h3 style={{ margin: 0, fontSize: "1.25rem", fontWeight: 700 }}>
+              Loja: {selectedStore.store}
+            </h3>
+            <p
+              style={{ margin: "6px 0 16px", color: "var(--color-text-muted)" }}
+            >
+              Regional {selectedStore.regiao} • {selectedStore.assets.length}{" "}
+              ativos
+            </p>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "12px",
+                marginBottom: "18px",
+              }}
+            >
+              <div style={{ minWidth: "180px" }}>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: "0.75rem",
+                    color: "var(--color-text-muted)",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Ativos
+                </p>
+                <p style={{ margin: "4px 0 0", fontWeight: 700 }}>
+                  {selectedStore.assets.length}
+                </p>
+              </div>
+              <div style={{ minWidth: "180px" }}>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: "0.75rem",
+                    color: "var(--color-text-muted)",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Substituir
+                </p>
+                <p style={{ margin: "4px 0 0", fontWeight: 700 }}>
+                  {
+                    selectedStore.assets.filter((a) => a.recomendacao === "BUY")
+                      .length
+                  }
+                </p>
+              </div>
+              <div style={{ minWidth: "180px" }}>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: "0.75rem",
+                    color: "var(--color-text-muted)",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Manter
+                </p>
+                <p style={{ margin: "4px 0 0", fontWeight: 700 }}>
+                  {
+                    selectedStore.assets.filter(
+                      (a) => a.recomendacao === "MAINTAIN",
+                    ).length
+                  }
+                </p>
+              </div>
+            </div>
+            <div style={{ marginTop: "16px" }}>
+              {renderStoreTable(selectedStore.assets)}
+            </div>
+          </div>
+        </div>
+      )}
+      {selectedAtivo && (
+        <div
+          className="modal-backdrop"
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.35)",
+            zIndex: 60,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "24px",
+          }}
+        >
+          <div
+            className="card"
+            style={{
+              width: "100%",
+              maxWidth: "760px",
+              borderRadius: "16px",
+              padding: "24px",
+              position: "relative",
+            }}
+          >
+            <button
+              type="button"
+              className="btn btn-ghost btn-sm"
+              onClick={() => setSelectedAtivo(null)}
+              style={{ position: "absolute", top: "16px", right: "16px" }}
+            >
+              Fechar
+            </button>
+            <h3 style={{ margin: 0, fontSize: "1.25rem", fontWeight: 700 }}>
+              {selectedAtivo.nome}
+            </h3>
+            <p
+              style={{ margin: "6px 0 16px", color: "var(--color-text-muted)" }}
+            >
+              {selectedAtivo.categoria} • {selectedAtivo.unidade} •{" "}
+              {selectedAtivo.regiao}
+            </p>
+            <div
+              className="grid grid-cols-2 gap-4"
+              style={{ marginBottom: "18px" }}
+            >
+              <div>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: "0.75rem",
+                    color: "var(--color-text-muted)",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  MTBF
+                </p>
+                <p style={{ margin: "4px 0 0", fontWeight: 700 }}>
+                  {selectedAtivo.mtbfDias} dias
+                </p>
+              </div>
+              <div>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: "0.75rem",
+                    color: "var(--color-text-muted)",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  MTTR
+                </p>
+                <p style={{ margin: "4px 0 0", fontWeight: 700 }}>
+                  {selectedAtivo.mttrHoras} horas
+                </p>
+              </div>
+              <div>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: "0.75rem",
+                    color: "var(--color-text-muted)",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Custo de Reparo
+                </p>
+                <p style={{ margin: "4px 0 0", fontWeight: 700 }}>
+                  {fmt(selectedAtivo.custoAcumulado)}
+                </p>
+              </div>
+              <div>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: "0.75rem",
+                    color: "var(--color-text-muted)",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Custo de Substituição
+                </p>
+                <p style={{ margin: "4px 0 0", fontWeight: 700 }}>
+                  {fmt(selectedAtivo.custoSubstituicao)}
+                </p>
+              </div>
+            </div>
+            {selectedAtivo.razoes && selectedAtivo.razoes.length > 0 && (
+              <div style={{ marginBottom: "18px" }}>
+                <p
+                  style={{
+                    margin: 0,
+                    fontWeight: 700,
+                    color: "var(--color-text-primary)",
+                  }}
+                >
+                  Justificativas
+                </p>
+                <ul
+                  style={{
+                    margin: "8px 0 0",
+                    paddingLeft: "18px",
+                    color: "var(--color-text-secondary)",
+                  }}
+                >
+                  {selectedAtivo.razoes.map((raz, index) => (
+                    <li key={index} style={{ marginBottom: "6px" }}>
+                      {raz}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <div className="flex gap-3 flex-wrap">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => {
+                  const toast = require("react-hot-toast").default;
+                  toast.success(
+                    `Chamado CSA aberto para ${selectedAtivo.nome}!`,
+                  );
+                }}
+              >
+                Abrir Chamado
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                disabled={selectedAtivo.recomendacao !== "BUY"}
+                onClick={() => {
+                  const toast = require("react-hot-toast").default;
+                  toast.success(
+                    `Cotação de substituição iniciada para ${selectedAtivo.nome}!`,
+                  );
+                }}
+              >
+                Cotar Troca
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -3319,13 +4284,17 @@ export default function DashboardPage() {
     queryKey: ["dashboard-regional-coordenador"],
     queryFn: () =>
       dashboardService
-        .regional({ mes: hoje.getMonth() + 1, ano: hoje.getFullYear(), regiao: "" })
+        .regional({
+          mes: hoje.getMonth() + 1,
+          ano: hoje.getFullYear(),
+          regiao: "",
+        })
         .then((r) => r.data),
     enabled: isCoordenador,
     staleTime: 5 * 60 * 1000,
   });
-  const opcoesRegionaisCoordenador = (
-    (regionalResCoordenador?.data || []).map((r) => r.regiao)
+  const opcoesRegionaisCoordenador = (regionalResCoordenador?.data || []).map(
+    (r) => r.regiao,
   );
 
   const macroRoles = ["ADMINISTRADOR", "DIRETOR", "GERENTE"];
@@ -3344,14 +4313,26 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6 animate-fade-in" style={{ paddingBottom: "24px" }}>
+    <div
+      className="flex flex-col gap-6 animate-fade-in"
+      style={{ paddingBottom: "24px" }}
+    >
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--color-border)] pb-4">
         <div>
-          <h1 style={{ fontSize: "1.375rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+          <h1
+            style={{
+              fontSize: "1.375rem",
+              fontWeight: 700,
+              color: "var(--color-text-primary)",
+            }}
+          >
             Painel Executivo de Manutenção
           </h1>
-          <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
-            Acompanhe a conformidade de infraestrutura, tendências financeiras e análises de ciclo de vida de ativos.
+          <p
+            style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}
+          >
+            Acompanhe a conformidade de infraestrutura, tendências financeiras e
+            análises de ciclo de vida de ativos.
           </p>
         </div>
 
@@ -3392,8 +4373,8 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {tabAtiva === "indicadores" && (
-        macroRoles.includes(usuario?.role) ? (
+      {tabAtiva === "indicadores" &&
+        (macroRoles.includes(usuario?.role) ? (
           <CorporativoDashboard filtro={filtro} setFiltro={setFiltro} />
         ) : (
           <GestorDashboard
@@ -3401,16 +4382,11 @@ export default function DashboardPage() {
             setFiltro={setFiltro}
             opcoesRegionais={opcoesRegionaisCoordenador}
           />
-        )
-      )}
+        ))}
 
-      {tabAtiva === "conformidade" && (
-        <ConformidadeDashboard filtro={filtro} />
-      )}
+      {tabAtiva === "conformidade" && <ConformidadeDashboard filtro={filtro} />}
 
-      {tabAtiva === "buy-vs-maintain" && (
-        <BuyVsMaintainDashboard />
-      )}
+      {tabAtiva === "buy-vs-maintain" && <BuyVsMaintainDashboard />}
     </div>
   );
 }

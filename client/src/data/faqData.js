@@ -32,9 +32,9 @@ export const faqData = [
   {
     id: 'buy-vs-maintain',
     category: 'dashboard',
-    title: 'O que é a análise Buy vs Maintain?',
+    title: 'O que é a análise Comprar vs Manter?',
     description: 'Inteligência para decidir entre reparar ou substituir um ativo.',
-    content: `A análise **Buy vs Maintain** avalia se vale mais a pena continuar reparando um equipamento ou substituí-lo por um novo.
+    content: `A análise **Comprar vs Manter** avalia se vale mais a pena continuar reparando um equipamento ou substituí-lo por um novo.
 
 **Critérios analisados:**
 - **Custo acumulado de manutenção:** Total gasto em chamados para aquele ativo
@@ -188,7 +188,7 @@ export const faqData = [
 
 **Por que isso importa:**
 - Reincidências indicam que o problema de raiz não foi resolvido
-- Um ativo com muitas reincidências é candidato à análise Buy vs Maintain
+- Um ativo com muitas reincidências é candidato à análise Comprar vs Manter
 - Ajuda a pressionar fornecedores que não resolvem definitivamente os problemas
 
 **Como visualizar:**
