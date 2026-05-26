@@ -1,5 +1,6 @@
 const prisma = require('../utils/prisma');
 const { getAccessFilter, getUserRegions, canAccessRegion } = require('../utils/access.utils');
+const { calcularMetricasConfiabilidade } = require('../utils/confiabilidadeAtivo');
 const { getWeek, startOfMonth, endOfMonth } = require('date-fns');
 
 const formatarSegmento = (segmento) => {
@@ -817,33 +818,10 @@ const buyVsMaintain = async (user, query) => {
     }
   });
 
-  const agora = new Date();
-
   return ativos.map(ativo => {
     // 1. Métricas de Confiabilidade (MTBF, MTTR, Uptime %)
-    const tempoTotalHoras = Math.max(1, (agora - ativo.criadoEm) / (1000 * 60 * 60));
-    
-    let downtimeHoras = 0;
-    let tempoReparoSoma = 0;
-    let falhasResolvidas = 0;
-    
-    ativo.falhas.forEach(f => {
-      const fim = f.dataResolucao ? new Date(f.dataResolucao) : agora;
-      const duracaoFalha = Math.max(0, (fim - new Date(f.dataDeteccao)) / (1000 * 60 * 60));
-      downtimeHoras += duracaoFalha;
-      
-      if (f.dataResolucao) {
-        tempoReparoSoma += duracaoFalha;
-        falhasResolvidas++;
-      }
-    });
-
-    const uptimeHoras = Math.max(0, tempoTotalHoras - downtimeHoras);
-    const totalFalhas = ativo.falhas.length;
-    
-    const mtbf = totalFalhas > 0 ? (uptimeHoras / totalFalhas) : uptimeHoras;
-    const mttr = falhasResolvidas > 0 ? (tempoReparoSoma / falhasResolvidas) : 0;
-    const uptimePercentual = (uptimeHoras / tempoTotalHoras) * 100;
+    const metricas = calcularMetricasConfiabilidade(ativo);
+    const { totalFalhas, uptimePercentual, mtbfDias, mttrHoras } = metricas;
 
     // 2. Custo Acumulado de Reparo
     let custoAcumulado = 0;
@@ -896,10 +874,9 @@ const buyVsMaintain = async (user, query) => {
       razoes.push(`Uptime de confiabilidade muito baixo (${uptimePercentual.toFixed(1)}%) com histórico recorrente`);
     }
 
-    const mtbfDias = mtbf / 24;
     const thresholdMtbf = isIlha ? 180 : 30; // 180 dias para ilhas (mais crítico!), 30 dias para os demais
     
-    if (totalFalhas >= 2 && mtbfDias < thresholdMtbf) {
+    if (totalFalhas >= 2 && mtbfDias !== null && mtbfDias < thresholdMtbf) {
       recomendacao = 'BUY';
       razoes.push(`Intervalo médio entre falhas (MTBF de ${mtbfDias.toFixed(1)} dias) abaixo do limite recomendado (${thresholdMtbf} dias)`);
     }
@@ -914,8 +891,12 @@ const buyVsMaintain = async (user, query) => {
       regiao: ativo.regiao,
       totalFalhas,
       uptimePercentual: uptimePercentual.toFixed(1),
-      mtbfDias: mtbfDias.toFixed(1),
-      mttrHoras: mttr.toFixed(1),
+      mtbfDias,
+      mttrHoras,
+      falhasResolvidas: metricas.falhasResolvidas,
+      falhasAbertas: metricas.falhasAbertas,
+      possuiHistoricoMtbf: metricas.possuiHistoricoMtbf,
+      possuiHistoricoMttr: metricas.possuiHistoricoMttr,
       custoAcumulado,
       custoSubstituicao,
       recomendacao,

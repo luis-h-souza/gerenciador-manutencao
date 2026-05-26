@@ -80,6 +80,14 @@ const hasOverlap = (r1, r2) => {
   return arr1.some((r) => arr2.includes(r));
 };
 
+const formatMetric = (value, unit, fallback = "Sem histórico") => {
+  if (value === null || value === undefined || value === "") return fallback;
+  const numeric = Number(value);
+  if (Number.isNaN(numeric)) return fallback;
+  if (numeric > 0 && numeric < 1) return `< 1${unit}`;
+  return `${numeric.toFixed(1)}${unit}`;
+};
+
 function Paginacao({ paginaAtual, totalPaginas, onMudar }) {
   if (totalPaginas <= 1) return null;
   const visiveis = new Set(
@@ -177,6 +185,68 @@ function CategoriaAccordion({ categoria, ativos, onEdit, onRemove, onViewDetails
        )}
     </div>
   )
+}
+
+function AtivosGestorPorCategoria({ ativos, isLoading, onEdit, onRemove, onViewDetails, canEdit }) {
+  const categorias = useMemo(() => {
+    const grupos = new Map();
+
+    ativos.forEach((ativo) => {
+      const categoria = ativo.categoria?.trim() || "Sem categoria";
+      if (!grupos.has(categoria)) grupos.set(categoria, []);
+      grupos.get(categoria).push(ativo);
+    });
+
+    return Array.from(grupos.entries())
+      .map(([categoria, itens]) => ({
+        categoria,
+        ativos: itens.sort((a, b) => a.nome.localeCompare(b.nome)),
+      }))
+      .sort((a, b) => a.categoria.localeCompare(b.categoria));
+  }, [ativos]);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-8">
+        <Loader2 size={22} className="animate-spin" style={{ color: "var(--color-brand-500)" }} />
+      </div>
+    );
+  }
+
+  if (categorias.length === 0) {
+    return (
+      <div className="card" style={{ textAlign: "center", color: "var(--color-text-muted)", padding: "2rem", fontSize: "0.875rem" }}>
+        Nenhum ativo encontrado na sua unidade
+      </div>
+    );
+  }
+
+  const totalAtivos = categorias.reduce((acc, grupo) => acc + grupo.ativos.length, 0);
+
+  return (
+    <div className="flex flex-col gap-4 animate-fade-in">
+      <div>
+        <h2 style={{ fontSize: "1.125rem", fontWeight: 700 }}>Ativos por Categoria</h2>
+        <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
+          {totalAtivos} {totalAtivos === 1 ? "ativo cadastrado" : "ativos cadastrados"} na sua loja. Clique em uma categoria para abrir a planilha.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        {categorias.map((grupo) => (
+          <CategoriaAccordion
+            key={grupo.categoria}
+            categoria={grupo.categoria}
+            ativos={grupo.ativos}
+            onEdit={onEdit}
+            onRemove={onRemove}
+            onViewDetails={onViewDetails}
+            canEdit={canEdit}
+          />
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function LojaAccordion({ loja, onEdit, onRemove, onViewDetails, canEdit }) {
@@ -297,6 +367,7 @@ function AtivoModal({ ativo, onClose }) {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["ativos"] });
       qc.invalidateQueries({ queryKey: ["ativos-loja-all"] });
+      qc.invalidateQueries({ queryKey: ["ativos-gestor-categorias"] });
       toast.success(isEdit ? "Ativo atualizado!" : "Ativo cadastrado!");
       onClose();
     },
@@ -465,6 +536,7 @@ function AtivoModal({ ativo, onClose }) {
 }
 
 function DetalhesAtivoModal({ ativo, onClose }) {
+  const qc = useQueryClient();
   const { data: kpis, isLoading: loadingKpis } = useQuery({
     queryKey: ["ativo-confiabilidade", ativo.id],
     queryFn: () => falhaAtivoService.calcularConfiabilidade(ativo.id).then(r => r.data),
@@ -473,6 +545,17 @@ function DetalhesAtivoModal({ ativo, onClose }) {
   const { data: falhasData, isLoading: loadingFalhas } = useQuery({
     queryKey: ["ativo-falhas", ativo.id],
     queryFn: () => falhaAtivoService.listarPorAtivo(ativo.id, { limit: 10 }).then(r => r.data.data || []),
+  });
+
+  const resolverFalha = useMutation({
+    mutationFn: (falhaId) => falhaAtivoService.marcarResolvido(falhaId, {}),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["ativo-confiabilidade", ativo.id] });
+      qc.invalidateQueries({ queryKey: ["ativo-falhas", ativo.id] });
+      qc.invalidateQueries({ queryKey: ["dashboard-buy-vs-maintain"] });
+      toast.success("Falha marcada como resolvida");
+    },
+    onError: (err) => toast.error(err.response?.data?.message || "Erro ao resolver falha"),
   });
 
   return (
@@ -497,11 +580,11 @@ function DetalhesAtivoModal({ ativo, onClose }) {
           <div className="grid gap-4 mb-8" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
             <div className="card" style={{ padding: "16px", borderLeft: "4px solid var(--color-success)" }}>
               <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", fontWeight: 600 }}>MTBF (Média entre falhas)</p>
-              <p style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--color-text-primary)" }}>{kpis.mtbfHoras}h</p>
+              <p style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--color-text-primary)" }}>{formatMetric(kpis.mtbfHoras, "h")}</p>
             </div>
             <div className="card" style={{ padding: "16px", borderLeft: "4px solid var(--color-danger)" }}>
               <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", fontWeight: 600 }}>MTTR (Tempo médio de reparo)</p>
-              <p style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--color-text-primary)" }}>{kpis.mttrHoras}h</p>
+              <p style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--color-text-primary)" }}>{formatMetric(kpis.mttrHoras, "h", kpis.falhasAbertas > 0 ? "Em aberto" : "Sem reparos")}</p>
             </div>
             <div className="card" style={{ padding: "16px", borderLeft: "4px solid var(--color-brand-500)" }}>
               <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", fontWeight: 600 }}>Uptime</p>
@@ -511,6 +594,25 @@ function DetalhesAtivoModal({ ativo, onClose }) {
               <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", fontWeight: 600 }}>Total de Falhas</p>
               <p style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--color-text-primary)" }}>{kpis.totalFalhas}</p>
             </div>
+          </div>
+        )}
+
+        {ativo.observacoes?.trim() && (
+          <div
+            className="card"
+            style={{
+              padding: "16px",
+              marginBottom: "24px",
+              borderLeft: "4px solid var(--color-warning)",
+              background: "rgba(245, 158, 11, 0.08)",
+            }}
+          >
+            <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", fontWeight: 700, textTransform: "uppercase", marginBottom: "6px" }}>
+              Observações importantes
+            </p>
+            <p style={{ fontSize: "0.875rem", color: "var(--color-text-secondary)", lineHeight: 1.55, whiteSpace: "pre-wrap", margin: 0 }}>
+              {ativo.observacoes}
+            </p>
           </div>
         )}
 
@@ -607,7 +709,19 @@ function DetalhesAtivoModal({ ativo, onClose }) {
                 </div>
                 <div>
                   {!f.dataResolucao ? (
-                    <span className="badge badge-danger">Aberta</span>
+                    <div className="flex items-center gap-2">
+                      <span className="badge badge-danger">Aberta</span>
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm"
+                        style={{ padding: "4px 8px", fontSize: "0.7rem" }}
+                        disabled={resolverFalha.isPending}
+                        onClick={() => resolverFalha.mutate(f.id)}
+                      >
+                        {resolverFalha.isPending ? <Loader2 size={12} className="animate-spin" /> : <CheckCircle2 size={12} />}
+                        Resolver
+                      </button>
+                    </div>
                   ) : (
                     <span className="badge badge-success">Resolvida</span>
                   )}
@@ -628,6 +742,7 @@ function DetalhesAtivoModal({ ativo, onClose }) {
 export default function AtivosPage() {
   const { usuario } = useAuth();
   const qc = useQueryClient();
+  const isGestor = usuario?.role === "GESTOR";
   const canEdit = usuario?.role === "GESTOR" || ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR"].includes(usuario?.role);
   
   const hasDrilldown = [
@@ -702,6 +817,12 @@ export default function AtivosPage() {
     placeholderData: (prev) => prev,
   });
 
+  const { data: gestorAtivos = [], isLoading: loadingGestorAtivos } = useQuery({
+    queryKey: ["ativos-gestor-categorias"],
+    queryFn: () => ativosService.listar({ limit: 10000 }).then((r) => r.data?.data || []),
+    enabled: isGestor && etapa === "ativos" && !isSearching,
+  });
+
   const ativos = data?.data ?? [];
   const meta = data?.meta ?? { total: 0 };
   const totalPaginas = Math.ceil(meta.total / LIMIT);
@@ -711,6 +832,7 @@ export default function AtivosPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["ativos"] });
       qc.invalidateQueries({ queryKey: ["ativos-loja-all"] });
+      qc.invalidateQueries({ queryKey: ["ativos-gestor-categorias"] });
       toast.success("Ativo inativado");
     },
     onError: () => toast.error("Erro ao inativar ativo"),
@@ -856,8 +978,20 @@ export default function AtivosPage() {
             </div>
           )}
 
-          {/* Para usuários sem drilldown (TECNICO, LOJA), listagem direta */}
-          {!hasDrilldown && etapa === "ativos" && !isSearching && (
+          {/* Para GESTOR, visão agrupada pelos ativos da própria loja */}
+          {isGestor && etapa === "ativos" && !isSearching && (
+            <AtivosGestorPorCategoria
+              ativos={gestorAtivos}
+              isLoading={loadingGestorAtivos}
+              onEdit={setModal}
+              onRemove={(id) => remover.mutate(id)}
+              onViewDetails={setModalDetalhes}
+              canEdit={canEdit}
+            />
+          )}
+
+          {/* Para usuários sem drilldown e sem visão de gestor, listagem direta */}
+          {!hasDrilldown && !isGestor && etapa === "ativos" && !isSearching && (
             <div className="flex flex-col gap-4 animate-fade-in">
               {loadingAtivos ? (
                 <div className="flex justify-center py-8"><Loader2 size={22} className="animate-spin" style={{ color: "var(--color-brand-500)" }} /></div>

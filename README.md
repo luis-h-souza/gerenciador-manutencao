@@ -268,7 +268,8 @@ O sistema já está operando com os módulos abaixo:
   - abrir chamados da regional
   - ver chamados de uma loja específica
   - abrir o BI regional diretamente na visão de gráficos
-- **Agrupamento Regional Escalável**: Visualizações executivas ("Matriz de Conformidade" e "Inteligência de Ativos Buy vs. Maintain") agrupadas dinamicamente em formato *Accordion* (sanfona) por Regional, otimizando a leitura para gestores de grandes carteiras.
+- **Agrupamento Regional Escalável**: Visualizações executivas ("Matriz de Conformidade" e "Inteligência de Ativos Buy vs. Maintain") agrupadas dinamicamente em formato *Accordion* (sanfona) por Regional, Loja e Categoria, otimizando a leitura para gestores de grandes carteiras.
+- **Confiabilidade de Ativos**: MTBF, MTTR, Uptime e falhas abertas/resolvidas calculados de forma centralizada para detalhes do ativo e Comprar vs. Manter.
 
 ### Controle Financeiro (Chamados)
 
@@ -304,6 +305,7 @@ O sistema já está operando com os módulos abaixo:
 - Gestão de lojas e regionais
 - Gestão de fornecedores
 - Gestão de estoque de peças, entradas, movimentações e saídas
+- Gestão de ativos por categoria, com observações importantes exibidas nos detalhes e ação para resolver falhas abertas
 
 ### Gestão de Tarefas
 
@@ -314,7 +316,7 @@ O sistema já está operando com os módulos abaixo:
 
 ### Documentação complementar
 
-- Guia do usuário: [docs/guia-do-usuario.md](docs/guia-do-usuario.md)
+- Guia do usuário: [docs/guia_do_usuario.md](docs/guia_do_usuario.md)
 
 ---
 
@@ -530,4 +532,3 @@ services:
 docker compose up -d   # subir
 docker compose down    # parar
 ```
-

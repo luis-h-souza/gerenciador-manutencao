@@ -1426,6 +1426,116 @@ paths:
                         items:
                           type: object
 
+  /falhas-ativo/ativo/{ativoId}:
+    get:
+      tags: [Falhas de Ativos]
+      summary: Listar falhas de um ativo
+      parameters:
+        - name: ativoId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de falhas abertas e resolvidas do ativo
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+
+  /falhas-ativo/ativo/{ativoId}/confiabilidade:
+    get:
+      tags: [Falhas de Ativos]
+      summary: Calcular MTBF, MTTR, uptime e falhas do ativo
+      parameters:
+        - name: ativoId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: KPIs de confiabilidade do ativo
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          mtbfHoras:
+                            type: number
+                            nullable: true
+                          mtbfDias:
+                            type: number
+                            nullable: true
+                          mttrHoras:
+                            type: number
+                            nullable: true
+                          uptimePercentual:
+                            type: number
+                          downtimeHoras:
+                            type: number
+                          totalFalhas:
+                            type: integer
+                          falhasResolvidas:
+                            type: integer
+                          falhasAbertas:
+                            type: integer
+
+  /falhas-ativo/{id}/resolver:
+    patch:
+      tags: [Falhas de Ativos]
+      summary: Marcar falha aberta como resolvida
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dataResolucao:
+                  type: string
+                  format: date
+                  description: Quando omitida, o backend usa a data/hora atual.
+      responses:
+        '200':
+          description: Falha marcada como resolvida
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+
   /checklists/equipamentos:
     get:
       tags: [Checklists]

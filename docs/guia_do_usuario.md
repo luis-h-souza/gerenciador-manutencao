@@ -121,6 +121,8 @@ O preenchimento e feito pelo `GESTOR`.
 
 O sistema permite atualizar o checklist da mesma semana, sem duplicar o registro.
 
+Quando um equipamento vinculado a um ativo e marcado como nao operacional, o sistema abre uma falha para esse ativo. Essa falha fica aberta ate ser resolvida manualmente nos detalhes do ativo ou ate o proximo checklist marcar o mesmo ativo como operacional.
+
 ### Consolidado gerencial
 
 Os perfis gerenciais acessam o consolidado por camadas:
@@ -181,6 +183,42 @@ O modulo de Fornecedores centraliza os parceiros de manutencao.
 
 ---
 
+## 8. Ativos e Confiabilidade
+
+O modulo de Ativos organiza os equipamentos cadastrados por loja e permite acompanhar detalhes tecnicos, observacoes importantes e indicadores de confiabilidade.
+
+### Gestores
+
+O `GESTOR` visualiza os ativos da sua propria loja agrupados por categoria. Ao abrir uma categoria, o sistema mostra a planilha com os ativos daquele grupo.
+
+### Perfis gerenciais
+
+Coordenadores, Gerentes, Diretores e Administradores navegam por camadas de gestao, como regional, loja e categoria, conforme seu escopo de acesso.
+
+### Detalhes e KPIs do ativo
+
+Ao abrir os detalhes de um ativo, o usuario visualiza:
+
+- MTBF
+- MTTR
+- Uptime
+- Total de falhas
+- Observacoes importantes, quando cadastradas
+- Historico de falhas
+
+Falhas abertas aparecem com o botao `Resolver`. Ao resolver uma falha, o sistema registra a data de resolucao e recalcula os indicadores do ativo.
+
+### Como interpretar MTBF e MTTR
+
+- `MTBF`: tempo medio entre falhas. So aparece quando existe historico de falhas.
+- `MTTR`: tempo medio de reparo. So e calculado quando existe falha resolvida.
+- Se houver falha aberta sem resolucao, o MTTR aparece como `Em aberto`.
+- Se ainda nao houver falhas resolvidas, o MTTR aparece como `Sem reparos`.
+
+Essas regras evitam interpretar uma falha recem-aberta como reparo de zero hora.
+
+---
+
 ## 9. Painel de Auditoria (Apenas Administradores)
 
 O sistema mantém um registro completo de todas as alterações importantes realizadas pelos usuários para garantir segurança e rastreabilidade.
@@ -215,6 +253,10 @@ Acesse o menu **Admin -> Logs de Auditoria**. Você pode filtrar por:
 ### Ranking de Coordenadores
 
 "O score resume desempenho operacional. Ele melhora com boa cobertura de checklist, menor custo por chamado e maior disponibilidade, e piora com paradas, quebras, tarefas ativas e mau uso."
+
+### Comprar vs Manter
+
+"O sistema cruza custo acumulado, falhas, MTBF, MTTR e uptime para indicar se um ativo deve ser mantido ou avaliado para substituicao. Dentro de cada loja, os ativos sao agrupados por categoria."
 
 ---
 

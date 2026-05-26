@@ -39,15 +39,16 @@ export const faqData = [
 **Critérios analisados:**
 - **Custo acumulado de manutenção:** Total gasto em chamados para aquele ativo
 - **MTBF (tempo entre falhas):** Frequência com que o equipamento quebra
+- **MTTR (tempo médio de reparo):** Tempo médio para resolver falhas já encerradas
 - **Taxa de disponibilidade:** Porcentagem do tempo em que está operacional
 
 **Indicadores de substituição:**
 - Custo acumulado > 60% do valor estimado de um ativo novo
-- MTBF < 30 dias (quebra com muito frequência)
-- Disponibilidade < 70%
+- MTBF < 30 dias com falhas recorrentes
+- Disponibilidade baixa com histórico de falhas
 - Reincidências repetidas no mesmo componente
 
-**Como acessar:** No Dashboard, na seção "Inteligência de Ativos". Os ativos que ultrapassam os limites aparecem destacados em vermelho.`,
+**Como acessar:** No Dashboard, na aba **Comprar vs. Manter**. Os ativos aparecem agrupados por regional, loja e categoria. Ativos que ultrapassam os limites aparecem destacados em vermelho.`,
   },
   {
     id: 'conformidade-operacional',
@@ -94,6 +95,60 @@ export const faqData = [
 **Quem vê o quê:**
 - **GESTOR:** Preenche e visualiza apenas sua loja
 - **COORDENADOR/GERENTE:** Visualiza checklists consolidados de sua regional`,
+  },
+  {
+    id: 'adesao-inadimplencia-checklists',
+    category: 'checklists',
+    title: 'O que são Adesão no Mês e Inadimplência nos Checklists?',
+    description: 'Entenda os indicadores de preenchimento mensal dos checklists.',
+    content: `Os indicadores de **Adesão no Mês** e **Inadimplência** mostram se as lojas estão cumprindo a rotina preventiva de checklists.
+
+**Adesão no Mês**
+
+Mede o percentual de lojas que iniciaram ao menos um checklist preventivo no mês selecionado.
+
+\`Adesão = (Lojas com preenchimento / Total de lojas ativas) × 100\`
+
+**Como interpretar:**
+- Quanto maior a adesão, maior a cobertura preventiva da operação
+- Uma loja conta como aderente quando tem pelo menos um checklist preenchido no mês
+- O indicador cruza as lojas dentro do escopo do usuário, como regionais sob gestão ou lojas da regional selecionada
+
+**Inadimplência Total / Lojas Pendentes**
+
+Mostra quantas lojas estão com **zero checklists preenchidos no mês**.
+
+**Por que isso importa:**
+- Lojas sem checklist deixam de registrar problemas preventivamente
+- A manutenção pode ficar mais reativa, ou seja, só aparece quando já virou chamado ou custo
+- Ao clicar nos cards de preenchidas ou pendentes, o sistema lista as lojas agrupadas por regional
+
+**Como usar:** Priorize as lojas pendentes e cobre o preenchimento dentro do mês para melhorar a visibilidade da operação.`,
+  },
+  {
+    id: 'insights-correlacionados-checklists',
+    category: 'checklists',
+    title: 'O que são Insights Correlacionados nos Checklists?',
+    description: 'Cruzamento entre gasto regional e adesão mensal aos checklists.',
+    content: `Os **Insights Correlacionados** cruzam o volume financeiro com a adesão mensal aos checklists.
+
+**Como funciona:**
+- O sistema compara os gastos do período com a cobertura de checklist das regionais
+- A prioridade aparece onde o gasto é alto e a prevenção está baixa
+- O alerta mais crítico ocorre quando a regional líder em gastos também é a de menor cobertura de checklist
+
+**O que o painel mostra:**
+- Regional com maior gasto no período
+- Percentual de cobertura de checklist dessa regional
+- Quantidade de lojas sem checklist no mês, quando houver
+- Regionais com cobertura abaixo do ideal
+
+**Como interpretar:**
+- Gasto alto + baixa adesão pode indicar manutenção reativa
+- Baixa cobertura reduz a capacidade de antecipar problemas
+- Se não houver alerta relevante, significa que a regional líder em gastos não coincide com a menor cobertura de checklist
+
+**Como agir:** Verifique as lojas sem checklist, cobre preenchimento preventivo e compare se os chamados financeiros estão ligados à falta de acompanhamento operacional.`,
   },
   {
     id: 'gerador-semanal',
@@ -195,6 +250,7 @@ export const faqData = [
 - Na página de **Ativos da Loja**, abra um ativo e veja o histórico de falhas
 - Falhas reincidentes aparecem com ícone de alerta em laranja
 - O Dashboard executa um ranking dos ativos com mais reincidências
+- Falhas abertas podem ser encerradas pelo botão **Resolver** nos detalhes do ativo
 
 **O que fazer com reincidências:**
 - Escalar o chamado para um técnico especializado
@@ -219,6 +275,7 @@ Mede o intervalo médio entre uma falha e a próxima.
 **Interpretação:**
 - MTBF alto = equipamento mais confiável
 - MTBF < 30 dias = equipamento falha com muita frequência → atenção imediata
+- Se o ativo ainda não tem falhas, o sistema mostra **Sem histórico** em vez de uma média artificial
 
 ---
 
@@ -231,6 +288,15 @@ Mede quanto tempo leva, em média, para resolver uma falha após sua detecção.
 **Interpretação:**
 - MTTR baixo = problemas são resolvidos rapidamente
 - MTTR alto = demora excessiva na resolução → rever processos
+- Falhas abertas não contam como reparo de 0 hora
+- Se existe falha aberta sem resolução, o sistema mostra **Em aberto**
+- Se ainda não há falhas resolvidas, o sistema mostra **Sem reparos**
+
+**Como fechar uma falha:**
+- Abra **Ativos da Loja**
+- Clique em **Detalhes e KPIs** do ativo
+- No histórico de falhas, clique em **Resolver** na falha aberta
+- O sistema registra a data de resolução e recalcula MTBF, MTTR e Uptime
 
 ---
 
@@ -267,6 +333,30 @@ Um ativo com 95%+ de disponibilidade está em excelente estado.
 **Chamados sem valor:** Caso o chamado não tenha valor registrado, ele não impacta o cálculo orçamentário. Preencha sempre o campo "Valor" ao finalizar um chamado.
 
 **Dica:** Use a visão **Regional** no Dashboard para comparar o consumo de orçamento entre regiões lado a lado.`,
+  },
+  {
+    id: 'concentracao-fornecedor',
+    category: 'orcamento',
+    title: 'O que é Concentração por Fornecedor?',
+    description: 'Entenda o risco de dependência quando um fornecedor concentra muito do budget.',
+    content: `A **Concentração por Fornecedor** mostra quanto do budget do mês está concentrado em cada empresa fornecedora.
+
+**Como funciona:**
+- O sistema soma os valores dos chamados do período por empresa
+- Calcula a participação de cada fornecedor sobre o total gasto
+- Exibe a distribuição em gráfico de rosca e em lista lateral com percentuais
+- Destaca o fornecedor líder do período
+
+**Limite de alerta:**
+- Quando algum fornecedor passa de **40% do budget**, o painel sinaliza risco de dependência
+- Abaixo desse limite, a distribuição é considerada sem concentração crítica
+
+**Como interpretar:**
+- Um fornecedor acima de 40% pode indicar dependência operacional ou financeira
+- A concentração pode ser normal em meses com um serviço grande, mas deve ser acompanhada
+- Se a mesma empresa aparece frequentemente acima do limite, vale revisar contratos, escopo e alternativas
+
+**Onde encontrar:** No **Controle Financeiro**, na análise gráfica da loja ou no detalhe regional, no bloco **Concentração por Fornecedor**.`,
   },
   {
     id: 'sistema-regionais',

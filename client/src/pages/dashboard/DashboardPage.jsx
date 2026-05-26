@@ -92,6 +92,14 @@ const fmt = (v) =>
     v || 0,
   );
 
+const formatMetric = (value, unit, fallback = "Sem histórico") => {
+  if (value === null || value === undefined || value === "") return fallback;
+  const numeric = Number(value);
+  if (Number.isNaN(numeric)) return fallback;
+  if (numeric > 0 && numeric < 1) return `< 1 ${unit}`;
+  return `${numeric.toFixed(1)} ${unit}`;
+};
+
 const fmtMonthYear = (mes, ano) =>
   new Date(ano, (mes || 1) - 1, 1).toLocaleString("pt-BR", {
     month: "long",
@@ -3622,6 +3630,7 @@ function BuyVsMaintainDashboard() {
 
   const [expandedRegions, setExpandedRegions] = useState({});
   const [expandedLojas, setExpandedLojas] = useState({});
+  const [expandedCategories, setExpandedCategories] = useState({});
 
   const filteredItems = useMemo(() => {
     return (assetsRes || []).filter((asset) => {
@@ -3662,6 +3671,27 @@ function BuyVsMaintainDashboard() {
   const toggleLoja = (regiao, loja) => {
     const key = `${regiao}-${loja}`;
     setExpandedLojas((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const toggleCategory = (regiao, loja, categoria) => {
+    const key = `${regiao}-${loja}-${categoria}`;
+    setExpandedCategories((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const groupAssetsByCategory = (assets) => {
+    const categories = {};
+    assets.forEach((asset) => {
+      const categoria = asset.categoria || asset.tipo || "Sem Categoria";
+      if (!categories[categoria]) categories[categoria] = [];
+      categories[categoria].push(asset);
+    });
+
+    return Object.entries(categories)
+      .map(([categoria, categoryAssets]) => ({
+        categoria,
+        assets: categoryAssets.sort((a, b) => a.nome.localeCompare(b.nome)),
+      }))
+      .sort((a, b) => a.categoria.localeCompare(b.categoria));
   };
 
   if (isLoading) {
@@ -3758,76 +3788,116 @@ function BuyVsMaintainDashboard() {
                             {isLojaOpen ? <ChevronUp size={18} style={{ color: "var(--color-brand-400)" }} /> : <ChevronDown size={18} style={{ color: "var(--color-text-muted)" }} />}
                           </div>
 
-                          {/* Nível 3: Cards dos Ativos */}
+                          {/* Nível 3: Categorias da Loja */}
                           {isLojaOpen && (
                             <div className="animate-fade-in" style={{ padding: "1rem", borderTop: "1px solid var(--color-border)", background: "var(--color-background)" }}>
-                              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                                {assets.map((ativo) => (
-                                  <div
-                                    key={ativo.ativoId}
-                                    className="card flex flex-col justify-between"
-                                    style={{ borderTop: `4px solid ${ativo.recomendacao === "BUY" ? "var(--color-danger)" : "var(--color-success)"}`, gap: "16px", background: "var(--color-surface-800)" }}
-                                  >
-                                    <div>
-                                      <div className="flex items-center justify-between mb-2">
-                                        <span className="badge badge-neutral" style={{ fontSize: "0.6875rem", textTransform: "uppercase" }}>
-                                          {ativo.categoria || "Sem Categoria"}
-                                        </span>
-                                        <span className={`badge ${ativo.recomendacao === "BUY" ? "badge-danger" : "badge-success"}`} style={{ fontWeight: 700 }}>
-                                          {ativo.recomendacao === "BUY" ? "SUBSTITUIR" : "MANTER"}
-                                        </span>
-                                      </div>
-                                      <h4 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--color-text-primary)" }}>{ativo.nome}</h4>
-                                      <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginBottom: "12px" }}>
-                                        Unidade: <strong style={{ color: "var(--color-text-secondary)" }}>{ativo.unidade}</strong> • Patr.: {ativo.patrimonio || "N/A"}
-                                      </p>
-                                      <hr style={{ borderTop: "1px solid var(--color-border)", borderRight: 0, borderBottom: 0, borderLeft: 0, margin: "12px 0" }} />
-                                      <div className="grid grid-cols-2 gap-3 text-sm">
-                                        <div>
-                                          <p style={{ fontSize: "0.6875rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 600 }}>MTBF</p>
-                                          <p style={{ fontWeight: 700, color: "var(--color-text-primary)" }}>{ativo.mtbfDias} dias</p>
+                              <div className="flex flex-col gap-2">
+                                {groupAssetsByCategory(assets).map(({ categoria, assets: categoryAssets }) => {
+                                  const categoryKey = `${regiao}-${store}-${categoria}`;
+                                  const isCategoryOpen = !!expandedCategories[categoryKey];
+                                  const categoryBuyCount = categoryAssets.filter((a) => a.recomendacao === "BUY").length;
+
+                                  return (
+                                    <div key={categoria} style={{ borderRadius: "10px", overflow: "hidden", border: "1px dashed var(--color-border)" }}>
+                                      <div
+                                        className="pointer flex items-center justify-between"
+                                        onClick={() => toggleCategory(regiao, store, categoria)}
+                                        style={{ padding: "0.8rem 1rem", background: isCategoryOpen ? "var(--color-surface-700)" : "var(--color-surface-800)", transition: "background 0.2s" }}
+                                      >
+                                        <div className="flex items-center gap-3">
+                                          <div style={{ width: "34px", height: "34px", borderRadius: "8px", background: "rgba(245, 158, 11, 0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                            <Package size={17} style={{ color: "var(--color-warning)" }} />
+                                          </div>
+                                          <div>
+                                            <h5 style={{ fontWeight: 700, fontSize: "0.875rem", color: "var(--color-text-primary)", margin: 0 }}>{categoria}</h5>
+                                            <p style={{ fontSize: "0.7rem", color: "var(--color-text-muted)", margin: 0, marginTop: "2px" }}>
+                                              {categoryAssets.length} {categoryAssets.length === 1 ? "ativo" : "ativos"} na categoria
+                                            </p>
+                                          </div>
                                         </div>
-                                        <div>
-                                          <p style={{ fontSize: "0.6875rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 600 }}>MTTR</p>
-                                          <p style={{ fontWeight: 700, color: "var(--color-text-primary)" }}>{ativo.mttrHoras} horas</p>
-                                        </div>
-                                        <div>
-                                          <p style={{ fontSize: "0.6875rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 600 }}>Custo Reparo</p>
-                                          <p style={{ fontWeight: 700, color: "var(--color-warning)" }}>{fmt(ativo.custoAcumulado)}</p>
-                                        </div>
-                                        <div>
-                                          <p style={{ fontSize: "0.6875rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 600 }}>Custo Subst.</p>
-                                          <p style={{ fontWeight: 700, color: "var(--color-text-secondary)" }}>{fmt(ativo.custoSubstituicao)}</p>
+                                        <div className="flex items-center gap-3">
+                                          {categoryBuyCount > 0 && (
+                                            <span className="badge badge-danger" style={{ fontSize: "0.68rem" }}>
+                                              {categoryBuyCount} SUBSTITUIR
+                                            </span>
+                                          )}
+                                          {isCategoryOpen ? <ChevronUp size={18} style={{ color: "var(--color-brand-400)" }} /> : <ChevronDown size={18} style={{ color: "var(--color-text-muted)" }} />}
                                         </div>
                                       </div>
+
+                                      {isCategoryOpen && (
+                                        <div className="animate-fade-in" style={{ padding: "1rem", borderTop: "1px dashed var(--color-border)", background: "var(--color-background)" }}>
+                                          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                                            {categoryAssets.map((ativo) => (
+                                              <div
+                                                key={ativo.ativoId}
+                                                className="card flex flex-col justify-between"
+                                                style={{ borderTop: `4px solid ${ativo.recomendacao === "BUY" ? "var(--color-danger)" : "var(--color-success)"}`, gap: "16px", background: "var(--color-surface-800)" }}
+                                              >
+                                                <div>
+                                                  <div className="flex items-center justify-between mb-2">
+                                                    <span className="badge badge-neutral" style={{ fontSize: "0.6875rem", textTransform: "uppercase" }}>
+                                                      {ativo.categoria || "Sem Categoria"}
+                                                    </span>
+                                                    <span className={`badge ${ativo.recomendacao === "BUY" ? "badge-danger" : "badge-success"}`} style={{ fontWeight: 700 }}>
+                                                      {ativo.recomendacao === "BUY" ? "SUBSTITUIR" : "MANTER"}
+                                                    </span>
+                                                  </div>
+                                                  <h4 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--color-text-primary)" }}>{ativo.nome}</h4>
+                                                  <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginBottom: "12px" }}>
+                                                    Unidade: <strong style={{ color: "var(--color-text-secondary)" }}>{ativo.unidade}</strong> • Patr.: {ativo.patrimonio || "N/A"}
+                                                  </p>
+                                                  <hr style={{ borderTop: "1px solid var(--color-border)", borderRight: 0, borderBottom: 0, borderLeft: 0, margin: "12px 0" }} />
+                                                  <div className="grid grid-cols-2 gap-3 text-sm">
+                                                    <div>
+                                                      <p style={{ fontSize: "0.6875rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 600 }}>MTBF</p>
+                                                      <p style={{ fontWeight: 700, color: "var(--color-text-primary)" }}>{formatMetric(ativo.mtbfDias, "dias")}</p>
+                                                    </div>
+                                                    <div>
+                                                      <p style={{ fontSize: "0.6875rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 600 }}>MTTR</p>
+                                                      <p style={{ fontWeight: 700, color: "var(--color-text-primary)" }}>{formatMetric(ativo.mttrHoras, "horas", ativo.falhasAbertas > 0 ? "Em aberto" : "Sem reparos")}</p>
+                                                    </div>
+                                                    <div>
+                                                      <p style={{ fontSize: "0.6875rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 600 }}>Custo Reparo</p>
+                                                      <p style={{ fontWeight: 700, color: "var(--color-warning)" }}>{fmt(ativo.custoAcumulado)}</p>
+                                                    </div>
+                                                    <div>
+                                                      <p style={{ fontSize: "0.6875rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 600 }}>Custo Subst.</p>
+                                                      <p style={{ fontWeight: 700, color: "var(--color-text-secondary)" }}>{fmt(ativo.custoSubstituicao)}</p>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div className="flex gap-2 mt-4 pt-3" style={{ borderTop: "1px solid var(--color-border)" }}>
+                                                  <button
+                                                    type="button"
+                                                    className="btn btn-secondary btn-sm flex-1"
+                                                    style={{ fontSize: "0.75rem", padding: "6px" }}
+                                                    onClick={() => {
+                                                      toast.success(`Chamado CSA aberto para ${ativo.nome}!`);
+                                                    }}
+                                                  >
+                                                    Abrir Chamado
+                                                  </button>
+                                                  <button
+                                                    type="button"
+                                                    className="btn btn-primary btn-sm flex-1"
+                                                    style={{ fontSize: "0.75rem", padding: "6px" }}
+                                                    disabled={ativo.recomendacao !== "BUY"}
+                                                    onClick={() => {
+                                                      toast.success(`Cotação de substituição iniciada para ${ativo.nome}!`);
+                                                    }}
+                                                  >
+                                                    Cotar Troca
+                                                  </button>
+                                                </div>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
                                     </div>
-                                    <div className="flex gap-2 mt-4 pt-3" style={{ borderTop: "1px solid var(--color-border)" }}>
-                                      <button
-                                        type="button"
-                                        className="btn btn-secondary btn-sm flex-1"
-                                        style={{ fontSize: "0.75rem", padding: "6px" }}
-                                        onClick={() => {
-                                          const toast = require("react-hot-toast").default;
-                                          toast.success(`Chamado CSA aberto para ${ativo.nome}!`);
-                                        }}
-                                      >
-                                        Abrir Chamado
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className="btn btn-primary btn-sm flex-1"
-                                        style={{ fontSize: "0.75rem", padding: "6px" }}
-                                        disabled={ativo.recomendacao !== "BUY"}
-                                        onClick={() => {
-                                          const toast = require("react-hot-toast").default;
-                                          toast.success(`Cotação de substituição iniciada para ${ativo.nome}!`);
-                                        }}
-                                      >
-                                        Cotar Troca
-                                      </button>
-                                    </div>
-                                  </div>
-                                ))}
+                                  );
+                                })}
                               </div>
                             </div>
                           )}

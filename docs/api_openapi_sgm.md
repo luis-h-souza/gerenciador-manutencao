@@ -20,13 +20,14 @@
 8. [Endpoints - Estoque](#endpoints---estoque)
 9. [Endpoints - Dashboard](#endpoints---dashboard)
 10. [Endpoints - Checklists](#endpoints---checklists)
-11. [Endpoints - Notificações](#endpoints---notificações)
-12. [Endpoints - Usuários](#endpoints---usuários)
-13. [Endpoints - Lojas](#endpoints---lojas)
-14. [Endpoints - Fornecedores](#endpoints---fornecedores)
-15. [Endpoints - Manutenção](#endpoints---manutencao)
-16. [Códigos de Erro](#códigos-de-erro)
-17. [Exemplos de Uso](#exemplos-de-uso)
+11. [Endpoints - Falhas de Ativos](#endpoints---falhas-de-ativos)
+12. [Endpoints - Notificações](#endpoints---notificações)
+13. [Endpoints - Usuários](#endpoints---usuários)
+14. [Endpoints - Lojas](#endpoints---lojas)
+15. [Endpoints - Fornecedores](#endpoints---fornecedores)
+16. [Endpoints - Manutenção](#endpoints---manutencao)
+17. [Códigos de Erro](#códigos-de-erro)
+18. [Exemplos de Uso](#exemplos-de-uso)
 
 ---
 
@@ -1937,6 +1938,118 @@ Retorna KPI consolidado do mês atual (equipamentos + carrinhos).
       },
       "insight": "Cobertura de checklists aumentou 5%, mas gastos também cresceram 31%. Investigar possível correlação com equipamentos que não foram verificados."
     }
+  }
+}
+```
+
+---
+
+## 🧰 Endpoints - Falhas de Ativos
+
+Endpoints usados pelo histórico de falhas, KPIs de confiabilidade e análise Comprar vs. Manter.
+
+### 1. Listar falhas de um ativo
+
+**GET** `/falhas-ativo/ativo/{ativoId}`
+
+Lista falhas abertas e resolvidas de um ativo respeitando o escopo de acesso do usuário.
+
+#### Permissões
+
+`ADMINISTRADOR`, `DIRETOR`, `GERENTE`, `COORDENADOR`, `GESTOR`
+
+#### Response (200 OK)
+
+```json
+{
+  "success": true,
+  "data": {
+    "data": [
+      {
+        "id": "uuid",
+        "ativoId": "uuid",
+        "dataDeteccao": "2026-05-26T12:00:00.000Z",
+        "dataResolucao": null,
+        "origemResolucao": null,
+        "descricao": "Falha detectada via checklist",
+        "reincidencia": false
+      }
+    ],
+    "meta": {
+      "total": 1,
+      "page": 1,
+      "limit": 20
+    }
+  }
+}
+```
+
+---
+
+### 2. Calcular confiabilidade do ativo
+
+**GET** `/falhas-ativo/ativo/{ativoId}/confiabilidade`
+
+Retorna MTBF, MTTR, Uptime, downtime, falhas abertas e falhas resolvidas.
+
+#### Regras
+
+- `mtbfHoras` e `mtbfDias` retornam `null` quando o ativo ainda não possui falhas.
+- `mttrHoras` retorna `null` quando ainda não existe falha resolvida.
+- Falhas abertas contribuem para downtime e uptime, mas não entram como reparo de zero hora.
+
+#### Response (200 OK)
+
+```json
+{
+  "success": true,
+  "data": {
+    "mtbfHoras": 48.5,
+    "mtbfDias": 2.0,
+    "mttrHoras": null,
+    "uptimePercentual": 94.2,
+    "downtimeHoras": 3.0,
+    "tempoTotalHoras": 51.5,
+    "totalFalhas": 1,
+    "falhasResolvidas": 0,
+    "falhasAbertas": 1,
+    "possuiHistoricoMtbf": true,
+    "possuiHistoricoMttr": false,
+    "ativoCriadoEm": "2026-05-20T08:00:00.000Z"
+  }
+}
+```
+
+---
+
+### 3. Resolver falha
+
+**PATCH** `/falhas-ativo/{id}/resolver`
+
+Marca uma falha aberta como resolvida. Quando `dataResolucao` não é enviada, o backend usa a data/hora atual.
+
+#### Permissões
+
+`ADMINISTRADOR`, `COORDENADOR`, `GESTOR`
+
+#### Request Body
+
+```json
+{
+  "dataResolucao": "2026-05-26"
+}
+```
+
+#### Response (200 OK)
+
+```json
+{
+  "success": true,
+  "message": "Falha marcada como resolvida",
+  "data": {
+    "id": "uuid",
+    "dataResolucao": "2026-05-26T00:00:00.000Z",
+    "origemResolucao": "MANUAL"
   }
 }
 ```

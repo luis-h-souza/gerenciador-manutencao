@@ -115,14 +115,18 @@ A **Fase 5** introduziu análises estratégicas de alto nível para Coordenadore
 ### Inteligência Analítica "Buy vs. Maintain" (Comprar ou Manter)
 O sistema calcula automaticamente se um ativo crítico de infraestrutura (Geradores, Nobreaks, Cabines Primárias ou Ilhas de Congelados) deve ser mantido ou substituído por um novo.
 *   **Indicadores de Confiabilidade**:
-    *   **MTBF (Mean Time Between Failures)**: Intervalo médio de dias entre falhas consecutivas registradas em `RegistroFalhaAtivo`.
-    *   **MTTR (Mean Time To Repair)**: Tempo médio (em horas) para resolução das falhas operacionais.
+    *   **MTBF (Mean Time Between Failures)**: Tempo operacional médio por falha registrada em `RegistroFalhaAtivo`. Quando o ativo ainda nao possui falhas, a API retorna `null` para evitar exibir uma media artificial.
+    *   **MTTR (Mean Time To Repair)**: Tempo medio (em horas) para resolucao das falhas operacionais. So considera falhas com `dataResolucao` preenchida; falhas abertas nao entram como reparo de zero hora.
     *   **Uptime %**: Percentual de tempo em que o equipamento esteve disponível no período selecionado (descontando o tempo de parada registrado em `RegistroFalhaAtivo`).
+    *   **Falhas abertas**: Falhas sem `dataResolucao` continuam contribuindo para downtime e uptime, mas a UI exibe MTTR como "Em aberto" ate a resolucao.
 *   **Fórmulas de Decisão**:
-    *   **Regra Geral**: Se o custo acumulado de manutenções/reparos (`custoAcumulado`) ultrapassar **40%** do valor de aquisição ou substituição (`custoSubstituicao`) do ativo, ou se o Uptime for inferior a **90%**, o sistema recomenda **SUBSTITUIR (BUY)**.
-    *   **Regra de Altíssima Criticidade (Ilhas de Congelados)**: Por ter impacto imediato no faturamento ("sem ilha = sem venda"), a recomendação de substituição é mais severa. O sistema recomenda **SUBSTITUIR (BUY)** se o MTBF for menor que **180 dias** ou houver mais de **2 reincidências** de falhas históricas.
+    *   **Regra Geral**: Se o custo acumulado de manutenções/reparos (`custoAcumulado`) ultrapassar **60%** do valor de aquisição ou substituição (`custoSubstituicao`) do ativo, se o Uptime for inferior a **85%** com pelo menos 3 falhas, ou se o MTBF for inferior a **30 dias** com pelo menos 2 falhas, o sistema recomenda **SUBSTITUIR (BUY)**.
+    *   **Regra de Altíssima Criticidade (Ilhas de Congelados)**: Por ter impacto imediato no faturamento ("sem ilha = sem venda"), a recomendação de substituição é mais severa. O sistema recomenda **SUBSTITUIR (BUY)** se o MTBF for menor que **180 dias** quando houver falhas recorrentes.
 *   **Valores de Substituição Padrão**: Na ausência de valor cadastrado em `dadosTecnicos.custoSubstituicao`, são aplicados os fallbacks automáticos:
     *   Cabine Primária: R$ 120.000,00
     *   Gerador: R$ 80.000,00
     *   Nobreak: R$ 35.000,00
     *   Ilha Self (Ilha de Congelados): R$ 25.000,00
+*   **Implementacao compartilhada**: O calculo de MTBF, MTTR, uptime, falhas abertas e falhas resolvidas fica centralizado em `server/src/utils/confiabilidadeAtivo.js`, usado tanto por `falhaAtivo.service.js` quanto por `dashboard.service.js`.
+*   **Resolucao de falhas**: Falhas podem ser encerradas manualmente via `PATCH /api/v1/falhas-ativo/:id/resolver` ou automaticamente quando um checklist posterior marca o ativo como operacional. A resolucao manual registra `origemResolucao = MANUAL`; a resolucao por checklist registra `origemResolucao = CHECKLIST`.
+*   **UI**: A aba Comprar vs. Manter agrupa os ativos por Regional > Loja > Categoria. O modal de detalhes do ativo exibe observacoes cadastradas abaixo dos KPIs de confiabilidade quando existirem.

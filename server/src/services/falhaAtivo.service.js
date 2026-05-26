@@ -1,5 +1,6 @@
 const prisma = require('../utils/prisma');
 const { getAccessFilter, getUserRegions } = require('../utils/access.utils');
+const { calcularMetricasConfiabilidade } = require('../utils/confiabilidadeAtivo');
 
 const aplicarFiltrosHierarquia = (user, query, where) => {
   const { regiao, unidade } = query;
@@ -92,39 +93,10 @@ const calcularConfiabilidade = async (user, ativoId) => {
     throw new Error('Ativo não encontrado ou acesso negado');
   }
 
-  const agora = new Date();
-  const tempoTotalHoras = Math.max(0, (agora - ativo.criadoEm) / (1000 * 60 * 60));
-
-  let downtimeHoras = 0;
-  let tempoReparoSoma = 0;
-  let falhasResolvidas = 0;
-
-  ativo.falhas.forEach(f => {
-    const fim = f.dataResolucao ? f.dataResolucao : agora;
-    const duracaoFalha = Math.max(0, (fim - f.dataDeteccao) / (1000 * 60 * 60));
-    downtimeHoras += duracaoFalha;
-
-    if (f.dataResolucao) {
-      tempoReparoSoma += duracaoFalha;
-      falhasResolvidas++;
-    }
-  });
-
-  const uptimeHoras = Math.max(0, tempoTotalHoras - downtimeHoras);
-  const totalFalhas = ativo.falhas.length;
-
-  const mtbf = totalFalhas > 0 ? (uptimeHoras / totalFalhas) : uptimeHoras;
-  const mttr = falhasResolvidas > 0 ? (tempoReparoSoma / falhasResolvidas) : 0;
-  
-  const uptimePercentual = tempoTotalHoras > 0 ? (uptimeHoras / tempoTotalHoras) * 100 : 100;
+  const metricas = calcularMetricasConfiabilidade(ativo);
 
   return {
-    mtbfHoras: mtbf.toFixed(1),
-    mttrHoras: mttr.toFixed(1),
-    uptimePercentual: uptimePercentual.toFixed(1),
-    downtimeHoras: downtimeHoras.toFixed(1),
-    totalFalhas,
-    falhasResolvidas,
+    ...metricas,
     ativoCriadoEm: ativo.criadoEm
   };
 };
