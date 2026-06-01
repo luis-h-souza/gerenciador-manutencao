@@ -17,6 +17,8 @@ const CAMPOS_CHAMADO = [
   'valor',
   'status',
   'mauUso',
+  'ativoId',
+  'dataResolucao',
 ];
 
 const normalizarTextoEnum = (valor) => String(valor)
@@ -76,16 +78,18 @@ const montarDadosChamado = (body) => {
   if (data.segmento !== undefined) data.segmento = normalizarSegmento(data.segmento);
   if (data.dataAbertura !== undefined) data.dataAbertura = normalizarData(data.dataAbertura);
   if (data.dataAprovacao !== undefined) data.dataAprovacao = normalizarDataOpcional(data.dataAprovacao);
+  if (data.dataResolucao !== undefined) data.dataResolucao = normalizarDataOpcional(data.dataResolucao);
   if (data.valor !== undefined) data.valor = data.valor === null || data.valor === '' ? null : parseFloat(data.valor);
   if (data.solicitacao !== undefined) data.solicitacao = data.solicitacao || null;
   if (data.numeroOM !== undefined) data.numeroOM = data.numeroOM || null;
   if (data.numeroOrcamento !== undefined) data.numeroOrcamento = data.numeroOrcamento || null;
+  if (data.ativoId !== undefined) data.ativoId = data.ativoId || null;
 
   return data;
 };
 
 const listar = async (user, query) => {
-  const { status, segmento, empresa, mes, ano, page = 1, limit = 20, regiao, unidade } = query;
+  const { status, segmento, empresa, mes, ano, page = 1, limit = 20, regiao, unidade, busca } = query;
   const skip = (parseInt(page) - 1) * parseInt(limit);
   
   const filter = getAccessFilter(user);
@@ -113,6 +117,12 @@ const listar = async (user, query) => {
   if (status) where.status = status;
   if (segmento) where.segmento = segmento;
   if (empresa) where.empresa = { contains: empresa, mode: 'insensitive' };
+  if (busca) {
+    where.OR = [
+      { empresa: { contains: busca, mode: 'insensitive' } },
+      { numeroChamado: { contains: busca, mode: 'insensitive' } },
+    ];
+  }
   
   if (mes && ano) {
     const dataInicio = new Date(parseInt(ano), parseInt(mes) - 1, 1);

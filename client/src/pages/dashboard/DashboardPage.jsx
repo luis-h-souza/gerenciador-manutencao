@@ -28,6 +28,10 @@ import {
 } from "../../services";
 import { useAuth } from "../../contexts/AuthContext";
 import InfoTooltip from "../../components/feedback/InfoTooltip";
+import StatCard from "./components/StatCard";
+import TooltipCustom from "./components/ChartTooltip";
+import MonthFilterBar from "./components/MonthFilterBar";
+import useDashboardFilters, { OPCOES_MES } from "./hooks/useDashboardFilters";
 import {
   ClipboardList,
   DollarSign,
@@ -53,22 +57,7 @@ import {
   Calendar,
 } from "lucide-react";
 
-// ─── Utilitário: gera lista de meses disponíveis (últimos 24 meses) ────────────
-function gerarOpcoesMes() {
-  const hoje = new Date();
-  const opcoes = [];
-  for (let i = 0; i < 24; i++) {
-    const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
-    opcoes.push({
-      value: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`,
-      label: d.toLocaleString("pt-BR", { month: "long", year: "numeric" }),
-      mes: d.getMonth() + 1,
-      ano: d.getFullYear(),
-    });
-  }
-  return opcoes;
-}
-const OPCOES_MES = gerarOpcoesMes();
+
 
 const CORES_SEGMENTO = [
   "#0ea5e9",
@@ -106,131 +95,7 @@ const fmtMonthYear = (mes, ano) =>
     year: "numeric",
   });
 
-function StatCard({ label, value, sub, icon: Icon, accent, trend }) {
-  const trendIcon =
-    trend > 0 ? (
-      <TrendingUp size={13} style={{ color: "var(--color-danger)" }} />
-    ) : trend < 0 ? (
-      <TrendingDown size={13} style={{ color: "var(--color-success)" }} />
-    ) : (
-      <Minus size={13} style={{ color: "var(--color-text-muted)" }} />
-    );
 
-  return (
-    <div className="stat-card" style={{ "--stat-accent": accent }}>
-      <div className="flex items-start justify-between">
-        <div>
-          <p
-            style={{
-              fontSize: "0.75rem",
-              color: "var(--color-text-muted)",
-              fontWeight: 600,
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-            }}
-          >
-            {label}
-          </p>
-          <p
-            style={{
-              fontSize: "1.625rem",
-              fontWeight: 700,
-              color: "var(--color-text-primary)",
-              marginTop: "6px",
-              lineHeight: 1,
-            }}
-          >
-            {value}
-          </p>
-          {sub && (
-            <div className="flex items-center gap-1 mt-2">
-              {trend !== undefined && trendIcon}
-              <p
-                style={{
-                  fontSize: "0.75rem",
-                  color: "var(--color-text-muted)",
-                }}
-              >
-                {sub}
-              </p>
-            </div>
-          )}
-        </div>
-        <div
-          className="flex items-center justify-center w-10 h-10 rounded-xl"
-          style={{
-            background: accent
-              ? "rgba(14, 165, 233, 0.1)"
-              : "var(--color-surface-600)",
-            color: accent || "var(--color-brand-500)",
-          }}
-        >
-          <Icon size={20} />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-const TooltipCustom = ({ active, payload, label }) => {
-  if (!active || !payload?.length) return null;
-  return (
-    <div
-      style={{
-        background: "var(--color-surface-700)",
-        border: "1px solid var(--color-border)",
-        borderRadius: "8px",
-        padding: "10px 14px",
-        fontSize: "0.8125rem",
-        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.3)",
-      }}
-    >
-      <p
-        style={{
-          color: "var(--color-text-secondary)",
-          marginBottom: "4px",
-          fontWeight: 700,
-        }}
-      >
-        {label}
-      </p>
-      {payload.map((p, i) => {
-        const isCurrency =
-          p.name?.toLowerCase().includes("custo") ||
-          p.name?.toLowerCase().includes("valor") ||
-          p.name?.includes("R$") ||
-          p.dataKey === "valor" ||
-          p.dataKey === "total";
-        const isPercent =
-          p.name?.toLowerCase().includes("%") ||
-          p.name?.toLowerCase().includes("acumulada") ||
-          p.dataKey === "acumulado";
-
-        return (
-          <p
-            key={i}
-            style={{
-              color: p.color,
-              fontWeight: 600,
-              display: "flex",
-              justifyContent: "space-between",
-              gap: "16px",
-            }}
-          >
-            <span>{p.name}:</span>
-            <span>
-              {isCurrency
-                ? fmt(p.value)
-                : isPercent
-                  ? `${Number(p.value).toFixed(1)}%`
-                  : p.value}
-            </span>
-          </p>
-        );
-      })}
-    </div>
-  );
-};
 
 function RegionalDrilldown({
   detalhe,
@@ -644,143 +509,7 @@ function RegionalDrilldown({
   );
 }
 
-function MonthFilterBar({
-  filtro,
-  setFiltro,
-  showRegional = false,
-  opcoesRegionais = [],
-  compact = false,
-}) {
-  const hoje = new Date();
-  const mesAtual = hoje.getMonth() + 1;
-  const anoAtual = hoje.getFullYear();
-  const isCurrentMonth = filtro.mes === mesAtual && filtro.ano === anoAtual;
-  const valorSelect = `${filtro.ano}-${String(filtro.mes).padStart(2, "0")}`;
 
-  return (
-    <div
-      className="card"
-      style={{
-        padding: compact ? "12px 16px" : "14px 18px",
-        marginBottom: compact ? "0" : "4px",
-      }}
-    >
-      <div className="flex items-center gap-3 flex-wrap">
-        <div
-          className="flex items-center gap-2"
-          style={{ color: "var(--color-brand-500)" }}
-        >
-          <Calendar size={16} />
-          <span
-            style={{
-              fontSize: "0.78rem",
-              fontWeight: 600,
-              color: "var(--color-text-secondary)",
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-            }}
-          >
-            Filtros
-          </span>
-        </div>
-
-        {/* Filtro Mês */}
-        <div className="flex items-center gap-2">
-          <select
-            id="dashboard-filtro-mes"
-            className="select"
-            style={{ minWidth: "200px" }}
-            value={valorSelect}
-            onChange={(e) => {
-              const opt = OPCOES_MES.find((o) => o.value === e.target.value);
-              if (opt)
-                setFiltro((prev) => ({ ...prev, mes: opt.mes, ano: opt.ano }));
-            }}
-          >
-            {OPCOES_MES.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-                {opt.value ===
-                `${anoAtual}-${String(mesAtual).padStart(2, "00")}`
-                  ? " (atual)"
-                  : ""}
-              </option>
-            ))}
-          </select>
-          {!isCurrentMonth && (
-            <button
-              className="btn btn-ghost btn-sm"
-              onClick={() =>
-                setFiltro((prev) => ({ ...prev, mes: mesAtual, ano: anoAtual }))
-              }
-              title="Voltar ao mês atual"
-              style={{
-                gap: "4px",
-                fontSize: "0.75rem",
-                border: "1px solid var(--color-border)",
-              }}
-            >
-              Mês atual
-            </button>
-          )}
-        </div>
-
-        {/* Filtro Regional (opcional) */}
-        {showRegional && (
-          <div
-            className="flex items-center gap-2"
-            style={{ marginLeft: "8px" }}
-          >
-            <select
-              id="dashboard-filtro-regional"
-              className="select"
-              style={{ minWidth: "200px" }}
-              value={filtro.regiao || ""}
-              onChange={(e) =>
-                setFiltro((prev) => ({ ...prev, regiao: e.target.value }))
-              }
-            >
-              <option value="">Todas as regionais</option>
-              {opcoesRegionais.map((regiao) => (
-                <option key={regiao} value={regiao}>
-                  {regiao}
-                </option>
-              ))}
-            </select>
-            {filtro.regiao && (
-              <button
-                className="btn btn-ghost btn-sm"
-                onClick={() => setFiltro((prev) => ({ ...prev, regiao: "" }))}
-                style={{
-                  fontSize: "0.75rem",
-                  border: "1px solid var(--color-border)",
-                }}
-              >
-                Limpar
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* Badge indicativo */}
-        {!isCurrentMonth && (
-          <span
-            className="badge"
-            style={{
-              background: "rgba(245,158,11,0.15)",
-              color: "var(--color-warning)",
-              border: "1px solid rgba(245,158,11,0.3)",
-              fontSize: "0.7rem",
-              marginLeft: "auto",
-            }}
-          >
-            Histórico de 6 meses não muda com este filtro
-          </span>
-        )}
-      </div>
-    </div>
-  );
-}
 
 function CorporativoDashboard({ filtro, setFiltro }) {
   const { usuario } = useAuth();

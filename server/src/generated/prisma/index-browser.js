@@ -217,6 +217,8 @@ exports.Prisma.ControleChamadoScalarFieldEnum = {
   valor: 'valor',
   status: 'status',
   mauUso: 'mauUso',
+  ativoId: 'ativoId',
+  dataResolucao: 'dataResolucao',
   criadoEm: 'criadoEm',
   atualizadoEm: 'atualizadoEm'
 };
@@ -371,7 +373,8 @@ exports.Prisma.AtivoLojaScalarFieldEnum = {
   ultimaTrocaBateria: 'ultimaTrocaBateria',
   proximaTrocaBateria: 'proximaTrocaBateria',
   intervaloPreventiva: 'intervaloPreventiva',
-  dadosTecnicos: 'dadosTecnicos'
+  dadosTecnicos: 'dadosTecnicos',
+  valorSubstituicao: 'valorSubstituicao'
 };
 
 exports.Prisma.RegistroFalhaAtivoScalarFieldEnum = {
@@ -382,6 +385,7 @@ exports.Prisma.RegistroFalhaAtivoScalarFieldEnum = {
   origemResolucao: 'origemResolucao',
   descricao: 'descricao',
   reincidencia: 'reincidencia',
+  horasParada: 'horasParada',
   chamadoId: 'chamadoId',
   resolvidoPorId: 'resolvidoPorId',
   criadoEm: 'criadoEm'

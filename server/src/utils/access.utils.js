@@ -30,7 +30,9 @@ const getUserRegions = (user) => expandRegionScopes(splitRegions(user?.regiao));
 
 const canAccessRegion = (user, regiao) => {
   if (!regiao) return false;
-  if (['ADMINISTRADOR', 'DIRETOR', 'COORDENADOR'].includes(user?.role)) return true;
+  // ✅ SEGURANÇA: Apenas ADMINISTRADOR e DIRETOR têm acesso irrestrito a regiões.
+  // COORDENADOR precisa passar pela verificação de regiao como qualquer outro role.
+  if (['ADMINISTRADOR', 'DIRETOR'].includes(user?.role)) return true;
   return getUserRegions(user).includes(regiao);
 };
 

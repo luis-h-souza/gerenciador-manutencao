@@ -20,6 +20,7 @@ const CAMPOS_ATIVO = [
   'proximaTrocaBateria',
   'intervaloPreventiva',
   'dadosTecnicos',
+  'valorSubstituicao',
 ];
 
 const montarDadosAtivo = (body) => {
@@ -40,6 +41,9 @@ const montarDadosAtivo = (body) => {
   }
   if (data.intervaloPreventiva !== undefined) {
     data.intervaloPreventiva = data.intervaloPreventiva ? parseInt(data.intervaloPreventiva) : null;
+  }
+  if (data.valorSubstituicao !== undefined) {
+    data.valorSubstituicao = data.valorSubstituicao === null || data.valorSubstituicao === '' ? null : parseFloat(data.valorSubstituicao);
   }
 
   return data;

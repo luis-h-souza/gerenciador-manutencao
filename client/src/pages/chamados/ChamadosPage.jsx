@@ -12,6 +12,7 @@ import {
   Trash2,
   Search,
   MapPin,
+  ChevronLeft,
   ChevronRight,
   BarChart3,
   Building2,
@@ -148,7 +149,10 @@ const PARETO_SEGMENTO_GRUPOS = {
   CIVIL: "Civil",
 };
 const formatarSegmento = (segmento) =>
-  segmento?.split("_").map((word) => word.charAt(0) + word.slice(1).toLowerCase()).join(" ") || "Diversos";
+  segmento
+    ?.split("_")
+    .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+    .join(" ") || "Diversos";
 const agruparSegmentoPareto = (segmento) =>
   PARETO_SEGMENTO_GRUPOS[segmento] || formatarSegmento(segmento);
 
@@ -165,21 +169,52 @@ const TooltipCustom = ({ active, payload, label }) => {
         boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.3)",
       }}
     >
-      <p style={{ color: "var(--color-text-secondary)", marginBottom: "4px", fontWeight: 700 }}>
+      <p
+        style={{
+          color: "var(--color-text-secondary)",
+          marginBottom: "4px",
+          fontWeight: 700,
+        }}
+      >
         {label}
       </p>
       {payload.map((p, i) => {
-        const isCurrency = p.name?.toLowerCase().includes("custo") || p.name?.toLowerCase().includes("valor") || p.name?.includes("R$") || p.dataKey === "valor" || p.dataKey === "total";
-        const isPercent = p.name?.toLowerCase().includes("%") || p.name?.toLowerCase().includes("acumulada") || p.dataKey === "acumulado";
+        const isCurrency =
+          p.name?.toLowerCase().includes("custo") ||
+          p.name?.toLowerCase().includes("valor") ||
+          p.name?.includes("R$") ||
+          p.dataKey === "valor" ||
+          p.dataKey === "total";
+        const isPercent =
+          p.name?.toLowerCase().includes("%") ||
+          p.name?.toLowerCase().includes("acumulada") ||
+          p.dataKey === "acumulado";
 
         // Cores fixas: Azul para custo, Vermelho para acumulado
-        const itemColor = isCurrency ? "var(--color-brand-500)" : isPercent ? "var(--color-danger)" : p.color;
+        const itemColor = isCurrency
+          ? "var(--color-brand-500)"
+          : isPercent
+            ? "var(--color-danger)"
+            : p.color;
 
         return (
-          <p key={i} style={{ color: itemColor, fontWeight: 600, display: 'flex', justifyContent: 'space-between', gap: '16px' }}>
+          <p
+            key={i}
+            style={{
+              color: itemColor,
+              fontWeight: 600,
+              display: "flex",
+              justifyContent: "space-between",
+              gap: "16px",
+            }}
+          >
             <span>{p.name}:</span>
             <span>
-              {isCurrency ? fmt(p.value) : isPercent ? `${Number(p.value).toFixed(1)}%` : p.value}
+              {isCurrency
+                ? fmt(p.value)
+                : isPercent
+                  ? `${Number(p.value).toFixed(1)}%`
+                  : p.value}
             </span>
           </p>
         );
@@ -198,25 +233,25 @@ function ChamadoModal({ chamado, onClose }) {
   } = useForm({
     defaultValues: isEdit
       ? {
-        ...chamado,
-        dataAbertura: chamado.dataAbertura
-          ? format(new Date(chamado.dataAbertura), "yyyy-MM-dd")
-          : "",
-        dataAprovacao: chamado.dataAprovacao
-          ? format(new Date(chamado.dataAprovacao), "yyyy-MM-dd")
-          : "",
-        valor: chamado.valor || "",
-        solicitacao: chamado.solicitacao || "",
-        numeroOM: chamado.numeroOM || "",
-      }
+          ...chamado,
+          dataAbertura: chamado.dataAbertura
+            ? format(new Date(chamado.dataAbertura), "yyyy-MM-dd")
+            : "",
+          dataAprovacao: chamado.dataAprovacao
+            ? format(new Date(chamado.dataAprovacao), "yyyy-MM-dd")
+            : "",
+          valor: chamado.valor || "",
+          solicitacao: chamado.solicitacao || "",
+          numeroOM: chamado.numeroOM || "",
+        }
       : {
-        dataAbertura: format(new Date(), "yyyy-MM-dd"),
-        dataAprovacao: "",
-        status: "AGUARDANDO_APROVACAO",
-        mauUso: false,
-        solicitacao: "",
-        numeroOM: "",
-      },
+          dataAbertura: format(new Date(), "yyyy-MM-dd"),
+          dataAprovacao: "",
+          status: "AGUARDANDO_APROVACAO",
+          mauUso: false,
+          solicitacao: "",
+          numeroOM: "",
+        },
   });
 
   const mutation = useMutation({
@@ -299,7 +334,12 @@ function ChamadoModal({ chamado, onClose }) {
                 <option value="">Selecione...</option>
                 {SEGMENTOS.map((s) => (
                   <option key={s} value={s}>
-                    {s.split('_').map(word => word.charAt(0) + word.slice(1).toLowerCase()).join(' ')}
+                    {s
+                      .split("_")
+                      .map(
+                        (word) => word.charAt(0) + word.slice(1).toLowerCase(),
+                      )
+                      .join(" ")}
                   </option>
                 ))}
               </select>
@@ -521,7 +561,11 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
             }}
           >
             Referente a{" "}
-            <strong style={{ color: "var(--color-brand-400)", fontSize: "0.875rem" }}>{detalhe.financeiro?.totalChamados} chamados</strong>{" "}
+            <strong
+              style={{ color: "var(--color-brand-400)", fontSize: "0.875rem" }}
+            >
+              {detalhe.financeiro?.totalChamados} chamados
+            </strong>{" "}
             abertos.
           </p>
         </div>
@@ -534,9 +578,7 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
           }}
         >
           <div className="flex items-center gap-3 mb-4">
-            <div
-              className="flex items-center justify-center w-10 h-10 rounded-lg bg-red-100 text-red-600"
-            >
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-red-100 text-red-600">
               <AlertTriangle size={20} />
             </div>
             <h3
@@ -579,13 +621,24 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
             }}
           >
             Prejuízo estimado:{" "}
-            <strong style={{ color: "var(--color-danger)", fontSize: "0.875rem", fontWeight: 700 }}>{fmt(detalhe.financeiro?.mauUso?.valor)}</strong>
+            <strong
+              style={{
+                color: "var(--color-danger)",
+                fontSize: "0.875rem",
+                fontWeight: 700,
+              }}
+            >
+              {fmt(detalhe.financeiro?.mauUso?.valor)}
+            </strong>
           </p>
         </div>
       </div>
 
       <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', height: '420px' }}>
+        <div
+          className="card"
+          style={{ display: "flex", flexDirection: "column", height: "420px" }}
+        >
           <h3
             className="flex items-center gap-2 mb-4"
             style={{ fontSize: "0.875rem", fontWeight: 600 }}
@@ -603,11 +656,7 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
                   tick={{ fontSize: 11 }}
                 />
                 <Tooltip content={<TooltipCustom />} />
-                <Bar
-                  dataKey="valor"
-                  radius={[0, 4, 4, 0]}
-                  name="Valor"
-                >
+                <Bar dataKey="valor" radius={[0, 4, 4, 0]} name="Valor">
                   {detalhe.segmentos?.map((_, i) => (
                     <Cell key={i} fill={CORES[i % CORES.length]} />
                   ))}
@@ -617,33 +666,56 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
           </div>
         </div>
 
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', height: '420px' }}>
+        <div
+          className="card"
+          style={{ display: "flex", flexDirection: "column", height: "420px" }}
+        >
           <div className="flex flex-col gap-1 mb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Building2 size={16} style={{ color: "var(--color-brand-500)" }} />
-                <h3 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+                <Building2
+                  size={16}
+                  style={{ color: "var(--color-brand-500)" }}
+                />
+                <h3
+                  style={{
+                    fontSize: "0.875rem",
+                    fontWeight: 700,
+                    color: "var(--color-text-primary)",
+                  }}
+                >
                   Concentração por Fornecedor (Risco)
                 </h3>
-                <InfoTooltip 
+                <InfoTooltip
                   title="Concentração de Budget"
-                  text="Mostra quanto do budget da regional está concentrado em cada fornecedor. Se algum passar de 40%, o painel sinaliza risco de dependência." 
-                  balloonStyle={{ left: '70%', transform: 'translateX(-70%)', bottom: 'calc(100% + 8px)', top: 'auto' }}
+                  text="Mostra quanto do budget da regional está concentrado em cada fornecedor. Se algum passar de 40%, o painel sinaliza risco de dependência."
+                  balloonStyle={{
+                    left: "70%",
+                    transform: "translateX(-70%)",
+                    bottom: "calc(100% + 8px)",
+                    top: "auto",
+                  }}
                 />
               </div>
             </div>
-            <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
+            <p
+              style={{
+                fontSize: "0.8125rem",
+                color: "var(--color-text-muted)",
+              }}
+            >
               Share do budget mensal por empresa de manutenção.
             </p>
           </div>
 
           {(() => {
             const totalGasto = detalhe.financeiro?.totalGasto || 1;
-            const fornecedoresComShare = detalhe.empresas?.map(item => ({
-              ...item,
-              share: (item.valor / totalGasto) * 100
-            })) || [];
-            const criticos = fornecedoresComShare.filter(f => f.share > 40);
+            const fornecedoresComShare =
+              detalhe.empresas?.map((item) => ({
+                ...item,
+                share: (item.valor / totalGasto) * 100,
+              })) || [];
+            const criticos = fornecedoresComShare.filter((f) => f.share > 40);
             const top1 = fornecedoresComShare[0];
 
             return (
@@ -653,23 +725,43 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
                   style={{
                     padding: "10px 12px",
                     borderRadius: "10px",
-                    background: criticos.length > 0 ? "rgba(239,68,68,0.08)" : "rgba(16,185,129,0.08)",
+                    background:
+                      criticos.length > 0
+                        ? "rgba(239,68,68,0.08)"
+                        : "rgba(16,185,129,0.08)",
                     border: `1px solid ${criticos.length > 0 ? "rgba(239,68,68,0.22)" : "rgba(16,185,129,0.22)"}`,
                   }}
                 >
                   <div className="flex items-center gap-2">
                     <AlertTriangle
                       size={16}
-                      style={{ color: criticos.length > 0 ? "var(--color-danger)" : "var(--color-success)" }}
+                      style={{
+                        color:
+                          criticos.length > 0
+                            ? "var(--color-danger)"
+                            : "var(--color-success)",
+                      }}
                     />
-                    <span style={{ fontSize: "0.8125rem", color: "var(--color-text-secondary)" }}>
+                    <span
+                      style={{
+                        fontSize: "0.8125rem",
+                        color: "var(--color-text-secondary)",
+                      }}
+                    >
                       {criticos.length > 0
                         ? `Alerta: ${criticos.length} fornecedor(es) acima de 40% do budget.`
                         : "Distribuição sem concentração crítica acima de 40%."}
                     </span>
                   </div>
                   {top1 && (
-                    <span className={criticos.length > 0 ? "badge badge-danger" : "badge badge-success"} style={{ fontSize: "0.75rem" }}>
+                    <span
+                      className={
+                        criticos.length > 0
+                          ? "badge badge-danger"
+                          : "badge badge-success"
+                      }
+                      style={{ fontSize: "0.75rem" }}
+                    >
                       Top 1: {top1.empresa} • {top1.share.toFixed(1)}%
                     </span>
                   )}
@@ -691,23 +783,31 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
                         style={{
                           padding: "10px 12px",
                           borderRadius: "10px",
-                          background: isCritico ? "rgba(239,68,68,0.05)" : "var(--color-surface-700)",
-                          border: isCritico ? "1px solid rgba(239,68,68,0.2)" : "1px solid var(--color-border)",
-                          position: 'relative',
-                          overflow: 'hidden',
-                          flexShrink: 0
+                          background: isCritico
+                            ? "rgba(239,68,68,0.05)"
+                            : "var(--color-surface-700)",
+                          border: isCritico
+                            ? "1px solid rgba(239,68,68,0.2)"
+                            : "1px solid var(--color-border)",
+                          position: "relative",
+                          overflow: "hidden",
+                          flexShrink: 0,
                         }}
                       >
                         {/* Barra de Progresso no Fundo */}
-                        <div style={{
-                          position: 'absolute',
-                          left: 0,
-                          top: 0,
-                          bottom: 0,
-                          width: `${item.share}%`,
-                          background: isCritico ? 'rgba(239, 68, 68, 0.15)' : 'rgba(14, 165, 233, 0.08)',
-                          transition: 'width 0.5s ease-out'
-                        }} />
+                        <div
+                          style={{
+                            position: "absolute",
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            width: `${item.share}%`,
+                            background: isCritico
+                              ? "rgba(239, 68, 68, 0.15)"
+                              : "rgba(14, 165, 233, 0.08)",
+                            transition: "width 0.5s ease-out",
+                          }}
+                        />
 
                         <div className="flex items-center justify-between gap-3 relative z-10">
                           <div className="flex flex-col min-w-0">
@@ -724,30 +824,63 @@ function CorporativoRegiaoDetalhe({ regiao, mes, ano, onBack }) {
                             >
                               {item.empresa}
                             </span>
-                            <span style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>
+                            <span
+                              style={{
+                                fontSize: "0.65rem",
+                                color: "var(--color-text-muted)",
+                              }}
+                            >
                               {fmt(item.valor)}
                             </span>
                           </div>
 
                           <div className="flex flex-col items-end shrink-0">
                             <div className="flex items-center gap-1">
-                              {isCritico && <AlertTriangle size={10} style={{ color: 'var(--color-danger)' }} />}
-                              <span style={{
-                                fontSize: "0.875rem",
-                                fontWeight: 800,
-                                color: isCritico ? 'var(--color-danger)' : 'var(--color-brand-400)'
-                              }}>
+                              {isCritico && (
+                                <AlertTriangle
+                                  size={10}
+                                  style={{ color: "var(--color-danger)" }}
+                                />
+                              )}
+                              <span
+                                style={{
+                                  fontSize: "0.875rem",
+                                  fontWeight: 800,
+                                  color: isCritico
+                                    ? "var(--color-danger)"
+                                    : "var(--color-brand-400)",
+                                }}
+                              >
                                 {item.share.toFixed(1)}%
                               </span>
                             </div>
-                            {isCritico && <span style={{ fontSize: '0.55rem', color: 'var(--color-danger)', fontWeight: 700, textTransform: 'uppercase' }}>Crítico</span>}
+                            {isCritico && (
+                              <span
+                                style={{
+                                  fontSize: "0.55rem",
+                                  color: "var(--color-danger)",
+                                  fontWeight: 700,
+                                  textTransform: "uppercase",
+                                }}
+                              >
+                                Crítico
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
                     );
                   })}
                 </div>
-                <p style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginTop: '12px', borderTop: '1px solid var(--color-border)', paddingTop: '8px' }}>
+                <p
+                  style={{
+                    fontSize: "0.65rem",
+                    color: "var(--color-text-muted)",
+                    marginTop: "12px",
+                    borderTop: "1px solid var(--color-border)",
+                    paddingTop: "8px",
+                  }}
+                >
                   * Alertas para fornecedores com mais de 40% de participação.
                 </p>
               </>
@@ -807,7 +940,6 @@ function PainelExecutivo({ mes, ano }) {
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in mb-8">
-
       {/* Cards KPI */}
       <div
         className="grid gap-4"
@@ -948,7 +1080,6 @@ function PainelExecutivo({ mes, ano }) {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-
         {/* Top 5 Lojas */}
         <div className="card p-6">
           <div className="flex items-center gap-2 mb-4">
@@ -1011,10 +1142,15 @@ function PainelExecutivo({ mes, ano }) {
                 >
                   Concentração por Fornecedor
                 </h3>
-                <InfoTooltip 
+                <InfoTooltip
                   title="Concentração de Budget"
-                  text="Mostra quanto do budget do mês está concentrado em cada fornecedor. Se algum passar de 40%, o painel sinaliza risco de dependência." 
-                  balloonStyle={{ left: '80%', transform: 'translateX(-80%)', bottom: 'calc(100% + 8px)', top: 'auto' }}
+                  text="Mostra quanto do budget do mês está concentrado em cada fornecedor. Se algum passar de 40%, o painel sinaliza risco de dependência."
+                  balloonStyle={{
+                    left: "80%",
+                    transform: "translateX(-80%)",
+                    bottom: "calc(100% + 8px)",
+                    top: "auto",
+                  }}
                 />
               </div>
               <p
@@ -1037,10 +1173,11 @@ function PainelExecutivo({ mes, ano }) {
                 fornecedoresCriticos.length > 0
                   ? "rgba(239,68,68,0.08)"
                   : "rgba(16,185,129,0.08)",
-              border: `1px solid ${fornecedoresCriticos.length > 0
-                ? "rgba(239,68,68,0.22)"
-                : "rgba(16,185,129,0.22)"
-                }`,
+              border: `1px solid ${
+                fornecedoresCriticos.length > 0
+                  ? "rgba(239,68,68,0.22)"
+                  : "rgba(16,185,129,0.22)"
+              }`,
             }}
           >
             <div className="flex items-center gap-2">
@@ -1190,10 +1327,15 @@ function PainelExecutivo({ mes, ano }) {
               >
                 {paretoTitle}
               </h3>
-              <InfoTooltip 
+              <InfoTooltip
                 title="Análise de Pareto (ABC)"
-                text="As barras mostram os maiores custos e a linha mostra a porcentagem acumulada. Use para ver quais poucos itens concentram a maior parte do gasto." 
-                balloonStyle={{ left: '50%', transform: 'translateX(-50%)', bottom: 'calc(100% + 8px)', top: 'auto' }}
+                text="As barras mostram os maiores custos e a linha mostra a porcentagem acumulada. Use para ver quais poucos itens concentram a maior parte do gasto."
+                balloonStyle={{
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  bottom: "calc(100% + 8px)",
+                  top: "auto",
+                }}
               />
             </div>
           </div>
@@ -1201,7 +1343,12 @@ function PainelExecutivo({ mes, ano }) {
             value={paretoTipo}
             onChange={(e) => setParetoTipo(e.target.value)}
             className="select"
-            style={{ width: 'auto', height: '32px', padding: '0 10px', fontSize: '0.75rem' }}
+            style={{
+              width: "auto",
+              height: "32px",
+              padding: "0 10px",
+              fontSize: "0.75rem",
+            }}
           >
             <option value="segmentos">Por Segmentos</option>
             <option value="empresas">Por Empresas</option>
@@ -1371,33 +1518,53 @@ function AnaliseLojaHistorico({ regiao, unidade, height = 240 }) {
   const { data: historico, isLoading } = useQuery({
     queryKey: ["historico-mensal-loja", regiao, unidade],
     queryFn: () =>
-      dashboardService
-        .historicoMensal({ regiao, unidade })
-        .then((r) => r.data),
+      dashboardService.historicoMensal({ regiao, unidade }).then((r) => r.data),
     enabled: !!unidade,
   });
 
   if (isLoading)
     return (
       <div className="card p-6">
-        <div className="skeleton" style={{ height: `${height + 20}px`, borderRadius: "8px" }} />
+        <div
+          className="skeleton"
+          style={{ height: `${height + 20}px`, borderRadius: "8px" }}
+        />
       </div>
     );
   if (!historico?.length) return null;
 
   return (
-    <div className="card p-6" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <div
+      className="card p-6"
+      style={{ height: "100%", display: "flex", flexDirection: "column" }}
+    >
       <div className="flex items-center gap-2 mb-4">
         <TrendingUp size={18} style={{ color: "var(--color-success)" }} />
-        <h3 style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text-primary)" }}>
+        <h3
+          style={{
+            fontSize: "0.875rem",
+            fontWeight: 600,
+            color: "var(--color-text-primary)",
+          }}
+        >
           Evolução Mensal de Gastos
         </h3>
       </div>
       <div style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height={height}>
-          <ComposedChart data={historico} margin={{ top: 10, right: 20, bottom: 0, left: 10 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
-            <XAxis dataKey="mes" tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} />
+          <ComposedChart
+            data={historico}
+            margin={{ top: 10, right: 20, bottom: 0, left: 10 }}
+          >
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+              stroke="var(--color-border)"
+            />
+            <XAxis
+              dataKey="mes"
+              tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
+            />
             <YAxis
               tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
               tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
@@ -1406,20 +1573,104 @@ function AnaliseLojaHistorico({ regiao, unidade, height = 240 }) {
               content={({ active, payload, label }) => {
                 if (!active || !payload?.length) return null;
                 return (
-                  <div style={{ background: "var(--color-surface-700)", border: "1px solid var(--color-border)", borderRadius: "8px", padding: "10px 14px", fontSize: "0.8125rem" }}>
-                    <p style={{ color: "var(--color-text-secondary)", marginBottom: "4px", fontWeight: 600 }}>{label}</p>
+                  <div
+                    style={{
+                      background: "var(--color-surface-700)",
+                      border: "1px solid var(--color-border)",
+                      borderRadius: "8px",
+                      padding: "10px 14px",
+                      fontSize: "0.8125rem",
+                    }}
+                  >
+                    <p
+                      style={{
+                        color: "var(--color-text-secondary)",
+                        marginBottom: "4px",
+                        fontWeight: 600,
+                      }}
+                    >
+                      {label}
+                    </p>
                     {payload.map((p, i) => (
-                      <p key={i} style={{ color: p.color }}>{p.name}: {p.name === "Chamados" ? p.value : fmt(p.value)}</p>
+                      <p key={i} style={{ color: p.color }}>
+                        {p.name}:{" "}
+                        {p.name === "Chamados" ? p.value : fmt(p.value)}
+                      </p>
                     ))}
                   </div>
                 );
               }}
             />
-            <Bar dataKey="valor" name="Gasto" fill="var(--color-brand-500)" radius={[4, 4, 0, 0]} />
-            <Line type="monotone" dataKey="quantidade" name="Chamados" stroke="var(--color-warning)" strokeWidth={2} dot={{ r: 3 }} yAxisId={0} />
+            <Bar
+              dataKey="valor"
+              name="Gasto"
+              fill="var(--color-brand-500)"
+              radius={[4, 4, 0, 0]}
+            />
+            <Line
+              type="monotone"
+              dataKey="quantidade"
+              name="Chamados"
+              stroke="var(--color-warning)"
+              strokeWidth={2}
+              dot={{ r: 3 }}
+              yAxisId={0}
+            />
           </ComposedChart>
         </ResponsiveContainer>
       </div>
+    </div>
+  );
+}
+
+function Paginacao({ paginaAtual, totalPaginas, onMudar }) {
+  if (totalPaginas <= 1) return null;
+  const visiveis = new Set(
+    [1, totalPaginas, paginaAtual, paginaAtual - 1, paginaAtual + 1].filter(
+      (p) => p >= 1 && p <= totalPaginas,
+    ),
+  );
+  const lista = [...visiveis].sort((a, b) => a - b);
+
+  return (
+    <div className="flex items-center justify-center gap-1 mt-4">
+      <button
+        className="btn btn-ghost btn-sm"
+        style={{ padding: "4px 8px" }}
+        disabled={paginaAtual === 1}
+        onClick={() => onMudar(paginaAtual - 1)}
+      >
+        <ChevronLeft size={16} />
+      </button>
+      {lista.map((p, i) => {
+        const prev = lista[i - 1];
+        return (
+          <span key={p} className="flex items-center gap-1">
+            {prev && p - prev > 1 && (
+              <span
+                style={{ color: "var(--color-text-muted)", padding: "0 2px" }}
+              >
+                ...
+              </span>
+            )}
+            <button
+              className={`btn btn-sm ${paginaAtual === p ? "btn-primary" : "btn-ghost"}`}
+              style={{ minWidth: "32px", padding: "4px 8px" }}
+              onClick={() => onMudar(p)}
+            >
+              {p}
+            </button>
+          </span>
+        );
+      })}
+      <button
+        className="btn btn-ghost btn-sm"
+        style={{ padding: "4px 8px" }}
+        disabled={paginaAtual === totalPaginas}
+        onClick={() => onMudar(paginaAtual + 1)}
+      >
+        <ChevronRight size={16} />
+      </button>
     </div>
   );
 }
@@ -1476,6 +1727,11 @@ export default function ChamadosPage() {
   const [visualizandoAnalise, setVisualizandoAnalise] = useState(false);
   const [paretoTipo, setParetoTipo] = useState("segmentos"); // 'segmentos' ou 'empresas'
   const [paretoHelpOpen, setParetoHelpOpen] = useState(false);
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    setPage(1);
+  }, [filtros, busca, periodo, regionalSelecionada, lojaSelecionada]);
 
   useEffect(() => {
     if (!hasDrilldown) return;
@@ -1497,9 +1753,9 @@ export default function ChamadosPage() {
   const splitRegions = (r) =>
     r
       ? r
-        .split(",")
-        .map((s) => s.trim().toUpperCase())
-        .filter(Boolean)
+          .split(",")
+          .map((s) => s.trim().toUpperCase())
+          .filter(Boolean)
       : [];
   const hasOverlap = (r1, r2) => {
     const arr1 = splitRegions(r1);
@@ -1532,12 +1788,12 @@ export default function ChamadosPage() {
   const coordenadoresFiltrados = (() => {
     if (!coordenadoresData) return [];
     // Filtro estrito: Apenas coordenadores e remove o próprio usuário caso apareça
-    let base = coordenadoresData.filter(u => u.role === "COORDENADOR" && u.id !== usuario?.id);
+    let base = coordenadoresData.filter(
+      (u) => u.role === "COORDENADOR" && u.id !== usuario?.id,
+    );
 
     if (usuario?.role === "GERENTE")
-      return base.filter((c) =>
-        hasOverlap(c.regiao, usuario.regiao),
-      );
+      return base.filter((c) => hasOverlap(c.regiao, usuario.regiao));
     if (gerenteSelecionado)
       return base.filter((c) =>
         hasOverlap(c.regiao, gerenteSelecionado.regiao),
@@ -1572,6 +1828,9 @@ export default function ChamadosPage() {
       mes,
       regionalSelecionada,
       lojaSelecionada?.nome,
+      page,
+      busca,
+      visualizandoAnalise,
     ],
     queryFn: () =>
       chamadosService
@@ -1582,7 +1841,9 @@ export default function ChamadosPage() {
           regiao:
             hasDrilldown && lojaSelecionada ? undefined : regionalSelecionada, // Se tem loja, busca direto pela loja
           unidade: lojaSelecionada?.nome,
-          limit: 100,
+          page: visualizandoAnalise ? 1 : page,
+          busca: visualizandoAnalise ? undefined : busca,
+          limit: visualizandoAnalise ? 10000 : 20,
         })
         .then((r) => r.data),
     enabled: etapa === "chamados",
@@ -1597,12 +1858,7 @@ export default function ChamadosPage() {
     onError: () => toast.error("Erro ao remover"),
   });
 
-  const chamados = (data?.data || []).filter(
-    (c) =>
-      busca === "" ||
-      c.empresa?.toLowerCase().includes(busca.toLowerCase()) ||
-      c.numeroChamado?.includes(busca),
-  );
+  const chamados = data?.data || [];
 
   const totalFiltrado = chamados.reduce(
     (s, c) => s + parseFloat(c.valor || 0),
@@ -1617,7 +1873,7 @@ export default function ChamadosPage() {
       acc[seg].valor += parseFloat(c.valor || 0);
       acc[seg].count += 1;
       return acc;
-    }, {})
+    }, {}),
   ).sort((a, b) => b.valor - a.valor);
 
   const chamadosPorEmpresa = Object.values(
@@ -1626,8 +1882,10 @@ export default function ChamadosPage() {
       if (!acc[emp]) acc[emp] = { empresa: emp, valor: 0 };
       acc[emp].valor += parseFloat(c.valor || 0);
       return acc;
-    }, {})
-  ).sort((a, b) => b.valor - a.valor).slice(0, 10);
+    }, {}),
+  )
+    .sort((a, b) => b.valor - a.valor)
+    .slice(0, 10);
 
   let acumuladoPareto = 0;
   const chamadosParetoSegmentos = chamadosPorSegmento
@@ -1637,7 +1895,10 @@ export default function ChamadosPage() {
       return {
         label: s.segmento,
         valor: s.valor,
-        acumulado: totalFiltrado > 0 ? Math.min((acumuladoPareto / totalFiltrado) * 100, 100) : 0,
+        acumulado:
+          totalFiltrado > 0
+            ? Math.min((acumuladoPareto / totalFiltrado) * 100, 100)
+            : 0,
       };
     });
 
@@ -1649,11 +1910,17 @@ export default function ChamadosPage() {
       return {
         label: e.empresa,
         valor: e.valor,
-        acumulado: totalFiltrado > 0 ? Math.min((acumuladoParetoEmp / totalFiltrado) * 100, 100) : 0,
+        acumulado:
+          totalFiltrado > 0
+            ? Math.min((acumuladoParetoEmp / totalFiltrado) * 100, 100)
+            : 0,
       };
     });
 
-  const paretoData = paretoTipo === "segmentos" ? chamadosParetoSegmentos : chamadosParetoEmpresas;
+  const paretoData =
+    paretoTipo === "segmentos"
+      ? chamadosParetoSegmentos
+      : chamadosParetoEmpresas;
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in pb-10">
@@ -1670,7 +1937,13 @@ export default function ChamadosPage() {
             >
               Controle Financeiro
             </h1>
-            <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", marginTop: "4px" }}>
+            <p
+              style={{
+                fontSize: "0.875rem",
+                color: "var(--color-text-muted)",
+                marginTop: "4px",
+              }}
+            >
               Gerenciamento de gastos e chamados por loja
             </p>
           </div>
@@ -1678,22 +1951,51 @@ export default function ChamadosPage() {
             <div className="relative">
               <select
                 className="select"
-                style={{ minWidth: '150px' }}
+                style={{ minWidth: "150px" }}
                 value={parseInt(mes)}
-                onChange={(e) => setPeriodo(`${ano}-${String(e.target.value).padStart(2, '0')}`)}
+                onChange={(e) =>
+                  setPeriodo(
+                    `${ano}-${String(e.target.value).padStart(2, "0")}`,
+                  )
+                }
               >
-                {["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"].map((m, i) => (
-                  <option key={i + 1} value={i + 1}>{m}</option>
+                {[
+                  "Janeiro",
+                  "Fevereiro",
+                  "Março",
+                  "Abril",
+                  "Maio",
+                  "Junho",
+                  "Julho",
+                  "Agosto",
+                  "Setembro",
+                  "Outubro",
+                  "Novembro",
+                  "Dezembro",
+                ].map((m, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    {m}
+                  </option>
                 ))}
               </select>
             </div>
-            <span style={{ color: "var(--color-border)", fontSize: "1.2rem", lineHeight: 1 }}>|</span>
+            <span
+              style={{
+                color: "var(--color-border)",
+                fontSize: "1.2rem",
+                lineHeight: 1,
+              }}
+            >
+              |
+            </span>
             <input
               type="number"
               className="input"
-              style={{ width: '100px' }}
+              style={{ width: "100px" }}
               value={parseInt(ano)}
-              onChange={(e) => setPeriodo(`${e.target.value}-${String(mes).padStart(2, '0')}`)}
+              onChange={(e) =>
+                setPeriodo(`${e.target.value}-${String(mes).padStart(2, "0")}`)
+              }
               placeholder="Ano"
             />
           </div>
@@ -1744,7 +2046,7 @@ export default function ChamadosPage() {
               }}
             >
               {gerentesData
-                .filter(u => u.role === "GERENTE")
+                .filter((u) => u.role === "GERENTE")
                 .map((gerente) => (
                   <div
                     key={gerente.id}
@@ -1933,17 +2235,17 @@ export default function ChamadosPage() {
             {["ADMINISTRADOR", "DIRETOR", "GERENTE"].includes(
               usuario?.role,
             ) && (
-                <button
-                  className="btn btn-ghost btn-sm"
-                  onClick={() => {
-                    setEtapa("coordenadores");
-                    setCoordenadorSelecionado(null);
-                  }}
-                  style={{ padding: "8px" }}
-                >
-                  <ChevronUp className="rotate-270" size={18} />
-                </button>
-              )}
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={() => {
+                  setEtapa("coordenadores");
+                  setCoordenadorSelecionado(null);
+                }}
+                style={{ padding: "8px" }}
+              >
+                <ChevronUp className="rotate-270" size={18} />
+              </button>
+            )}
             <h2
               style={{
                 fontSize: "1.25rem",
@@ -2132,7 +2434,11 @@ export default function ChamadosPage() {
                     background: "var(--color-surface-700)",
                   }}
                 >
-                  <BarChart3 size={16} style={{ color: "var(--color-brand-500)" }} /> Análise Gráfica
+                  <BarChart3
+                    size={16}
+                    style={{ color: "var(--color-brand-500)" }}
+                  />{" "}
+                  Análise Gráfica
                 </button>
               )}
             </div>
@@ -2141,16 +2447,16 @@ export default function ChamadosPage() {
           {/* ——— Barra de Ferramentas (Filtros e Ações) ——— */}
           <div
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '20px',
-              flexWrap: 'wrap',
-              padding: '16px 20px',
-              background: 'var(--color-surface-800)',
-              border: '1px solid var(--color-border)',
-              borderRadius: '12px',
-              marginBottom: '4px'
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "20px",
+              flexWrap: "wrap",
+              padding: "16px 20px",
+              background: "var(--color-surface-800)",
+              border: "1px solid var(--color-border)",
+              borderRadius: "12px",
+              marginBottom: "4px",
             }}
           >
             {/* Bloco de Filtros */}
@@ -2203,7 +2509,13 @@ export default function ChamadosPage() {
                   <option value="">Todos Segmentos</option>
                   {SEGMENTOS.map((s) => (
                     <option key={s} value={s}>
-                      {s.split('_').map(word => word.charAt(0) + word.slice(1).toLowerCase()).join(' ')}
+                      {s
+                        .split("_")
+                        .map(
+                          (word) =>
+                            word.charAt(0) + word.slice(1).toLowerCase(),
+                        )
+                        .join(" ")}
                     </option>
                   ))}
                 </select>
@@ -2213,22 +2525,44 @@ export default function ChamadosPage() {
             {/* Bloco de Resumo e Ação */}
             <div className="flex items-center gap-6">
               <div className="flex flex-col items-end">
-                <span style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em', marginBottom: '2px' }}>
+                <span
+                  style={{
+                    fontSize: "0.65rem",
+                    color: "var(--color-text-muted)",
+                    textTransform: "uppercase",
+                    fontWeight: 700,
+                    letterSpacing: "0.05em",
+                    marginBottom: "2px",
+                  }}
+                >
                   Investimento Total
                 </span>
-                <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-brand-400)', lineHeight: 1 }}>
+                <span
+                  style={{
+                    fontSize: "1.25rem",
+                    fontWeight: 800,
+                    color: "var(--color-brand-400)",
+                    lineHeight: 1,
+                  }}
+                >
                   {fmt(totalFiltrado)}
                 </span>
               </div>
 
-              <div style={{ width: '1px', height: '32px', background: 'var(--color-border)' }}></div>
+              <div
+                style={{
+                  width: "1px",
+                  height: "32px",
+                  background: "var(--color-border)",
+                }}
+              ></div>
 
               <button
                 className="btn btn-primary"
                 style={{
-                  height: '42px',
-                  padding: '0 20px',
-                  boxShadow: '0 4px 12px rgba(14, 165, 233, 0.2)'
+                  height: "42px",
+                  padding: "0 20px",
+                  boxShadow: "0 4px 12px rgba(14, 165, 233, 0.2)",
                 }}
                 onClick={() => setModal("novo")}
               >
@@ -2241,15 +2575,15 @@ export default function ChamadosPage() {
             <table className="table">
               <thead>
                 <tr>
-                  <th style={{ whiteSpace: 'nowrap' }}>Abertura</th>
+                  <th style={{ whiteSpace: "nowrap" }}>Abertura</th>
                   <th>Solicitação</th>
                   <th>Chamado</th>
                   <th>Segmento</th>
                   <th>Empresa</th>
                   <th>Descrição</th>
                   <th>Orçamento</th>
-                  <th style={{ whiteSpace: 'nowrap' }}>Mau Uso</th>
-                  <th style={{ whiteSpace: 'nowrap' }}>Aprovação</th>
+                  <th style={{ whiteSpace: "nowrap" }}>Mau Uso</th>
+                  <th style={{ whiteSpace: "nowrap" }}>Aprovação</th>
                   <th>OM</th>
                   <th>Valor</th>
                   <th>Status</th>
@@ -2286,58 +2620,142 @@ export default function ChamadosPage() {
                   chamados.map((c) => (
                     <tr key={c.id}>
                       <td style={{ whiteSpace: "nowrap", fontSize: "0.75rem" }}>
-                        {c.dataAbertura ? format(new Date(c.dataAbertura), "dd/MM/yy") : "-"}
+                        {c.dataAbertura
+                          ? format(new Date(c.dataAbertura), "dd/MM/yy")
+                          : "-"}
                       </td>
-                      <td style={{ fontSize: "0.75rem", color: "var(--color-text-secondary)" }}>
+                      <td
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "var(--color-text-secondary)",
+                        }}
+                      >
                         {c.solicitacao || "-"}
                       </td>
-                      <td style={{ fontWeight: 600, fontSize: "0.75rem", whiteSpace: "nowrap" }}>
+                      <td
+                        style={{
+                          fontWeight: 600,
+                          fontSize: "0.75rem",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
                         {c.numeroChamado}
                       </td>
                       <td>
-                        <span className="badge badge-brand" style={{ fontSize: "0.65rem", whiteSpace: 'nowrap' }}>
-                          {c.segmento?.split('_').map(word => word.charAt(0) + word.slice(1).toLowerCase()).join(' ')}
+                        <span
+                          className="badge badge-brand"
+                          style={{ fontSize: "0.65rem", whiteSpace: "nowrap" }}
+                        >
+                          {c.segmento
+                            ?.split("_")
+                            .map(
+                              (word) =>
+                                word.charAt(0) + word.slice(1).toLowerCase(),
+                            )
+                            .join(" ")}
                         </span>
                       </td>
-                      <td style={{ fontSize: "0.75rem", maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      <td
+                        style={{
+                          fontSize: "0.75rem",
+                          maxWidth: "120px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
                         {c.empresa}
                       </td>
-                      <td style={{ fontSize: "0.75rem", maxWidth: "180px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={c.descricao}>
+                      <td
+                        style={{
+                          fontSize: "0.75rem",
+                          maxWidth: "180px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                        title={c.descricao}
+                      >
                         {c.descricao}
                       </td>
-                      <td style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
+                      <td
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "var(--color-text-muted)",
+                        }}
+                      >
                         {c.numeroOrcamento || "-"}
                       </td>
-                      <td style={{ textAlign: 'center' }}>
+                      <td style={{ textAlign: "center" }}>
                         {c.mauUso ? (
-                          <span className="badge badge-danger" style={{ fontSize: "0.65rem" }}>Sim</span>
+                          <span
+                            className="badge badge-danger"
+                            style={{ fontSize: "0.65rem" }}
+                          >
+                            Sim
+                          </span>
                         ) : (
-                          <span style={{ color: "var(--color-text-muted)", fontSize: "0.75rem" }}>Não</span>
+                          <span
+                            style={{
+                              color: "var(--color-text-muted)",
+                              fontSize: "0.75rem",
+                            }}
+                          >
+                            Não
+                          </span>
                         )}
                       </td>
-                      <td style={{ whiteSpace: "nowrap", fontSize: "0.75rem", color: "var(--color-text-secondary)" }}>
-                        {c.dataAprovacao ? format(new Date(c.dataAprovacao), "dd/MM/yy") : "-"}
+                      <td
+                        style={{
+                          whiteSpace: "nowrap",
+                          fontSize: "0.75rem",
+                          color: "var(--color-text-secondary)",
+                        }}
+                      >
+                        {c.dataAprovacao
+                          ? format(new Date(c.dataAprovacao), "dd/MM/yy")
+                          : "-"}
                       </td>
                       <td style={{ fontSize: "0.75rem", fontWeight: 500 }}>
                         {c.numeroOM || "-"}
                       </td>
-                      <td style={{ fontWeight: 700, whiteSpace: "nowrap", color: "var(--color-success)", fontSize: "0.75rem" }}>
+                      <td
+                        style={{
+                          fontWeight: 700,
+                          whiteSpace: "nowrap",
+                          color: "var(--color-success)",
+                          fontSize: "0.75rem",
+                        }}
+                      >
                         {fmt(c.valor)}
                       </td>
                       <td>
-                        <span className={`badge ${STATUS_BADGE[c.status]}`} style={{ fontSize: "0.65rem", whiteSpace: 'nowrap' }}>
+                        <span
+                          className={`badge ${STATUS_BADGE[c.status]}`}
+                          style={{ fontSize: "0.65rem", whiteSpace: "nowrap" }}
+                        >
                           {STATUS_LABEL[c.status]}
                         </span>
                       </td>
                       <td>
                         <div className="flex items-center gap-1">
-                          <button className="btn btn-ghost btn-sm" onClick={() => setModal(c)} style={{ padding: "2px" }}>
+                          <button
+                            className="btn btn-ghost btn-sm"
+                            onClick={() => setModal(c)}
+                            style={{ padding: "2px" }}
+                          >
                             <Pencil size={14} />
                           </button>
                           <button
                             className="btn btn-ghost btn-sm"
-                            onClick={() => { if (confirm("Remover chamado?")) remover.mutate(c.id); }}
-                            style={{ padding: "2px", color: "var(--color-danger)" }}
+                            onClick={() => {
+                              if (confirm("Remover chamado?"))
+                                remover.mutate(c.id);
+                            }}
+                            style={{
+                              padding: "2px",
+                              color: "var(--color-danger)",
+                            }}
                           >
                             <Trash2 size={14} />
                           </button>
@@ -2349,6 +2767,11 @@ export default function ChamadosPage() {
               </tbody>
             </table>
           </div>
+          <Paginacao
+            paginaAtual={page}
+            totalPaginas={data?.meta?.pages || 1}
+            onMudar={setPage}
+          />
         </div>
       )}
 
@@ -2362,28 +2785,135 @@ export default function ChamadosPage() {
             >
               <ArrowLeft size={18} /> Voltar para Planilha
             </button>
-            <h2 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+            <h2
+              style={{
+                fontSize: "1.25rem",
+                fontWeight: 700,
+                color: "var(--color-text-primary)",
+              }}
+            >
               Análise Gráfica: {lojaSelecionada.nome}
             </h2>
           </div>
 
           {/* KPI Cards */}
-          <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
-            <div className="card" style={{ padding: "18px", borderLeft: "4px solid var(--color-brand-500)" }}>
-              <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginBottom: "6px", textTransform: "uppercase", fontWeight: 600 }}>Total do Mês</p>
-              <span style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--color-text-primary)" }}>{fmt(totalFiltrado)}</span>
+          <div
+            className="grid gap-4"
+            style={{
+              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            }}
+          >
+            <div
+              className="card"
+              style={{
+                padding: "18px",
+                borderLeft: "4px solid var(--color-brand-500)",
+              }}
+            >
+              <p
+                style={{
+                  fontSize: "0.75rem",
+                  color: "var(--color-text-muted)",
+                  marginBottom: "6px",
+                  textTransform: "uppercase",
+                  fontWeight: 600,
+                }}
+              >
+                Total do Mês
+              </p>
+              <span
+                style={{
+                  fontSize: "1.5rem",
+                  fontWeight: 800,
+                  color: "var(--color-text-primary)",
+                }}
+              >
+                {fmt(totalFiltrado)}
+              </span>
             </div>
-            <div className="card" style={{ padding: "18px", borderLeft: "4px solid var(--color-warning)" }}>
-              <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginBottom: "6px", textTransform: "uppercase", fontWeight: 600 }}>Chamados</p>
-              <span style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--color-text-primary)" }}>{chamados.length}</span>
+            <div
+              className="card"
+              style={{
+                padding: "18px",
+                borderLeft: "4px solid var(--color-warning)",
+              }}
+            >
+              <p
+                style={{
+                  fontSize: "0.75rem",
+                  color: "var(--color-text-muted)",
+                  marginBottom: "6px",
+                  textTransform: "uppercase",
+                  fontWeight: 600,
+                }}
+              >
+                Chamados
+              </p>
+              <span
+                style={{
+                  fontSize: "1.5rem",
+                  fontWeight: 800,
+                  color: "var(--color-text-primary)",
+                }}
+              >
+                {chamados.length}
+              </span>
             </div>
-            <div className="card" style={{ padding: "18px", borderLeft: "4px solid var(--color-success)" }}>
-              <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginBottom: "6px", textTransform: "uppercase", fontWeight: 600 }}>Ticket Médio</p>
-              <span style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--color-text-primary)" }}>{fmt(chamados.length > 0 ? totalFiltrado / chamados.length : 0)}</span>
+            <div
+              className="card"
+              style={{
+                padding: "18px",
+                borderLeft: "4px solid var(--color-success)",
+              }}
+            >
+              <p
+                style={{
+                  fontSize: "0.75rem",
+                  color: "var(--color-text-muted)",
+                  marginBottom: "6px",
+                  textTransform: "uppercase",
+                  fontWeight: 600,
+                }}
+              >
+                Ticket Médio
+              </p>
+              <span
+                style={{
+                  fontSize: "1.5rem",
+                  fontWeight: 800,
+                  color: "var(--color-text-primary)",
+                }}
+              >
+                {fmt(chamados.length > 0 ? totalFiltrado / chamados.length : 0)}
+              </span>
             </div>
-            <div className="card" style={{ padding: "18px", borderLeft: "4px solid var(--color-danger)" }}>
-              <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginBottom: "6px", textTransform: "uppercase", fontWeight: 600 }}>Mau Uso</p>
-              <span style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--color-danger)" }}>{chamados.filter((c) => c.mauUso).length}</span>
+            <div
+              className="card"
+              style={{
+                padding: "18px",
+                borderLeft: "4px solid var(--color-danger)",
+              }}
+            >
+              <p
+                style={{
+                  fontSize: "0.75rem",
+                  color: "var(--color-text-muted)",
+                  marginBottom: "6px",
+                  textTransform: "uppercase",
+                  fontWeight: 600,
+                }}
+              >
+                Mau Uso
+              </p>
+              <span
+                style={{
+                  fontSize: "1.5rem",
+                  fontWeight: 800,
+                  color: "var(--color-danger)",
+                }}
+              >
+                {chamados.filter((c) => c.mauUso).length}
+              </span>
             </div>
           </div>
 
@@ -2397,7 +2927,17 @@ export default function ChamadosPage() {
 
             {/* Top Empresas */}
             <div className="card">
-              <h3 style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text-primary)", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
+              <h3
+                style={{
+                  fontSize: "0.875rem",
+                  fontWeight: 600,
+                  color: "var(--color-text-primary)",
+                  marginBottom: "16px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                }}
+              >
                 <Trophy size={16} style={{ color: "var(--color-brand-500)" }} />
                 Top 10 Empresas (Fornecedores)
               </h3>
@@ -2408,7 +2948,11 @@ export default function ChamadosPage() {
                     layout="vertical"
                     margin={{ left: 10, right: 30 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--color-border)" />
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      horizontal={false}
+                      stroke="var(--color-border)"
+                    />
                     <XAxis type="number" hide />
                     <YAxis
                       dataKey="empresa"
@@ -2416,7 +2960,10 @@ export default function ChamadosPage() {
                       width={110}
                       tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
                     />
-                    <Tooltip content={<TooltipCustom />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+                    <Tooltip
+                      content={<TooltipCustom />}
+                      cursor={{ fill: "rgba(255,255,255,0.05)" }}
+                    />
                     <Bar
                       dataKey="valor"
                       fill="var(--color-brand-600)"
@@ -2425,7 +2972,11 @@ export default function ChamadosPage() {
                       name="Gasto"
                     >
                       {chamadosPorEmpresa.map((_, i) => (
-                        <Cell key={i} fill={CORES[(i + 4) % CORES.length]} fillOpacity={0.9} />
+                        <Cell
+                          key={i}
+                          fill={CORES[(i + 4) % CORES.length]}
+                          fillOpacity={0.9}
+                        />
                       ))}
                     </Bar>
                   </BarChart>
@@ -2441,39 +2992,77 @@ export default function ChamadosPage() {
                 <div className="flex items-center gap-2">
                   <Tag size={18} style={{ color: "var(--color-brand-600)" }} />
                   <div className="flex items-center gap-2">
-                    <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
-                      Análise de Pareto: {paretoTipo === "segmentos" ? "Segmentos" : "Empresas"}
+                    <h3
+                      style={{
+                        fontSize: "1rem",
+                        fontWeight: 700,
+                        color: "var(--color-text-primary)",
+                      }}
+                    >
+                      Análise de Pareto:{" "}
+                      {paretoTipo === "segmentos" ? "Segmentos" : "Empresas"}
                     </h3>
-                    <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        position: "relative",
+                        display: "inline-flex",
+                        alignItems: "center",
+                      }}
+                    >
                       <button
                         type="button"
                         className="btn btn-ghost btn-sm"
-                        style={{ padding: 0, minWidth: 'auto', width: '20px', height: '20px', borderRadius: '50%', color: 'var(--color-text-muted)' }}
+                        style={{
+                          padding: 0,
+                          minWidth: "auto",
+                          width: "20px",
+                          height: "20px",
+                          borderRadius: "50%",
+                          color: "var(--color-text-muted)",
+                        }}
                         onMouseEnter={() => setParetoHelpOpen(true)}
                         onMouseLeave={() => setParetoHelpOpen(false)}
                       >
-                        <CircleHelp size={14} style={{ color: "var(--color-warning)" }} />
+                        <CircleHelp
+                          size={14}
+                          style={{ color: "var(--color-warning)" }}
+                        />
                       </button>
                       {paretoHelpOpen && (
-                        <div style={{
-                          position: "absolute",
-                          bottom: "calc(100% + 8px)",
-                          left: "65%",
-                          transform: "translateX(-65%)",
-                          width: "260px",
-                          padding: "10px 12px",
-                          borderRadius: "10px",
-                          background: "var(--color-surface-700)",
-                          border: "1px solid var(--color-border)",
-                          color: "var(--color-text-secondary)",
-                          boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-                          lineHeight: 1.4,
-                          zIndex: 50,
-                          fontSize: '0.75rem'
-                        }}>
-                          <p style={{ fontWeight: 700, color: 'var(--color-brand-400)', marginBottom: '4px' }}>O que é a Análise de Pareto?</p>
-                          Indica que aproximadamente 80% dos custos costumam vir de apenas 20% das causas ({paretoTipo === "segmentos" ? "Segmentos" : "Empresas"}).
-                          As barras mostram o valor individual e a linha vermelha o impacto acumulado.
+                        <div
+                          style={{
+                            position: "absolute",
+                            bottom: "calc(100% + 8px)",
+                            left: "65%",
+                            transform: "translateX(-65%)",
+                            width: "260px",
+                            padding: "10px 12px",
+                            borderRadius: "10px",
+                            background: "var(--color-surface-700)",
+                            border: "1px solid var(--color-border)",
+                            color: "var(--color-text-secondary)",
+                            boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+                            lineHeight: 1.4,
+                            zIndex: 50,
+                            fontSize: "0.75rem",
+                          }}
+                        >
+                          <p
+                            style={{
+                              fontWeight: 700,
+                              color: "var(--color-brand-400)",
+                              marginBottom: "4px",
+                            }}
+                          >
+                            O que é a Análise de Pareto?
+                          </p>
+                          Indica que aproximadamente 80% dos custos costumam vir
+                          de apenas 20% das causas (
+                          {paretoTipo === "segmentos"
+                            ? "Segmentos"
+                            : "Empresas"}
+                          ). As barras mostram o valor individual e a linha
+                          vermelha o impacto acumulado.
                         </div>
                       )}
                     </div>
@@ -2482,7 +3071,12 @@ export default function ChamadosPage() {
 
                 <select
                   className="select"
-                  style={{ width: 'auto', height: '32px', padding: '0 10px', fontSize: '0.75rem' }}
+                  style={{
+                    width: "auto",
+                    height: "32px",
+                    padding: "0 10px",
+                    fontSize: "0.75rem",
+                  }}
                   value={paretoTipo}
                   onChange={(e) => setParetoTipo(e.target.value)}
                 >
@@ -2492,8 +3086,15 @@ export default function ChamadosPage() {
               </div>
 
               <ResponsiveContainer width="100%" height={280}>
-                <ComposedChart data={paretoData} margin={{ top: 20, right: 30, bottom: 55, left: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
+                <ComposedChart
+                  data={paretoData}
+                  margin={{ top: 20, right: 30, bottom: 55, left: 10 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="var(--color-border)"
+                  />
                   <XAxis
                     dataKey="label"
                     tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
@@ -2502,8 +3103,18 @@ export default function ChamadosPage() {
                     interval={0}
                     textAnchor="end"
                   />
-                  <YAxis yAxisId="left" tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} />
-                  <YAxis yAxisId="right" orientation="right" tickFormatter={(v) => `${v}%`} tick={{ fontSize: 11, fill: "var(--color-danger)" }} domain={[0, 100]} />
+                  <YAxis
+                    yAxisId="left"
+                    tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
+                    tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
+                  />
+                  <YAxis
+                    yAxisId="right"
+                    orientation="right"
+                    tickFormatter={(v) => `${v}%`}
+                    tick={{ fontSize: 11, fill: "var(--color-danger)" }}
+                    domain={[0, 100]}
+                  />
                   <Tooltip content={<TooltipCustom />} />
                   <Bar
                     yAxisId="left"
@@ -2528,12 +3139,19 @@ export default function ChamadosPage() {
                   />
                 </ComposedChart>
               </ResponsiveContainer>
-              <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '10px', textAlign: 'center' }}>
-                * A linha vermelha indica o percentual acumulado em relação ao gasto total da loja no mês.
+              <p
+                style={{
+                  fontSize: "0.75rem",
+                  color: "var(--color-text-muted)",
+                  marginTop: "10px",
+                  textAlign: "center",
+                }}
+              >
+                * A linha vermelha indica o percentual acumulado em relação ao
+                gasto total da loja no mês.
               </p>
             </div>
           )}
-
         </div>
       )}
 

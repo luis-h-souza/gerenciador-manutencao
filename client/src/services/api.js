@@ -20,6 +20,15 @@ let filaEspera = [];
 
 api.interceptors.response.use(
   (res) => {
+    // VALIDAÇÃO: backend retornou sucesso === false com HTTP 200 → rejeitar
+    if (res.data && res.data.sucesso === false) {
+      const apiError = new Error(res.data.mensagem || res.data.error || 'Erro desconhecido');
+      apiError.status = res.status;
+      apiError.detalhes = res.data.detalhes;
+      apiError.sucesso = false;
+      return Promise.reject(apiError);
+    }
+
     // Desempacota o padrão retornoHttp do backend para não quebrar o frontend
     if (res.data && res.data.sucesso === true && res.data.dados !== undefined) {
       res.data = res.data.dados;

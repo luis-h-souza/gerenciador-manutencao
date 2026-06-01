@@ -2,6 +2,7 @@ const prisma = require('../utils/prisma');
 const { getAccessFilter, getUserRegions, canAccessRegion } = require('../utils/access.utils');
 const { calcularMetricasConfiabilidade } = require('../utils/confiabilidadeAtivo');
 const { getWeek, startOfMonth, endOfMonth } = require('date-fns');
+const { buildKey, withCache, TTL } = require('../utils/dashboard.cache');
 
 const formatarSegmento = (segmento) => {
   if (!segmento) return 'Diversos';
@@ -46,68 +47,71 @@ const resumo = async (user, query) => {
   const mesIdx = mes ? parseInt(mes) - 1 : agora.getMonth();
   const anoNum = ano ? parseInt(ano) : agora.getFullYear();
 
-  const inicioMes = new Date(anoNum, mesIdx, 1);
-  const fimMes    = new Date(anoNum, mesIdx + 1, 1);
-  const inicioMesPassado = new Date(anoNum, mesIdx - 1, 1);
-  const fimMesPassado = new Date(anoNum, mesIdx, 0);
+  const cacheKey = buildKey('resumo', user, { mes: mesIdx + 1, ano: anoNum, regiao, unidade });
+  return withCache(cacheKey, TTL.resumo, async () => {
+    const inicioMes = new Date(anoNum, mesIdx, 1);
+    const fimMes    = new Date(anoNum, mesIdx + 1, 1);
+    const inicioMesPassado = new Date(anoNum, mesIdx - 1, 1);
+    const fimMesPassado = new Date(anoNum, mesIdx, 0);
 
-  const filter = getAccessFilter(user);
-  const where = { ...filter };
+    const filter = getAccessFilter(user);
+    const where = { ...filter };
 
-  if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE'].includes(user.role)) {
-    if (regiao) {
-      if (!canAccessRegion(user, regiao)) {
-        throw { status: 403, error: 'Acesso negado: região fora da sua abrangência' };
+    if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE'].includes(user.role)) {
+      if (regiao) {
+        if (!canAccessRegion(user, regiao)) {
+          throw { status: 403, error: 'Acesso negado: região fora da sua abrangência' };
+        }
+        where.regiao = regiao;
       }
-      where.regiao = regiao;
+      if (unidade) where.unidade = unidade;
     }
-    if (unidade) where.unidade = unidade;
-  }
 
-  const [
-    totalTarefas, tarefasPendentes, tarefasEmAndamento, tarefasConcluidas,
-    totalChamadosMes, gastosMes, gastosMesPassado,
-    chamadosMauUso, totalFornecedores,
-    pecasBaixoEstoque,
-  ] = await Promise.all([
-    prisma.tarefa.count({ where }),
-    prisma.tarefa.count({ where: { ...where, status: 'PENDENTE' } }),
-    prisma.tarefa.count({ where: { ...where, status: 'EM_ANDAMENTO' } }),
-    prisma.tarefa.count({ where: { ...where, status: 'CONCLUIDA' } }),
-    prisma.controleChamado.count({ where: { ...where, dataAbertura: { gte: inicioMes, lt: fimMes } } }),
-    prisma.controleChamado.aggregate({
-      where: { ...where, dataAbertura: { gte: inicioMes, lt: fimMes } },
-      _sum: { valor: true },
-    }),
-    prisma.controleChamado.aggregate({
-      where: { ...where, dataAbertura: { gte: inicioMesPassado, lte: fimMesPassado } },
-      _sum: { valor: true },
-    }),
-    prisma.controleChamado.count({ where: { ...where, mauUso: true, dataAbertura: { gte: inicioMes, lt: fimMes } } }),
-    prisma.fornecedor.count({ where: { ativo: true } }),
-    user.role === 'GESTOR'
-      ? prisma.peca.findMany({
-          where: { quantidadeEstoque: { lte: 5 } },
-          select: { id: true, nome: true, quantidadeEstoque: true },
-        })
-      : Promise.resolve([]),
-  ]);
+    const [
+      totalTarefas, tarefasPendentes, tarefasEmAndamento, tarefasConcluidas,
+      totalChamadosMes, gastosMes, gastosMesPassado,
+      chamadosMauUso, totalFornecedores,
+      pecasBaixoEstoque,
+    ] = await Promise.all([
+      prisma.tarefa.count({ where }),
+      prisma.tarefa.count({ where: { ...where, status: 'PENDENTE' } }),
+      prisma.tarefa.count({ where: { ...where, status: 'EM_ANDAMENTO' } }),
+      prisma.tarefa.count({ where: { ...where, status: 'CONCLUIDA' } }),
+      prisma.controleChamado.count({ where: { ...where, dataAbertura: { gte: inicioMes, lt: fimMes } } }),
+      prisma.controleChamado.aggregate({
+        where: { ...where, dataAbertura: { gte: inicioMes, lt: fimMes } },
+        _sum: { valor: true },
+      }),
+      prisma.controleChamado.aggregate({
+        where: { ...where, dataAbertura: { gte: inicioMesPassado, lte: fimMesPassado } },
+        _sum: { valor: true },
+      }),
+      prisma.controleChamado.count({ where: { ...where, mauUso: true, dataAbertura: { gte: inicioMes, lt: fimMes } } }),
+      prisma.fornecedor.count({ where: { ativo: true } }),
+      user.role === 'GESTOR'
+        ? prisma.peca.findMany({
+            where: { quantidadeEstoque: { lte: 5 } },
+            select: { id: true, nome: true, quantidadeEstoque: true },
+          })
+        : Promise.resolve([]),
+    ]);
 
-  const gastoAtual = parseFloat(gastosMes._sum.valor || 0);
-  const gastoAnterior = parseFloat(gastosMesPassado._sum.valor || 0);
-  const variacaoGastos = gastoAnterior > 0 ? ((gastoAtual - gastoAnterior) / gastoAnterior) * 100 : 0;
+    const gastoAtual = parseFloat(gastosMes._sum.valor || 0);
+    const gastoAnterior = parseFloat(gastosMesPassado._sum.valor || 0);
+    const variacaoGastos = gastoAnterior > 0 ? ((gastoAtual - gastoAnterior) / gastoAnterior) * 100 : 0;
 
-  return {
-    periodo: { mes: mesIdx + 1, ano: anoNum },
-    tarefas: { total: totalTarefas, pendentes: tarefasPendentes, emAndamento: tarefasEmAndamento, concluidas: tarefasConcluidas },
-    financeiro: { chamadosMes: totalChamadosMes, gastosMes: gastoAtual, gastosMesPassado: gastoAnterior, variacaoPercent: variacaoGastos.toFixed(1), mauUso: chamadosMauUso },
-    fornecedores: { total: totalFornecedores },
-    estoque: { pecasBaixoEstoque },
-    contexto: {
-      unidade: user.loja?.nome || null,
-      regiao: user.regiao
-    }
-  };
+    return {
+      periodo: { mes: mesIdx + 1, ano: anoNum },
+      tarefas: { total: totalTarefas, pendentes: tarefasPendentes, emAndamento: tarefasEmAndamento, concluidas: tarefasConcluidas },
+      financeiro: { chamadosMes: totalChamadosMes, gastosMes: gastoAtual, gastosMesPassado: gastoAnterior, variacaoPercent: variacaoGastos.toFixed(1), mauUso: chamadosMauUso },
+      fornecedores: { total: totalFornecedores },
+      estoque: { pecasBaixoEstoque },
+      contexto: {
+        unidade: user.loja?.nome || null,
+        regiao: user.regiao
+      }
+    };
+  });
 };
 
 const gastosPorSegmento = async (user, query) => {
@@ -115,130 +119,141 @@ const gastosPorSegmento = async (user, query) => {
   const mesNum = mes ? parseInt(mes) : new Date().getMonth() + 1;
   const anoNum = ano ? parseInt(ano) : new Date().getFullYear();
 
-  const dataInicio = new Date(anoNum, mesNum - 1, 1);
-  const dataFim = new Date(anoNum, mesNum, 1);
+  const cacheKey = buildKey('gastosPorSegmento', user, { mes: mesNum, ano: anoNum, regiao, unidade });
+  return withCache(cacheKey, TTL.gastosPorSegmento, async () => {
+    const dataInicio = new Date(anoNum, mesNum - 1, 1);
+    const dataFim = new Date(anoNum, mesNum, 1);
 
-  const filter = getAccessFilter(user);
-  const where = {
-    ...filter,
-    dataAbertura: { gte: dataInicio, lt: dataFim }
-  };
+    const filter = getAccessFilter(user);
+    const where = {
+      ...filter,
+      dataAbertura: { gte: dataInicio, lt: dataFim }
+    };
 
-  if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE'].includes(user.role)) {
-    if (regiao) {
-      if (!canAccessRegion(user, regiao)) {
-        throw { status: 403, error: 'Acesso negado: região fora da sua abrangência' };
+    if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE'].includes(user.role)) {
+      if (regiao) {
+        if (!canAccessRegion(user, regiao)) {
+          throw { status: 403, error: 'Acesso negado: região fora da sua abrangência' };
+        }
+        where.regiao = regiao;
       }
-      where.regiao = regiao;
+      if (unidade) where.unidade = unidade;
     }
-    if (unidade) where.unidade = unidade;
-  }
 
-  const dados = await prisma.controleChamado.groupBy({
-    by: ['segmento'],
-    where: where,
-    _sum: { valor: true },
-    _count: true,
-    orderBy: { _sum: { valor: 'desc' } },
+    const dados = await prisma.controleChamado.groupBy({
+      by: ['segmento'],
+      where: where,
+      _sum: { valor: true },
+      _count: true,
+      orderBy: { _sum: { valor: 'desc' } },
+    });
+
+    return dados.map(d => ({
+      segmento: d.segmento,
+      total: parseFloat(d._sum.valor || 0),
+      quantidade: d._count,
+    }));
   });
-
-  return dados.map(d => ({
-    segmento: d.segmento,
-    total: parseFloat(d._sum.valor || 0),
-    quantidade: d._count,
-  }));
 };
 
 const historicoMensal = async (user, query) => {
   const { regiao, unidade } = query;
-  const filter = getAccessFilter(user);
 
-  const baseWhere = { ...filter };
-  if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE'].includes(user.role)) {
-    if (regiao) {
-      if (!canAccessRegion(user, regiao)) {
-        throw { status: 403, error: 'Acesso negado: região fora da sua abrangência' };
+  const cacheKey = buildKey('historicoMensal', user, { regiao, unidade });
+  return withCache(cacheKey, TTL.historicoMensal, async () => {
+    const filter = getAccessFilter(user);
+
+    const baseWhere = { ...filter };
+    if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE'].includes(user.role)) {
+      if (regiao) {
+        if (!canAccessRegion(user, regiao)) {
+          throw { status: 403, error: 'Acesso negado: região fora da sua abrangência' };
+        }
+        baseWhere.regiao = regiao;
       }
-      baseWhere.regiao = regiao;
+      if (unidade) baseWhere.unidade = unidade;
     }
-    if (unidade) baseWhere.unidade = unidade;
-  }
 
-  const meses = [];
-  for (let i = 5; i >= 0; i--) {
-    const d = new Date();
-    d.setMonth(d.getMonth() - i);
-    const inicio = new Date(d.getFullYear(), d.getMonth(), 1);
-    const fim = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+    const meses = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      const inicio = new Date(d.getFullYear(), d.getMonth(), 1);
+      const fim = new Date(d.getFullYear(), d.getMonth() + 1, 0);
 
-    const agg = await prisma.controleChamado.aggregate({
-      where: { ...baseWhere, dataAbertura: { gte: inicio, lte: fim } },
-      _sum: { valor: true }, _count: true,
-    });
+      const agg = await prisma.controleChamado.aggregate({
+        where: { ...baseWhere, dataAbertura: { gte: inicio, lte: fim } },
+        _sum: { valor: true }, _count: true,
+      });
 
-    meses.push({
-      mes: inicio.toLocaleString('pt-BR', { month: 'short', year: '2-digit' }),
-      mesNum: inicio.getMonth() + 1,
-      anoNum: inicio.getFullYear(),
-      valor: parseFloat(agg._sum.valor || 0),
-      quantidade: agg._count,
-    });
-  }
-  return meses;
+      meses.push({
+        mes: inicio.toLocaleString('pt-BR', { month: 'short', year: '2-digit' }),
+        mesNum: inicio.getMonth() + 1,
+        anoNum: inicio.getFullYear(),
+        valor: parseFloat(agg._sum.valor || 0),
+        quantidade: agg._count,
+      });
+    }
+    return meses;
+  });
 };
 
 const resumoRegional = async (user, query) => {
   const agora = new Date();
   const mesNum = query.mes ? parseInt(query.mes) : agora.getMonth() + 1;
   const anoNum = query.ano ? parseInt(query.ano) : agora.getFullYear();
-  const inicioMes = new Date(anoNum, mesNum - 1, 1);
-  const fimMes = new Date(anoNum, mesNum, 1);
-  const regioesPermitidas = getUserRegions(user);
 
-  const regioesRes = await prisma.loja.findMany({
-    select: { regiao: true },
-    distinct: ['regiao'],
-    where: { ativo: true },
-    orderBy: { regiao: 'asc' },
-  });
-  
-  const todasRegioes = regioesRes
-    .map(r => r.regiao)
-    .filter((regiao) => {
-      if (['ADMINISTRADOR', 'DIRETOR'].includes(user.role)) return true;
-      return regioesPermitidas.includes(regiao);
+  const cacheKey = buildKey('resumoRegional', user, { mes: mesNum, ano: anoNum });
+  return withCache(cacheKey, TTL.resumoRegional, async () => {
+    const inicioMes = new Date(anoNum, mesNum - 1, 1);
+    const fimMes = new Date(anoNum, mesNum, 1);
+    const regioesPermitidas = getUserRegions(user);
+
+    const regioesRes = await prisma.loja.findMany({
+      select: { regiao: true },
+      distinct: ['regiao'],
+      where: { ativo: true },
+      orderBy: { regiao: 'asc' },
     });
 
-  const resumo = await Promise.all(todasRegioes.map(async (regiao) => {
-    const [gastos, chamados, tarefas, totalLojas] = await Promise.all([
-      prisma.controleChamado.aggregate({
-        where: { regiao, dataAbertura: { gte: inicioMes, lt: fimMes } },
-        _sum: { valor: true }
-      }),
-      prisma.controleChamado.count({
-        where: { regiao, dataAbertura: { gte: inicioMes, lt: fimMes } }
-      }),
-      prisma.tarefa.count({
-        where: { regiao, status: { in: ['PENDENTE', 'EM_ANDAMENTO'] }, criadoEm: { gte: inicioMes, lt: fimMes } }
-      }),
-      prisma.loja.count({
-        where: { regiao, ativo: true }
-      })
-    ]);
+    const todasRegioes = regioesRes
+      .map(r => r.regiao)
+      .filter((regiao) => {
+        if (['ADMINISTRADOR', 'DIRETOR'].includes(user.role)) return true;
+        return regioesPermitidas.includes(regiao);
+      });
+
+    const resumo = await Promise.all(todasRegioes.map(async (regiao) => {
+      const [gastos, chamados, tarefas, totalLojas] = await Promise.all([
+        prisma.controleChamado.aggregate({
+          where: { regiao, dataAbertura: { gte: inicioMes, lt: fimMes } },
+          _sum: { valor: true }
+        }),
+        prisma.controleChamado.count({
+          where: { regiao, dataAbertura: { gte: inicioMes, lt: fimMes } }
+        }),
+        prisma.tarefa.count({
+          where: { regiao, status: { in: ['PENDENTE', 'EM_ANDAMENTO'] }, criadoEm: { gte: inicioMes, lt: fimMes } }
+        }),
+        prisma.loja.count({
+          where: { regiao, ativo: true }
+        })
+      ]);
+
+      return {
+        regiao,
+        gastosMes: parseFloat(gastos._sum.valor || 0),
+        chamadosMes: chamados,
+        tarefasAtivas: tarefas,
+        totalLojas,
+      };
+    }));
 
     return {
-      regiao,
-      gastosMes: parseFloat(gastos._sum.valor || 0),
-      chamadosMes: chamados,
-      tarefasAtivas: tarefas,
-      totalLojas,
+      periodo: { mes: mesNum, ano: anoNum },
+      data: resumo,
     };
-  }));
-
-  return {
-    periodo: { mes: mesNum, ano: anoNum },
-    data: resumo,
-  };
+  });
 };
 
 const detalheRegional = async (user, paramRegiao, query) => {
@@ -249,129 +264,137 @@ const detalheRegional = async (user, paramRegiao, query) => {
   const agora = new Date();
   const mesNum = query.mes ? parseInt(query.mes) : agora.getMonth() + 1;
   const anoNum = query.ano ? parseInt(query.ano) : agora.getFullYear();
-  const inicioMes = new Date(anoNum, mesNum - 1, 1);
-  const fimMes = new Date(anoNum, mesNum, 1);
+  const cacheKey = buildKey('detalheRegional', user, { mes: mesNum, ano: anoNum, regiao: paramRegiao });
+  return withCache(cacheKey, TTL.detalheRegional, async () => {
+    const inicioMes = new Date(anoNum, mesNum - 1, 1);
+    const fimMes = new Date(anoNum, mesNum, 1);
 
-  const [
-    gastosPorSegmento,
-    topEmpresasGastos,
-    totalMauUso,
-    resumoFinanceiro,
-    lojasRegional
-  ] = await Promise.all([
-    prisma.controleChamado.groupBy({
-      by: ['segmento'],
-      where: { regiao: paramRegiao, dataAbertura: { gte: inicioMes, lt: fimMes } },
-      _sum: { valor: true },
-      _count: true,
-      orderBy: { _sum: { valor: 'desc' } },
-      take: 10
-    }),
-    prisma.controleChamado.groupBy({
-      by: ['empresa'],
-      where: { regiao: paramRegiao, dataAbertura: { gte: inicioMes, lt: fimMes } },
-      _sum: { valor: true },
-      orderBy: { _sum: { valor: 'desc' } },
-      take: 10
-    }),
-    prisma.controleChamado.aggregate({
-      where: { regiao: paramRegiao, mauUso: true, dataAbertura: { gte: inicioMes, lt: fimMes } },
-      _count: true,
-      _sum: { valor: true }
-    }),
-    prisma.controleChamado.aggregate({
-      where: { regiao: paramRegiao, dataAbertura: { gte: inicioMes, lt: fimMes } },
-      _sum: { valor: true },
-      _count: true
-    }),
-    prisma.loja.findMany({
-      where: { regiao: paramRegiao, ativo: true },
-      select: {
-        id: true,
-        numero: true,
-        nome: true,
-        regiao: true,
+    const [
+      gastosPorSegmento,
+      topEmpresasGastos,
+      totalMauUso,
+      resumoFinanceiro,
+      lojasRegional
+    ] = await Promise.all([
+      prisma.controleChamado.groupBy({
+        by: ['segmento'],
+        where: { regiao: paramRegiao, dataAbertura: { gte: inicioMes, lt: fimMes } },
+        _sum: { valor: true },
+        _count: true,
+        orderBy: { _sum: { valor: 'desc' } },
+        take: 10
+      }),
+      prisma.controleChamado.groupBy({
+        by: ['empresa'],
+        where: { regiao: paramRegiao, dataAbertura: { gte: inicioMes, lt: fimMes } },
+        _sum: { valor: true },
+        orderBy: { _sum: { valor: 'desc' } },
+        take: 10
+      }),
+      prisma.controleChamado.aggregate({
+        where: { regiao: paramRegiao, mauUso: true, dataAbertura: { gte: inicioMes, lt: fimMes } },
+        _count: true,
+        _sum: { valor: true }
+      }),
+      prisma.controleChamado.aggregate({
+        where: { regiao: paramRegiao, dataAbertura: { gte: inicioMes, lt: fimMes } },
+        _sum: { valor: true },
+        _count: true
+      }),
+      prisma.loja.findMany({
+        where: { regiao: paramRegiao, ativo: true },
+        select: {
+          id: true,
+          numero: true,
+          nome: true,
+          regiao: true,
+        },
+        orderBy: [{ numero: 'asc' }],
+      })
+    ]);
+
+    const lojas = await Promise.all(
+      lojasRegional.map(async (loja) => {
+        const [financeiro, mauUso, gestoresAtivos] = await Promise.all([
+          prisma.controleChamado.aggregate({
+            where: {
+              regiao: paramRegiao,
+              unidade: loja.nome,
+              dataAbertura: { gte: inicioMes, lt: fimMes },
+            },
+            _sum: { valor: true },
+            _count: true,
+          }),
+          prisma.controleChamado.count({
+            where: {
+              regiao: paramRegiao,
+              unidade: loja.nome,
+              mauUso: true,
+              dataAbertura: { gte: inicioMes, lt: fimMes },
+            },
+          }),
+          prisma.usuario.count({
+            where: {
+              lojaId: loja.id,
+              role: 'GESTOR',
+              ativo: true,
+            },
+          }),
+        ]);
+
+        return {
+          id: loja.id,
+          numero: loja.numero,
+          nome: loja.nome,
+          regiao: loja.regiao,
+          gestoresAtivos,
+          totalGasto: parseFloat(financeiro._sum.valor || 0),
+          totalChamados: financeiro._count,
+          mauUso,
+        };
+      })
+    );
+
+    return {
+      regiao: paramRegiao,
+      periodo: { mes: mesNum, ano: anoNum },
+      financeiro: {
+        totalGasto: parseFloat(resumoFinanceiro._sum.valor || 0),
+        totalChamados: resumoFinanceiro._count,
+        mauUso: {
+          quantidade: totalMauUso._count,
+          valor: parseFloat(totalMauUso._sum.valor || 0)
+        }
       },
-      orderBy: [{ numero: 'asc' }],
-    })
-  ]);
-
-  const lojas = await Promise.all(
-    lojasRegional.map(async (loja) => {
-      const [financeiro, mauUso, gestoresAtivos] = await Promise.all([
-        prisma.controleChamado.aggregate({
-          where: {
-            regiao: paramRegiao,
-            unidade: loja.nome,
-            dataAbertura: { gte: inicioMes, lt: fimMes },
-          },
-          _sum: { valor: true },
-          _count: true,
-        }),
-        prisma.controleChamado.count({
-          where: {
-            regiao: paramRegiao,
-            unidade: loja.nome,
-            mauUso: true,
-            dataAbertura: { gte: inicioMes, lt: fimMes },
-          },
-        }),
-        prisma.usuario.count({
-          where: {
-            lojaId: loja.id,
-            role: 'GESTOR',
-            ativo: true,
-          },
-        }),
-      ]);
-
-      return {
-        id: loja.id,
-        numero: loja.numero,
-        nome: loja.nome,
-        regiao: loja.regiao,
-        gestoresAtivos,
-        totalGasto: parseFloat(financeiro._sum.valor || 0),
-        totalChamados: financeiro._count,
-        mauUso,
-      };
-    })
-  );
-
-  return {
-    regiao: paramRegiao,
-    periodo: { mes: mesNum, ano: anoNum },
-    financeiro: {
-      totalGasto: parseFloat(resumoFinanceiro._sum.valor || 0),
-      totalChamados: resumoFinanceiro._count,
-      mauUso: {
-        quantidade: totalMauUso._count,
-        valor: parseFloat(totalMauUso._sum.valor || 0)
-      }
-    },
-    segmentos: gastosPorSegmento.map(s => ({
-      segmento: formatarSegmento(s.segmento),
-      valor: parseFloat(s._sum.valor || 0),
-      quantidade: s._count
-    })),
-    empresas: topEmpresasGastos.map(e => ({
-      empresa: e.empresa,
-      valor: parseFloat(e._sum.valor || 0)
-    })),
-    lojas: lojas.sort((a, b) => b.totalGasto - a.totalGasto),
-  };
+      segmentos: gastosPorSegmento.map(s => ({
+        segmento: formatarSegmento(s.segmento),
+        valor: parseFloat(s._sum.valor || 0),
+        quantidade: s._count
+      })),
+      empresas: topEmpresasGastos.map(e => ({
+        empresa: e.empresa,
+        valor: parseFloat(e._sum.valor || 0)
+      })),
+      lojas: lojas.sort((a, b) => b.totalGasto - a.totalGasto),
+    };
+  });
 };
+
+
 
 const rankingCoordenadores = async (user, query) => {
   const agora = new Date();
   const mesNum = query.mes ? parseInt(query.mes) : agora.getMonth() + 1;
   const anoNum = query.ano ? parseInt(query.ano) : agora.getFullYear();
-  const inicioMes = startOfMonth(new Date(anoNum, mesNum - 1));
-  const fimMes = endOfMonth(new Date(anoNum, mesNum - 1));
-  const semanaInicio = getWeek(inicioMes, { weekStartsOn: 5 });
-  const semanaFim    = getWeek(fimMes,    { weekStartsOn: 5 });
-  const totalSemanasNoMes = Math.max(1, semanaFim - semanaInicio + 1);
-  const regioesPermitidas = getUserRegions(user);
+
+  const cacheKey = buildKey('rankingCoordenadores', user, { mes: mesNum, ano: anoNum });
+  return withCache(cacheKey, TTL.rankingCoordenadores, async () => {
+    const inicioMes = startOfMonth(new Date(anoNum, mesNum - 1));
+    const fimMes = endOfMonth(new Date(anoNum, mesNum - 1));
+    const semanaInicio = getWeek(inicioMes, { weekStartsOn: 5 });
+    const semanaFim    = getWeek(fimMes,    { weekStartsOn: 5 });
+    const totalSemanasNoMes = Math.max(1, semanaFim - semanaInicio + 1);
+    const regioesPermitidas = getUserRegions(user);
 
   const coordenadores = await prisma.usuario.findMany({
     where: { role: 'COORDENADOR', ativo: true },
@@ -495,11 +518,12 @@ const rankingCoordenadores = async (user, query) => {
     .sort((a, b) => b.score - a.score)
     .map((item, index) => ({ ...item, posicao: index + 1 }));
 
-  return {
-    periodo: { mes: mesNum, ano: anoNum },
-    criterio: 'Ranking proxy por disponibilidade, eficiencia de custo por chamado e cobertura de checklist.',
-    data: ranking,
-  };
+    return {
+      periodo: { mes: mesNum, ano: anoNum },
+      criterio: 'Ranking proxy por disponibilidade, eficiencia de custo por chamado e cobertura de checklist.',
+      data: ranking,
+    };
+  });
 };
 
 const executivo = async (user, query) => {
@@ -507,10 +531,12 @@ const executivo = async (user, query) => {
   const mesNum = mes ? parseInt(mes) : new Date().getMonth() + 1;
   const anoNum = ano ? parseInt(ano) : new Date().getFullYear();
 
-  const inicioMes = new Date(anoNum, mesNum - 1, 1);
-  const fimMes    = new Date(anoNum, mesNum, 1);
-  const inicioMesPassado = new Date(anoNum, mesNum - 2, 1);
-  const fimMesPassado = new Date(anoNum, mesNum - 1, 1);
+  const cacheKey = buildKey('executivo', user, { mes: mesNum, ano: anoNum });
+  return withCache(cacheKey, TTL.executivo, async () => {
+    const inicioMes = new Date(anoNum, mesNum - 1, 1);
+    const fimMes    = new Date(anoNum, mesNum, 1);
+    const inicioMesPassado = new Date(anoNum, mesNum - 2, 1);
+    const fimMesPassado = new Date(anoNum, mesNum - 1, 1);
 
   const filter = getAccessFilter(user);
   const whereMesAtual = { ...filter, dataAbertura: { gte: inicioMes, lt: fimMes } };
@@ -626,15 +652,16 @@ const executivo = async (user, query) => {
     acumulado: Math.min(item.acumulado, 100)
   }));
 
-  return {
-    comparativo: { atual: totalAtual, passado: totalPassado, variacao: variacaoMoM },
-    ticketMedio,
-    top5Lojas: lojasGasto.map(l => ({ unidade: l.unidade, valor: parseFloat(l._sum.valor || 0) })),
-    fornecedores,
-    paretoSegmentos,
-    paretoEmpresas,
-    pareto: paretoSegmentos
-  };
+    return {
+      comparativo: { atual: totalAtual, passado: totalPassado, variacao: variacaoMoM },
+      ticketMedio,
+      top5Lojas: lojasGasto.map(l => ({ unidade: l.unidade, valor: parseFloat(l._sum.valor || 0) })),
+      fornecedores,
+      paretoSegmentos,
+      paretoEmpresas,
+      pareto: paretoSegmentos
+    };
+  });
 };
 
 const conformidadeMatrix = async (user, query) => {
@@ -642,12 +669,13 @@ const conformidadeMatrix = async (user, query) => {
   const mesNum = mes ? parseInt(mes) : new Date().getMonth() + 1;
   const anoNum = ano ? parseInt(ano) : new Date().getFullYear();
 
-  const { getWeek, startOfMonth, endOfMonth } = require('date-fns');
-  const inicioMes = startOfMonth(new Date(anoNum, mesNum - 1));
-  const fimMes    = endOfMonth(new Date(anoNum, mesNum - 1));
-  const semanaInicio = getWeek(inicioMes, { weekStartsOn: 5 });
-  const semanaFim    = getWeek(fimMes,    { weekStartsOn: 5 });
-  const totalSemanasNoMes = Math.max(1, semanaFim - semanaInicio + 1);
+  const cacheKey = buildKey('conformidadeMatrix', user, { mes: mesNum, ano: anoNum });
+  return withCache(cacheKey, TTL.conformidadeMatrix, async () => {
+    const inicioMes = startOfMonth(new Date(anoNum, mesNum - 1));
+    const fimMes    = endOfMonth(new Date(anoNum, mesNum - 1));
+    const semanaInicio = getWeek(inicioMes, { weekStartsOn: 5 });
+    const semanaFim    = getWeek(fimMes,    { weekStartsOn: 5 });
+    const totalSemanasNoMes = Math.max(1, semanaFim - semanaInicio + 1);
 
   const filter = getAccessFilter(user);
   
@@ -798,110 +826,113 @@ const conformidadeMatrix = async (user, query) => {
       totalPreventivas: ativosPreventiva.length
     };
   });
+  });
 };
 
 const buyVsMaintain = async (user, query) => {
-  const filter = getAccessFilter(user);
-  
-  // Buscar todos os ativos com falhas e itens de checklist vinculados
-  const ativos = await prisma.ativoLoja.findMany({
-    where: { ...filter, ativo: true },
-    include: {
-      falhas: {
-        orderBy: { dataDeteccao: 'desc' }
-      },
-      checklistItens: {
-        select: {
-          valor: true
+  const cacheKey = buildKey('buyVsMaintain', user, {});
+  return withCache(cacheKey, TTL.buyVsMaintain, async () => {
+    const filter = getAccessFilter(user);
+
+    // Buscar todos os ativos com falhas e itens de checklist vinculados
+    const ativos = await prisma.ativoLoja.findMany({
+      where: { ...filter, ativo: true },
+      include: {
+        falhas: {
+          orderBy: { dataDeteccao: 'desc' }
+        },
+        checklistItens: {
+          select: {
+            valor: true
+          }
         }
-      }
-    }
-  });
-
-  return ativos.map(ativo => {
-    // 1. Métricas de Confiabilidade (MTBF, MTTR, Uptime %)
-    const metricas = calcularMetricasConfiabilidade(ativo);
-    const { totalFalhas, uptimePercentual, mtbfDias, mttrHoras } = metricas;
-
-    // 2. Custo Acumulado de Reparo
-    let custoAcumulado = 0;
-    ativo.checklistItens.forEach(item => {
-      if (item.valor) {
-        custoAcumulado += parseFloat(item.valor);
       }
     });
 
-    // 3. Custo Estimado de Substituição
-    let custoSubstituicao = 15000; // Baseline padrão
-    
-    const cat = (ativo.categoria || '').toLowerCase();
-    const isIlha = cat.includes('ilha') || cat.includes('congelado');
+    return ativos.map(ativo => {
+      // 1. Métricas de Confiabilidade (MTBF, MTTR, Uptime %)
+      const metricas = calcularMetricasConfiabilidade(ativo);
+      const { totalFalhas, uptimePercentual, mtbfDias, mttrHoras } = metricas;
 
-    if (ativo.dadosTecnicos && typeof ativo.dadosTecnicos === 'object') {
-      const dt = ativo.dadosTecnicos;
-      if (dt.custoSubstituicao) {
-        custoSubstituicao = parseFloat(dt.custoSubstituicao);
+      // 2. Custo Acumulado de Reparo
+      let custoAcumulado = 0;
+      ativo.checklistItens.forEach(item => {
+        if (item.valor) {
+          custoAcumulado += parseFloat(item.valor);
+        }
+      });
+
+      // 3. Custo Estimado de Substituição
+      let custoSubstituicao = 15000; // Baseline padrão
+
+      const cat = (ativo.categoria || '').toLowerCase();
+      const isIlha = cat.includes('ilha') || cat.includes('congelado');
+
+      if (ativo.dadosTecnicos && typeof ativo.dadosTecnicos === 'object') {
+        const dt = ativo.dadosTecnicos;
+        if (dt.custoSubstituicao) {
+          custoSubstituicao = parseFloat(dt.custoSubstituicao);
+        } else {
+          if (cat.includes('gerador')) custoSubstituicao = 80000;
+          else if (cat.includes('nobreak')) custoSubstituicao = 35000;
+          else if (cat.includes('cabine')) custoSubstituicao = 120000;
+          else if (isIlha) custoSubstituicao = 25000;
+        }
       } else {
         if (cat.includes('gerador')) custoSubstituicao = 80000;
         else if (cat.includes('nobreak')) custoSubstituicao = 35000;
         else if (cat.includes('cabine')) custoSubstituicao = 120000;
         else if (isIlha) custoSubstituicao = 25000;
       }
-    } else {
-      if (cat.includes('gerador')) custoSubstituicao = 80000;
-      else if (cat.includes('nobreak')) custoSubstituicao = 35000;
-      else if (cat.includes('cabine')) custoSubstituicao = 120000;
-      else if (isIlha) custoSubstituicao = 25000;
-    }
 
-    // 4. Algoritmo de Recomendação Buy vs. Maintain
-    // Recomendação é "BUY" se:
-    // - Custo acumulado excede 60% do valor de substituição
-    // - OU Uptime < 85% e tem pelo menos 3 falhas
-    // - OU MTBF é muito baixo (< 720h / 30 dias para a maioria, ou < 1440h / 60 dias para ilha congelada se houver falhas recorrentes)
-    // Para Ilhas de Congelados: MTBF < 180 dias (4320 horas) ou reincidências > 2
-    let recomendacao = 'MAINTAIN';
-    const razoes = [];
+      // 4. Algoritmo de Recomendação Buy vs. Maintain
+      // Recomendação é "BUY" se:
+      // - Custo acumulado excede 60% do valor de substituição
+      // - OU Uptime < 85% e tem pelo menos 3 falhas
+      // - OU MTBF é muito baixo (< 30 dias para a maioria, ou < 180 dias para ilhas congeladas)
+      let recomendacao = 'MAINTAIN';
+      const razoes = [];
 
-    const limiteCusto = custoSubstituicao * 0.6;
-    if (custoAcumulado > limiteCusto) {
-      recomendacao = 'BUY';
-      razoes.push(`Custo acumulado de manutenção (R$ ${custoAcumulado.toFixed(2)}) supera 60% do custo de substituição (R$ ${custoSubstituicao.toFixed(2)})`);
-    }
+      const limiteCusto = custoSubstituicao * 0.6;
+      if (custoAcumulado > limiteCusto) {
+        recomendacao = 'BUY';
+        razoes.push(`Custo acumulado de manutenção (R$ ${custoAcumulado.toFixed(2)}) supera 60% do custo de substituição (R$ ${custoSubstituicao.toFixed(2)})`);
+      }
 
-    if (uptimePercentual < 85 && totalFalhas >= 3) {
-      recomendacao = 'BUY';
-      razoes.push(`Uptime de confiabilidade muito baixo (${uptimePercentual.toFixed(1)}%) com histórico recorrente`);
-    }
+      if (uptimePercentual < 85 && totalFalhas >= 3) {
+        recomendacao = 'BUY';
+        razoes.push(`Uptime de confiabilidade muito baixo (${uptimePercentual.toFixed(1)}%) com histórico recorrente`);
+      }
 
-    const thresholdMtbf = isIlha ? 180 : 30; // 180 dias para ilhas (mais crítico!), 30 dias para os demais
-    
-    if (totalFalhas >= 2 && mtbfDias !== null && mtbfDias < thresholdMtbf) {
-      recomendacao = 'BUY';
-      razoes.push(`Intervalo médio entre falhas (MTBF de ${mtbfDias.toFixed(1)} dias) abaixo do limite recomendado (${thresholdMtbf} dias)`);
-    }
+      const thresholdMtbf = isIlha ? 180 : 30;
 
-    return {
-      ativoId: ativo.id,
-      nome: ativo.nome,
-      categoria: ativo.categoria,
-      tipo: ativo.tipo,
-      patrimonio: ativo.patrimonio,
-      unidade: ativo.unidade,
-      regiao: ativo.regiao,
-      totalFalhas,
-      uptimePercentual: uptimePercentual.toFixed(1),
-      mtbfDias,
-      mttrHoras,
-      falhasResolvidas: metricas.falhasResolvidas,
-      falhasAbertas: metricas.falhasAbertas,
-      possuiHistoricoMtbf: metricas.possuiHistoricoMtbf,
-      possuiHistoricoMttr: metricas.possuiHistoricoMttr,
-      custoAcumulado,
-      custoSubstituicao,
-      recomendacao,
-      razoes
-    };
+      if (totalFalhas >= 2 && mtbfDias !== null && mtbfDias < thresholdMtbf) {
+        recomendacao = 'BUY';
+        razoes.push(`Intervalo médio entre falhas (MTBF de ${mtbfDias.toFixed(1)} dias) abaixo do limite recomendado (${thresholdMtbf} dias)`);
+      }
+
+      return {
+        ativoId: ativo.id,
+        nome: ativo.nome,
+        categoria: ativo.categoria,
+        tipo: ativo.tipo,
+        patrimonio: ativo.patrimonio,
+        unidade: ativo.unidade,
+        regiao: ativo.regiao,
+        totalFalhas,
+        uptimePercentual: uptimePercentual.toFixed(1),
+        mtbfDias,
+        mttrHoras,
+        falhasResolvidas: metricas.falhasResolvidas,
+        falhasAbertas: metricas.falhasAbertas,
+        possuiHistoricoMtbf: metricas.possuiHistoricoMtbf,
+        possuiHistoricoMttr: metricas.possuiHistoricoMttr,
+        custoAcumulado,
+        custoSubstituicao,
+        recomendacao,
+        razoes
+      };
+    });
   });
 };
 

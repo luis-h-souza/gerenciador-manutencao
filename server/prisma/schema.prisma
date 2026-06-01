@@ -150,6 +150,9 @@ model ControleChamado {
   valor           Decimal?        @db.Decimal(12, 2)
   status          StatusChamado   @default(AGUARDANDO_APROVACAO)
   mauUso          Boolean         @default(false)
+  ativoId         String?
+  ativo           AtivoLoja?      @relation(fields: [ativoId], references: [id])
+  dataResolucao   DateTime?
   criadoEm        DateTime        @default(now())
   atualizadoEm    DateTime        @updatedAt
 
@@ -157,6 +160,7 @@ model ControleChamado {
   @@index([unidade, dataAbertura])
   @@index([status])
   @@index([segmento])
+  @@index([ativoId])
   @@map("controle_chamados")
 }
 
@@ -364,6 +368,8 @@ model AtivoLoja {
   criadoPor      Usuario                    @relation(fields: [criadoPorId], references: [id])
   falhas         RegistroFalhaAtivo[]
   checklistItens ChecklistEquipamentoItem[]
+  chamados       ControleChamado[]
+  valorSubstituicao Decimal?                 @db.Decimal(12, 2)
 
   @@index([regiao])
   @@index([unidade])
@@ -381,6 +387,7 @@ model RegistroFalhaAtivo {
   origemResolucao String? // "CHECKLIST" ou "MANUAL"
   descricao       String // Descrição do problema observado
   reincidencia    Boolean   @default(false) // True se mesmo tipo de problema em < 90 dias
+  horasParada     Float?    // Novo: para Uptime e Custo/Hora de Parada
   chamadoId       String? // Vínculo com ControleChamado (rastreabilidade financeira)
   resolvidoPorId  String? // Quem marcou como resolvido (se manual)
   criadoEm        DateTime  @default(now())

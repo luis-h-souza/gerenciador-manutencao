@@ -3255,11 +3255,13 @@ export namespace Prisma {
   export type AtivoLojaCountOutputType = {
     falhas: number
     checklistItens: number
+    chamados: number
   }
 
   export type AtivoLojaCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     falhas?: boolean | AtivoLojaCountOutputTypeCountFalhasArgs
     checklistItens?: boolean | AtivoLojaCountOutputTypeCountChecklistItensArgs
+    chamados?: boolean | AtivoLojaCountOutputTypeCountChamadosArgs
   }
 
   // Custom InputTypes
@@ -3285,6 +3287,13 @@ export namespace Prisma {
    */
   export type AtivoLojaCountOutputTypeCountChecklistItensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ChecklistEquipamentoItemWhereInput
+  }
+
+  /**
+   * AtivoLojaCountOutputType without action
+   */
+  export type AtivoLojaCountOutputTypeCountChamadosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ControleChamadoWhereInput
   }
 
 
@@ -11568,6 +11577,8 @@ export namespace Prisma {
     valor: Decimal | null
     status: $Enums.StatusChamado | null
     mauUso: boolean | null
+    ativoId: string | null
+    dataResolucao: Date | null
     criadoEm: Date | null
     atualizadoEm: Date | null
   }
@@ -11588,6 +11599,8 @@ export namespace Prisma {
     valor: Decimal | null
     status: $Enums.StatusChamado | null
     mauUso: boolean | null
+    ativoId: string | null
+    dataResolucao: Date | null
     criadoEm: Date | null
     atualizadoEm: Date | null
   }
@@ -11608,6 +11621,8 @@ export namespace Prisma {
     valor: number
     status: number
     mauUso: number
+    ativoId: number
+    dataResolucao: number
     criadoEm: number
     atualizadoEm: number
     _all: number
@@ -11638,6 +11653,8 @@ export namespace Prisma {
     valor?: true
     status?: true
     mauUso?: true
+    ativoId?: true
+    dataResolucao?: true
     criadoEm?: true
     atualizadoEm?: true
   }
@@ -11658,6 +11675,8 @@ export namespace Prisma {
     valor?: true
     status?: true
     mauUso?: true
+    ativoId?: true
+    dataResolucao?: true
     criadoEm?: true
     atualizadoEm?: true
   }
@@ -11678,6 +11697,8 @@ export namespace Prisma {
     valor?: true
     status?: true
     mauUso?: true
+    ativoId?: true
+    dataResolucao?: true
     criadoEm?: true
     atualizadoEm?: true
     _all?: true
@@ -11785,6 +11806,8 @@ export namespace Prisma {
     valor: Decimal | null
     status: $Enums.StatusChamado
     mauUso: boolean
+    ativoId: string | null
+    dataResolucao: Date | null
     criadoEm: Date
     atualizadoEm: Date
     _count: ControleChamadoCountAggregateOutputType | null
@@ -11824,8 +11847,11 @@ export namespace Prisma {
     valor?: boolean
     status?: boolean
     mauUso?: boolean
+    ativoId?: boolean
+    dataResolucao?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
+    ativo?: boolean | ControleChamado$ativoArgs<ExtArgs>
   }, ExtArgs["result"]["controleChamado"]>
 
   export type ControleChamadoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -11844,8 +11870,11 @@ export namespace Prisma {
     valor?: boolean
     status?: boolean
     mauUso?: boolean
+    ativoId?: boolean
+    dataResolucao?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
+    ativo?: boolean | ControleChamado$ativoArgs<ExtArgs>
   }, ExtArgs["result"]["controleChamado"]>
 
   export type ControleChamadoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -11864,8 +11893,11 @@ export namespace Prisma {
     valor?: boolean
     status?: boolean
     mauUso?: boolean
+    ativoId?: boolean
+    dataResolucao?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
+    ativo?: boolean | ControleChamado$ativoArgs<ExtArgs>
   }, ExtArgs["result"]["controleChamado"]>
 
   export type ControleChamadoSelectScalar = {
@@ -11884,15 +11916,28 @@ export namespace Prisma {
     valor?: boolean
     status?: boolean
     mauUso?: boolean
+    ativoId?: boolean
+    dataResolucao?: boolean
     criadoEm?: boolean
     atualizadoEm?: boolean
   }
 
-  export type ControleChamadoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "dataAbertura" | "numeroChamado" | "segmento" | "empresa" | "descricao" | "regiao" | "unidade" | "numeroOrcamento" | "solicitacao" | "dataAprovacao" | "numeroOM" | "valor" | "status" | "mauUso" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["controleChamado"]>
+  export type ControleChamadoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "dataAbertura" | "numeroChamado" | "segmento" | "empresa" | "descricao" | "regiao" | "unidade" | "numeroOrcamento" | "solicitacao" | "dataAprovacao" | "numeroOM" | "valor" | "status" | "mauUso" | "ativoId" | "dataResolucao" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["controleChamado"]>
+  export type ControleChamadoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    ativo?: boolean | ControleChamado$ativoArgs<ExtArgs>
+  }
+  export type ControleChamadoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    ativo?: boolean | ControleChamado$ativoArgs<ExtArgs>
+  }
+  export type ControleChamadoIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    ativo?: boolean | ControleChamado$ativoArgs<ExtArgs>
+  }
 
   export type $ControleChamadoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "ControleChamado"
-    objects: {}
+    objects: {
+      ativo: Prisma.$AtivoLojaPayload<ExtArgs> | null
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       dataAbertura: Date
@@ -11909,6 +11954,8 @@ export namespace Prisma {
       valor: Prisma.Decimal | null
       status: $Enums.StatusChamado
       mauUso: boolean
+      ativoId: string | null
+      dataResolucao: Date | null
       criadoEm: Date
       atualizadoEm: Date
     }, ExtArgs["result"]["controleChamado"]>
@@ -12305,6 +12352,7 @@ export namespace Prisma {
    */
   export interface Prisma__ControleChamadoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    ativo<T extends ControleChamado$ativoArgs<ExtArgs> = {}>(args?: Subset<T, ControleChamado$ativoArgs<ExtArgs>>): Prisma__AtivoLojaClient<$Result.GetResult<Prisma.$AtivoLojaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -12349,6 +12397,8 @@ export namespace Prisma {
     readonly valor: FieldRef<"ControleChamado", 'Decimal'>
     readonly status: FieldRef<"ControleChamado", 'StatusChamado'>
     readonly mauUso: FieldRef<"ControleChamado", 'Boolean'>
+    readonly ativoId: FieldRef<"ControleChamado", 'String'>
+    readonly dataResolucao: FieldRef<"ControleChamado", 'DateTime'>
     readonly criadoEm: FieldRef<"ControleChamado", 'DateTime'>
     readonly atualizadoEm: FieldRef<"ControleChamado", 'DateTime'>
   }
@@ -12368,6 +12418,10 @@ export namespace Prisma {
      */
     omit?: ControleChamadoOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ControleChamadoInclude<ExtArgs> | null
+    /**
      * Filter, which ControleChamado to fetch.
      */
     where: ControleChamadoWhereUniqueInput
@@ -12386,6 +12440,10 @@ export namespace Prisma {
      */
     omit?: ControleChamadoOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ControleChamadoInclude<ExtArgs> | null
+    /**
      * Filter, which ControleChamado to fetch.
      */
     where: ControleChamadoWhereUniqueInput
@@ -12403,6 +12461,10 @@ export namespace Prisma {
      * Omit specific fields from the ControleChamado
      */
     omit?: ControleChamadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ControleChamadoInclude<ExtArgs> | null
     /**
      * Filter, which ControleChamado to fetch.
      */
@@ -12452,6 +12514,10 @@ export namespace Prisma {
      */
     omit?: ControleChamadoOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ControleChamadoInclude<ExtArgs> | null
+    /**
      * Filter, which ControleChamado to fetch.
      */
     where?: ControleChamadoWhereInput
@@ -12499,6 +12565,10 @@ export namespace Prisma {
      * Omit specific fields from the ControleChamado
      */
     omit?: ControleChamadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ControleChamadoInclude<ExtArgs> | null
     /**
      * Filter, which ControleChamados to fetch.
      */
@@ -12548,6 +12618,10 @@ export namespace Prisma {
      */
     omit?: ControleChamadoOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ControleChamadoInclude<ExtArgs> | null
+    /**
      * The data needed to create a ControleChamado.
      */
     data: XOR<ControleChamadoCreateInput, ControleChamadoUncheckedCreateInput>
@@ -12581,6 +12655,10 @@ export namespace Prisma {
      */
     data: ControleChamadoCreateManyInput | ControleChamadoCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ControleChamadoIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -12595,6 +12673,10 @@ export namespace Prisma {
      * Omit specific fields from the ControleChamado
      */
     omit?: ControleChamadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ControleChamadoInclude<ExtArgs> | null
     /**
      * The data needed to update a ControleChamado.
      */
@@ -12647,6 +12729,10 @@ export namespace Prisma {
      * Limit how many ControleChamados to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ControleChamadoIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -12661,6 +12747,10 @@ export namespace Prisma {
      * Omit specific fields from the ControleChamado
      */
     omit?: ControleChamadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ControleChamadoInclude<ExtArgs> | null
     /**
      * The filter to search for the ControleChamado to update in case it exists.
      */
@@ -12688,6 +12778,10 @@ export namespace Prisma {
      */
     omit?: ControleChamadoOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ControleChamadoInclude<ExtArgs> | null
+    /**
      * Filter which ControleChamado to delete.
      */
     where: ControleChamadoWhereUniqueInput
@@ -12708,6 +12802,25 @@ export namespace Prisma {
   }
 
   /**
+   * ControleChamado.ativo
+   */
+  export type ControleChamado$ativoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AtivoLoja
+     */
+    select?: AtivoLojaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AtivoLoja
+     */
+    omit?: AtivoLojaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AtivoLojaInclude<ExtArgs> | null
+    where?: AtivoLojaWhereInput
+  }
+
+  /**
    * ControleChamado without action
    */
   export type ControleChamadoDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -12719,6 +12832,10 @@ export namespace Prisma {
      * Omit specific fields from the ControleChamado
      */
     omit?: ControleChamadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ControleChamadoInclude<ExtArgs> | null
   }
 
 
@@ -25266,11 +25383,13 @@ export namespace Prisma {
   export type AtivoLojaAvgAggregateOutputType = {
     quantidade: number | null
     intervaloPreventiva: number | null
+    valorSubstituicao: Decimal | null
   }
 
   export type AtivoLojaSumAggregateOutputType = {
     quantidade: number | null
     intervaloPreventiva: number | null
+    valorSubstituicao: Decimal | null
   }
 
   export type AtivoLojaMinAggregateOutputType = {
@@ -25297,6 +25416,7 @@ export namespace Prisma {
     ultimaTrocaBateria: Date | null
     proximaTrocaBateria: Date | null
     intervaloPreventiva: number | null
+    valorSubstituicao: Decimal | null
   }
 
   export type AtivoLojaMaxAggregateOutputType = {
@@ -25323,6 +25443,7 @@ export namespace Prisma {
     ultimaTrocaBateria: Date | null
     proximaTrocaBateria: Date | null
     intervaloPreventiva: number | null
+    valorSubstituicao: Decimal | null
   }
 
   export type AtivoLojaCountAggregateOutputType = {
@@ -25350,6 +25471,7 @@ export namespace Prisma {
     proximaTrocaBateria: number
     intervaloPreventiva: number
     dadosTecnicos: number
+    valorSubstituicao: number
     _all: number
   }
 
@@ -25357,11 +25479,13 @@ export namespace Prisma {
   export type AtivoLojaAvgAggregateInputType = {
     quantidade?: true
     intervaloPreventiva?: true
+    valorSubstituicao?: true
   }
 
   export type AtivoLojaSumAggregateInputType = {
     quantidade?: true
     intervaloPreventiva?: true
+    valorSubstituicao?: true
   }
 
   export type AtivoLojaMinAggregateInputType = {
@@ -25388,6 +25512,7 @@ export namespace Prisma {
     ultimaTrocaBateria?: true
     proximaTrocaBateria?: true
     intervaloPreventiva?: true
+    valorSubstituicao?: true
   }
 
   export type AtivoLojaMaxAggregateInputType = {
@@ -25414,6 +25539,7 @@ export namespace Prisma {
     ultimaTrocaBateria?: true
     proximaTrocaBateria?: true
     intervaloPreventiva?: true
+    valorSubstituicao?: true
   }
 
   export type AtivoLojaCountAggregateInputType = {
@@ -25441,6 +25567,7 @@ export namespace Prisma {
     proximaTrocaBateria?: true
     intervaloPreventiva?: true
     dadosTecnicos?: true
+    valorSubstituicao?: true
     _all?: true
   }
 
@@ -25555,6 +25682,7 @@ export namespace Prisma {
     proximaTrocaBateria: Date | null
     intervaloPreventiva: number | null
     dadosTecnicos: JsonValue | null
+    valorSubstituicao: Decimal | null
     _count: AtivoLojaCountAggregateOutputType | null
     _avg: AtivoLojaAvgAggregateOutputType | null
     _sum: AtivoLojaSumAggregateOutputType | null
@@ -25601,9 +25729,11 @@ export namespace Prisma {
     proximaTrocaBateria?: boolean
     intervaloPreventiva?: boolean
     dadosTecnicos?: boolean
+    valorSubstituicao?: boolean
     criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
     falhas?: boolean | AtivoLoja$falhasArgs<ExtArgs>
     checklistItens?: boolean | AtivoLoja$checklistItensArgs<ExtArgs>
+    chamados?: boolean | AtivoLoja$chamadosArgs<ExtArgs>
     _count?: boolean | AtivoLojaCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["ativoLoja"]>
 
@@ -25632,6 +25762,7 @@ export namespace Prisma {
     proximaTrocaBateria?: boolean
     intervaloPreventiva?: boolean
     dadosTecnicos?: boolean
+    valorSubstituicao?: boolean
     criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["ativoLoja"]>
 
@@ -25660,6 +25791,7 @@ export namespace Prisma {
     proximaTrocaBateria?: boolean
     intervaloPreventiva?: boolean
     dadosTecnicos?: boolean
+    valorSubstituicao?: boolean
     criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["ativoLoja"]>
 
@@ -25688,13 +25820,15 @@ export namespace Prisma {
     proximaTrocaBateria?: boolean
     intervaloPreventiva?: boolean
     dadosTecnicos?: boolean
+    valorSubstituicao?: boolean
   }
 
-  export type AtivoLojaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nome" | "categoria" | "tipo" | "fabricante" | "modelo" | "numeroSerie" | "patrimonio" | "quantidade" | "status" | "localizacao" | "observacoes" | "regiao" | "unidade" | "criadoPorId" | "ativo" | "criadoEm" | "atualizadoEm" | "ultimaPreventiva" | "proximaPreventiva" | "ultimaTrocaBateria" | "proximaTrocaBateria" | "intervaloPreventiva" | "dadosTecnicos", ExtArgs["result"]["ativoLoja"]>
+  export type AtivoLojaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nome" | "categoria" | "tipo" | "fabricante" | "modelo" | "numeroSerie" | "patrimonio" | "quantidade" | "status" | "localizacao" | "observacoes" | "regiao" | "unidade" | "criadoPorId" | "ativo" | "criadoEm" | "atualizadoEm" | "ultimaPreventiva" | "proximaPreventiva" | "ultimaTrocaBateria" | "proximaTrocaBateria" | "intervaloPreventiva" | "dadosTecnicos" | "valorSubstituicao", ExtArgs["result"]["ativoLoja"]>
   export type AtivoLojaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     criadoPor?: boolean | UsuarioDefaultArgs<ExtArgs>
     falhas?: boolean | AtivoLoja$falhasArgs<ExtArgs>
     checklistItens?: boolean | AtivoLoja$checklistItensArgs<ExtArgs>
+    chamados?: boolean | AtivoLoja$chamadosArgs<ExtArgs>
     _count?: boolean | AtivoLojaCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type AtivoLojaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -25710,6 +25844,7 @@ export namespace Prisma {
       criadoPor: Prisma.$UsuarioPayload<ExtArgs>
       falhas: Prisma.$RegistroFalhaAtivoPayload<ExtArgs>[]
       checklistItens: Prisma.$ChecklistEquipamentoItemPayload<ExtArgs>[]
+      chamados: Prisma.$ControleChamadoPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -25736,6 +25871,7 @@ export namespace Prisma {
       proximaTrocaBateria: Date | null
       intervaloPreventiva: number | null
       dadosTecnicos: Prisma.JsonValue | null
+      valorSubstituicao: Prisma.Decimal | null
     }, ExtArgs["result"]["ativoLoja"]>
     composites: {}
   }
@@ -26133,6 +26269,7 @@ export namespace Prisma {
     criadoPor<T extends UsuarioDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UsuarioDefaultArgs<ExtArgs>>): Prisma__UsuarioClient<$Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     falhas<T extends AtivoLoja$falhasArgs<ExtArgs> = {}>(args?: Subset<T, AtivoLoja$falhasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RegistroFalhaAtivoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     checklistItens<T extends AtivoLoja$checklistItensArgs<ExtArgs> = {}>(args?: Subset<T, AtivoLoja$checklistItensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChecklistEquipamentoItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    chamados<T extends AtivoLoja$chamadosArgs<ExtArgs> = {}>(args?: Subset<T, AtivoLoja$chamadosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ControleChamadoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -26186,6 +26323,7 @@ export namespace Prisma {
     readonly proximaTrocaBateria: FieldRef<"AtivoLoja", 'DateTime'>
     readonly intervaloPreventiva: FieldRef<"AtivoLoja", 'Int'>
     readonly dadosTecnicos: FieldRef<"AtivoLoja", 'Json'>
+    readonly valorSubstituicao: FieldRef<"AtivoLoja", 'Decimal'>
   }
     
 
@@ -26635,6 +26773,30 @@ export namespace Prisma {
   }
 
   /**
+   * AtivoLoja.chamados
+   */
+  export type AtivoLoja$chamadosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ControleChamado
+     */
+    select?: ControleChamadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ControleChamado
+     */
+    omit?: ControleChamadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ControleChamadoInclude<ExtArgs> | null
+    where?: ControleChamadoWhereInput
+    orderBy?: ControleChamadoOrderByWithRelationInput | ControleChamadoOrderByWithRelationInput[]
+    cursor?: ControleChamadoWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ControleChamadoScalarFieldEnum | ControleChamadoScalarFieldEnum[]
+  }
+
+  /**
    * AtivoLoja without action
    */
   export type AtivoLojaDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -26659,8 +26821,18 @@ export namespace Prisma {
 
   export type AggregateRegistroFalhaAtivo = {
     _count: RegistroFalhaAtivoCountAggregateOutputType | null
+    _avg: RegistroFalhaAtivoAvgAggregateOutputType | null
+    _sum: RegistroFalhaAtivoSumAggregateOutputType | null
     _min: RegistroFalhaAtivoMinAggregateOutputType | null
     _max: RegistroFalhaAtivoMaxAggregateOutputType | null
+  }
+
+  export type RegistroFalhaAtivoAvgAggregateOutputType = {
+    horasParada: number | null
+  }
+
+  export type RegistroFalhaAtivoSumAggregateOutputType = {
+    horasParada: number | null
   }
 
   export type RegistroFalhaAtivoMinAggregateOutputType = {
@@ -26671,6 +26843,7 @@ export namespace Prisma {
     origemResolucao: string | null
     descricao: string | null
     reincidencia: boolean | null
+    horasParada: number | null
     chamadoId: string | null
     resolvidoPorId: string | null
     criadoEm: Date | null
@@ -26684,6 +26857,7 @@ export namespace Prisma {
     origemResolucao: string | null
     descricao: string | null
     reincidencia: boolean | null
+    horasParada: number | null
     chamadoId: string | null
     resolvidoPorId: string | null
     criadoEm: Date | null
@@ -26697,12 +26871,21 @@ export namespace Prisma {
     origemResolucao: number
     descricao: number
     reincidencia: number
+    horasParada: number
     chamadoId: number
     resolvidoPorId: number
     criadoEm: number
     _all: number
   }
 
+
+  export type RegistroFalhaAtivoAvgAggregateInputType = {
+    horasParada?: true
+  }
+
+  export type RegistroFalhaAtivoSumAggregateInputType = {
+    horasParada?: true
+  }
 
   export type RegistroFalhaAtivoMinAggregateInputType = {
     id?: true
@@ -26712,6 +26895,7 @@ export namespace Prisma {
     origemResolucao?: true
     descricao?: true
     reincidencia?: true
+    horasParada?: true
     chamadoId?: true
     resolvidoPorId?: true
     criadoEm?: true
@@ -26725,6 +26909,7 @@ export namespace Prisma {
     origemResolucao?: true
     descricao?: true
     reincidencia?: true
+    horasParada?: true
     chamadoId?: true
     resolvidoPorId?: true
     criadoEm?: true
@@ -26738,6 +26923,7 @@ export namespace Prisma {
     origemResolucao?: true
     descricao?: true
     reincidencia?: true
+    horasParada?: true
     chamadoId?: true
     resolvidoPorId?: true
     criadoEm?: true
@@ -26782,6 +26968,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: RegistroFalhaAtivoAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: RegistroFalhaAtivoSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: RegistroFalhaAtivoMinAggregateInputType
@@ -26812,6 +27010,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: RegistroFalhaAtivoCountAggregateInputType | true
+    _avg?: RegistroFalhaAtivoAvgAggregateInputType
+    _sum?: RegistroFalhaAtivoSumAggregateInputType
     _min?: RegistroFalhaAtivoMinAggregateInputType
     _max?: RegistroFalhaAtivoMaxAggregateInputType
   }
@@ -26824,10 +27024,13 @@ export namespace Prisma {
     origemResolucao: string | null
     descricao: string
     reincidencia: boolean
+    horasParada: number | null
     chamadoId: string | null
     resolvidoPorId: string | null
     criadoEm: Date
     _count: RegistroFalhaAtivoCountAggregateOutputType | null
+    _avg: RegistroFalhaAtivoAvgAggregateOutputType | null
+    _sum: RegistroFalhaAtivoSumAggregateOutputType | null
     _min: RegistroFalhaAtivoMinAggregateOutputType | null
     _max: RegistroFalhaAtivoMaxAggregateOutputType | null
   }
@@ -26854,6 +27057,7 @@ export namespace Prisma {
     origemResolucao?: boolean
     descricao?: boolean
     reincidencia?: boolean
+    horasParada?: boolean
     chamadoId?: boolean
     resolvidoPorId?: boolean
     criadoEm?: boolean
@@ -26869,6 +27073,7 @@ export namespace Prisma {
     origemResolucao?: boolean
     descricao?: boolean
     reincidencia?: boolean
+    horasParada?: boolean
     chamadoId?: boolean
     resolvidoPorId?: boolean
     criadoEm?: boolean
@@ -26884,6 +27089,7 @@ export namespace Prisma {
     origemResolucao?: boolean
     descricao?: boolean
     reincidencia?: boolean
+    horasParada?: boolean
     chamadoId?: boolean
     resolvidoPorId?: boolean
     criadoEm?: boolean
@@ -26899,12 +27105,13 @@ export namespace Prisma {
     origemResolucao?: boolean
     descricao?: boolean
     reincidencia?: boolean
+    horasParada?: boolean
     chamadoId?: boolean
     resolvidoPorId?: boolean
     criadoEm?: boolean
   }
 
-  export type RegistroFalhaAtivoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ativoId" | "dataDeteccao" | "dataResolucao" | "origemResolucao" | "descricao" | "reincidencia" | "chamadoId" | "resolvidoPorId" | "criadoEm", ExtArgs["result"]["registroFalhaAtivo"]>
+  export type RegistroFalhaAtivoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ativoId" | "dataDeteccao" | "dataResolucao" | "origemResolucao" | "descricao" | "reincidencia" | "horasParada" | "chamadoId" | "resolvidoPorId" | "criadoEm", ExtArgs["result"]["registroFalhaAtivo"]>
   export type RegistroFalhaAtivoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     ativo?: boolean | AtivoLojaDefaultArgs<ExtArgs>
     resolvidoPor?: boolean | RegistroFalhaAtivo$resolvidoPorArgs<ExtArgs>
@@ -26932,6 +27139,7 @@ export namespace Prisma {
       origemResolucao: string | null
       descricao: string
       reincidencia: boolean
+      horasParada: number | null
       chamadoId: string | null
       resolvidoPorId: string | null
       criadoEm: Date
@@ -27367,6 +27575,7 @@ export namespace Prisma {
     readonly origemResolucao: FieldRef<"RegistroFalhaAtivo", 'String'>
     readonly descricao: FieldRef<"RegistroFalhaAtivo", 'String'>
     readonly reincidencia: FieldRef<"RegistroFalhaAtivo", 'Boolean'>
+    readonly horasParada: FieldRef<"RegistroFalhaAtivo", 'Float'>
     readonly chamadoId: FieldRef<"RegistroFalhaAtivo", 'String'>
     readonly resolvidoPorId: FieldRef<"RegistroFalhaAtivo", 'String'>
     readonly criadoEm: FieldRef<"RegistroFalhaAtivo", 'DateTime'>
@@ -29162,6 +29371,8 @@ export namespace Prisma {
     valor: 'valor',
     status: 'status',
     mauUso: 'mauUso',
+    ativoId: 'ativoId',
+    dataResolucao: 'dataResolucao',
     criadoEm: 'criadoEm',
     atualizadoEm: 'atualizadoEm'
   };
@@ -29352,7 +29563,8 @@ export namespace Prisma {
     ultimaTrocaBateria: 'ultimaTrocaBateria',
     proximaTrocaBateria: 'proximaTrocaBateria',
     intervaloPreventiva: 'intervaloPreventiva',
-    dadosTecnicos: 'dadosTecnicos'
+    dadosTecnicos: 'dadosTecnicos',
+    valorSubstituicao: 'valorSubstituicao'
   };
 
   export type AtivoLojaScalarFieldEnum = (typeof AtivoLojaScalarFieldEnum)[keyof typeof AtivoLojaScalarFieldEnum]
@@ -29366,6 +29578,7 @@ export namespace Prisma {
     origemResolucao: 'origemResolucao',
     descricao: 'descricao',
     reincidencia: 'reincidencia',
+    horasParada: 'horasParada',
     chamadoId: 'chamadoId',
     resolvidoPorId: 'resolvidoPorId',
     criadoEm: 'criadoEm'
@@ -29630,20 +29843,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'TipoRotinaInfra'
-   */
-  export type EnumTipoRotinaInfraFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TipoRotinaInfra'>
-    
-
-
-  /**
-   * Reference to a field of type 'TipoRotinaInfra[]'
-   */
-  export type ListEnumTipoRotinaInfraFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TipoRotinaInfra[]'>
-    
-
-
-  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -29654,6 +29853,20 @@ export namespace Prisma {
    * Reference to a field of type 'Float[]'
    */
   export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'TipoRotinaInfra'
+   */
+  export type EnumTipoRotinaInfraFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TipoRotinaInfra'>
+    
+
+
+  /**
+   * Reference to a field of type 'TipoRotinaInfra[]'
+   */
+  export type ListEnumTipoRotinaInfraFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TipoRotinaInfra[]'>
     
   /**
    * Deep Input Types
@@ -30233,8 +30446,11 @@ export namespace Prisma {
     valor?: DecimalNullableFilter<"ControleChamado"> | Decimal | DecimalJsLike | number | string | null
     status?: EnumStatusChamadoFilter<"ControleChamado"> | $Enums.StatusChamado
     mauUso?: BoolFilter<"ControleChamado"> | boolean
+    ativoId?: StringNullableFilter<"ControleChamado"> | string | null
+    dataResolucao?: DateTimeNullableFilter<"ControleChamado"> | Date | string | null
     criadoEm?: DateTimeFilter<"ControleChamado"> | Date | string
     atualizadoEm?: DateTimeFilter<"ControleChamado"> | Date | string
+    ativo?: XOR<AtivoLojaNullableScalarRelationFilter, AtivoLojaWhereInput> | null
   }
 
   export type ControleChamadoOrderByWithRelationInput = {
@@ -30253,8 +30469,11 @@ export namespace Prisma {
     valor?: SortOrderInput | SortOrder
     status?: SortOrder
     mauUso?: SortOrder
+    ativoId?: SortOrderInput | SortOrder
+    dataResolucao?: SortOrderInput | SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
+    ativo?: AtivoLojaOrderByWithRelationInput
   }
 
   export type ControleChamadoWhereUniqueInput = Prisma.AtLeast<{
@@ -30276,8 +30495,11 @@ export namespace Prisma {
     valor?: DecimalNullableFilter<"ControleChamado"> | Decimal | DecimalJsLike | number | string | null
     status?: EnumStatusChamadoFilter<"ControleChamado"> | $Enums.StatusChamado
     mauUso?: BoolFilter<"ControleChamado"> | boolean
+    ativoId?: StringNullableFilter<"ControleChamado"> | string | null
+    dataResolucao?: DateTimeNullableFilter<"ControleChamado"> | Date | string | null
     criadoEm?: DateTimeFilter<"ControleChamado"> | Date | string
     atualizadoEm?: DateTimeFilter<"ControleChamado"> | Date | string
+    ativo?: XOR<AtivoLojaNullableScalarRelationFilter, AtivoLojaWhereInput> | null
   }, "id">
 
   export type ControleChamadoOrderByWithAggregationInput = {
@@ -30296,6 +30518,8 @@ export namespace Prisma {
     valor?: SortOrderInput | SortOrder
     status?: SortOrder
     mauUso?: SortOrder
+    ativoId?: SortOrderInput | SortOrder
+    dataResolucao?: SortOrderInput | SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
     _count?: ControleChamadoCountOrderByAggregateInput
@@ -30324,6 +30548,8 @@ export namespace Prisma {
     valor?: DecimalNullableWithAggregatesFilter<"ControleChamado"> | Decimal | DecimalJsLike | number | string | null
     status?: EnumStatusChamadoWithAggregatesFilter<"ControleChamado"> | $Enums.StatusChamado
     mauUso?: BoolWithAggregatesFilter<"ControleChamado"> | boolean
+    ativoId?: StringNullableWithAggregatesFilter<"ControleChamado"> | string | null
+    dataResolucao?: DateTimeNullableWithAggregatesFilter<"ControleChamado"> | Date | string | null
     criadoEm?: DateTimeWithAggregatesFilter<"ControleChamado"> | Date | string
     atualizadoEm?: DateTimeWithAggregatesFilter<"ControleChamado"> | Date | string
   }
@@ -31181,9 +31407,11 @@ export namespace Prisma {
     proximaTrocaBateria?: DateTimeNullableFilter<"AtivoLoja"> | Date | string | null
     intervaloPreventiva?: IntNullableFilter<"AtivoLoja"> | number | null
     dadosTecnicos?: JsonNullableFilter<"AtivoLoja">
+    valorSubstituicao?: DecimalNullableFilter<"AtivoLoja"> | Decimal | DecimalJsLike | number | string | null
     criadoPor?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
     falhas?: RegistroFalhaAtivoListRelationFilter
     checklistItens?: ChecklistEquipamentoItemListRelationFilter
+    chamados?: ControleChamadoListRelationFilter
   }
 
   export type AtivoLojaOrderByWithRelationInput = {
@@ -31211,9 +31439,11 @@ export namespace Prisma {
     proximaTrocaBateria?: SortOrderInput | SortOrder
     intervaloPreventiva?: SortOrderInput | SortOrder
     dadosTecnicos?: SortOrderInput | SortOrder
+    valorSubstituicao?: SortOrderInput | SortOrder
     criadoPor?: UsuarioOrderByWithRelationInput
     falhas?: RegistroFalhaAtivoOrderByRelationAggregateInput
     checklistItens?: ChecklistEquipamentoItemOrderByRelationAggregateInput
+    chamados?: ControleChamadoOrderByRelationAggregateInput
   }
 
   export type AtivoLojaWhereUniqueInput = Prisma.AtLeast<{
@@ -31244,9 +31474,11 @@ export namespace Prisma {
     proximaTrocaBateria?: DateTimeNullableFilter<"AtivoLoja"> | Date | string | null
     intervaloPreventiva?: IntNullableFilter<"AtivoLoja"> | number | null
     dadosTecnicos?: JsonNullableFilter<"AtivoLoja">
+    valorSubstituicao?: DecimalNullableFilter<"AtivoLoja"> | Decimal | DecimalJsLike | number | string | null
     criadoPor?: XOR<UsuarioScalarRelationFilter, UsuarioWhereInput>
     falhas?: RegistroFalhaAtivoListRelationFilter
     checklistItens?: ChecklistEquipamentoItemListRelationFilter
+    chamados?: ControleChamadoListRelationFilter
   }, "id">
 
   export type AtivoLojaOrderByWithAggregationInput = {
@@ -31274,6 +31506,7 @@ export namespace Prisma {
     proximaTrocaBateria?: SortOrderInput | SortOrder
     intervaloPreventiva?: SortOrderInput | SortOrder
     dadosTecnicos?: SortOrderInput | SortOrder
+    valorSubstituicao?: SortOrderInput | SortOrder
     _count?: AtivoLojaCountOrderByAggregateInput
     _avg?: AtivoLojaAvgOrderByAggregateInput
     _max?: AtivoLojaMaxOrderByAggregateInput
@@ -31309,6 +31542,7 @@ export namespace Prisma {
     proximaTrocaBateria?: DateTimeNullableWithAggregatesFilter<"AtivoLoja"> | Date | string | null
     intervaloPreventiva?: IntNullableWithAggregatesFilter<"AtivoLoja"> | number | null
     dadosTecnicos?: JsonNullableWithAggregatesFilter<"AtivoLoja">
+    valorSubstituicao?: DecimalNullableWithAggregatesFilter<"AtivoLoja"> | Decimal | DecimalJsLike | number | string | null
   }
 
   export type RegistroFalhaAtivoWhereInput = {
@@ -31322,6 +31556,7 @@ export namespace Prisma {
     origemResolucao?: StringNullableFilter<"RegistroFalhaAtivo"> | string | null
     descricao?: StringFilter<"RegistroFalhaAtivo"> | string
     reincidencia?: BoolFilter<"RegistroFalhaAtivo"> | boolean
+    horasParada?: FloatNullableFilter<"RegistroFalhaAtivo"> | number | null
     chamadoId?: StringNullableFilter<"RegistroFalhaAtivo"> | string | null
     resolvidoPorId?: StringNullableFilter<"RegistroFalhaAtivo"> | string | null
     criadoEm?: DateTimeFilter<"RegistroFalhaAtivo"> | Date | string
@@ -31337,6 +31572,7 @@ export namespace Prisma {
     origemResolucao?: SortOrderInput | SortOrder
     descricao?: SortOrder
     reincidencia?: SortOrder
+    horasParada?: SortOrderInput | SortOrder
     chamadoId?: SortOrderInput | SortOrder
     resolvidoPorId?: SortOrderInput | SortOrder
     criadoEm?: SortOrder
@@ -31355,6 +31591,7 @@ export namespace Prisma {
     origemResolucao?: StringNullableFilter<"RegistroFalhaAtivo"> | string | null
     descricao?: StringFilter<"RegistroFalhaAtivo"> | string
     reincidencia?: BoolFilter<"RegistroFalhaAtivo"> | boolean
+    horasParada?: FloatNullableFilter<"RegistroFalhaAtivo"> | number | null
     chamadoId?: StringNullableFilter<"RegistroFalhaAtivo"> | string | null
     resolvidoPorId?: StringNullableFilter<"RegistroFalhaAtivo"> | string | null
     criadoEm?: DateTimeFilter<"RegistroFalhaAtivo"> | Date | string
@@ -31370,12 +31607,15 @@ export namespace Prisma {
     origemResolucao?: SortOrderInput | SortOrder
     descricao?: SortOrder
     reincidencia?: SortOrder
+    horasParada?: SortOrderInput | SortOrder
     chamadoId?: SortOrderInput | SortOrder
     resolvidoPorId?: SortOrderInput | SortOrder
     criadoEm?: SortOrder
     _count?: RegistroFalhaAtivoCountOrderByAggregateInput
+    _avg?: RegistroFalhaAtivoAvgOrderByAggregateInput
     _max?: RegistroFalhaAtivoMaxOrderByAggregateInput
     _min?: RegistroFalhaAtivoMinOrderByAggregateInput
+    _sum?: RegistroFalhaAtivoSumOrderByAggregateInput
   }
 
   export type RegistroFalhaAtivoScalarWhereWithAggregatesInput = {
@@ -31389,6 +31629,7 @@ export namespace Prisma {
     origemResolucao?: StringNullableWithAggregatesFilter<"RegistroFalhaAtivo"> | string | null
     descricao?: StringWithAggregatesFilter<"RegistroFalhaAtivo"> | string
     reincidencia?: BoolWithAggregatesFilter<"RegistroFalhaAtivo"> | boolean
+    horasParada?: FloatNullableWithAggregatesFilter<"RegistroFalhaAtivo"> | number | null
     chamadoId?: StringNullableWithAggregatesFilter<"RegistroFalhaAtivo"> | string | null
     resolvidoPorId?: StringNullableWithAggregatesFilter<"RegistroFalhaAtivo"> | string | null
     criadoEm?: DateTimeWithAggregatesFilter<"RegistroFalhaAtivo"> | Date | string
@@ -32124,8 +32365,10 @@ export namespace Prisma {
     valor?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.StatusChamado
     mauUso?: boolean
+    dataResolucao?: Date | string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
+    ativo?: AtivoLojaCreateNestedOneWithoutChamadosInput
   }
 
   export type ControleChamadoUncheckedCreateInput = {
@@ -32144,6 +32387,8 @@ export namespace Prisma {
     valor?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.StatusChamado
     mauUso?: boolean
+    ativoId?: string | null
+    dataResolucao?: Date | string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
   }
@@ -32164,8 +32409,10 @@ export namespace Prisma {
     valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumStatusChamadoFieldUpdateOperationsInput | $Enums.StatusChamado
     mauUso?: BoolFieldUpdateOperationsInput | boolean
+    dataResolucao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    ativo?: AtivoLojaUpdateOneWithoutChamadosNestedInput
   }
 
   export type ControleChamadoUncheckedUpdateInput = {
@@ -32184,6 +32431,8 @@ export namespace Prisma {
     valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumStatusChamadoFieldUpdateOperationsInput | $Enums.StatusChamado
     mauUso?: BoolFieldUpdateOperationsInput | boolean
+    ativoId?: NullableStringFieldUpdateOperationsInput | string | null
+    dataResolucao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -32204,6 +32453,8 @@ export namespace Prisma {
     valor?: Decimal | DecimalJsLike | number | string | null
     status?: $Enums.StatusChamado
     mauUso?: boolean
+    ativoId?: string | null
+    dataResolucao?: Date | string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
   }
@@ -32224,6 +32475,7 @@ export namespace Prisma {
     valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumStatusChamadoFieldUpdateOperationsInput | $Enums.StatusChamado
     mauUso?: BoolFieldUpdateOperationsInput | boolean
+    dataResolucao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -32244,6 +32496,8 @@ export namespace Prisma {
     valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     status?: EnumStatusChamadoFieldUpdateOperationsInput | $Enums.StatusChamado
     mauUso?: BoolFieldUpdateOperationsInput | boolean
+    ativoId?: NullableStringFieldUpdateOperationsInput | string | null
+    dataResolucao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -33166,9 +33420,11 @@ export namespace Prisma {
     proximaTrocaBateria?: Date | string | null
     intervaloPreventiva?: number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: Decimal | DecimalJsLike | number | string | null
     criadoPor: UsuarioCreateNestedOneWithoutAtivosLojaInput
     falhas?: RegistroFalhaAtivoCreateNestedManyWithoutAtivoInput
     checklistItens?: ChecklistEquipamentoItemCreateNestedManyWithoutAtivoInput
+    chamados?: ControleChamadoCreateNestedManyWithoutAtivoInput
   }
 
   export type AtivoLojaUncheckedCreateInput = {
@@ -33196,8 +33452,10 @@ export namespace Prisma {
     proximaTrocaBateria?: Date | string | null
     intervaloPreventiva?: number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: Decimal | DecimalJsLike | number | string | null
     falhas?: RegistroFalhaAtivoUncheckedCreateNestedManyWithoutAtivoInput
     checklistItens?: ChecklistEquipamentoItemUncheckedCreateNestedManyWithoutAtivoInput
+    chamados?: ControleChamadoUncheckedCreateNestedManyWithoutAtivoInput
   }
 
   export type AtivoLojaUpdateInput = {
@@ -33224,9 +33482,11 @@ export namespace Prisma {
     proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     criadoPor?: UsuarioUpdateOneRequiredWithoutAtivosLojaNestedInput
     falhas?: RegistroFalhaAtivoUpdateManyWithoutAtivoNestedInput
     checklistItens?: ChecklistEquipamentoItemUpdateManyWithoutAtivoNestedInput
+    chamados?: ControleChamadoUpdateManyWithoutAtivoNestedInput
   }
 
   export type AtivoLojaUncheckedUpdateInput = {
@@ -33254,8 +33514,10 @@ export namespace Prisma {
     proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     falhas?: RegistroFalhaAtivoUncheckedUpdateManyWithoutAtivoNestedInput
     checklistItens?: ChecklistEquipamentoItemUncheckedUpdateManyWithoutAtivoNestedInput
+    chamados?: ControleChamadoUncheckedUpdateManyWithoutAtivoNestedInput
   }
 
   export type AtivoLojaCreateManyInput = {
@@ -33283,6 +33545,7 @@ export namespace Prisma {
     proximaTrocaBateria?: Date | string | null
     intervaloPreventiva?: number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: Decimal | DecimalJsLike | number | string | null
   }
 
   export type AtivoLojaUpdateManyMutationInput = {
@@ -33309,6 +33572,7 @@ export namespace Prisma {
     proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
   }
 
   export type AtivoLojaUncheckedUpdateManyInput = {
@@ -33336,6 +33600,7 @@ export namespace Prisma {
     proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
   }
 
   export type RegistroFalhaAtivoCreateInput = {
@@ -33345,6 +33610,7 @@ export namespace Prisma {
     origemResolucao?: string | null
     descricao: string
     reincidencia?: boolean
+    horasParada?: number | null
     chamadoId?: string | null
     criadoEm?: Date | string
     ativo: AtivoLojaCreateNestedOneWithoutFalhasInput
@@ -33359,6 +33625,7 @@ export namespace Prisma {
     origemResolucao?: string | null
     descricao: string
     reincidencia?: boolean
+    horasParada?: number | null
     chamadoId?: string | null
     resolvidoPorId?: string | null
     criadoEm?: Date | string
@@ -33371,6 +33638,7 @@ export namespace Prisma {
     origemResolucao?: NullableStringFieldUpdateOperationsInput | string | null
     descricao?: StringFieldUpdateOperationsInput | string
     reincidencia?: BoolFieldUpdateOperationsInput | boolean
+    horasParada?: NullableFloatFieldUpdateOperationsInput | number | null
     chamadoId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     ativo?: AtivoLojaUpdateOneRequiredWithoutFalhasNestedInput
@@ -33385,6 +33653,7 @@ export namespace Prisma {
     origemResolucao?: NullableStringFieldUpdateOperationsInput | string | null
     descricao?: StringFieldUpdateOperationsInput | string
     reincidencia?: BoolFieldUpdateOperationsInput | boolean
+    horasParada?: NullableFloatFieldUpdateOperationsInput | number | null
     chamadoId?: NullableStringFieldUpdateOperationsInput | string | null
     resolvidoPorId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33398,6 +33667,7 @@ export namespace Prisma {
     origemResolucao?: string | null
     descricao: string
     reincidencia?: boolean
+    horasParada?: number | null
     chamadoId?: string | null
     resolvidoPorId?: string | null
     criadoEm?: Date | string
@@ -33410,6 +33680,7 @@ export namespace Prisma {
     origemResolucao?: NullableStringFieldUpdateOperationsInput | string | null
     descricao?: StringFieldUpdateOperationsInput | string
     reincidencia?: BoolFieldUpdateOperationsInput | boolean
+    horasParada?: NullableFloatFieldUpdateOperationsInput | number | null
     chamadoId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -33422,6 +33693,7 @@ export namespace Prisma {
     origemResolucao?: NullableStringFieldUpdateOperationsInput | string | null
     descricao?: StringFieldUpdateOperationsInput | string
     reincidencia?: BoolFieldUpdateOperationsInput | boolean
+    horasParada?: NullableFloatFieldUpdateOperationsInput | number | null
     chamadoId?: NullableStringFieldUpdateOperationsInput | string | null
     resolvidoPorId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34210,6 +34482,11 @@ export namespace Prisma {
     not?: NestedEnumStatusChamadoFilter<$PrismaModel> | $Enums.StatusChamado
   }
 
+  export type AtivoLojaNullableScalarRelationFilter = {
+    is?: AtivoLojaWhereInput | null
+    isNot?: AtivoLojaWhereInput | null
+  }
+
   export type ControleChamadoCountOrderByAggregateInput = {
     id?: SortOrder
     dataAbertura?: SortOrder
@@ -34226,6 +34503,8 @@ export namespace Prisma {
     valor?: SortOrder
     status?: SortOrder
     mauUso?: SortOrder
+    ativoId?: SortOrder
+    dataResolucao?: SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
   }
@@ -34250,6 +34529,8 @@ export namespace Prisma {
     valor?: SortOrder
     status?: SortOrder
     mauUso?: SortOrder
+    ativoId?: SortOrder
+    dataResolucao?: SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
   }
@@ -34270,6 +34551,8 @@ export namespace Prisma {
     valor?: SortOrder
     status?: SortOrder
     mauUso?: SortOrder
+    ativoId?: SortOrder
+    dataResolucao?: SortOrder
     criadoEm?: SortOrder
     atualizadoEm?: SortOrder
   }
@@ -34729,11 +35012,6 @@ export namespace Prisma {
     isNot?: ChecklistEquipamentoWhereInput
   }
 
-  export type AtivoLojaNullableScalarRelationFilter = {
-    is?: AtivoLojaWhereInput | null
-    isNot?: AtivoLojaWhereInput | null
-  }
-
   export type ChecklistEquipamentoItemCountOrderByAggregateInput = {
     id?: SortOrder
     checklistId?: SortOrder
@@ -34973,6 +35251,16 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type ControleChamadoListRelationFilter = {
+    every?: ControleChamadoWhereInput
+    some?: ControleChamadoWhereInput
+    none?: ControleChamadoWhereInput
+  }
+
+  export type ControleChamadoOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type AtivoLojaCountOrderByAggregateInput = {
     id?: SortOrder
     nome?: SortOrder
@@ -34998,11 +35286,13 @@ export namespace Prisma {
     proximaTrocaBateria?: SortOrder
     intervaloPreventiva?: SortOrder
     dadosTecnicos?: SortOrder
+    valorSubstituicao?: SortOrder
   }
 
   export type AtivoLojaAvgOrderByAggregateInput = {
     quantidade?: SortOrder
     intervaloPreventiva?: SortOrder
+    valorSubstituicao?: SortOrder
   }
 
   export type AtivoLojaMaxOrderByAggregateInput = {
@@ -35029,6 +35319,7 @@ export namespace Prisma {
     ultimaTrocaBateria?: SortOrder
     proximaTrocaBateria?: SortOrder
     intervaloPreventiva?: SortOrder
+    valorSubstituicao?: SortOrder
   }
 
   export type AtivoLojaMinOrderByAggregateInput = {
@@ -35055,11 +35346,13 @@ export namespace Prisma {
     ultimaTrocaBateria?: SortOrder
     proximaTrocaBateria?: SortOrder
     intervaloPreventiva?: SortOrder
+    valorSubstituicao?: SortOrder
   }
 
   export type AtivoLojaSumOrderByAggregateInput = {
     quantidade?: SortOrder
     intervaloPreventiva?: SortOrder
+    valorSubstituicao?: SortOrder
   }
 
   export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -35078,6 +35371,17 @@ export namespace Prisma {
     _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type AtivoLojaScalarRelationFilter = {
     is?: AtivoLojaWhereInput
     isNot?: AtivoLojaWhereInput
@@ -35091,9 +35395,14 @@ export namespace Prisma {
     origemResolucao?: SortOrder
     descricao?: SortOrder
     reincidencia?: SortOrder
+    horasParada?: SortOrder
     chamadoId?: SortOrder
     resolvidoPorId?: SortOrder
     criadoEm?: SortOrder
+  }
+
+  export type RegistroFalhaAtivoAvgOrderByAggregateInput = {
+    horasParada?: SortOrder
   }
 
   export type RegistroFalhaAtivoMaxOrderByAggregateInput = {
@@ -35104,6 +35413,7 @@ export namespace Prisma {
     origemResolucao?: SortOrder
     descricao?: SortOrder
     reincidencia?: SortOrder
+    horasParada?: SortOrder
     chamadoId?: SortOrder
     resolvidoPorId?: SortOrder
     criadoEm?: SortOrder
@@ -35117,9 +35427,30 @@ export namespace Prisma {
     origemResolucao?: SortOrder
     descricao?: SortOrder
     reincidencia?: SortOrder
+    horasParada?: SortOrder
     chamadoId?: SortOrder
     resolvidoPorId?: SortOrder
     criadoEm?: SortOrder
+  }
+
+  export type RegistroFalhaAtivoSumOrderByAggregateInput = {
+    horasParada?: SortOrder
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type EnumTipoRotinaInfraFilter<$PrismaModel = never> = {
@@ -35916,6 +36247,12 @@ export namespace Prisma {
     update?: XOR<XOR<UsuarioUpdateToOneWithWhereWithoutLogsAuditoriaInput, UsuarioUpdateWithoutLogsAuditoriaInput>, UsuarioUncheckedUpdateWithoutLogsAuditoriaInput>
   }
 
+  export type AtivoLojaCreateNestedOneWithoutChamadosInput = {
+    create?: XOR<AtivoLojaCreateWithoutChamadosInput, AtivoLojaUncheckedCreateWithoutChamadosInput>
+    connectOrCreate?: AtivoLojaCreateOrConnectWithoutChamadosInput
+    connect?: AtivoLojaWhereUniqueInput
+  }
+
   export type EnumSegmentoChamadoFieldUpdateOperationsInput = {
     set?: $Enums.SegmentoChamado
   }
@@ -35930,6 +36267,16 @@ export namespace Prisma {
 
   export type EnumStatusChamadoFieldUpdateOperationsInput = {
     set?: $Enums.StatusChamado
+  }
+
+  export type AtivoLojaUpdateOneWithoutChamadosNestedInput = {
+    create?: XOR<AtivoLojaCreateWithoutChamadosInput, AtivoLojaUncheckedCreateWithoutChamadosInput>
+    connectOrCreate?: AtivoLojaCreateOrConnectWithoutChamadosInput
+    upsert?: AtivoLojaUpsertWithoutChamadosInput
+    disconnect?: AtivoLojaWhereInput | boolean
+    delete?: AtivoLojaWhereInput | boolean
+    connect?: AtivoLojaWhereUniqueInput
+    update?: XOR<XOR<AtivoLojaUpdateToOneWithWhereWithoutChamadosInput, AtivoLojaUpdateWithoutChamadosInput>, AtivoLojaUncheckedUpdateWithoutChamadosInput>
   }
 
   export type DecimalFieldUpdateOperationsInput = {
@@ -36296,6 +36643,13 @@ export namespace Prisma {
     connect?: ChecklistEquipamentoItemWhereUniqueInput | ChecklistEquipamentoItemWhereUniqueInput[]
   }
 
+  export type ControleChamadoCreateNestedManyWithoutAtivoInput = {
+    create?: XOR<ControleChamadoCreateWithoutAtivoInput, ControleChamadoUncheckedCreateWithoutAtivoInput> | ControleChamadoCreateWithoutAtivoInput[] | ControleChamadoUncheckedCreateWithoutAtivoInput[]
+    connectOrCreate?: ControleChamadoCreateOrConnectWithoutAtivoInput | ControleChamadoCreateOrConnectWithoutAtivoInput[]
+    createMany?: ControleChamadoCreateManyAtivoInputEnvelope
+    connect?: ControleChamadoWhereUniqueInput | ControleChamadoWhereUniqueInput[]
+  }
+
   export type RegistroFalhaAtivoUncheckedCreateNestedManyWithoutAtivoInput = {
     create?: XOR<RegistroFalhaAtivoCreateWithoutAtivoInput, RegistroFalhaAtivoUncheckedCreateWithoutAtivoInput> | RegistroFalhaAtivoCreateWithoutAtivoInput[] | RegistroFalhaAtivoUncheckedCreateWithoutAtivoInput[]
     connectOrCreate?: RegistroFalhaAtivoCreateOrConnectWithoutAtivoInput | RegistroFalhaAtivoCreateOrConnectWithoutAtivoInput[]
@@ -36308,6 +36662,13 @@ export namespace Prisma {
     connectOrCreate?: ChecklistEquipamentoItemCreateOrConnectWithoutAtivoInput | ChecklistEquipamentoItemCreateOrConnectWithoutAtivoInput[]
     createMany?: ChecklistEquipamentoItemCreateManyAtivoInputEnvelope
     connect?: ChecklistEquipamentoItemWhereUniqueInput | ChecklistEquipamentoItemWhereUniqueInput[]
+  }
+
+  export type ControleChamadoUncheckedCreateNestedManyWithoutAtivoInput = {
+    create?: XOR<ControleChamadoCreateWithoutAtivoInput, ControleChamadoUncheckedCreateWithoutAtivoInput> | ControleChamadoCreateWithoutAtivoInput[] | ControleChamadoUncheckedCreateWithoutAtivoInput[]
+    connectOrCreate?: ControleChamadoCreateOrConnectWithoutAtivoInput | ControleChamadoCreateOrConnectWithoutAtivoInput[]
+    createMany?: ControleChamadoCreateManyAtivoInputEnvelope
+    connect?: ControleChamadoWhereUniqueInput | ControleChamadoWhereUniqueInput[]
   }
 
   export type NullableIntFieldUpdateOperationsInput = {
@@ -36354,6 +36715,20 @@ export namespace Prisma {
     deleteMany?: ChecklistEquipamentoItemScalarWhereInput | ChecklistEquipamentoItemScalarWhereInput[]
   }
 
+  export type ControleChamadoUpdateManyWithoutAtivoNestedInput = {
+    create?: XOR<ControleChamadoCreateWithoutAtivoInput, ControleChamadoUncheckedCreateWithoutAtivoInput> | ControleChamadoCreateWithoutAtivoInput[] | ControleChamadoUncheckedCreateWithoutAtivoInput[]
+    connectOrCreate?: ControleChamadoCreateOrConnectWithoutAtivoInput | ControleChamadoCreateOrConnectWithoutAtivoInput[]
+    upsert?: ControleChamadoUpsertWithWhereUniqueWithoutAtivoInput | ControleChamadoUpsertWithWhereUniqueWithoutAtivoInput[]
+    createMany?: ControleChamadoCreateManyAtivoInputEnvelope
+    set?: ControleChamadoWhereUniqueInput | ControleChamadoWhereUniqueInput[]
+    disconnect?: ControleChamadoWhereUniqueInput | ControleChamadoWhereUniqueInput[]
+    delete?: ControleChamadoWhereUniqueInput | ControleChamadoWhereUniqueInput[]
+    connect?: ControleChamadoWhereUniqueInput | ControleChamadoWhereUniqueInput[]
+    update?: ControleChamadoUpdateWithWhereUniqueWithoutAtivoInput | ControleChamadoUpdateWithWhereUniqueWithoutAtivoInput[]
+    updateMany?: ControleChamadoUpdateManyWithWhereWithoutAtivoInput | ControleChamadoUpdateManyWithWhereWithoutAtivoInput[]
+    deleteMany?: ControleChamadoScalarWhereInput | ControleChamadoScalarWhereInput[]
+  }
+
   export type RegistroFalhaAtivoUncheckedUpdateManyWithoutAtivoNestedInput = {
     create?: XOR<RegistroFalhaAtivoCreateWithoutAtivoInput, RegistroFalhaAtivoUncheckedCreateWithoutAtivoInput> | RegistroFalhaAtivoCreateWithoutAtivoInput[] | RegistroFalhaAtivoUncheckedCreateWithoutAtivoInput[]
     connectOrCreate?: RegistroFalhaAtivoCreateOrConnectWithoutAtivoInput | RegistroFalhaAtivoCreateOrConnectWithoutAtivoInput[]
@@ -36382,6 +36757,20 @@ export namespace Prisma {
     deleteMany?: ChecklistEquipamentoItemScalarWhereInput | ChecklistEquipamentoItemScalarWhereInput[]
   }
 
+  export type ControleChamadoUncheckedUpdateManyWithoutAtivoNestedInput = {
+    create?: XOR<ControleChamadoCreateWithoutAtivoInput, ControleChamadoUncheckedCreateWithoutAtivoInput> | ControleChamadoCreateWithoutAtivoInput[] | ControleChamadoUncheckedCreateWithoutAtivoInput[]
+    connectOrCreate?: ControleChamadoCreateOrConnectWithoutAtivoInput | ControleChamadoCreateOrConnectWithoutAtivoInput[]
+    upsert?: ControleChamadoUpsertWithWhereUniqueWithoutAtivoInput | ControleChamadoUpsertWithWhereUniqueWithoutAtivoInput[]
+    createMany?: ControleChamadoCreateManyAtivoInputEnvelope
+    set?: ControleChamadoWhereUniqueInput | ControleChamadoWhereUniqueInput[]
+    disconnect?: ControleChamadoWhereUniqueInput | ControleChamadoWhereUniqueInput[]
+    delete?: ControleChamadoWhereUniqueInput | ControleChamadoWhereUniqueInput[]
+    connect?: ControleChamadoWhereUniqueInput | ControleChamadoWhereUniqueInput[]
+    update?: ControleChamadoUpdateWithWhereUniqueWithoutAtivoInput | ControleChamadoUpdateWithWhereUniqueWithoutAtivoInput[]
+    updateMany?: ControleChamadoUpdateManyWithWhereWithoutAtivoInput | ControleChamadoUpdateManyWithWhereWithoutAtivoInput[]
+    deleteMany?: ControleChamadoScalarWhereInput | ControleChamadoScalarWhereInput[]
+  }
+
   export type AtivoLojaCreateNestedOneWithoutFalhasInput = {
     create?: XOR<AtivoLojaCreateWithoutFalhasInput, AtivoLojaUncheckedCreateWithoutFalhasInput>
     connectOrCreate?: AtivoLojaCreateOrConnectWithoutFalhasInput
@@ -36392,6 +36781,14 @@ export namespace Prisma {
     create?: XOR<UsuarioCreateWithoutFalhasResolvidasInput, UsuarioUncheckedCreateWithoutFalhasResolvidasInput>
     connectOrCreate?: UsuarioCreateOrConnectWithoutFalhasResolvidasInput
     connect?: UsuarioWhereUniqueInput
+  }
+
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type AtivoLojaUpdateOneRequiredWithoutFalhasNestedInput = {
@@ -36844,6 +37241,22 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
   export type NestedEnumTipoRotinaInfraFilter<$PrismaModel = never> = {
     equals?: $Enums.TipoRotinaInfra | EnumTipoRotinaInfraFieldRefInput<$PrismaModel>
     in?: $Enums.TipoRotinaInfra[] | ListEnumTipoRotinaInfraFieldRefInput<$PrismaModel>
@@ -37070,8 +37483,10 @@ export namespace Prisma {
     proximaTrocaBateria?: Date | string | null
     intervaloPreventiva?: number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: Decimal | DecimalJsLike | number | string | null
     falhas?: RegistroFalhaAtivoCreateNestedManyWithoutAtivoInput
     checklistItens?: ChecklistEquipamentoItemCreateNestedManyWithoutAtivoInput
+    chamados?: ControleChamadoCreateNestedManyWithoutAtivoInput
   }
 
   export type AtivoLojaUncheckedCreateWithoutCriadoPorInput = {
@@ -37098,8 +37513,10 @@ export namespace Prisma {
     proximaTrocaBateria?: Date | string | null
     intervaloPreventiva?: number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: Decimal | DecimalJsLike | number | string | null
     falhas?: RegistroFalhaAtivoUncheckedCreateNestedManyWithoutAtivoInput
     checklistItens?: ChecklistEquipamentoItemUncheckedCreateNestedManyWithoutAtivoInput
+    chamados?: ControleChamadoUncheckedCreateNestedManyWithoutAtivoInput
   }
 
   export type AtivoLojaCreateOrConnectWithoutCriadoPorInput = {
@@ -37313,6 +37730,7 @@ export namespace Prisma {
     origemResolucao?: string | null
     descricao: string
     reincidencia?: boolean
+    horasParada?: number | null
     chamadoId?: string | null
     criadoEm?: Date | string
     ativo: AtivoLojaCreateNestedOneWithoutFalhasInput
@@ -37326,6 +37744,7 @@ export namespace Prisma {
     origemResolucao?: string | null
     descricao: string
     reincidencia?: boolean
+    horasParada?: number | null
     chamadoId?: string | null
     criadoEm?: Date | string
   }
@@ -37523,6 +37942,7 @@ export namespace Prisma {
     proximaTrocaBateria?: DateTimeNullableFilter<"AtivoLoja"> | Date | string | null
     intervaloPreventiva?: IntNullableFilter<"AtivoLoja"> | number | null
     dadosTecnicos?: JsonNullableFilter<"AtivoLoja">
+    valorSubstituicao?: DecimalNullableFilter<"AtivoLoja"> | Decimal | DecimalJsLike | number | string | null
   }
 
   export type NotificacaoUpsertWithWhereUniqueWithoutUsuarioInput = {
@@ -37719,6 +38139,7 @@ export namespace Prisma {
     origemResolucao?: StringNullableFilter<"RegistroFalhaAtivo"> | string | null
     descricao?: StringFilter<"RegistroFalhaAtivo"> | string
     reincidencia?: BoolFilter<"RegistroFalhaAtivo"> | boolean
+    horasParada?: FloatNullableFilter<"RegistroFalhaAtivo"> | number | null
     chamadoId?: StringNullableFilter<"RegistroFalhaAtivo"> | string | null
     resolvidoPorId?: StringNullableFilter<"RegistroFalhaAtivo"> | string | null
     criadoEm?: DateTimeFilter<"RegistroFalhaAtivo"> | Date | string
@@ -38528,6 +38949,142 @@ export namespace Prisma {
     rotinasInfra?: ChecklistRotinaInfraUncheckedUpdateManyWithoutCriadoPorNestedInput
   }
 
+  export type AtivoLojaCreateWithoutChamadosInput = {
+    id?: string
+    nome: string
+    categoria: string
+    tipo?: string | null
+    fabricante?: string | null
+    modelo?: string | null
+    numeroSerie?: string | null
+    patrimonio?: string | null
+    quantidade?: number
+    status?: string
+    localizacao?: string | null
+    observacoes?: string | null
+    regiao: string
+    unidade: string
+    ativo?: boolean
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    ultimaPreventiva?: Date | string | null
+    proximaPreventiva?: Date | string | null
+    ultimaTrocaBateria?: Date | string | null
+    proximaTrocaBateria?: Date | string | null
+    intervaloPreventiva?: number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: Decimal | DecimalJsLike | number | string | null
+    criadoPor: UsuarioCreateNestedOneWithoutAtivosLojaInput
+    falhas?: RegistroFalhaAtivoCreateNestedManyWithoutAtivoInput
+    checklistItens?: ChecklistEquipamentoItemCreateNestedManyWithoutAtivoInput
+  }
+
+  export type AtivoLojaUncheckedCreateWithoutChamadosInput = {
+    id?: string
+    nome: string
+    categoria: string
+    tipo?: string | null
+    fabricante?: string | null
+    modelo?: string | null
+    numeroSerie?: string | null
+    patrimonio?: string | null
+    quantidade?: number
+    status?: string
+    localizacao?: string | null
+    observacoes?: string | null
+    regiao: string
+    unidade: string
+    criadoPorId: string
+    ativo?: boolean
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+    ultimaPreventiva?: Date | string | null
+    proximaPreventiva?: Date | string | null
+    ultimaTrocaBateria?: Date | string | null
+    proximaTrocaBateria?: Date | string | null
+    intervaloPreventiva?: number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: Decimal | DecimalJsLike | number | string | null
+    falhas?: RegistroFalhaAtivoUncheckedCreateNestedManyWithoutAtivoInput
+    checklistItens?: ChecklistEquipamentoItemUncheckedCreateNestedManyWithoutAtivoInput
+  }
+
+  export type AtivoLojaCreateOrConnectWithoutChamadosInput = {
+    where: AtivoLojaWhereUniqueInput
+    create: XOR<AtivoLojaCreateWithoutChamadosInput, AtivoLojaUncheckedCreateWithoutChamadosInput>
+  }
+
+  export type AtivoLojaUpsertWithoutChamadosInput = {
+    update: XOR<AtivoLojaUpdateWithoutChamadosInput, AtivoLojaUncheckedUpdateWithoutChamadosInput>
+    create: XOR<AtivoLojaCreateWithoutChamadosInput, AtivoLojaUncheckedCreateWithoutChamadosInput>
+    where?: AtivoLojaWhereInput
+  }
+
+  export type AtivoLojaUpdateToOneWithWhereWithoutChamadosInput = {
+    where?: AtivoLojaWhereInput
+    data: XOR<AtivoLojaUpdateWithoutChamadosInput, AtivoLojaUncheckedUpdateWithoutChamadosInput>
+  }
+
+  export type AtivoLojaUpdateWithoutChamadosInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    categoria?: StringFieldUpdateOperationsInput | string
+    tipo?: NullableStringFieldUpdateOperationsInput | string | null
+    fabricante?: NullableStringFieldUpdateOperationsInput | string | null
+    modelo?: NullableStringFieldUpdateOperationsInput | string | null
+    numeroSerie?: NullableStringFieldUpdateOperationsInput | string | null
+    patrimonio?: NullableStringFieldUpdateOperationsInput | string | null
+    quantidade?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    localizacao?: NullableStringFieldUpdateOperationsInput | string | null
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    ultimaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ultimaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    criadoPor?: UsuarioUpdateOneRequiredWithoutAtivosLojaNestedInput
+    falhas?: RegistroFalhaAtivoUpdateManyWithoutAtivoNestedInput
+    checklistItens?: ChecklistEquipamentoItemUpdateManyWithoutAtivoNestedInput
+  }
+
+  export type AtivoLojaUncheckedUpdateWithoutChamadosInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    categoria?: StringFieldUpdateOperationsInput | string
+    tipo?: NullableStringFieldUpdateOperationsInput | string | null
+    fabricante?: NullableStringFieldUpdateOperationsInput | string | null
+    modelo?: NullableStringFieldUpdateOperationsInput | string | null
+    numeroSerie?: NullableStringFieldUpdateOperationsInput | string | null
+    patrimonio?: NullableStringFieldUpdateOperationsInput | string | null
+    quantidade?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    localizacao?: NullableStringFieldUpdateOperationsInput | string | null
+    observacoes?: NullableStringFieldUpdateOperationsInput | string | null
+    regiao?: StringFieldUpdateOperationsInput | string
+    unidade?: StringFieldUpdateOperationsInput | string
+    criadoPorId?: StringFieldUpdateOperationsInput | string
+    ativo?: BoolFieldUpdateOperationsInput | boolean
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    ultimaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaPreventiva?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ultimaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
+    dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    falhas?: RegistroFalhaAtivoUncheckedUpdateManyWithoutAtivoNestedInput
+    checklistItens?: ChecklistEquipamentoItemUncheckedUpdateManyWithoutAtivoNestedInput
+  }
+
   export type EntradaPecaCreateWithoutPecaInput = {
     id?: string
     dataEntrada: Date | string
@@ -39124,8 +39681,10 @@ export namespace Prisma {
     proximaTrocaBateria?: Date | string | null
     intervaloPreventiva?: number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: Decimal | DecimalJsLike | number | string | null
     criadoPor: UsuarioCreateNestedOneWithoutAtivosLojaInput
     falhas?: RegistroFalhaAtivoCreateNestedManyWithoutAtivoInput
+    chamados?: ControleChamadoCreateNestedManyWithoutAtivoInput
   }
 
   export type AtivoLojaUncheckedCreateWithoutChecklistItensInput = {
@@ -39153,7 +39712,9 @@ export namespace Prisma {
     proximaTrocaBateria?: Date | string | null
     intervaloPreventiva?: number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: Decimal | DecimalJsLike | number | string | null
     falhas?: RegistroFalhaAtivoUncheckedCreateNestedManyWithoutAtivoInput
+    chamados?: ControleChamadoUncheckedCreateNestedManyWithoutAtivoInput
   }
 
   export type AtivoLojaCreateOrConnectWithoutChecklistItensInput = {
@@ -39231,8 +39792,10 @@ export namespace Prisma {
     proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     criadoPor?: UsuarioUpdateOneRequiredWithoutAtivosLojaNestedInput
     falhas?: RegistroFalhaAtivoUpdateManyWithoutAtivoNestedInput
+    chamados?: ControleChamadoUpdateManyWithoutAtivoNestedInput
   }
 
   export type AtivoLojaUncheckedUpdateWithoutChecklistItensInput = {
@@ -39260,7 +39823,9 @@ export namespace Prisma {
     proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     falhas?: RegistroFalhaAtivoUncheckedUpdateManyWithoutAtivoNestedInput
+    chamados?: ControleChamadoUncheckedUpdateManyWithoutAtivoNestedInput
   }
 
   export type ChecklistCarrinhoItemCreateWithoutChecklistInput = {
@@ -39550,6 +40115,7 @@ export namespace Prisma {
     origemResolucao?: string | null
     descricao: string
     reincidencia?: boolean
+    horasParada?: number | null
     chamadoId?: string | null
     criadoEm?: Date | string
     resolvidoPor?: UsuarioCreateNestedOneWithoutFalhasResolvidasInput
@@ -39562,6 +40128,7 @@ export namespace Prisma {
     origemResolucao?: string | null
     descricao: string
     reincidencia?: boolean
+    horasParada?: number | null
     chamadoId?: string | null
     resolvidoPorId?: string | null
     criadoEm?: Date | string
@@ -39612,6 +40179,58 @@ export namespace Prisma {
 
   export type ChecklistEquipamentoItemCreateManyAtivoInputEnvelope = {
     data: ChecklistEquipamentoItemCreateManyAtivoInput | ChecklistEquipamentoItemCreateManyAtivoInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ControleChamadoCreateWithoutAtivoInput = {
+    id?: string
+    dataAbertura: Date | string
+    numeroChamado: string
+    segmento: $Enums.SegmentoChamado
+    empresa: string
+    descricao: string
+    regiao?: string | null
+    unidade?: string | null
+    numeroOrcamento?: string | null
+    solicitacao?: string | null
+    dataAprovacao?: Date | string | null
+    numeroOM?: string | null
+    valor?: Decimal | DecimalJsLike | number | string | null
+    status?: $Enums.StatusChamado
+    mauUso?: boolean
+    dataResolucao?: Date | string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+  }
+
+  export type ControleChamadoUncheckedCreateWithoutAtivoInput = {
+    id?: string
+    dataAbertura: Date | string
+    numeroChamado: string
+    segmento: $Enums.SegmentoChamado
+    empresa: string
+    descricao: string
+    regiao?: string | null
+    unidade?: string | null
+    numeroOrcamento?: string | null
+    solicitacao?: string | null
+    dataAprovacao?: Date | string | null
+    numeroOM?: string | null
+    valor?: Decimal | DecimalJsLike | number | string | null
+    status?: $Enums.StatusChamado
+    mauUso?: boolean
+    dataResolucao?: Date | string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+  }
+
+  export type ControleChamadoCreateOrConnectWithoutAtivoInput = {
+    where: ControleChamadoWhereUniqueInput
+    create: XOR<ControleChamadoCreateWithoutAtivoInput, ControleChamadoUncheckedCreateWithoutAtivoInput>
+  }
+
+  export type ControleChamadoCreateManyAtivoInputEnvelope = {
+    data: ControleChamadoCreateManyAtivoInput | ControleChamadoCreateManyAtivoInput[]
     skipDuplicates?: boolean
   }
 
@@ -39704,6 +40323,47 @@ export namespace Prisma {
     data: XOR<ChecklistEquipamentoItemUpdateManyMutationInput, ChecklistEquipamentoItemUncheckedUpdateManyWithoutAtivoInput>
   }
 
+  export type ControleChamadoUpsertWithWhereUniqueWithoutAtivoInput = {
+    where: ControleChamadoWhereUniqueInput
+    update: XOR<ControleChamadoUpdateWithoutAtivoInput, ControleChamadoUncheckedUpdateWithoutAtivoInput>
+    create: XOR<ControleChamadoCreateWithoutAtivoInput, ControleChamadoUncheckedCreateWithoutAtivoInput>
+  }
+
+  export type ControleChamadoUpdateWithWhereUniqueWithoutAtivoInput = {
+    where: ControleChamadoWhereUniqueInput
+    data: XOR<ControleChamadoUpdateWithoutAtivoInput, ControleChamadoUncheckedUpdateWithoutAtivoInput>
+  }
+
+  export type ControleChamadoUpdateManyWithWhereWithoutAtivoInput = {
+    where: ControleChamadoScalarWhereInput
+    data: XOR<ControleChamadoUpdateManyMutationInput, ControleChamadoUncheckedUpdateManyWithoutAtivoInput>
+  }
+
+  export type ControleChamadoScalarWhereInput = {
+    AND?: ControleChamadoScalarWhereInput | ControleChamadoScalarWhereInput[]
+    OR?: ControleChamadoScalarWhereInput[]
+    NOT?: ControleChamadoScalarWhereInput | ControleChamadoScalarWhereInput[]
+    id?: StringFilter<"ControleChamado"> | string
+    dataAbertura?: DateTimeFilter<"ControleChamado"> | Date | string
+    numeroChamado?: StringFilter<"ControleChamado"> | string
+    segmento?: EnumSegmentoChamadoFilter<"ControleChamado"> | $Enums.SegmentoChamado
+    empresa?: StringFilter<"ControleChamado"> | string
+    descricao?: StringFilter<"ControleChamado"> | string
+    regiao?: StringNullableFilter<"ControleChamado"> | string | null
+    unidade?: StringNullableFilter<"ControleChamado"> | string | null
+    numeroOrcamento?: StringNullableFilter<"ControleChamado"> | string | null
+    solicitacao?: StringNullableFilter<"ControleChamado"> | string | null
+    dataAprovacao?: DateTimeNullableFilter<"ControleChamado"> | Date | string | null
+    numeroOM?: StringNullableFilter<"ControleChamado"> | string | null
+    valor?: DecimalNullableFilter<"ControleChamado"> | Decimal | DecimalJsLike | number | string | null
+    status?: EnumStatusChamadoFilter<"ControleChamado"> | $Enums.StatusChamado
+    mauUso?: BoolFilter<"ControleChamado"> | boolean
+    ativoId?: StringNullableFilter<"ControleChamado"> | string | null
+    dataResolucao?: DateTimeNullableFilter<"ControleChamado"> | Date | string | null
+    criadoEm?: DateTimeFilter<"ControleChamado"> | Date | string
+    atualizadoEm?: DateTimeFilter<"ControleChamado"> | Date | string
+  }
+
   export type AtivoLojaCreateWithoutFalhasInput = {
     id?: string
     nome: string
@@ -39728,8 +40388,10 @@ export namespace Prisma {
     proximaTrocaBateria?: Date | string | null
     intervaloPreventiva?: number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: Decimal | DecimalJsLike | number | string | null
     criadoPor: UsuarioCreateNestedOneWithoutAtivosLojaInput
     checklistItens?: ChecklistEquipamentoItemCreateNestedManyWithoutAtivoInput
+    chamados?: ControleChamadoCreateNestedManyWithoutAtivoInput
   }
 
   export type AtivoLojaUncheckedCreateWithoutFalhasInput = {
@@ -39757,7 +40419,9 @@ export namespace Prisma {
     proximaTrocaBateria?: Date | string | null
     intervaloPreventiva?: number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: Decimal | DecimalJsLike | number | string | null
     checklistItens?: ChecklistEquipamentoItemUncheckedCreateNestedManyWithoutAtivoInput
+    chamados?: ControleChamadoUncheckedCreateNestedManyWithoutAtivoInput
   }
 
   export type AtivoLojaCreateOrConnectWithoutFalhasInput = {
@@ -39851,8 +40515,10 @@ export namespace Prisma {
     proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     criadoPor?: UsuarioUpdateOneRequiredWithoutAtivosLojaNestedInput
     checklistItens?: ChecklistEquipamentoItemUpdateManyWithoutAtivoNestedInput
+    chamados?: ControleChamadoUpdateManyWithoutAtivoNestedInput
   }
 
   export type AtivoLojaUncheckedUpdateWithoutFalhasInput = {
@@ -39880,7 +40546,9 @@ export namespace Prisma {
     proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     checklistItens?: ChecklistEquipamentoItemUncheckedUpdateManyWithoutAtivoNestedInput
+    chamados?: ControleChamadoUncheckedUpdateManyWithoutAtivoNestedInput
   }
 
   export type UsuarioUpsertWithoutFalhasResolvidasInput = {
@@ -40164,6 +40832,7 @@ export namespace Prisma {
     proximaTrocaBateria?: Date | string | null
     intervaloPreventiva?: number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: Decimal | DecimalJsLike | number | string | null
   }
 
   export type NotificacaoCreateManyUsuarioInput = {
@@ -40239,6 +40908,7 @@ export namespace Prisma {
     origemResolucao?: string | null
     descricao: string
     reincidencia?: boolean
+    horasParada?: number | null
     chamadoId?: string | null
     criadoEm?: Date | string
   }
@@ -40353,8 +41023,10 @@ export namespace Prisma {
     proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     falhas?: RegistroFalhaAtivoUpdateManyWithoutAtivoNestedInput
     checklistItens?: ChecklistEquipamentoItemUpdateManyWithoutAtivoNestedInput
+    chamados?: ControleChamadoUpdateManyWithoutAtivoNestedInput
   }
 
   export type AtivoLojaUncheckedUpdateWithoutCriadoPorInput = {
@@ -40381,8 +41053,10 @@ export namespace Prisma {
     proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     falhas?: RegistroFalhaAtivoUncheckedUpdateManyWithoutAtivoNestedInput
     checklistItens?: ChecklistEquipamentoItemUncheckedUpdateManyWithoutAtivoNestedInput
+    chamados?: ControleChamadoUncheckedUpdateManyWithoutAtivoNestedInput
   }
 
   export type AtivoLojaUncheckedUpdateManyWithoutCriadoPorInput = {
@@ -40409,6 +41083,7 @@ export namespace Prisma {
     proximaTrocaBateria?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     intervaloPreventiva?: NullableIntFieldUpdateOperationsInput | number | null
     dadosTecnicos?: NullableJsonNullValueInput | InputJsonValue
+    valorSubstituicao?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
   }
 
   export type NotificacaoUpdateWithoutUsuarioInput = {
@@ -40617,6 +41292,7 @@ export namespace Prisma {
     origemResolucao?: NullableStringFieldUpdateOperationsInput | string | null
     descricao?: StringFieldUpdateOperationsInput | string
     reincidencia?: BoolFieldUpdateOperationsInput | boolean
+    horasParada?: NullableFloatFieldUpdateOperationsInput | number | null
     chamadoId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     ativo?: AtivoLojaUpdateOneRequiredWithoutFalhasNestedInput
@@ -40630,6 +41306,7 @@ export namespace Prisma {
     origemResolucao?: NullableStringFieldUpdateOperationsInput | string | null
     descricao?: StringFieldUpdateOperationsInput | string
     reincidencia?: BoolFieldUpdateOperationsInput | boolean
+    horasParada?: NullableFloatFieldUpdateOperationsInput | number | null
     chamadoId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -40642,6 +41319,7 @@ export namespace Prisma {
     origemResolucao?: NullableStringFieldUpdateOperationsInput | string | null
     descricao?: StringFieldUpdateOperationsInput | string
     reincidencia?: BoolFieldUpdateOperationsInput | boolean
+    horasParada?: NullableFloatFieldUpdateOperationsInput | number | null
     chamadoId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -40953,6 +41631,7 @@ export namespace Prisma {
     origemResolucao?: string | null
     descricao: string
     reincidencia?: boolean
+    horasParada?: number | null
     chamadoId?: string | null
     resolvidoPorId?: string | null
     criadoEm?: Date | string
@@ -40972,6 +41651,27 @@ export namespace Prisma {
     valor?: Decimal | DecimalJsLike | number | string | null
   }
 
+  export type ControleChamadoCreateManyAtivoInput = {
+    id?: string
+    dataAbertura: Date | string
+    numeroChamado: string
+    segmento: $Enums.SegmentoChamado
+    empresa: string
+    descricao: string
+    regiao?: string | null
+    unidade?: string | null
+    numeroOrcamento?: string | null
+    solicitacao?: string | null
+    dataAprovacao?: Date | string | null
+    numeroOM?: string | null
+    valor?: Decimal | DecimalJsLike | number | string | null
+    status?: $Enums.StatusChamado
+    mauUso?: boolean
+    dataResolucao?: Date | string | null
+    criadoEm?: Date | string
+    atualizadoEm?: Date | string
+  }
+
   export type RegistroFalhaAtivoUpdateWithoutAtivoInput = {
     id?: StringFieldUpdateOperationsInput | string
     dataDeteccao?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -40979,6 +41679,7 @@ export namespace Prisma {
     origemResolucao?: NullableStringFieldUpdateOperationsInput | string | null
     descricao?: StringFieldUpdateOperationsInput | string
     reincidencia?: BoolFieldUpdateOperationsInput | boolean
+    horasParada?: NullableFloatFieldUpdateOperationsInput | number | null
     chamadoId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     resolvidoPor?: UsuarioUpdateOneWithoutFalhasResolvidasNestedInput
@@ -40991,6 +41692,7 @@ export namespace Prisma {
     origemResolucao?: NullableStringFieldUpdateOperationsInput | string | null
     descricao?: StringFieldUpdateOperationsInput | string
     reincidencia?: BoolFieldUpdateOperationsInput | boolean
+    horasParada?: NullableFloatFieldUpdateOperationsInput | number | null
     chamadoId?: NullableStringFieldUpdateOperationsInput | string | null
     resolvidoPorId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -41003,6 +41705,7 @@ export namespace Prisma {
     origemResolucao?: NullableStringFieldUpdateOperationsInput | string | null
     descricao?: StringFieldUpdateOperationsInput | string
     reincidencia?: BoolFieldUpdateOperationsInput | boolean
+    horasParada?: NullableFloatFieldUpdateOperationsInput | number | null
     chamadoId?: NullableStringFieldUpdateOperationsInput | string | null
     resolvidoPorId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -41048,6 +41751,69 @@ export namespace Prisma {
     numeroChamado?: NullableStringFieldUpdateOperationsInput | string | null
     descricaoProblema?: NullableStringFieldUpdateOperationsInput | string | null
     valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type ControleChamadoUpdateWithoutAtivoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dataAbertura?: DateTimeFieldUpdateOperationsInput | Date | string
+    numeroChamado?: StringFieldUpdateOperationsInput | string
+    segmento?: EnumSegmentoChamadoFieldUpdateOperationsInput | $Enums.SegmentoChamado
+    empresa?: StringFieldUpdateOperationsInput | string
+    descricao?: StringFieldUpdateOperationsInput | string
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    numeroOrcamento?: NullableStringFieldUpdateOperationsInput | string | null
+    solicitacao?: NullableStringFieldUpdateOperationsInput | string | null
+    dataAprovacao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    numeroOM?: NullableStringFieldUpdateOperationsInput | string | null
+    valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    status?: EnumStatusChamadoFieldUpdateOperationsInput | $Enums.StatusChamado
+    mauUso?: BoolFieldUpdateOperationsInput | boolean
+    dataResolucao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ControleChamadoUncheckedUpdateWithoutAtivoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dataAbertura?: DateTimeFieldUpdateOperationsInput | Date | string
+    numeroChamado?: StringFieldUpdateOperationsInput | string
+    segmento?: EnumSegmentoChamadoFieldUpdateOperationsInput | $Enums.SegmentoChamado
+    empresa?: StringFieldUpdateOperationsInput | string
+    descricao?: StringFieldUpdateOperationsInput | string
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    numeroOrcamento?: NullableStringFieldUpdateOperationsInput | string | null
+    solicitacao?: NullableStringFieldUpdateOperationsInput | string | null
+    dataAprovacao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    numeroOM?: NullableStringFieldUpdateOperationsInput | string | null
+    valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    status?: EnumStatusChamadoFieldUpdateOperationsInput | $Enums.StatusChamado
+    mauUso?: BoolFieldUpdateOperationsInput | boolean
+    dataResolucao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ControleChamadoUncheckedUpdateManyWithoutAtivoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dataAbertura?: DateTimeFieldUpdateOperationsInput | Date | string
+    numeroChamado?: StringFieldUpdateOperationsInput | string
+    segmento?: EnumSegmentoChamadoFieldUpdateOperationsInput | $Enums.SegmentoChamado
+    empresa?: StringFieldUpdateOperationsInput | string
+    descricao?: StringFieldUpdateOperationsInput | string
+    regiao?: NullableStringFieldUpdateOperationsInput | string | null
+    unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    numeroOrcamento?: NullableStringFieldUpdateOperationsInput | string | null
+    solicitacao?: NullableStringFieldUpdateOperationsInput | string | null
+    dataAprovacao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    numeroOM?: NullableStringFieldUpdateOperationsInput | string | null
+    valor?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    status?: EnumStatusChamadoFieldUpdateOperationsInput | $Enums.StatusChamado
+    mauUso?: BoolFieldUpdateOperationsInput | boolean
+    dataResolucao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
+    atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 
