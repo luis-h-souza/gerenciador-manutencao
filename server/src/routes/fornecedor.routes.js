@@ -9,6 +9,7 @@ router.use(autenticar);
 const GESTORES = [Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR, Roles.GESTOR];
 
 router.get('/', ctrl.listar);
+router.get('/regioes', ctrl.listarRegioes);
 router.get('/:id', ctrl.buscarPorId);
 
 router.post('/', autorizar(...GESTORES), [

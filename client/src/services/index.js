@@ -49,6 +49,7 @@ export const chamadosService = {
 // ─── Fornecedores ─────────────────────────────────────────────────────────
 export const fornecedoresService = {
   listar:    (params) => api.get('/fornecedores', { params }),
+  listarRegioes: ()   => api.get('/fornecedores/regioes'),
   buscar:    (id)     => api.get(`/fornecedores/${id}`),
   criar:     (data)   => api.post('/fornecedores', data),
   atualizar: (id, data) => api.put(`/fornecedores/${id}`, data),

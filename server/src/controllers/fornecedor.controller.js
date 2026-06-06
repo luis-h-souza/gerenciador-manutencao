@@ -9,6 +9,13 @@ const listar = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+const listarRegioes = async (req, res, next) => {
+  try {
+    const regioes = await fornecedorService.listarRegioes();
+    resSucesso(res, 'Operação realizada com sucesso', 200, regioes);
+  } catch (err) { next(err); }
+};
+
 const buscarPorId = async (req, res, next) => {
   try {
     const f = await fornecedorService.buscarPorId(req.params.id);
@@ -38,4 +45,4 @@ const remover = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-module.exports = { listar, buscarPorId, criar, atualizar, remover };
+module.exports = { listar, listarRegioes, buscarPorId, criar, atualizar, remover };
