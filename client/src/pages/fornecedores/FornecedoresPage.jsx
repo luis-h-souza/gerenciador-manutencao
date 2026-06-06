@@ -56,7 +56,7 @@ const SEGMENTOS = [
 const formatarSegmento = (s) =>
   s?.split('_').map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(' ') || s;
 
-const LIMIT = 16;
+const LIMIT = 20;
 
 /* ── Modal criar/editar ─────────────────────────────────────────────────── */
 function FornecedorModal({ fornecedor, onClose }) {
@@ -265,7 +265,10 @@ export default function FornecedoresPage() {
                 </div>
                 <div>
                   <div style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--color-text-primary)' }}>{f.nome}</div>
+                  <div className='flex justify-between'>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '2px' }}>Região: {f.regiao}</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '2px' }}>CNPJ: {f.cnpj}</div>
+                  </div>
                 </div>
               </div>
               <div className="flex gap-1 shrink-0">
