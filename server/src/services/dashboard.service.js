@@ -30,9 +30,28 @@ const agruparSegmentoPareto = (segmento) => {
     PINTURA: 'CIVIL',
     LIMPEZA_ESGOTO: 'CIVIL',
     TELHADO: 'CIVIL',
-    CIVIL: 'CIVIL'
+    CIVIL: 'CIVIL',
+    LAUDOS: 'OPEX_MANUTENCAO',
+    SISTEMA_INCENDIO: 'OPEX_MANUTENCAO',
   };
   return grupos[segmentoNormalizado] || segmentoNormalizado;
+};
+
+const isOpexChamado = (segmento) =>
+  ['LAUDOS', 'SISTEMA_INCENDIO'].includes((segmento || '').trim());
+
+const OPEX_SEGMENTO_LABEL = 'OPEX Manutenção';
+
+// Investment tower statuses
+const isInvestmentTowerStatus = (status) =>
+  ['PCI', 'LAUDOS'].includes((status || '').trim());
+
+const investmentTowerLabel = (status) => {
+  const labels = {
+    'PCI': 'Investimento - Sistema de Incêndio',
+    'LAUDOS': 'Investimento - Laudos'
+  };
+  return labels[status] || status;
 };
 
 const hasRegionOverlap = (sourceRegions, targetRegions) => {
@@ -148,11 +167,17 @@ const gastosPorSegmento = async (user, query) => {
       orderBy: { _sum: { valor: 'desc' } },
     });
 
-    return dados.map(d => ({
-      segmento: d.segmento,
-      total: parseFloat(d._sum.valor || 0),
-      quantidade: d._count,
-    }));
+    const agrupado = {};
+    dados.forEach((d) => {
+      const segmento = isOpexChamado(d.segmento) ? OPEX_SEGMENTO_LABEL : d.segmento;
+      if (!agrupado[segmento]) {
+        agrupado[segmento] = { segmento, total: 0, quantidade: 0 };
+      }
+      agrupado[segmento].total += parseFloat(d._sum.valor || 0);
+      agrupado[segmento].quantidade += d._count;
+    });
+
+    return Object.values(agrupado).sort((a, b) => b.total - a.total);
   });
 };
 
@@ -181,17 +206,84 @@ const historicoMensal = async (user, query) => {
       const inicio = new Date(d.getFullYear(), d.getMonth(), 1);
       const fim = new Date(d.getFullYear(), d.getMonth() + 1, 0);
 
+      // Get total aggregated data
       const agg = await prisma.controleChamado.aggregate({
         where: { ...baseWhere, dataAbertura: { gte: inicio, lte: fim } },
-        _sum: { valor: true }, _count: true,
+        _sum: { valor: true },
+        _count: true,
       });
 
-      meses.push({
+      // Get OPEX data (old segment-based approach for backward compatibility)
+      const aggOpex = await prisma.controleChamado.aggregate({
+        where: {
+          ...baseWhere,
+          segmento: { in: ['LAUDOS', 'SISTEMA_INCENDIO'] },
+          dataAbertura: { gte: inicio, lte: fim },
+        },
+        _sum: { valor: true },
+        _count: true,
+      });
+
+        // Get investment tower data (support both status and segmento for backwards compatibility)
+        const aggPCI = await prisma.controleChamado.aggregate({
+          where: {
+            ...baseWhere,
+            AND: [
+              { dataAbertura: { gte: inicio, lte: fim } },
+              {
+                OR: [
+                  { status: 'PCI' },
+                  { segmento: 'SISTEMA_INCENDIO' },
+                ],
+              },
+            ],
+          },
+          _sum: { valor: true },
+          _count: true,
+        });
+
+        const aggLAUDOS = await prisma.controleChamado.aggregate({
+          where: {
+            ...baseWhere,
+            AND: [
+              { dataAbertura: { gte: inicio, lte: fim } },
+              {
+                OR: [
+                  { status: 'LAUDOS' },
+                  { segmento: 'LAUDOS' },
+                ],
+              },
+            ],
+          },
+          _sum: { valor: true },
+          _count: true,
+        });
+
+      const valorTotal = parseFloat(agg._sum.valor || 0);
+      const valorOpex = parseFloat(aggOpex._sum.valor || 0);
+      const quantidadeOpex = aggOpex._count || 0;
+
+      // Investment tower totals
+      const valorPCI = parseFloat(aggPCI._sum.valor || 0);
+      const quantidadePCI = aggPCI._count || 0;
+      const valorLAUDOS = parseFloat(aggLAUDOS._sum.valor || 0);
+      const quantidadeLAUDOS = aggLAUDOS._count || 0;
+
+        meses.push({
         mes: inicio.toLocaleString('pt-BR', { month: 'short', year: '2-digit' }),
         mesNum: inicio.getMonth() + 1,
         anoNum: inicio.getFullYear(),
-        valor: parseFloat(agg._sum.valor || 0),
+        valor: valorTotal,
+          valorRegular: Math.max(valorTotal - (valorLAUDOS + valorPCI), 0),
+        valorOpex,
         quantidade: agg._count,
+        quantidadeOpex,
+        quantidadeRegular: Math.max(agg._count - quantidadeOpex, 0),
+        // Investment tower data
+        valorPCI,
+        quantidadePCI,
+        valorLAUDOS,
+        quantidadeLAUDOS,
       });
     }
     return meses;
@@ -678,7 +770,7 @@ const conformidadeMatrix = async (user, query) => {
     const totalSemanasNoMes = Math.max(1, semanaFim - semanaInicio + 1);
 
   const filter = getAccessFilter(user);
-  
+
   // Buscar todas as lojas do escopo
   const lojas = await prisma.loja.findMany({
     where: { ...filter, ativo: true },
@@ -725,7 +817,7 @@ const conformidadeMatrix = async (user, query) => {
     const equipFills = checklistsEquip.filter(c => c.unidade === loja.nome).length;
     const carrFills = checklistsCarrinho.filter(c => c.unidade === loja.nome).length;
     const rotinaFills = checklistsRotina.filter(c => c.unidade === String(loja.numero)).length;
-    
+
     const totalFilled = equipFills + carrFills + rotinaFills;
     const totalExpected = totalSemanasNoMes * 3 + 1; // 1 de equip, 1 de carrinho, 1 de gerador por semana + 1 de incendio visual por mes
     const checklistCoverage = totalExpected > 0 ? Math.min(100, Math.round((totalFilled / totalExpected) * 100)) : 100;
@@ -734,7 +826,7 @@ const conformidadeMatrix = async (user, query) => {
     const lojaAtivos = ativos.filter(a => a.unidade === loja.nome);
     const ativosPreventiva = lojaAtivos.filter(a => a.intervaloPreventiva !== null);
     let preventivasEmDia = 0;
-    
+
     ativosPreventiva.forEach(a => {
       if (a.proximaPreventiva) {
         const proxima = new Date(a.proximaPreventiva);
@@ -754,7 +846,7 @@ const conformidadeMatrix = async (user, query) => {
       tiposRotina.forEach(tipo => {
         const rotinasTipo = rotinasLoja.filter(r => r.tipo === tipo);
         const temFalha = rotinasTipo.some(r => r.conforme === false);
-        
+
         totalItensAdesao++;
         if (!temFalha) {
           itensAdesaoEmDia++;
@@ -762,7 +854,7 @@ const conformidadeMatrix = async (user, query) => {
       });
     }
 
-    const preventivaAdherence = totalItensAdesao > 0 
+    const preventivaAdherence = totalItensAdesao > 0
       ? Math.round((itensAdesaoEmDia / totalItensAdesao) * 100)
       : 100;
 

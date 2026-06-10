@@ -501,6 +501,8 @@ enum StatusChamado {
   AGUARDANDO_OM_ENTREGA
   FINALIZADO
   ALUGUEL_OUTROS
+  PCI
+  LAUDOS
 }
 
 enum StatusMovimentacao {

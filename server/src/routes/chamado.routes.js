@@ -88,7 +88,7 @@ router.post('/', createRateLimiter, autorizar(...GESTORES), [
   body('segmento').customSanitizer(normalizarSegmento).isIn(SEGMENTOS_CHAMADO),
   body('empresa').notEmpty(),
   body('descricao').notEmpty(),
-  body('status').optional().isIn(['AGUARDANDO_APROVACAO', 'AGUARDANDO_OM_ENTREGA', 'FINALIZADO', 'ALUGUEL_OUTROS']),
+  body('status').optional().isIn(['AGUARDANDO_APROVACAO', 'AGUARDANDO_OM_ENTREGA', 'FINALIZADO', 'ALUGUEL_OUTROS', 'PCI', 'LAUDOS']),
 ], validate, ctrl.criar);
 
 router.put('/:id', autorizar(...GESTORES), ctrl.atualizar);

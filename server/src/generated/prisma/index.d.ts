@@ -220,7 +220,9 @@ export const StatusChamado: {
   AGUARDANDO_APROVACAO: 'AGUARDANDO_APROVACAO',
   AGUARDANDO_OM_ENTREGA: 'AGUARDANDO_OM_ENTREGA',
   FINALIZADO: 'FINALIZADO',
-  ALUGUEL_OUTROS: 'ALUGUEL_OUTROS'
+  ALUGUEL_OUTROS: 'ALUGUEL_OUTROS',
+  PCI: 'PCI',
+  LAUDOS: 'LAUDOS'
 };
 
 export type StatusChamado = (typeof StatusChamado)[keyof typeof StatusChamado]
