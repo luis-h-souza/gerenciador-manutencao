@@ -13,6 +13,7 @@ import {
   Building2,
   ChevronLeft,
   ChevronRight,
+  MoreVertical,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -35,7 +36,7 @@ const SEGMENTOS = [
   "REFRIGERACAO",
   "REFRIGERACAO_PECAS",
   "SERRALHERIA",
-  "SISTEMA_INCENDIO",
+  "SISTEMA_DE_INCENDIO",
   "LOCACAO",
   "LIMPEZA",
   "TRATAMENTO_AGUA",
@@ -56,6 +57,7 @@ const SEGMENTOS = [
   "SISTEMA_SOM",
   "FRENTE_CAIXA",
   "GALERIAS",
+  "CONTROLE_DE_PRAGAS",
   "FRETE",
   "OUTROS",
 ];
@@ -65,6 +67,34 @@ const formatarSegmento = (s) =>
     ?.split("_")
     .map((w) => w.charAt(0) + w.slice(1).toLowerCase())
     .join(" ") || s;
+
+const formatarNomeEmpresa = (nome = "") =>
+  nome
+    .toLowerCase()
+    .split(" ")
+    .filter(Boolean)
+    .map((palavra) => palavra.charAt(0).toUpperCase() + palavra.slice(1))
+    .join(" ");
+
+const capitalizarFrase = (texto = "") => {
+  const normalizado = texto.toLowerCase().trim();
+  return normalizado
+    ? normalizado.charAt(0).toUpperCase() + normalizado.slice(1)
+    : "";
+};
+
+const separarDescricao = (descricao) =>
+  String(descricao ?? "")
+    .split(/\s+-\s+|;\s*|\n+/)
+    .map((item) => item.replace(/^-+\s*/, "").trim())
+    .filter(Boolean)
+    .map(capitalizarFrase);
+
+const separarCnaes = (cnae) =>
+  String(cnae ?? "")
+    .split(/[,;\n]+/)
+    .map((item) => item.trim())
+    .filter(Boolean);
 
 const somenteDigitos = (valor = "") => String(valor).replace(/\D/g, "");
 
@@ -93,6 +123,192 @@ const formatarTelefone = (valor = "") => {
 };
 
 const LIMIT = 20;
+
+function InfoItem({ label, value, fullWidth = false }) {
+  if (value === undefined || value === null || value === "") return null;
+
+  return (
+    <div style={{ gridColumn: fullWidth ? "1 / -1" : undefined }}>
+      <div
+        style={{
+          fontSize: "0.7rem",
+          color: "var(--color-text-muted)",
+          marginBottom: "4px",
+          textTransform: "uppercase",
+        }}
+      >
+        {label}
+      </div>
+      <div
+        style={{
+          fontSize: "0.875rem",
+          color: "var(--color-text-primary)",
+          lineHeight: 1.45,
+          wordBreak: "break-word",
+        }}
+      >
+        {value}
+      </div>
+    </div>
+  );
+}
+
+function InfoList({ label, items, fullWidth = false }) {
+  if (!items?.length) return null;
+
+  return (
+    <div style={{ gridColumn: fullWidth ? "1 / -1" : undefined }}>
+      <div
+        style={{
+          fontSize: "0.7rem",
+          color: "var(--color-text-muted)",
+          marginBottom: "6px",
+          textTransform: "uppercase",
+        }}
+      >
+        {label}
+      </div>
+      <div className="flex flex-col gap-2">
+        {items.map((item, index) => (
+          <div
+            key={`${item}-${index}`}
+            style={{
+              fontSize: "0.875rem",
+              color: "var(--color-text-primary)",
+              lineHeight: 1.45,
+              wordBreak: "break-word",
+            }}
+          >
+            - {item}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function InfoInlineList({ label, items, fullWidth = false }) {
+  if (!items?.length) return null;
+
+  return (
+    <div style={{ gridColumn: fullWidth ? "1 / -1" : undefined }}>
+      <div
+        style={{
+          fontSize: "0.7rem",
+          color: "var(--color-text-muted)",
+          marginBottom: "4px",
+          textTransform: "uppercase",
+        }}
+      >
+        {label}
+      </div>
+      <div
+        style={{
+          fontSize: "0.875rem",
+          color: "var(--color-text-primary)",
+          lineHeight: 1.45,
+          wordBreak: "break-word",
+        }}
+      >
+        {items.join(" - ")}
+      </div>
+    </div>
+  );
+}
+
+function FornecedorDetalhesModal({ fornecedor, onClose, onEdit, onRemove }) {
+  if (!fornecedor) return null;
+
+  const cnaes = separarCnaes(fornecedor.cnae);
+  const descricaoItens = separarDescricao(fornecedor.descricao);
+
+  return (
+    <div
+      className="modal-overlay"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div
+        className="modal-content animate-fade-in"
+        style={{ maxWidth: "680px" }}
+      >
+        <div className="flex items-start justify-between gap-4 mb-5">
+          <div style={{ minWidth: 0 }}>
+            <h2
+              style={{
+                fontSize: "1rem",
+                fontWeight: 700,
+                color: "var(--color-text-primary)",
+                lineHeight: 1.35,
+              }}
+            >
+              {formatarNomeEmpresa(fornecedor.nome)}
+            </h2>
+            <div className="flex items-center gap-2 flex-wrap mt-2">
+              <span
+                className={`badge ${
+                  fornecedor.ativo ? "badge-success" : "badge-neutral"
+                }`}
+                style={{ fontSize: "0.7rem" }}
+              >
+                {fornecedor.ativo ? "Ativo" : "Inativo"}
+              </span>
+            </div>
+          </div>
+          <button
+            className="btn btn-ghost btn-sm"
+            onClick={onClose}
+            style={{ padding: "4px" }}
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        <div
+          className="grid gap-4"
+          style={{
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          }}
+        >
+          <InfoItem label="CNPJ" value={formatarCnpj(fornecedor.cnpj)} />
+          <InfoItem label="Região" value={fornecedor.regiao} />
+          <InfoItem
+            label="Telefone"
+            value={
+              fornecedor.telefone
+                ? formatarTelefone(fornecedor.telefone)
+                : undefined
+            }
+          />
+          <InfoItem label="E-mail" value={fornecedor.email} />
+          <InfoItem
+            label="Segmento"
+            value={formatarSegmento(fornecedor.segmento)}
+          />
+          <InfoInlineList label="CNAEs" items={cnaes} fullWidth />
+          <InfoList label="Descrição" items={descricaoItens} fullWidth />
+        </div>
+
+        <div className="flex justify-end gap-2 pt-5 mt-5 border-t">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => onEdit(fornecedor)}
+          >
+            <Pencil size={15} /> Editar
+          </button>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            style={{ color: "var(--color-danger)" }}
+            onClick={() => onRemove(fornecedor)}
+          >
+            <Trash2 size={15} /> Excluir
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /* ── Modal criar/editar ─────────────────────────────────────────────────── */
 function FornecedorModal({ fornecedor, onClose }) {
@@ -135,11 +351,13 @@ function FornecedorModal({ fornecedor, onClose }) {
             ...data,
             cnpj: somenteDigitos(data.cnpj),
             telefone: somenteDigitos(data.telefone),
+            regiao: data.regiao?.trim().toUpperCase() || null,
           })
         : fornecedoresService.criar({
             ...data,
             cnpj: somenteDigitos(data.cnpj),
             telefone: somenteDigitos(data.telefone),
+            regiao: data.regiao?.trim().toUpperCase() || null,
           }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["fornecedores"] });
@@ -212,6 +430,17 @@ function FornecedorModal({ fornecedor, onClose }) {
                 ))}
               </select>
             </div>
+          </div>
+          <div>
+            <label className="label">Região</label>
+            <input
+              className="input"
+              placeholder="ex: PR, SP 07, RJ 01"
+              {...register("regiao")}
+              onChange={(e) => {
+                e.target.value = e.target.value.toUpperCase();
+              }}
+            />
           </div>
           <div
             className="grid gap-4"
@@ -320,6 +549,7 @@ function Paginacao({ paginaAtual, totalPaginas, onMudar }) {
 export default function FornecedoresPage() {
   const qc = useQueryClient();
   const [modal, setModal] = useState(null);
+  const [fornecedorDetalhe, setFornecedorDetalhe] = useState(null);
   const [page, setPage] = useState(1);
   const [filtros, setFiltros] = useState({
     nome: "",
@@ -470,7 +700,10 @@ export default function FornecedoresPage() {
           fornecedores.map((f) => (
             <div key={f.id} className="card" style={{ position: "relative" }}>
               <div className="flex items-start justify-between gap-2">
-                <div className="flex items-center gap-2.5">
+                <div
+                  className="flex items-center gap-2.5 mb-2"
+                  style={{ minWidth: 0, flex: 1 }}
+                >
                   <div
                     className="flex items-center justify-center w-9 h-9 rounded-lg shrink-0"
                     style={{ background: "var(--color-surface-600)" }}
@@ -480,56 +713,53 @@ export default function FornecedoresPage() {
                       style={{ color: "var(--color-brand-400)" }}
                     />
                   </div>
-                  <div>
+                  <div style={{ minWidth: 0, flex: 1 }}>
                     <div
                       style={{
                         fontWeight: 600,
                         fontSize: "0.875rem",
                         color: "var(--color-text-primary)",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
                       }}
+                      title={formatarNomeEmpresa(f.nome)}
                     >
-                      {f.nome}
+                      {formatarNomeEmpresa(f.nome)}
                     </div>
-                    <div className="flex flex-col justify-between">
+                    <div
+                      className="flex items-center justify-between gap-2"
+                      style={{ width: "100%" }}
+                    >
                       <div
                         style={{
                           fontSize: "0.75rem",
                           color: "var(--color-text-muted)",
                           marginTop: "2px",
+                          minWidth: 0,
                         }}
                       >
                         CNPJ: {formatarCnpj(f.cnpj)}
                       </div>
-                      <div
-                        style={{
-                          fontSize: "0.75rem",
-                          color: "var(--color-text-muted)",
-                          marginBlock: "2px",
-                        }}
-                      >
-                        Região: {f.regiao}
-                      </div>
+                      {f.regiao && (
+                        <span
+                          className="badge badge-brand"
+                          style={{ fontSize: "0.7rem", flexShrink: 0 }}
+                        >
+                          {f.regiao}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
-                <div className="flex gap-1 shrink-0">
-                  <button
-                    className="btn btn-ghost btn-sm"
-                    onClick={() => setModal(f)}
-                    style={{ padding: "4px 6px" }}
-                  >
-                    <Pencil size={13} />
-                  </button>
-                  <button
-                    className="btn btn-ghost btn-sm"
-                    style={{ padding: "4px 6px", color: "var(--color-danger)" }}
-                    onClick={() => {
-                      if (confirm("Remover fornecedor?")) remover.mutate(f.id);
-                    }}
-                  >
-                    <Trash2 size={13} />
-                  </button>
-                </div>
+                <button
+                  className="btn btn-ghost btn-sm shrink-0"
+                  onClick={() => setFornecedorDetalhe(f)}
+                  style={{ padding: "4px 6px" }}
+                  title="Ver detalhes"
+                >
+                  <MoreVertical size={16} />
+                </button>
               </div>
               <div
                 style={{
@@ -538,12 +768,6 @@ export default function FornecedoresPage() {
                 }}
               >
                 <div className="flex items-center justify-between">
-                  <span
-                    className="badge badge-brand"
-                    style={{ fontSize: "0.7rem" }}
-                  >
-                    {formatarSegmento(f.segmento)}
-                  </span>
                   {f.telefone && (
                     <span
                       style={{
@@ -554,6 +778,12 @@ export default function FornecedoresPage() {
                       Telefone: {formatarTelefone(f.telefone)}
                     </span>
                   )}
+                  <span
+                    className="badge badge-brand"
+                    style={{ fontSize: "0.7rem" }}
+                  >
+                    {formatarSegmento(f.segmento)}
+                  </span>
                 </div>
                 {f.email && (
                   <div
@@ -564,7 +794,7 @@ export default function FornecedoresPage() {
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
                       marginTop: "4px",
-                      paddingTop: "2px"
+                      paddingTop: "2px",
                     }}
                   >
                     {f.email}
@@ -587,6 +817,23 @@ export default function FornecedoresPage() {
         <FornecedorModal
           fornecedor={modal === "novo" ? null : modal}
           onClose={() => setModal(null)}
+        />
+      )}
+
+      {fornecedorDetalhe && (
+        <FornecedorDetalhesModal
+          fornecedor={fornecedorDetalhe}
+          onClose={() => setFornecedorDetalhe(null)}
+          onEdit={(fornecedor) => {
+            setFornecedorDetalhe(null);
+            setModal(fornecedor);
+          }}
+          onRemove={(fornecedor) => {
+            if (confirm("Remover fornecedor?")) {
+              remover.mutate(fornecedor.id);
+              setFornecedorDetalhe(null);
+            }
+          }}
         />
       )}
     </div>

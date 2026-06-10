@@ -1,6 +1,6 @@
 const REGION_GROUPS = {
   'SP INTERIOR': ['SP 07', 'SP 08', 'SP 09', 'SP 10'],
-  'SP CAPITAL': ['SP 01A', 'SP 01B', 'SP 2A', 'SP 02A', 'SP 02B', 'SP 03', 'SP 04', 'SP 05', 'SP 06'],
+  'SP CAPITAL': ['SP 01A', 'SP 01B', 'SP 02A', 'SP 02B', 'SP 03', 'SP 04', 'SP 05', 'SP 06'],
 };
 
 const splitRegions = (value) => {
