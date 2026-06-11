@@ -116,11 +116,11 @@ const STATUS_LABEL = {
 };
 const STATUS_BADGE = {
   AGUARDANDO_APROVACAO: "badge-warning",
-  AGUARDANDO_OM_ENTREGA: "badge-warning",
+  AGUARDANDO_OM_ENTREGA: "badge-info",
   FINALIZADO: "badge-success",
   ALUGUEL_OUTROS: "badge-neutral",
-  PCI: "badge-info",
-  LAUDOS: "badge-info",
+  PCI: "badge-brand",
+  LAUDOS: "badge-brand",
 };
 const fmt = (v) =>
   new Intl.NumberFormat("pt-BR", {
@@ -2503,18 +2503,18 @@ export default function ChamadosPage() {
             </div>
           )}
 
-          {/* ——— Barra de Ferramentas (Filtros e Ações) ——— */}
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 flex-wrap p-4 sm:p-5 bg-surface-800 border border-border rounded-xl mb-1">
-            {/* ── Bloco de Filtros ── */}
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3 sm:flex-1 sm:min-w-0">
+          {/* ——— Barra de Ferramentas ——— */}
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 p-4 bg-surface-800 border border-border rounded-xl mb-1">
+            {/* ── Filtros ── */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 min-w-0">
               {/* Busca */}
-              <div className="relative sm:flex-1 sm:min-w-0">
+              <div className="relative w-full sm:flex-1 min-w-74">
                 <Search
                   size={15}
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
                 />
                 <input
-                  className="input pl-9 w-full"
+                  className="input pl-9! w-full placeholder:text-muted placeholder:opacity-60"
                   placeholder="Buscar empresa ou chamado..."
                   value={busca}
                   onChange={(e) => setBusca(e.target.value)}
@@ -2522,9 +2522,9 @@ export default function ChamadosPage() {
               </div>
 
               {/* Selects */}
-              <div className="flex gap-2">
+              <div className="flex gap-2 shrink-0">
                 <select
-                  className="select flex-1 sm:flex-none sm:min-w-[140px]"
+                  className="select w-42 min-w-36"
                   value={filtros.status}
                   onChange={(e) =>
                     setFiltros((f) => ({ ...f, status: e.target.value }))
@@ -2539,7 +2539,7 @@ export default function ChamadosPage() {
                 </select>
 
                 <select
-                  className="select flex-1 sm:flex-none sm:min-w-[140px]"
+                  className="select w-42 min-w-36"
                   value={filtros.segmento}
                   onChange={(e) =>
                     setFiltros((f) => ({ ...f, segmento: e.target.value }))
@@ -2558,85 +2558,46 @@ export default function ChamadosPage() {
               </div>
             </div>
 
-            {/* ── Bloco de Resumo e Ação ── */}
-
-            {/* MOBILE: valores | separador | botão */}
-            <div className="flex items-center sm:hidden">
-              {/* Lado esquerdo — OPEX + Laudos/PCI */}
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-[0.6rem] text-muted uppercase font-bold tracking-wide">
+            {/* ── Resumo + Botão ── */}
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
+              <div className="flex items-center gap-3 shrink-0 flex-1">
+                <div className="flex flex-col mx-1.5 shrink-0">
+                  <span className="text-[0.875rem] text-muted uppercase font-bold tracking-wide whitespace-nowrap">
                     Investimento (OPEX)
                   </span>
-                  <span className="text-[1.05rem] font-extrabold text-brand-400 leading-none">
+                  <span className="text-base font-extrabold text-brand-400 leading-none whitespace-nowrap">
                     {fmt(investimentoSemLaudosEPci)}
                   </span>
                 </div>
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 shrink-0">
                   <div>
-                    <div className="text-[0.6rem] text-muted">Laudos</div>
-                    <div className="text-[0.75rem] font-bold text-[#a78bfa]">
+                    <div className="text-[0.875rem] text-muted whitespace-nowrap">
+                      Laudos
+                    </div>
+                    <div className="text-sm font-bold text-[#a78bfa] whitespace-nowrap">
                       {fmt(totalLaudos)}
                     </div>
                   </div>
                   <div>
-                    <div className="text-[0.6rem] text-muted">PCI</div>
-                    <div className="text-[0.75rem] font-bold text-[#e2670f]">
+                    <div className="text-[0.875rem] text-muted whitespace-nowrap">
+                      PCI
+                    </div>
+                    <div className="text-sm font-bold text-[#e2670f] whitespace-nowrap">
                       {fmt(totalPCI)}
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Separador central */}
-              <div className="w-px h-9 bg-border shrink-0 mx-2.5" />
-
-              {/* Lado direito — Botão */}
-              <div className="flex items-center justify-end flex-1 min-w-0">
-                <button
-                  className="btn btn-primary h-[38px] px-3.5 text-[13px] whitespace-nowrap shrink-0"
-                  style={{ boxShadow: "0 4px 12px rgba(14, 165, 233, 0.2)" }}
-                  onClick={() => setModal("novo")}
-                >
-                  <Plus size={15} /> Novo Chamado
-                </button>
-              </div>
-            </div>
-
-            {/* DESKTOP: layout original */}
-            <div className="hidden sm:flex items-center justify-end gap-4 flex-wrap flex-1 min-w-0">
-              <div className="flex flex-col items-end flex-1 min-w-0">
-                <span className="text-[0.65rem] text-muted uppercase font-bold tracking-wide mb-0.5">
-                  Investimento (OPEX)
-                </span>
-                <span className="text-[1.25rem] font-extrabold text-brand-400 leading-none">
-                  {fmt(investimentoSemLaudosEPci)}
-                </span>
-              </div>
-
-              <div className="flex flex-col gap-1.5 text-right shrink-0">
-                <div>
-                  <div className="text-[0.65rem] text-muted">Laudos</div>
-                  <div className="font-bold text-[#a78bfa]">
-                    {fmt(totalLaudos)}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-[0.65rem] text-muted">PCI</div>
-                  <div className="font-bold text-[#e2670f]">
-                    {fmt(totalPCI)}
-                  </div>
-                </div>
-              </div>
-
-              <div className="w-px h-8 bg-border shrink-0" />
+            <div className="w-px h-8 bg-border shrink-0 hidden [@media(max-width:1023px)]:hidden sm:block" />
 
               <button
-                className="btn btn-primary h-[42px] px-5 shrink-0"
+                className="btn btn-primary h-9.5 px-4 text-sm whitespace-nowrap shrink-0 w-full sm:w-auto"
                 style={{ boxShadow: "0 4px 12px rgba(14, 165, 233, 0.2)" }}
                 onClick={() => setModal("novo")}
               >
-                <Plus size={18} /> Novo Chamado
+                <Plus size={15} />
+                Novo Chamado
               </button>
             </div>
           </div>
