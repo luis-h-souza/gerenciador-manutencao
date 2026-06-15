@@ -29,6 +29,7 @@ const logRoutes       = require('./routes/log.routes');
 const jobRoutes       = require('./routes/job.routes');
 const falhaAtivoRoutes = require('./routes/falhaAtivo.routes');
 const rotinaInfraRoutes = require('./routes/rotinaInfra.routes');
+const metaRoutes        = require('./routes/meta.routes');
 
 const path = require('path');
 
@@ -172,6 +173,7 @@ app.use(`${API}/logs`,      logRoutes);
 app.use(`${API}/jobs`,      jobRoutes);
 app.use(`${API}/falhas-ativo`, falhaAtivoRoutes);
 app.use(`${API}/rotinas-infra`, rotinaInfraRoutes);
+app.use(`${API}/metas`,        metaRoutes);
 
 // ─── 404 ──────────────────────────────────────────────────────────────────────
 app.use((req, res) => {

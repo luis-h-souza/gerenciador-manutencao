@@ -17,6 +17,7 @@ import {
   History,
   Activity,
   HelpCircle,
+  Target,
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -63,6 +64,12 @@ const NAV = [
     to: "/chamados",
     icon: DollarSign,
     label: "Controle Financeiro",
+    roles: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR"],
+  },
+  {
+    to: "/metas",
+    icon: Target,
+    label: "Metas Orçamentárias",
     roles: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR"],
   },
   {

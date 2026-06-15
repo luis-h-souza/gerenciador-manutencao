@@ -23,6 +23,7 @@ import {
   MapPin,
   ClipboardCheck,
   ShoppingCart,
+  Target,
 } from "lucide-react";
 import {
   dashboardService,
@@ -266,6 +267,27 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
         </div>
         <div style={{ flex: "1 1 240px" }}>
           <StatCard
+            label="Meta Orçamentária"
+            value={resumo?.meta?.semMeta ? "Sem Meta" : fmt(resumo?.meta?.valorMeta)}
+            sub={
+              resumo?.meta?.semMeta
+                ? "Nenhuma meta definida"
+                : `Gasto: ${resumo?.meta?.percentualExecucao}% da meta`
+            }
+            icon={Target}
+            accent={
+              resumo?.meta?.semMeta
+                ? "var(--color-text-muted)"
+                : resumo?.meta?.statusMeta === "VERDE"
+                ? "var(--color-success)"
+                : resumo?.meta?.statusMeta === "AMARELO"
+                ? "var(--color-warning)"
+                : "var(--color-danger)"
+            }
+          />
+        </div>
+        <div style={{ flex: "1 1 240px" }}>
+          <StatCard
             label="Chamados / Mau Uso"
             value={resumo?.financeiro?.chamadosMes ?? "—"}
             sub={`${resumo?.financeiro?.mauUso ?? 0} registros de mau uso`}
@@ -374,6 +396,19 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
                     fontSize: 10,
                   }}
                 />
+                {!resumo?.meta?.semMeta && (
+                  <ReferenceLine
+                    y={resumo.meta.valorMeta}
+                    stroke="var(--color-danger)"
+                    strokeDasharray="3 3"
+                    label={{
+                      position: "top",
+                      value: `Meta: R$${(resumo.meta.valorMeta / 1000).toFixed(0)}k`,
+                      fill: "var(--color-danger)",
+                      fontSize: 10,
+                    }}
+                  />
+                )}
                 <Area
                   type="monotone"
                   dataKey="valor"
@@ -396,6 +431,12 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
               <div style={{ width: 10, height: 1, borderTop: "1px dashed var(--color-text-muted)" }} />
               <span style={{ fontSize: "0.7rem", color: "var(--color-text-secondary)" }}>Média</span>
             </div>
+            {!resumo?.meta?.semMeta && (
+              <div className="flex items-center gap-2">
+                <div style={{ width: 10, height: 1, borderTop: "1px dashed var(--color-danger)" }} />
+                <span style={{ fontSize: "0.7rem", color: "var(--color-text-secondary)" }}>Meta Orçamentária</span>
+              </div>
+            )}
           </div>
         </div>
 

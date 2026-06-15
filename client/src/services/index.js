@@ -131,3 +131,12 @@ export const falhaAtivoService = {
   marcarResolvido: (id, data)        => api.patch(`/falhas-ativo/${id}/resolver`, data),
   calcularConfiabilidade: (ativoId)  => api.get(`/falhas-ativo/ativo/${ativoId}/confiabilidade`),
 };
+
+// ─── Metas Orçamentárias ─────────────────────────────────────────────────
+export const metasService = {
+  listar:  (params) => api.get('/metas', { params }),
+  upsert:  (data)   => api.post('/metas', data),
+  remover: (id)     => api.delete(`/metas/${id}`),
+  cards:   (params) => api.get('/metas/cards', { params }),
+};
+

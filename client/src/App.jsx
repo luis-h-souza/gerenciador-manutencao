@@ -21,6 +21,7 @@ import ChecklistConsolidadoPage from "./pages/checklists/ChecklistConsolidadoPag
 import LojasPage from "./pages/lojas/LojasPage";
 import LogsPage from "./pages/admin/LogsPage";
 import ConfiguracaoPage from "./pages/configuracoes/ConfiguracaoPage";
+import MetasOrcamentariasPage from "./pages/metas/MetasOrcamentariasPage";
 
 // Rota protegida
 const ProtectedRoute = ({ children, roles }) => {
@@ -200,6 +201,15 @@ function AppRoutes() {
           element={
             <ProtectedRoute roles={["ADMINISTRADOR", "DIRETOR"]}>
               <LojasPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="metas"
+          element={
+            <ProtectedRoute roles={["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR"]}>
+              <MetasOrcamentariasPage />
             </ProtectedRoute>
           }
         />

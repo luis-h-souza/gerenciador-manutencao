@@ -265,7 +265,7 @@ export default function RegionalDrilldown({
                         </button>
                       </div>
 
-                      <div className="grid gap-3 mt-3 grid-cols-1 sm:grid-cols-2">
+                      <div className="grid gap-3 mt-3 grid-cols-1 sm:grid-cols-3">
                         <div>
                           <p
                             style={{
@@ -295,6 +295,33 @@ export default function RegionalDrilldown({
                               textTransform: "uppercase",
                             }}
                           >
+                            Meta
+                          </p>
+                          <p
+                            style={{
+                              fontSize: "0.95rem",
+                              fontWeight: 700,
+                              color: loja.semMeta
+                                ? "var(--color-text-muted)"
+                                : loja.statusMeta === "VERDE"
+                                ? "var(--color-success)"
+                                : loja.statusMeta === "AMARELO"
+                                ? "var(--color-warning)"
+                                : "var(--color-danger)",
+                              marginTop: "4px",
+                            }}
+                          >
+                            {loja.semMeta ? "Sem Meta" : fmt(loja.valorMeta)}
+                          </p>
+                        </div>
+                        <div>
+                          <p
+                            style={{
+                              fontSize: "0.68rem",
+                              color: "var(--color-text-muted)",
+                              textTransform: "uppercase",
+                            }}
+                          >
                             Chamados
                           </p>
                           <p
@@ -309,6 +336,41 @@ export default function RegionalDrilldown({
                           </p>
                         </div>
                       </div>
+
+                      {!loja.semMeta && (
+                        <div style={{ marginTop: "10px" }}>
+                          <div className="flex justify-between items-center mb-1">
+                            <span style={{ fontSize: "0.65rem", color: "var(--color-text-muted)" }}>Consumo da Meta</span>
+                            <span
+                              style={{
+                                fontSize: "0.7rem",
+                                fontWeight: 700,
+                                color: loja.statusMeta === "VERDE"
+                                  ? "var(--color-success)"
+                                  : loja.statusMeta === "AMARELO"
+                                  ? "var(--color-warning)"
+                                  : "var(--color-danger)"
+                              }}
+                            >
+                              {loja.percentualExecucao}%
+                            </span>
+                          </div>
+                          <div style={{ width: "100%", height: "4px", background: "var(--color-surface-700)", borderRadius: "2px", overflow: "hidden" }}>
+                            <div
+                              style={{
+                                width: `${Math.min(loja.percentualExecucao, 100)}%`,
+                                height: "100%",
+                                borderRadius: "2px",
+                                background: loja.statusMeta === "VERDE"
+                                  ? "var(--color-success)"
+                                  : loja.statusMeta === "AMARELO"
+                                  ? "var(--color-warning)"
+                                  : "var(--color-danger)"
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))
                 )}

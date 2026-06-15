@@ -3,6 +3,7 @@ const { getAccessFilter, getUserRegions, canAccessRegion } = require('../utils/a
 const { calcularMetricasConfiabilidade } = require('../utils/confiabilidadeAtivo');
 const { getWeek, startOfMonth, endOfMonth } = require('date-fns');
 const { buildKey, withCache, TTL } = require('../utils/dashboard.cache');
+const { buscarMetaVigente } = require('./meta.service');
 
 const formatarSegmento = (segmento) => {
   if (!segmento) return 'Diversos';
@@ -119,10 +120,93 @@ const resumo = async (user, query) => {
     const gastoAnterior = parseFloat(gastosMesPassado._sum.valor || 0);
     const variacaoGastos = gastoAnterior > 0 ? ((gastoAtual - gastoAnterior) / gastoAnterior) * 100 : 0;
 
+    // --- CÁLCULO DE META ORÇAMENTÁRIA (KPI 1) ---
+    let valorMeta = null;
+    let semMeta = true;
+
+    if (user.role === 'GESTOR') {
+      const reg = user.loja?.regiao || null;
+      const uni = user.loja?.nome || null;
+      const meta = await buscarMetaVigente(reg, uni, anoNum, mesIdx + 1);
+      if (meta) {
+        valorMeta = parseFloat(meta.valorMeta);
+        semMeta = false;
+      }
+    } else if (unidade) {
+      const reg = regiao || (user.role === 'COORDENADOR' ? getUserRegions(user)[0] : null);
+      const meta = await buscarMetaVigente(reg, unidade, anoNum, mesIdx + 1);
+      if (meta) {
+        valorMeta = parseFloat(meta.valorMeta);
+        semMeta = false;
+      }
+    } else if (regiao) {
+      const meta = await buscarMetaVigente(regiao, null, anoNum, mesIdx + 1);
+      if (meta) {
+        valorMeta = parseFloat(meta.valorMeta);
+        semMeta = false;
+      }
+    } else {
+      let regioesPermitidas = [];
+      if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE'].includes(user.role)) {
+        const resultado = await prisma.loja.findMany({
+          where: { ativo: true },
+          select: { regiao: true },
+          distinct: ['regiao'],
+        });
+        regioesPermitidas = resultado.map(r => r.regiao);
+      } else if (user.role === 'COORDENADOR') {
+        regioesPermitidas = getUserRegions(user);
+      }
+
+      if (regioesPermitidas.length > 0) {
+        const metasRegionais = await prisma.metaOrcamentaria.findMany({
+          where: {
+            regiao: { in: regioesPermitidas },
+            unidade: null,
+            ano: anoNum,
+            mes: mesIdx + 1,
+          },
+        });
+        if (metasRegionais.length > 0) {
+          valorMeta = metasRegionais.reduce((sum, m) => sum + parseFloat(m.valorMeta), 0);
+          semMeta = false;
+        }
+      }
+    }
+
+    let percentualExecucao = null;
+    let statusMeta = 'SEM_META';
+
+    if (!semMeta && valorMeta > 0) {
+      percentualExecucao = Math.round((gastoAtual / valorMeta) * 100);
+      if (percentualExecucao <= 90) {
+        statusMeta = 'VERDE';
+      } else if (percentualExecucao <= 110) {
+        statusMeta = 'AMARELO';
+      } else {
+        statusMeta = 'VERMELHO';
+      }
+    }
+
+    const metaObj = {
+      valorMeta,
+      percentualExecucao,
+      statusMeta,
+      semMeta,
+    };
+
     return {
       periodo: { mes: mesIdx + 1, ano: anoNum },
       tarefas: { total: totalTarefas, pendentes: tarefasPendentes, emAndamento: tarefasEmAndamento, concluidas: tarefasConcluidas },
-      financeiro: { chamadosMes: totalChamadosMes, gastosMes: gastoAtual, gastosMesPassado: gastoAnterior, variacaoPercent: variacaoGastos.toFixed(1), mauUso: chamadosMauUso },
+      financeiro: {
+        chamadosMes: totalChamadosMes,
+        gastosMes: gastoAtual,
+        gastosMesPassado: gastoAnterior,
+        variacaoPercent: variacaoGastos.toFixed(1),
+        mauUso: chamadosMauUso,
+        meta: metaObj,
+      },
+      meta: metaObj,
       fornecedores: { total: totalFornecedores },
       estoque: { pecasBaixoEstoque },
       contexto: {
@@ -316,7 +400,7 @@ const resumoRegional = async (user, query) => {
       });
 
     const resumo = await Promise.all(todasRegioes.map(async (regiao) => {
-      const [gastos, chamados, tarefas, totalLojas] = await Promise.all([
+      const [gastos, chamados, tarefas, totalLojas, meta] = await Promise.all([
         prisma.controleChamado.aggregate({
           where: { regiao, dataAbertura: { gte: inicioMes, lt: fimMes } },
           _sum: { valor: true }
@@ -329,15 +413,30 @@ const resumoRegional = async (user, query) => {
         }),
         prisma.loja.count({
           where: { regiao, ativo: true }
-        })
+        }),
+        buscarMetaVigente(regiao, null, anoNum, mesNum)
       ]);
+
+      const gastosMes = parseFloat(gastos._sum.valor || 0);
+      const valorMeta = meta ? parseFloat(meta.valorMeta) : null;
+      const percentualExecucao = valorMeta ? Math.round((gastosMes / valorMeta) * 100) : null;
+      let statusMeta = 'SEM_META';
+      if (valorMeta) {
+        if (percentualExecucao <= 90) statusMeta = 'VERDE';
+        else if (percentualExecucao <= 110) statusMeta = 'AMARELO';
+        else statusMeta = 'VERMELHO';
+      }
 
       return {
         regiao,
-        gastosMes: parseFloat(gastos._sum.valor || 0),
+        gastosMes,
         chamadosMes: chamados,
         tarefasAtivas: tarefas,
         totalLojas,
+        valorMeta,
+        percentualExecucao,
+        statusMeta,
+        semMeta: !meta,
       };
     }));
 
@@ -407,7 +506,7 @@ const detalheRegional = async (user, paramRegiao, query) => {
 
     const lojas = await Promise.all(
       lojasRegional.map(async (loja) => {
-        const [financeiro, mauUso, gestoresAtivos] = await Promise.all([
+        const [financeiro, mauUso, gestoresAtivos, meta] = await Promise.all([
           prisma.controleChamado.aggregate({
             where: {
               regiao: paramRegiao,
@@ -432,7 +531,18 @@ const detalheRegional = async (user, paramRegiao, query) => {
               ativo: true,
             },
           }),
+          buscarMetaVigente(paramRegiao, loja.nome, anoNum, mesNum)
         ]);
+
+        const totalGasto = parseFloat(financeiro._sum.valor || 0);
+        const valorMeta = meta ? parseFloat(meta.valorMeta) : null;
+        const percentualExecucao = valorMeta ? Math.round((totalGasto / valorMeta) * 100) : null;
+        let statusMeta = 'SEM_META';
+        if (valorMeta) {
+          if (percentualExecucao <= 90) statusMeta = 'VERDE';
+          else if (percentualExecucao <= 110) statusMeta = 'AMARELO';
+          else statusMeta = 'VERMELHO';
+        }
 
         return {
           id: loja.id,
@@ -440,9 +550,13 @@ const detalheRegional = async (user, paramRegiao, query) => {
           nome: loja.nome,
           regiao: loja.regiao,
           gestoresAtivos,
-          totalGasto: parseFloat(financeiro._sum.valor || 0),
+          totalGasto,
           totalChamados: financeiro._count,
           mauUso,
+          valorMeta,
+          percentualExecucao,
+          statusMeta,
+          semMeta: !meta,
         };
       })
     );

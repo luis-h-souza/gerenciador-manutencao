@@ -14,6 +14,7 @@ import {
   PieChart,
   Pie,
   Cell,
+  ReferenceLine,
 } from "recharts";
 import {
   DollarSign,
@@ -26,6 +27,7 @@ import {
   UserRound,
   Trophy,
   CircleHelp,
+  Target,
 } from "lucide-react";
 import {
   dashboardService,
@@ -407,6 +409,27 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
           </div>
           <div style={{ flex: "1 1 300px" }}>
             <StatCard
+              label="Meta Orçamentária"
+              value={macroResumo?.meta?.semMeta ? "Sem Meta" : fmt(macroResumo?.meta?.valorMeta)}
+              sub={
+                macroResumo?.meta?.semMeta
+                  ? "Nenhuma meta definida"
+                  : `Gasto: ${macroResumo?.meta?.percentualExecucao}% da meta`
+              }
+              icon={Target}
+              accent={
+                macroResumo?.meta?.semMeta
+                  ? "var(--color-text-muted)"
+                  : macroResumo?.meta?.statusMeta === "VERDE"
+                  ? "var(--color-success)"
+                  : macroResumo?.meta?.statusMeta === "AMARELO"
+                  ? "var(--color-warning)"
+                  : "var(--color-danger)"
+              }
+            />
+          </div>
+          <div style={{ flex: "1 1 300px" }}>
+            <StatCard
               label="Chamados / Mau Uso Total"
               value={macroResumo?.financeiro?.chamadosMes ?? "—"}
               sub={`${macroResumo?.financeiro?.mauUso ?? 0} alertas de mau uso`}
@@ -489,6 +512,19 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                     tickLine={false}
                   />
                   <Tooltip content={<TooltipCustom />} />
+                  {!macroResumo?.meta?.semMeta && (
+                    <ReferenceLine
+                      y={macroResumo.meta.valorMeta}
+                      stroke="var(--color-danger)"
+                      strokeDasharray="3 3"
+                      label={{
+                        position: "top",
+                        value: `Meta: R$${(macroResumo.meta.valorMeta / 1000).toFixed(0)}k`,
+                        fill: "var(--color-danger)",
+                        fontSize: 10,
+                      }}
+                    />
+                  )}
                   <Area
                     type="monotone"
                     dataKey="valor"
@@ -759,10 +795,23 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                   </div>
                   <div className="text-center" style={{ borderLeft: "1px solid var(--color-border)" }}>
                     <p style={{ fontSize: "0.625rem", fontWeight: 600, color: "var(--color-text-muted)", textTransform: "uppercase" }}>
-                      Chamados Abertos
+                      Orçamento / Meta
                     </p>
-                    <p style={{ fontSize: "1rem", fontWeight: 700, color: "var(--color-text-primary)", marginTop: "4px" }}>
-                      {reg.chamadosMes}
+                    <p
+                      style={{
+                        fontSize: "1rem",
+                        fontWeight: 700,
+                        color: reg.semMeta
+                          ? "var(--color-text-muted)"
+                          : reg.statusMeta === "VERDE"
+                          ? "var(--color-success)"
+                          : reg.statusMeta === "AMARELO"
+                          ? "var(--color-warning)"
+                          : "var(--color-danger)",
+                        marginTop: "4px",
+                      }}
+                    >
+                      {reg.semMeta ? "Sem Meta" : fmt(reg.valorMeta)}
                     </p>
                   </div>
                   <div className="text-center">
@@ -782,6 +831,41 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                     </p>
                   </div>
                 </div>
+
+                {!reg.semMeta && (
+                  <div style={{ marginTop: "4px", marginBottom: "12px" }}>
+                    <div className="flex justify-between items-center mb-1">
+                      <span style={{ fontSize: "0.65rem", color: "var(--color-text-muted)" }}>Consumo Orçamentário</span>
+                      <span
+                        style={{
+                          fontSize: "0.7rem",
+                          fontWeight: 700,
+                          color: reg.statusMeta === "VERDE"
+                            ? "var(--color-success)"
+                            : reg.statusMeta === "AMARELO"
+                            ? "var(--color-warning)"
+                            : "var(--color-danger)"
+                        }}
+                      >
+                        {reg.percentualExecucao}%
+                      </span>
+                    </div>
+                    <div style={{ width: "100%", height: "4px", background: "var(--color-surface-700)", borderRadius: "2px", overflow: "hidden" }}>
+                      <div
+                        style={{
+                          width: `${Math.min(reg.percentualExecucao, 100)}%`,
+                          height: "100%",
+                          borderRadius: "2px",
+                          background: reg.statusMeta === "VERDE"
+                            ? "var(--color-success)"
+                            : reg.statusMeta === "AMARELO"
+                            ? "var(--color-warning)"
+                            : "var(--color-danger)"
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div className="mt-4 flex justify-between gap-2 flex-wrap">
                   <button
