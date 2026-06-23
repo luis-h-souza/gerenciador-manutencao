@@ -387,12 +387,12 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
                 <Tooltip content={<TooltipCustom />} />
                 <ReferenceLine
                   y={avgGastos}
-                  stroke="var(--color-text-muted)"
+                  stroke="var(--color-warning)"
                   strokeDasharray="5 5"
                   label={{
-                    position: "right",
+                    position: "insideBottomLeft",
                     value: "Média",
-                    fill: "var(--color-text-muted)",
+                    fill: "var(--color-warning)",
                     fontSize: 10,
                   }}
                 />
@@ -400,9 +400,9 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
                   <ReferenceLine
                     y={resumo.meta.valorMeta}
                     stroke="var(--color-danger)"
-                    strokeDasharray="3 3"
+                    strokeDasharray="5 5"
                     label={{
-                      position: "top",
+                      position: "insideTop",
                       value: `Meta: R$${(resumo.meta.valorMeta / 1000).toFixed(0)}k`,
                       fill: "var(--color-danger)",
                       fontSize: 10,
@@ -428,8 +428,8 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
               <span style={{ fontSize: "0.7rem", color: "var(--color-text-secondary)" }}>Investimento</span>
             </div>
             <div className="flex items-center gap-2">
-              <div style={{ width: 10, height: 1, borderTop: "1px dashed var(--color-text-muted)" }} />
-              <span style={{ fontSize: "0.7rem", color: "var(--color-text-secondary)" }}>Média</span>
+              <div style={{ width: 10, height: 1, borderTop: "1px dashed var(--color-warning)" }} />
+              <span style={{ fontSize: "0.7rem", color: "var(--color-text-muted)" }}>Média</span>
             </div>
             {!resumo?.meta?.semMeta && (
               <div className="flex items-center gap-2">

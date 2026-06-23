@@ -593,7 +593,7 @@ function TabEquipamentos({ semana, ano, usuario, canEdit }) {
 
   return (
     <div className="flex flex-col gap-4 animate-fade-in">
-      <div className="flex items-center gap-3 flex-wrap">
+      <div className="flex items-stretch gap-3 flex-wrap">
         <div
           className="card"
           style={{
@@ -644,7 +644,7 @@ function TabEquipamentos({ semana, ano, usuario, canEdit }) {
         {checklistExistente && (
           <div
             className="card"
-            style={{ padding: "12px 20px", flex: 1, minWidth: "160px", borderTop: "4px solid var(--color-info)" }}
+            style={{ padding: "12px 20px", flex: 1, minWidth: "160px", borderTop: "4px solid var(--color-warning)" }}
           >
             <p
               style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", minHeight: "25px" }}

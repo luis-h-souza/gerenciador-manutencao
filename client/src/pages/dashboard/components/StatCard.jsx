@@ -11,7 +11,7 @@ export default function StatCard({ label, value, sub, icon: Icon, accent, trend 
     );
 
   return (
-    <div className="stat-card" style={{ "--stat-accent": accent }}>
+    <div className="stat-card h-full flex flex-col justify-center" style={{ "--stat-accent": accent }}>
       <div className="flex items-start justify-between">
         <div>
           <p
