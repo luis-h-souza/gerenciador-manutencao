@@ -269,7 +269,7 @@ O sistema já está operando com os módulos abaixo:
   - ver chamados de uma loja específica
   - abrir o BI regional diretamente na visão de gráficos
 - **Agrupamento Regional Escalável**: Visualizações executivas ("Matriz de Conformidade" e "Inteligência de Ativos Buy vs. Maintain") agrupadas dinamicamente em formato *Accordion* (sanfona) por Regional, Loja e Categoria, otimizando a leitura para gestores de grandes carteiras.
-- **Confiabilidade de Ativos**: MTBF, MTTR, Uptime e falhas abertas/resolvidas calculados de forma centralizada para detalhes do ativo e Comprar vs. Manter.
+- **Confiabilidade de Ativos**: MTBF, MTTR, Uptime e falhas abertas/resolvidas calculados de forma centralizada. No algoritmo **Comprar vs. Manter**, as regras de confiabilidade (Uptime e MTBF) possuem uma **trava de maturidade de 90 dias de cadastro** do ativo para evitar falsos positivos em equipamentos recém-adicionados.
 
 ### Controle Financeiro (Chamados)
 
@@ -286,6 +286,12 @@ O sistema já está operando com os módulos abaixo:
   - barras de custo
   - linha de percentual acumulado
   - tooltip explicativo para o usuário
+
+### Metas Orçamentárias
+
+- **Barra de Orçamento Regional (Consolidação)**: Barra de progresso no topo do drill-down de lojas mostrando o budget consumido pelas unidades em relação à meta regional cadastrada (Verde ≤ 90%, Amarelo 91-110%, Vermelho > 110%).
+- **Isolamento de Metas de Lojas**: Lojas sem metas de orçamento individuais cadastradas são mostradas com coloração cinza neutro e não herdam o orçamento regional para evitar falsos positivos de estouro de budget.
+- **Navegação Drill-Down com Botão Voltar**: Fluxo fluido entre visão regional e visão por lojas, permitindo voltar com um único clique.
 
 ### Checklists e Rotinas de Infraestrutura
 
@@ -468,6 +474,8 @@ ChecklistEquipamentoItem — tipo, operacional, qtd, qtdQuebrada, numSerie, cham
 ChecklistCarrinho        — semana, ano, regiao, unidade (unique por semana+ano+unidade)
 ChecklistCarrinhoItem    — tipo, total, quebrados, chamado
 FrotaCarrinho            — capacidade por tipo/unidade
+AtivoLoja                — nome, categoria, tipo, fabricante, modelo, patrimonio, regiao, unidade, valorSubstituicao, dadosTecnicos
+MetaOrcamentaria         — regiao, unidade, ano, mes, valorMeta
 ```
 
 ---

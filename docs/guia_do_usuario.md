@@ -210,12 +210,21 @@ Falhas abertas aparecem com o botao `Resolver`. Ao resolver uma falha, o sistema
 
 ### Como interpretar MTBF e MTTR
 
-- `MTBF`: tempo medio entre falhas. So aparece quando existe historico de falhas.
+- `MTBF`: tempo medio entre falhas. So aparece quando existe historico de falhas (mínimo 2).
 - `MTTR`: tempo medio de reparo. So e calculado quando existe falha resolvida.
 - Se houver falha aberta sem resolucao, o MTTR aparece como `Em aberto`.
 - Se ainda nao houver falhas resolvidas, o MTTR aparece como `Sem reparos`.
 
 Essas regras evitam interpretar uma falha recem-aberta como reparo de zero hora.
+
+### Custo Estimado de Substituição (Ordem de Prioridade)
+Para a análise Comprar vs Manter, o sistema determina o custo de substituição do ativo na seguinte ordem:
+1. **Valor de Substituição direto da tabela:** Coluna `valorSubstituicao` no cadastro do ativo (`ativos_loja`).
+2. **Dados Técnicos (JSON):** Atributo `custoSubstituicao` no campo flexível `dadosTecnicos` do ativo.
+3. **Fallback por Categoria:** Valores padronizados se as opções anteriores estiverem vazias (Geradores: R$ 80k, Nobreaks: R$ 35k, Cabines Primárias: R$ 120k, Ilhas/Congelados: R$ 25k, demais ativos: R$ 15k).
+
+### Maturidade de Confiabilidade (Evitar Falsos Positivos)
+Para evitar que ativos novos sejam sugeridos para substituição precipitadamente (devido a poucas quebras logo após o cadastro), **o sistema exige que o ativo esteja cadastrado há pelo menos 90 dias** para aplicar as validações de **Uptime** (<85%) e **MTBF** (<30 dias). Ativos com menos de 90 dias são avaliados apenas pelo critério de **custo acumulado de reparo > 60%** do valor do ativo.
 
 ---
 
@@ -256,7 +265,11 @@ Acesse o menu **Admin -> Logs de Auditoria**. Você pode filtrar por:
 
 ### Comprar vs Manter
 
-"O sistema cruza custo acumulado, falhas, MTBF, MTTR e uptime para indicar se um ativo deve ser mantido ou avaliado para substituicao. Dentro de cada loja, os ativos sao agrupados por categoria."
+"O sistema cruza custo acumulado, falhas, MTBF, MTTR e uptime (desde que o ativo tenha mais de 90 dias de cadastro) para indicar se um ativo deve ser mantido ou substituído. O custo de substituição prioriza o valor cadastrado na tabela de ativos (\`valorSubstituicao\`), caindo nos dados técnicos ou em fallbacks de categoria se estiver ausente. O card do ativo destaca o status SUBSTITUIR em vermelho juntamente com os motivos técnicos da recomendação."
+
+### Barra de Orçamento Regional (Metas)
+
+"Ao detalhar uma Regional nas Metas Orçamentárias, o topo exibe a barra consolidada de progresso do budget da regional (Verde até 90%, Amarelo até 110%, Vermelho acima de 110%). Lojas sem metas individuais cadastradas aparecem em tom cinza neutro para sinalizar que não há limite específico, impedindo que herdem o valor cheio da regional."
 
 ---
 

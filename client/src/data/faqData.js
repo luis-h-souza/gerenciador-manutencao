@@ -37,18 +37,25 @@ export const faqData = [
     content: `A análise **Comprar vs Manter** avalia se vale mais a pena continuar reparando um equipamento ou substituí-lo por um novo.
 
 **Critérios analisados:**
-- **Custo acumulado de manutenção:** Total gasto em chamados para aquele ativo
-- **MTBF (tempo entre falhas):** Frequência com que o equipamento quebra
-- **MTTR (tempo médio de reparo):** Tempo médio para resolver falhas já encerradas
-- **Taxa de disponibilidade:** Porcentagem do tempo em que está operacional
+- **Custo acumulado de manutenção:** Total gasto em chamados para aquele ativo.
+- **MTBF (tempo médio entre falhas):** Frequência com que o equipamento quebra (mínimo de 2 falhas para cálculo).
+- **MTTR (tempo médio de reparo):** Tempo médio para resolver falhas já encerradas.
+- **Taxa de disponibilidade (Uptime):** Porcentagem do tempo em que está operacional.
 
-**Indicadores de substituição:**
-- Custo acumulado > 60% do valor estimado de um ativo novo
-- MTBF < 30 dias com falhas recorrentes
-- Disponibilidade baixa com histórico de falhas
-- Reincidências repetidas no mesmo componente
+**Como o Custo de Substituição é calculado (Ordem de Prioridade):**
+1. **Valor de Substituição no Banco de Dados:** O sistema busca primeiro a coluna \`valorSubstituicao\` na tabela do ativo (\`ativos_loja\`).
+2. **Dados Técnicos Flexíveis:** Se não houver o valor acima, verifica a propriedade \`custoSubstituicao\` dentro do campo JSON \`dadosTecnicos\` do ativo.
+3. **Fallback por Categoria:** Caso nenhuma das opções anteriores exista, o sistema estima o valor conforme a categoria (Gerador: R$ 80k, Nobreak: R$ 35k, Cabine Primária: R$ 120k, Ilha/Congelado: R$ 25k, outros: R$ 15k).
 
-**Como acessar:** No Dashboard, na aba **Comprar vs. Manter**. Os ativos aparecem agrupados por regional, loja e categoria. Ativos que ultrapassam os limites aparecem destacados em vermelho.`,
+**Indicadores de substituição (Recomendação "SUBSTITUIR"):**
+- **Custo acumulado** > 60% do valor de substituição do ativo.
+- **Uptime de confiabilidade** < 85% com histórico recorrente (mínimo 5 falhas).
+- **MTBF** < 30 dias (ou < 180 dias para ilhas de congelados) com pelo menos 2 falhas.
+
+**Evitando Falsos Positivos (Maturidade de Histórico):**
+Para evitar que ativos novos ou recém-cadastrados sejam recomendados para substituição por "fotografias" de curto prazo (como duas falhas seguidas logo após o cadastro), **as regras de Uptime e MTBF só são aplicadas se o ativo tiver pelo menos 90 dias de cadastro no SGM**. Para ativos com menos de 90 dias, apenas o critério de custo acumulado (>60%) pode sugerir a troca.
+
+**Como acessar e visualizar:** No Dashboard, na aba **Comprar vs. Manter**. Os ativos aparecem agrupados por regional, loja e categoria. Ativos que ultrapassam os limites aparecem destacados em vermelho indicando "SUBSTITUIR" e exibem detalhadamente na tela os motivos específicos da recomendação.`,
   },
   {
     id: 'conformidade-operacional',
@@ -318,21 +325,26 @@ Um ativo com 95%+ de disponibilidade está em excelente estado.
     content: `O sistema permite cadastrar **Metas Orçamentárias** mensais por regional e/ou unidade, criando um limite de referência para os gastos de manutenção.
 
 **Como configurar:**
-- Acesse **Controle Financeiro** → aba "Metas"
-- Defina o valor da meta por regional/unidade e mês
+- Acesse **Controle Financeiro** → aba "Metas" (ou através da página de Metas Orçamentárias)
+- Defina o valor da meta por regional, unidade e mês/ano correspondente.
 
-**Como o Dashboard usa isso:**
-- Compara o total de chamados finalizados com a meta do período
-- Exibe o percentual de utilização do budget
-- Alerta visualmente quando o gasto ultrapassa 80% da meta
+**Barra de Progresso Regional no Drill-Down:**
+Ao entrar no detalhamento de uma regional no painel de Metas Orçamentárias:
+- **Barra de Orçamento Regional:** É exibido no topo um indicador consolidado com o total de gastos das lojas daquela regional confrontado com a meta regional estipulada. Essa barra diminui gradualmente à medida que o saldo é consumido pelas lojas.
+- **Faixas de Cores do Progresso:**
+  * 🟢 **Verde:** Consumo menor ou igual a 90% do orçamento.
+  * 🟡 **Amarelo:** Consumo entre 91% e 110% (alerta de proximidade do limite).
+  * 🔴 **Vermelho:** Consumo acima de 110% (indica estouro crítico do budget).
+
+**Comportamento dos Cards de Lojas:**
+- **Metas Individuais:** Cada loja exibe seu próprio consumo com relação à sua meta específica (se cadastrada).
+- **Sem Meta (Neutro):** Lojas que não possuem metas individuais cadastradas **não herdam a meta da regional** (evitando que pareçam "estouradas" com o valor total da regional). Os cards dessas lojas são coloridos com um tom **cinza neutro**, sinalizando que não há meta configurada para aquela unidade.
 
 **Tipos de gasto computados:**
-- Chamados com status **FINALIZADO**
-- Valor informado no campo "Valor" de cada chamado
+- Chamados com status **FINALIZADO**.
+- Valor informado no campo "Valor" de cada chamado.
 
-**Chamados sem valor:** Caso o chamado não tenha valor registrado, ele não impacta o cálculo orçamentário. Preencha sempre o campo "Valor" ao finalizar um chamado.
-
-**Dica:** Use a visão **Regional** no Dashboard para comparar o consumo de orçamento entre regiões lado a lado.`,
+**Chamados sem valor:** Caso o chamado não tenha valor registrado, ele não impacta o cálculo orçamentário. Preencha sempre o campo "Valor" ao finalizar um chamado.`,
   },
   {
     id: 'concentracao-fornecedor',
