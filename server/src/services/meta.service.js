@@ -108,19 +108,25 @@ const upsert = async (user, body) => {
     throw { status: 400, error: 'Dados inválidos', message: 'O valor da meta não pode ser negativo.' };
   }
 
-  // Upsert usando o unique constraint: [regiao, unidade, ano, mes]
-  const meta = await prisma.metaOrcamentaria.upsert({
+  // Prisma não aceita null no where de unique constraint composta.
+  // Usamos findFirst (que suporta IS NULL) + create/update manual.
+  const existente = await prisma.metaOrcamentaria.findFirst({
     where: {
-      meta_unica: {
-        regiao,
-        unidade: unidade || null,
-        ano: anoNum,
-        mes: mesNum,
-      },
+      regiao,
+      unidade: unidade || null,
+      ano: anoNum,
+      mes: mesNum,
     },
-    update: { valorMeta: valor },
-    create: { regiao, unidade: unidade || null, ano: anoNum, mes: mesNum, valorMeta: valor },
   });
+
+  const meta = existente
+    ? await prisma.metaOrcamentaria.update({
+        where: { id: existente.id },
+        data:  { valorMeta: valor },
+      })
+    : await prisma.metaOrcamentaria.create({
+        data: { regiao, unidade: unidade || null, ano: anoNum, mes: mesNum, valorMeta: valor },
+      });
 
   await invalidateDashboardCache().catch(() => {});
 
@@ -189,9 +195,9 @@ const cardsStatus = async (user, query) => {
       prisma.controleChamado.aggregate({
         _sum: { valor: true },
         where: {
-          loja: { regiao: lojaRegiao, nome: lojaUnidade },
-          dataDeteccao: { gte: inicioMes, lt: fimMes },
-          status: { not: 'CANCELADO' },
+          regiao: lojaRegiao,
+          unidade: lojaUnidade,
+          dataAbertura: { gte: inicioMes, lt: fimMes },
         },
       }),
       buscarMetaVigente(lojaRegiao, lojaUnidade, anoNum, mesNum),
@@ -265,9 +271,8 @@ const cardsNivelRegional = async (regioes, ano, mes, inicioMes, fimMes) => {
       prisma.controleChamado.aggregate({
         _sum: { valor: true },
         where: {
-          loja: { regiao },
-          dataDeteccao: { gte: inicioMes, lt: fimMes },
-          status: { not: 'CANCELADO' },
+          regiao,
+          dataAbertura: { gte: inicioMes, lt: fimMes },
         },
       }),
       buscarMetaVigente(regiao, null, ano, mes),
@@ -287,28 +292,37 @@ const cardsNivelRegional = async (regioes, ano, mes, inicioMes, fimMes) => {
 const cardsDetalheLoja = async (user, regiao, regioesPermitidas, ano, mes, inicioMes, fimMes) => {
   if (!regioesPermitidas.includes(regiao)) return [];
 
-  const lojas = await prisma.loja.findMany({
-    where: { regiao, ativo: true },
-    select: { id: true, nome: true, numero: true, regiao: true },
-    orderBy: { numero: 'asc' },
-  });
+  const [lojas, metaRegional] = await Promise.all([
+    prisma.loja.findMany({
+      where: { regiao, ativo: true },
+      select: { id: true, nome: true, numero: true, regiao: true },
+      orderBy: { numero: 'asc' },
+    }),
+    // Meta da regional inteira (unidade = null) — usada só na barra de progresso
+    prisma.metaOrcamentaria.findFirst({
+      where: { regiao, unidade: null, ano, mes },
+    }),
+  ]);
 
   const cards = await Promise.all(lojas.map(async (loja) => {
-    const [gastoAgg, meta] = await Promise.all([
+    const [gastoAgg, metaLoja] = await Promise.all([
       prisma.controleChamado.aggregate({
         _sum: { valor: true },
         where: {
-          lojaId: loja.id,
-          dataDeteccao: { gte: inicioMes, lt: fimMes },
-          status: { not: 'CANCELADO' },
+          regiao: loja.regiao,
+          unidade: loja.nome,
+          dataAbertura: { gte: inicioMes, lt: fimMes },
         },
       }),
-      buscarMetaVigente(regiao, loja.nome, ano, mes),
+      // Busca APENAS meta específica desta loja (sem fallback regional)
+      prisma.metaOrcamentaria.findFirst({
+        where: { regiao, unidade: loja.nome, ano, mes },
+      }),
     ]);
 
     const gastoReal  = Number(gastoAgg._sum.valor || 0);
-    const valorMeta  = meta ? Number(meta.valorMeta) : null;
-    const percentual = valorMeta ? Math.round((gastoReal / valorMeta) * 100) : null;
+    const valorMeta  = metaLoja ? Number(metaLoja.valorMeta) : null;
+    const percentual = valorMeta !== null ? Math.round((gastoReal / valorMeta) * 100) : null;
     const status     = calcularStatus(percentual);
 
     return {
@@ -321,11 +335,28 @@ const cardsDetalheLoja = async (user, regiao, regioesPermitidas, ano, mes, inici
       valorMeta,
       percentual,
       status,
-      semMeta: !meta,
+      semMeta: !metaLoja,
     };
   }));
 
-  return cards;
+  // ── Barra de orçamento regional ──────────────────────────────────────────────
+  const gastoTotalRegiao   = cards.reduce((s, c) => s + c.gastoReal, 0);
+  const valorMetaRegional  = metaRegional ? Number(metaRegional.valorMeta) : null;
+  const percentualRegional = valorMetaRegional ? Math.round((gastoTotalRegiao / valorMetaRegional) * 100) : null;
+  const saldoRestante      = valorMetaRegional !== null ? valorMetaRegional - gastoTotalRegiao : null;
+
+  const barraRegional = {
+    tipo: 'BARRA_REGIONAL',
+    regiao,
+    gastoTotal: gastoTotalRegiao,
+    valorMeta: valorMetaRegional,
+    percentual: percentualRegional,
+    saldoRestante,
+    status: calcularStatus(percentualRegional),
+    semMeta: !metaRegional,
+  };
+
+  return [barraRegional, ...cards];
 };
 
 module.exports = { listar, upsert, remover, buscarMetaVigente, cardsStatus };

@@ -356,6 +356,28 @@ export default function BuyVsMaintainDashboard() {
                                                     <strong style={{ color: "var(--color-text-secondary)" }}>{ativo.unidade}</strong> • Patr.:{" "}
                                                     {ativo.patrimonio || "N/A"}
                                                   </p>
+                                                  {ativo.recomendacao === "BUY" && ativo.razoes && ativo.razoes.length > 0 && (
+                                                    <div
+                                                      style={{
+                                                        marginTop: "8px",
+                                                        marginBottom: "12px",
+                                                        padding: "8px 12px",
+                                                        borderRadius: "8px",
+                                                        background: "rgba(239, 68, 68, 0.08)",
+                                                        border: "1px solid rgba(239, 68, 68, 0.2)",
+                                                        fontSize: "0.725rem",
+                                                        color: "#f87171",
+                                                        lineHeight: "1.3"
+                                                      }}
+                                                    >
+                                                      <strong style={{ display: "block", marginBottom: "4px" }}>Motivos para substituição:</strong>
+                                                      <ul style={{ listStyleType: "disc", paddingLeft: "16px", margin: 0, display: "flex", flexDirection: "column", gap: "3px" }}>
+                                                        {ativo.razoes.map((razao, idx) => (
+                                                          <li key={idx}>{razao}</li>
+                                                        ))}
+                                                      </ul>
+                                                    </div>
+                                                  )}
                                                   <hr style={{ borderTop: "1px solid var(--color-border)", borderRight: 0, borderBottom: 0, borderLeft: 0, margin: "12px 0" }} />
                                                   <div className="grid grid-cols-2 gap-3 text-sm">
                                                     <div>

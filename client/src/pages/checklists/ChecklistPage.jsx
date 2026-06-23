@@ -644,10 +644,10 @@ function TabEquipamentos({ semana, ano, usuario, canEdit }) {
         {checklistExistente && (
           <div
             className="card"
-            style={{ padding: "12px 20px", flex: 1, minWidth: "160px" }}
+            style={{ padding: "12px 20px", flex: 1, minWidth: "160px", borderTop: "4px solid var(--color-info)" }}
           >
             <p
-              style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}
+              style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", minHeight: "25px" }}
             >
               Último preenchimento
             </p>
@@ -924,10 +924,10 @@ function TabCarrinhos({ semana, ano, usuario, canEdit }) {
           return found
             ? { ...found, total: base.total }
             : {
-                tipoCarrinho: base.tipoCarrinho,
-                total: base.total,
-                quebrados: 0,
-              };
+              tipoCarrinho: base.tipoCarrinho,
+              total: base.total,
+              quebrados: 0,
+            };
         }),
       );
       setObservacoes(checklistExistente.observacoes || "");
@@ -2202,11 +2202,11 @@ export default function ChecklistPage() {
           // COORDENADOR não tem voltar (é a tela inicial)
           ["ADMINISTRADOR", "DIRETOR", "GERENTE"].includes(usuario?.role)
             ? () =>
-                setViewState((p) => ({
-                  ...p,
-                  mode: "COORDENADOR_LIST",
-                  regiaoSelecionada: null,
-                }))
+              setViewState((p) => ({
+                ...p,
+                mode: "COORDENADOR_LIST",
+                regiaoSelecionada: null,
+              }))
             : null
         }
         onSelect={(g) =>

@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import {
   Target, TrendingUp, TrendingDown, Minus, Plus, Pencil, Trash2,
-  Loader2, ChevronLeft, AlertCircle, X, Filter, RefreshCw,
+  Loader2, ChevronLeft, ArrowLeft, AlertCircle, X, Filter, RefreshCw,
 } from 'lucide-react';
 import { metasService, lojasService } from '../../services';
 import { useAuth } from '../../contexts/AuthContext';
@@ -136,6 +136,123 @@ function StatusCard({ card, onClick }) {
         </div>
       )}
     </button>
+  );
+}
+
+// ─── Componente Barra de Orçamento Regional ───────────────────────────────────
+
+function BarraRegional({ barra, mes, ano }) {
+  if (!barra) return null;
+
+  const pct      = barra.percentual ?? 0;
+  const estourou = pct > 100;
+  const saldo    = barra.saldoRestante;
+
+  const corBarra =
+    barra.semMeta ? 'var(--color-border)'
+    : estourou    ? 'var(--color-danger)'
+    : pct > 90    ? 'var(--color-warning)'
+                  : 'var(--color-success)';
+
+  const bgBarra =
+    barra.semMeta ? 'var(--color-surface-700)'
+    : estourou    ? 'rgba(239,68,68,0.08)'
+    : pct > 90    ? 'rgba(245,158,11,0.08)'
+                  : 'rgba(34,197,94,0.08)';
+
+  return (
+    <div style={{
+      background: bgBarra,
+      border: `1.5px solid ${corBarra}`,
+      borderRadius: '14px',
+      padding: '20px 24px',
+      marginBottom: '16px',
+    }}>
+      {/* Cabeçalho */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+        <div>
+          <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '3px' }}>
+            Orçamento Regional — {barra.regiao}
+          </div>
+          <div style={{ fontSize: '0.8125rem', color: 'var(--color-text-secondary)' }}>
+            {barra.semMeta
+              ? 'Nenhuma meta regional cadastrada para este período'
+              : 'Consumo consolidado das lojas vs. meta da regional'}
+          </div>
+        </div>
+        {!barra.semMeta && (
+          <div style={{
+            background: estourou ? 'rgba(239,68,68,0.15)' : pct > 90 ? 'rgba(245,158,11,0.15)' : 'rgba(34,197,94,0.15)',
+            border: `1px solid ${corBarra}`,
+            borderRadius: '8px',
+            padding: '4px 12px',
+            fontSize: '0.8125rem',
+            fontWeight: 700,
+            color: corBarra,
+            whiteSpace: 'nowrap',
+          }}>
+            {pct}% consumido
+          </div>
+        )}
+      </div>
+
+      {/* Valores */}
+      {!barra.semMeta && (
+        <>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '16px' }}>
+            <div>
+              <div style={{ fontSize: '0.6875rem', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Gasto Total das Lojas</div>
+              <div style={{ fontSize: '1.1875rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>{fmtBRL(barra.gastoTotal)}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.6875rem', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Meta Regional</div>
+              <div style={{ fontSize: '1.1875rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>{fmtBRL(barra.valorMeta)}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.6875rem', color: 'var(--color-text-muted)', marginBottom: '4px' }}>
+                {saldo >= 0 ? 'Saldo Disponível' : 'Estouro'}
+              </div>
+              <div style={{ fontSize: '1.1875rem', fontWeight: 700, color: saldo >= 0 ? 'var(--color-success)' : 'var(--color-danger)' }}>
+                {fmtBRL(Math.abs(saldo))}
+              </div>
+            </div>
+          </div>
+
+          {/* Barra de progresso */}
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+              <span style={{ fontSize: '0.6875rem', color: 'var(--color-text-muted)' }}>Orçamento consumido</span>
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: corBarra }}>{pct}%</span>
+            </div>
+            <div style={{ height: '10px', background: 'rgba(0,0,0,0.18)', borderRadius: '99px', overflow: 'hidden', position: 'relative' }}>
+              <div style={{
+                height: '100%',
+                width: `${Math.min(pct, 100)}%`,
+                background: corBarra,
+                borderRadius: '99px',
+                transition: 'width 0.8s ease',
+              }} />
+              {/* Marcador de 100% */}
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: '100%',
+                transform: 'translateX(-1px)',
+                width: '2px',
+                height: '100%',
+                background: 'rgba(255,255,255,0.3)',
+              }} />
+            </div>
+            {estourou && (
+              <div style={{ marginTop: '8px', fontSize: '0.75rem', color: 'var(--color-danger)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <AlertCircle size={12} />
+                Orçamento regional estourado em {fmtBRL(Math.abs(saldo))}
+              </div>
+            )}
+          </div>
+        </>
+      )}
+    </div>
   );
 }
 
@@ -463,45 +580,72 @@ export default function MetasOrcamentariasPage() {
 
       {/* ── Cards de Status ────────────────────────────────────────────────── */}
       <div>
-        <h2 style={{ margin: '0 0 14px', fontSize: '0.9375rem', fontWeight: 600, color: 'var(--color-text-secondary)' }}>
-          {temFiltroRegiao ? `Lojas — ${filtro.regiao}` : 'Visão por Regional'}
-          {' '}
-          <span style={{ fontWeight: 400, color: 'var(--color-text-muted)', fontSize: '0.8125rem' }}>
-            {MESES[filtro.mes - 1]} / {filtro.ano}
-          </span>
-        </h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
+          {temFiltroRegiao && usuario?.role !== 'GESTOR' && (
+            <button
+              className="btn btn-ghost btn-sm"
+              onClick={() => setFiltro(f => ({ ...f, regiao: '', unidade: '' }))}
+            >
+              <ArrowLeft size={18} /> Voltar para Regionais
+            </button>
+          )}
+          <h2 style={{ margin: 0, fontSize: '0.9375rem', fontWeight: 600, color: 'var(--color-text-secondary)' }}>
+            {temFiltroRegiao ? `Lojas — ${filtro.regiao}` : 'Visão por Regional'}
+            {' '}
+            <span style={{ fontWeight: 400, color: 'var(--color-text-muted)', fontSize: '0.8125rem' }}>
+              {MESES[filtro.mes - 1]} / {filtro.ano}
+            </span>
+          </h2>
+        </div>
 
         {cardsLoading ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-text-muted)', padding: '32px 0' }}>
             <Loader2 size={18} className="animate-spin" />
             <span>Carregando...</span>
           </div>
-        ) : cardsData.length === 0 ? (
-          <div style={{
-            background: 'var(--color-surface-800)',
-            border: '1px dashed var(--color-border)',
-            borderRadius: '12px',
-            padding: '40px',
-            textAlign: 'center',
-            color: 'var(--color-text-muted)',
-          }}>
-            <Target size={32} style={{ opacity: 0.3, marginBottom: '8px' }} />
-            <p style={{ margin: 0 }}>Nenhuma regional ou loja encontrada para os filtros selecionados.</p>
-          </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
-            {cardsData.map((card, i) => (
-              <StatusCard
-                key={i}
-                card={card}
-                onClick={card.tipo === 'REGIONAL' && usuario?.role !== 'GESTOR'
-                  ? () => setFiltro(f => ({ ...f, regiao: card.regiao, unidade: '' }))
-                  : null
-                }
-              />
-            ))}
-          </div>
-        )}
+        ) : (() => {
+          const barraRegional = temFiltroRegiao ? cardsData.find(c => c.tipo === 'BARRA_REGIONAL') ?? null : null;
+          const lojaCards     = cardsData.filter(c => c.tipo !== 'BARRA_REGIONAL');
+
+          return lojaCards.length === 0 && !barraRegional ? (
+            <div style={{
+              background: 'var(--color-surface-800)',
+              border: '1px dashed var(--color-border)',
+              borderRadius: '12px',
+              padding: '40px',
+              textAlign: 'center',
+              color: 'var(--color-text-muted)',
+            }}>
+              <Target size={32} style={{ opacity: 0.3, marginBottom: '8px' }} />
+              <p style={{ margin: 0 }}>Nenhuma regional ou loja encontrada para os filtros selecionados.</p>
+            </div>
+          ) : (
+            <>
+              {/* Barra de orçamento regional (drill-down de lojas) */}
+              {temFiltroRegiao && (
+                <BarraRegional
+                  barra={barraRegional}
+                  mes={filtro.mes}
+                  ano={filtro.ano}
+                />
+              )}
+
+              {/* Cards das lojas / regionais */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
+                {lojaCards.map((card, i) => (
+                  <StatusCard
+                    key={i}
+                    card={card}
+                    onClick={card.tipo === 'REGIONAL' && usuario?.role !== 'GESTOR'
+                      ? () => setFiltro(f => ({ ...f, regiao: card.regiao, unidade: '' }))
+                      : null
+                    }
+                  />
+                ))}
+              </div>
+            </>
+          );
+        })()}
       </div>
 
       {/* ── Tabela de Gestão (apenas ADMIN, DIRETOR, GERENTE) ─────────────── */}

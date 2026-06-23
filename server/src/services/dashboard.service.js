@@ -1069,35 +1069,44 @@ const buyVsMaintain = async (user, query) => {
       });
 
       // 3. Custo Estimado de Substituição
-      let custoSubstituicao = 15000; // Baseline padrão
-
       const cat = (ativo.categoria || '').toLowerCase();
       const isIlha = cat.includes('ilha') || cat.includes('congelado');
+      let custoSubstituicao;
 
-      if (ativo.dadosTecnicos && typeof ativo.dadosTecnicos === 'object') {
-        const dt = ativo.dadosTecnicos;
-        if (dt.custoSubstituicao) {
-          custoSubstituicao = parseFloat(dt.custoSubstituicao);
+      if (ativo.valorSubstituicao !== null && ativo.valorSubstituicao !== undefined) {
+        custoSubstituicao = parseFloat(ativo.valorSubstituicao);
+      } else {
+        custoSubstituicao = 15000; // Baseline padrão
+
+        if (ativo.dadosTecnicos && typeof ativo.dadosTecnicos === 'object') {
+          const dt = ativo.dadosTecnicos;
+          if (dt.custoSubstituicao) {
+            custoSubstituicao = parseFloat(dt.custoSubstituicao);
+          } else {
+            if (cat.includes('gerador')) custoSubstituicao = 80000;
+            else if (cat.includes('nobreak')) custoSubstituicao = 35000;
+            else if (cat.includes('cabine')) custoSubstituicao = 120000;
+            else if (isIlha) custoSubstituicao = 25000;
+          }
         } else {
           if (cat.includes('gerador')) custoSubstituicao = 80000;
           else if (cat.includes('nobreak')) custoSubstituicao = 35000;
           else if (cat.includes('cabine')) custoSubstituicao = 120000;
           else if (isIlha) custoSubstituicao = 25000;
         }
-      } else {
-        if (cat.includes('gerador')) custoSubstituicao = 80000;
-        else if (cat.includes('nobreak')) custoSubstituicao = 35000;
-        else if (cat.includes('cabine')) custoSubstituicao = 120000;
-        else if (isIlha) custoSubstituicao = 25000;
       }
 
       // 4. Algoritmo de Recomendação Buy vs. Maintain
       // Recomendação é "BUY" se:
       // - Custo acumulado excede 60% do valor de substituição
-      // - OU Uptime < 85% e tem pelo menos 3 falhas
-      // - OU MTBF é muito baixo (< 30 dias para a maioria, ou < 180 dias para ilhas congeladas)
+      // - OU Uptime < 85% e tem pelo menos 5 falhas (apenas se tiver maturidade de histórico de 90 dias)
+      // - OU MTBF é muito baixo (apenas se tiver maturidade de histórico de 90 dias)
       let recomendacao = 'MAINTAIN';
       const razoes = [];
+
+      // Calcular idade do cadastro do ativo em dias
+      const diasCadastro = (new Date() - new Date(ativo.criadoEm)) / (1000 * 60 * 60 * 24);
+      const possuiMaturidadeHistorico = diasCadastro >= 90;
 
       const limiteCusto = custoSubstituicao * 0.6;
       if (custoAcumulado > limiteCusto) {
@@ -1105,14 +1114,14 @@ const buyVsMaintain = async (user, query) => {
         razoes.push(`Custo acumulado de manutenção (R$ ${custoAcumulado.toFixed(2)}) supera 60% do custo de substituição (R$ ${custoSubstituicao.toFixed(2)})`);
       }
 
-      if (uptimePercentual < 85 && totalFalhas >= 3) {
+      if (possuiMaturidadeHistorico && uptimePercentual < 85 && totalFalhas >= 5) {
         recomendacao = 'BUY';
         razoes.push(`Uptime de confiabilidade muito baixo (${uptimePercentual.toFixed(1)}%) com histórico recorrente`);
       }
 
       const thresholdMtbf = isIlha ? 180 : 30;
 
-      if (totalFalhas >= 2 && mtbfDias !== null && mtbfDias < thresholdMtbf) {
+      if (possuiMaturidadeHistorico && totalFalhas >= 2 && mtbfDias !== null && mtbfDias < thresholdMtbf) {
         recomendacao = 'BUY';
         razoes.push(`Intervalo médio entre falhas (MTBF de ${mtbfDias.toFixed(1)} dias) abaixo do limite recomendado (${thresholdMtbf} dias)`);
       }
