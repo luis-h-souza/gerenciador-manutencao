@@ -166,8 +166,8 @@ const buscarMetaVigente = async (regiao, unidade, ano, mes) => {
   }
 
   // Fallback: meta regional (sem unidade específica)
-  const metaRegional = await prisma.metaOrcamentaria.findUnique({
-    where: { meta_unica: { regiao, unidade: null, ano, mes } },
+  const metaRegional = await prisma.metaOrcamentaria.findFirst({
+    where: { regiao, unidade: null, ano, mes },
   });
 
   return metaRegional || null;

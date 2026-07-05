@@ -79,6 +79,11 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
   });
 
   const loading = l1 || l2 || l3;
+  const hasMeta = Boolean(
+    resumo?.meta &&
+      !resumo.meta.semMeta &&
+      Number(resumo.meta.valorMeta) > 0,
+  );
   const avgGastos =
     historico && historico.length > 0
       ? historico.reduce((acc, h) => acc + (Number(h.valor) || 0), 0) /
@@ -396,7 +401,7 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
                     fontSize: 10,
                   }}
                 />
-                {!resumo?.meta?.semMeta && (
+                {hasMeta && (
                   <ReferenceLine
                     y={resumo.meta.valorMeta}
                     stroke="var(--color-danger)"
@@ -431,7 +436,7 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
               <div style={{ width: 10, height: 1, borderTop: "1px dashed var(--color-warning)" }} />
               <span style={{ fontSize: "0.7rem", color: "var(--color-text-muted)" }}>Média</span>
             </div>
-            {!resumo?.meta?.semMeta && (
+            {hasMeta && (
               <div className="flex items-center gap-2">
                 <div style={{ width: 10, height: 1, borderTop: "1px dashed var(--color-danger)" }} />
                 <span style={{ fontSize: "0.7rem", color: "var(--color-text-secondary)" }}>Meta Orçamentária</span>
