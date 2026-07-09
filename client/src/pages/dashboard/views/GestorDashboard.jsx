@@ -25,25 +25,39 @@ import {
   ShoppingCart,
   Target,
 } from "lucide-react";
-import {
-  dashboardService,
-  checklistService,
-} from "../../../services";
+import { dashboardService, checklistService } from "../../../services";
 import { useAuth } from "../../../contexts/AuthContext";
 import StatCard from "../components/StatCard";
 import TooltipCustom from "../components/ChartTooltip";
 import { OPCOES_MES } from "../hooks/useDashboardFilters";
 
 const CORES_SEGMENTO = [
-  "#0ea5e9","#10b981","#f59e0b","#ef4444","#8b5cf6",
-  "#e2670f","#4d7412","#ec4899","#fcd34d","#db2777",
-  "#c9ff71","#f87171","#eab308","#a78bfa",
+  "#0ea5e9",
+  "#10b981",
+  "#f59e0b",
+  "#ef4444",
+  "#8b5cf6",
+  "#e2670f",
+  "#4d7412",
+  "#ec4899",
+  "#fcd34d",
+  "#db2777",
+  "#c9ff71",
+  "#f87171",
+  "#eab308",
+  "#a78bfa",
 ];
 
 const fmt = (v) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
+  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(
+    v || 0,
+  );
 
-export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [] }) {
+export default function GestorDashboard({
+  filtro,
+  setFiltro,
+  opcoesRegionais = [],
+}) {
   const { usuario } = useAuth();
   const navigate = useNavigate();
   const isGestor = usuario?.role === "GESTOR";
@@ -80,9 +94,7 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
 
   const loading = l1 || l2 || l3;
   const hasMeta = Boolean(
-    resumo?.meta &&
-      !resumo.meta.semMeta &&
-      Number(resumo.meta.valorMeta) > 0,
+    resumo?.meta && !resumo.meta.semMeta && Number(resumo.meta.valorMeta) > 0,
   );
   const avgGastos =
     historico && historico.length > 0
@@ -273,7 +285,9 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
         <div style={{ flex: "1 1 240px" }}>
           <StatCard
             label="Meta Orçamentária"
-            value={resumo?.meta?.semMeta ? "Sem Meta" : fmt(resumo?.meta?.valorMeta)}
+            value={
+              resumo?.meta?.semMeta ? "Sem Meta" : fmt(resumo?.meta?.valorMeta)
+            }
             sub={
               resumo?.meta?.semMeta
                 ? "Nenhuma meta definida"
@@ -284,10 +298,10 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
               resumo?.meta?.semMeta
                 ? "var(--color-text-muted)"
                 : resumo?.meta?.statusMeta === "VERDE"
-                ? "var(--color-success)"
-                : resumo?.meta?.statusMeta === "AMARELO"
-                ? "var(--color-warning)"
-                : "var(--color-danger)"
+                  ? "var(--color-success)"
+                  : resumo?.meta?.statusMeta === "AMARELO"
+                    ? "var(--color-warning)"
+                    : "var(--color-danger)"
             }
           />
         </div>
@@ -295,19 +309,46 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
           <StatCard
             label="Chamados / Mau Uso"
             value={resumo?.financeiro?.chamadosMes ?? "—"}
-            sub={`${resumo?.financeiro?.mauUso ?? 0} registros de mau uso`}
+            sub={
+              <>
+                <span
+                  style={{
+                    color:
+                      (resumo?.financeiro?.mauUso ?? 0) > 0
+                        ? "var(--color-danger)"
+                        : "inherit",
+                    fontWeight: 600,
+                    fontSize: "0.875rem",
+                  }}
+                >
+                  {resumo?.financeiro?.mauUso ?? 0}
+                </span>{" "}
+                registros de mau uso
+              </>
+            }
             icon={AlertTriangle}
             accent="var(--color-warning)"
           />
         </div>
-        {isGestor && (
+        {resumo?.investimento?.pci?.valor > 0 && (
           <div style={{ flex: "1 1 240px" }}>
             <StatCard
-              label="Peças em Alerta"
-              value={resumo?.estoque?.pecasBaixoEstoque?.length ?? 0}
-              sub="Estoque ≤ 5 unidades"
-              icon={Package}
-              accent="var(--color-danger)"
+              label="Investimento - PCI"
+              value={fmt(resumo.investimento.pci.valor)}
+              sub={`${resumo.investimento.pci.quantidade} chamado(s)`}
+              icon={TrendingUp}
+              accent="#8b5cf6"
+            />
+          </div>
+        )}
+        {resumo?.investimento?.laudos?.valor > 0 && (
+          <div style={{ flex: "1 1 240px" }}>
+            <StatCard
+              label="Investimento - Laudos"
+              value={fmt(resumo.investimento.laudos.valor)}
+              sub={`${resumo.investimento.laudos.quantidade} chamado(s)`}
+              icon={TrendingUp}
+              accent="#a78bfa"
             />
           </div>
         )}
@@ -319,7 +360,10 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
         <div className="card h-full flex flex-col">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
-              <TrendingUp size={18} style={{ color: "var(--color-brand-500)" }} />
+              <TrendingUp
+                size={18}
+                style={{ color: "var(--color-brand-500)" }}
+              />
               <h3
                 style={{
                   fontSize: "0.875rem",
@@ -362,7 +406,11 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
                 onClick={(state) => {
                   if (state && state.activePayload) {
-                    if (!state.activePayload || state.activePayload.length === 0) return;
+                    if (
+                      !state.activePayload ||
+                      state.activePayload.length === 0
+                    )
+                      return;
                     const d = state.activePayload[0].payload;
                     navigate(`/chamados?mes=${d.mesNum}&ano=${d.anoNum}`);
                   }
@@ -370,12 +418,30 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
                 style={{ cursor: "pointer" }}
               >
                 <defs>
-                  <linearGradient id="colorGastoDash" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--color-brand-500)" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="var(--color-brand-500)" stopOpacity={0} />
+                  <linearGradient
+                    id="colorGastoDash"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop
+                      offset="5%"
+                      stopColor="var(--color-brand-500)"
+                      stopOpacity={0.3}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor="var(--color-brand-500)"
+                      stopOpacity={0}
+                    />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="var(--color-border)"
+                />
                 <XAxis
                   dataKey="mes"
                   tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
@@ -417,7 +483,7 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
                 <Area
                   type="monotone"
                   dataKey="valor"
-                  name="Total Gasto"
+                  name="OPEX Manutenção"
                   stroke="var(--color-brand-500)"
                   strokeWidth={3}
                   fillOpacity={1}
@@ -429,17 +495,54 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
           </div>
           <div className="mt-4 flex items-center justify-center gap-4 border-t border-border pt-4">
             <div className="flex items-center gap-2">
-              <div style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--color-brand-500)" }} />
-              <span style={{ fontSize: "0.7rem", color: "var(--color-text-secondary)" }}>Investimento</span>
+              <div
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: "50%",
+                  background: "var(--color-brand-500)",
+                }}
+              />
+              <span
+                style={{
+                  fontSize: "0.7rem",
+                  color: "var(--color-text-secondary)",
+                }}
+              >
+                OPEX Manutenção
+              </span>
             </div>
             <div className="flex items-center gap-2">
-              <div style={{ width: 10, height: 1, borderTop: "1px dashed var(--color-warning)" }} />
-              <span style={{ fontSize: "0.7rem", color: "var(--color-text-muted)" }}>Média</span>
+              <div
+                style={{
+                  width: 10,
+                  height: 1,
+                  borderTop: "1px dashed var(--color-warning)",
+                }}
+              />
+              <span
+                style={{ fontSize: "0.7rem", color: "var(--color-text-muted)" }}
+              >
+                Média
+              </span>
             </div>
             {hasMeta && (
               <div className="flex items-center gap-2">
-                <div style={{ width: 10, height: 1, borderTop: "1px dashed var(--color-danger)" }} />
-                <span style={{ fontSize: "0.7rem", color: "var(--color-text-secondary)" }}>Meta Orçamentária</span>
+                <div
+                  style={{
+                    width: 10,
+                    height: 1,
+                    borderTop: "1px dashed var(--color-danger)",
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: "0.7rem",
+                    color: "var(--color-text-secondary)",
+                  }}
+                >
+                  Meta Orçamentária
+                </span>
               </div>
             )}
           </div>
@@ -478,7 +581,10 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
                       innerRadius="44%"
                     >
                       {porSegmento.map((_, i) => (
-                        <Cell key={i} fill={CORES_SEGMENTO[i % CORES_SEGMENTO.length]} />
+                        <Cell
+                          key={i}
+                          fill={CORES_SEGMENTO[i % CORES_SEGMENTO.length]}
+                        />
                       ))}
                     </Pie>
                     <Tooltip content={<TooltipCustom />} />
@@ -488,7 +594,11 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
 
               <div
                 className="flex flex-col gap-2"
-                style={{ maxHeight: "clamp(220px, 36vw, 320px)", overflowY: "auto", paddingRight: "4px" }}
+                style={{
+                  maxHeight: "clamp(220px, 36vw, 320px)",
+                  overflowY: "auto",
+                  paddingRight: "4px",
+                }}
               >
                 {porSegmento.map((item, i) => (
                   <div
@@ -501,7 +611,10 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
                       border: "1px solid var(--color-border)",
                     }}
                   >
-                    <div className="flex items-center gap-2" style={{ minWidth: 0 }}>
+                    <div
+                      className="flex items-center gap-2"
+                      style={{ minWidth: 0 }}
+                    >
                       <span
                         style={{
                           width: "10px",
@@ -524,7 +637,13 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
                         {item.segmento}
                       </span>
                     </div>
-                    <strong style={{ fontSize: "0.8rem", color: "var(--color-text-primary)", flexShrink: 0 }}>
+                    <strong
+                      style={{
+                        fontSize: "0.8rem",
+                        color: "var(--color-text-primary)",
+                        flexShrink: 0,
+                      }}
+                    >
                       {fmt(item.total)}
                     </strong>
                   </div>
@@ -550,12 +669,18 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <ClipboardCheck size={16} style={{ color: "var(--color-brand-400)" }} />
+            <ClipboardCheck
+              size={16}
+              style={{ color: "var(--color-brand-400)" }}
+            />
             {usuario?.role === "COORDENADOR"
               ? "Atividade Mensal (Consolidado Regional)"
               : "Meus Checklists"}{" "}
             —{" "}
-            {new Date().toLocaleString("pt-BR", { month: "long", year: "numeric" })}
+            {new Date().toLocaleString("pt-BR", {
+              month: "long",
+              year: "numeric",
+            })}
           </div>
           <select
             className="select"
@@ -576,7 +701,9 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
         ) : (
           <div
             className="grid gap-4"
-            style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))" }}
+            style={{
+              gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+            }}
           >
             {/* Equipamentos */}
             <div
@@ -631,16 +758,28 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
                 }}
               >
                 {kpiChecklist.equipamentos.semanasPrenchidas}/
-                {kpiChecklist.equipamentos.totalSemanasNoMes} semanas preenchidas
+                {kpiChecklist.equipamentos.totalSemanasNoMes} semanas
+                preenchidas
               </p>
               {Object.entries(kpiChecklist.equipamentos.porTipo || {})
                 .slice(0, 3)
                 .map(([tipo, qtd]) => (
-                  <div key={tipo} className="flex justify-between items-center mt-2">
-                    <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
+                  <div
+                    key={tipo}
+                    className="flex justify-between items-center mt-2"
+                  >
+                    <span
+                      style={{
+                        fontSize: "0.75rem",
+                        color: "var(--color-text-muted)",
+                      }}
+                    >
                       {tipo.replace(/_/g, " ")}
                     </span>
-                    <span className="badge badge-danger" style={{ fontSize: "0.7rem", padding: "1px 6px" }}>
+                    <span
+                      className="badge badge-danger"
+                      style={{ fontSize: "0.7rem", padding: "1px 6px" }}
+                    >
                       {qtd} parado(s)
                     </span>
                   </div>
@@ -692,11 +831,23 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
               >
                 {kpiChecklist.carrinhos.totalQuebrados}
               </p>
-              <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginTop: "6px" }}>
+              <p
+                style={{
+                  fontSize: "0.75rem",
+                  color: "var(--color-text-muted)",
+                  marginTop: "6px",
+                }}
+              >
                 de {kpiChecklist.carrinhos.totalGeral} cadastrados • Taxa:{" "}
                 {kpiChecklist.carrinhos.taxaQuebra}%
               </p>
-              <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginTop: "4px" }}>
+              <p
+                style={{
+                  fontSize: "0.75rem",
+                  color: "var(--color-text-muted)",
+                  marginTop: "4px",
+                }}
+              >
                 {kpiChecklist.carrinhos.semanasPrenchidas}/
                 {kpiChecklist.carrinhos.totalSemanasNoMes} semanas preenchidas
               </p>
@@ -704,44 +855,6 @@ export default function GestorDashboard({ filtro, setFiltro, opcoesRegionais = [
           </div>
         )}
       </div>
-
-      {/* Lista de Peças em alerta */}
-      {isGestor && resumo?.estoque?.pecasBaixoEstoque?.length > 0 && (
-        <div className="card mt-2">
-          <h3
-            style={{
-              fontSize: "0.875rem",
-              fontWeight: 600,
-              color: "var(--color-warning)",
-              marginBottom: "12px",
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-            }}
-          >
-            <AlertTriangle size={15} /> Peças com estoque crítico
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {resumo.estoque.pecasBaixoEstoque.map((p) => (
-              <div
-                key={p.id}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
-                style={{
-                  background: "rgba(239,68,68,0.08)",
-                  border: "1px solid rgba(239,68,68,0.2)",
-                }}
-              >
-                <span style={{ fontSize: "0.8125rem", color: "var(--color-text-primary)" }}>
-                  {p.nome}
-                </span>
-                <span className="badge badge-danger" style={{ padding: "1px 6px" }}>
-                  {p.quantidadeEstoque} un.
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

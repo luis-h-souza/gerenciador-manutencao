@@ -41,13 +41,26 @@ import RegionalDrilldown from "../components/RegionalDrilldown";
 import { OPCOES_MES } from "../hooks/useDashboardFilters";
 
 const CORES_SEGMENTO = [
-  "#0ea5e9","#10b981","#f59e0b","#ef4444","#8b5cf6",
-  "#e2670f","#4d7412","#ec4899","#fcd34d","#db2777",
-  "#c9ff71","#f87171","#eab308","#a78bfa",
+  "#0ea5e9",
+  "#10b981",
+  "#f59e0b",
+  "#ef4444",
+  "#8b5cf6",
+  "#e2670f",
+  "#4d7412",
+  "#ec4899",
+  "#fcd34d",
+  "#db2777",
+  "#c9ff71",
+  "#f87171",
+  "#eab308",
+  "#a78bfa",
 ];
 
 const fmt = (v) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
+  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(
+    v || 0,
+  );
 
 const fmtMonthYear = (mes, ano) =>
   new Date(ano, (mes || 1) - 1, 1).toLocaleString("pt-BR", {
@@ -182,8 +195,14 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
         );
         return {
           ...g,
-          gastosMes: regionaisAtreladas.reduce((sum, r) => sum + (r.gastosMes || 0), 0),
-          totalLojas: regionaisAtreladas.reduce((sum, r) => sum + (r.totalLojas || 0), 0),
+          gastosMes: regionaisAtreladas.reduce(
+            (sum, r) => sum + (r.gastosMes || 0),
+            0,
+          ),
+          totalLojas: regionaisAtreladas.reduce(
+            (sum, r) => sum + (r.totalLojas || 0),
+            0,
+          ),
           numRegionais: regionaisAtreladas.length,
         };
       })
@@ -220,8 +239,14 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
         );
         return {
           ...c,
-          gastosMes: regionaisAtreladas.reduce((sum, r) => sum + (r.gastosMes || 0), 0),
-          totalLojas: regionaisAtreladas.reduce((sum, r) => sum + (r.totalLojas || 0), 0),
+          gastosMes: regionaisAtreladas.reduce(
+            (sum, r) => sum + (r.gastosMes || 0),
+            0,
+          ),
+          totalLojas: regionaisAtreladas.reduce(
+            (sum, r) => sum + (r.totalLojas || 0),
+            0,
+          ),
           numRegionais: regionaisAtreladas.length,
         };
       })
@@ -269,27 +294,43 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
       <div className="flex flex-col gap-6">
         <div
           className="grid gap-4"
-          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))" }}
+          style={{
+            gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+          }}
         >
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="skeleton" style={{ height: "110px", borderRadius: "12px" }} />
+            <div
+              key={i}
+              className="skeleton"
+              style={{ height: "110px", borderRadius: "12px" }}
+            />
           ))}
         </div>
         <div className="grid gap-4" style={{ gridTemplateColumns: "1fr 1fr" }}>
-          <div className="skeleton" style={{ height: "250px", borderRadius: "12px" }} />
-          <div className="skeleton" style={{ height: "250px", borderRadius: "12px" }} />
+          <div
+            className="skeleton"
+            style={{ height: "250px", borderRadius: "12px" }}
+          />
+          <div
+            className="skeleton"
+            style={{ height: "250px", borderRadius: "12px" }}
+          />
         </div>
       </div>
     );
   }
 
-  const variacaoMacro = parseFloat(macroResumo?.financeiro?.variacaoPercent || 0);
+  const variacaoMacro = parseFloat(
+    macroResumo?.financeiro?.variacaoPercent || 0,
+  );
   const opcoesRegionais = regionalOrdenado.map((item) => item.regiao);
   const periodoAtual = fmtMonthYear(
     macroResumo?.periodo?.mes || filtro.mes,
     macroResumo?.periodo?.ano || filtro.ano,
   );
-  const escopoAtual = filtro.regiao ? `Regional ${filtro.regiao}` : "Levantamento geral";
+  const escopoAtual = filtro.regiao
+    ? `Regional ${filtro.regiao}`
+    : "Levantamento geral";
 
   return (
     <div className="flex flex-col gap-8 animate-fade-in">
@@ -325,16 +366,37 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
               >
                 Resumo Financeiro
               </p>
-              <p style={{ fontSize: "0.875rem", color: "var(--color-text-secondary)", marginTop: "4px" }}>
-                Filtre regional e/ou mês para detalhar gastos, histórico e composição financeira.
+              <p
+                style={{
+                  fontSize: "0.875rem",
+                  color: "var(--color-text-secondary)",
+                  marginTop: "4px",
+                }}
+              >
+                Filtre regional e/ou mês para detalhar gastos, histórico e
+                composição financeira.
               </p>
-              <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginTop: "8px" }}>
+              <p
+                style={{
+                  fontSize: "0.75rem",
+                  color: "var(--color-text-muted)",
+                  marginTop: "8px",
+                }}
+              >
                 Exibindo:{" "}
-                <strong style={{ color: "var(--color-brand-400)" }}>{periodoAtual}</strong>{" "}
+                <strong style={{ color: "var(--color-brand-400)" }}>
+                  {periodoAtual}
+                </strong>{" "}
                 • Escopo: {escopoAtual}
                 {filtro.mes !== new Date().getMonth() + 1 ||
                 filtro.ano !== new Date().getFullYear() ? (
-                  <span style={{ marginLeft: "8px", color: "var(--color-warning)", fontSize: "0.7rem" }}>
+                  <span
+                    style={{
+                      marginLeft: "8px",
+                      color: "var(--color-warning)",
+                      fontSize: "0.7rem",
+                    }}
+                  >
                     ⚠ Histórico de 6 meses não é afetado por este filtro
                   </span>
                 ) : null}
@@ -348,15 +410,22 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                 style={{ minWidth: "185px" }}
                 value={`${filtro.ano}-${String(filtro.mes).padStart(2, "0")}`}
                 onChange={(e) => {
-                  const opt = OPCOES_MES.find((o) => o.value === e.target.value);
+                  const opt = OPCOES_MES.find(
+                    (o) => o.value === e.target.value,
+                  );
                   if (opt)
-                    setFiltro((prev) => ({ ...prev, mes: opt.mes, ano: opt.ano }));
+                    setFiltro((prev) => ({
+                      ...prev,
+                      mes: opt.mes,
+                      ano: opt.ano,
+                    }));
                 }}
               >
                 {OPCOES_MES.map((opt) => {
                   const hoje = new Date();
                   const isAtual =
-                    opt.mes === hoje.getMonth() + 1 && opt.ano === hoje.getFullYear();
+                    opt.mes === hoje.getMonth() + 1 &&
+                    opt.ano === hoje.getFullYear();
                   return (
                     <option key={opt.value} value={opt.value}>
                       {opt.label}
@@ -366,7 +435,15 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                 })}
               </select>
 
-              <span style={{ color: "var(--color-border)", fontSize: "1.2rem", lineHeight: 1 }}>|</span>
+              <span
+                style={{
+                  color: "var(--color-border)",
+                  fontSize: "1.2rem",
+                  lineHeight: 1,
+                }}
+              >
+                |
+              </span>
 
               <select
                 id="dashboard-filtro-regional"
@@ -410,7 +487,11 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
           <div style={{ flex: "1 1 300px" }}>
             <StatCard
               label="Meta Orçamentária"
-              value={macroResumo?.meta?.semMeta ? "Sem Meta" : fmt(macroResumo?.meta?.valorMeta)}
+              value={
+                macroResumo?.meta?.semMeta
+                  ? "Sem Meta"
+                  : fmt(macroResumo?.meta?.valorMeta)
+              }
               sub={
                 macroResumo?.meta?.semMeta
                   ? "Nenhuma meta definida"
@@ -421,10 +502,10 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                 macroResumo?.meta?.semMeta
                   ? "var(--color-text-muted)"
                   : macroResumo?.meta?.statusMeta === "VERDE"
-                  ? "var(--color-success)"
-                  : macroResumo?.meta?.statusMeta === "AMARELO"
-                  ? "var(--color-warning)"
-                  : "var(--color-danger)"
+                    ? "var(--color-success)"
+                    : macroResumo?.meta?.statusMeta === "AMARELO"
+                      ? "var(--color-warning)"
+                      : "var(--color-danger)"
               }
             />
           </div>
@@ -432,7 +513,23 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
             <StatCard
               label="Chamados / Mau Uso Total"
               value={macroResumo?.financeiro?.chamadosMes ?? "—"}
-              sub={`${macroResumo?.financeiro?.mauUso ?? 0} alertas de mau uso`}
+              sub={
+                <>
+                  <span
+                    style={{
+                      color:
+                        (macroResumo?.financeiro?.mauUso ?? 0) > 0
+                          ? "var(--color-danger)"
+                          : "inherit",
+                      fontWeight: 600,
+                      fontSize: "0.875rem",
+                    }}
+                  >
+                    {macroResumo?.financeiro?.mauUso ?? 0}
+                  </span>{" "}
+                  alertas de mau uso
+                </>
+              }
               icon={AlertTriangle}
               accent="var(--color-warning)"
             />
@@ -457,20 +554,44 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
           <div className="card h-full flex flex-col">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
-                <BarChart3 size={18} style={{ color: "var(--color-brand-500)" }} />
-                <h3 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+                <BarChart3
+                  size={18}
+                  style={{ color: "var(--color-brand-500)" }}
+                />
+                <h3
+                  style={{
+                    fontSize: "0.875rem",
+                    fontWeight: 700,
+                    color: "var(--color-text-primary)",
+                  }}
+                >
                   Histórico de Gastos Global (6 meses)
                 </h3>
               </div>
               {historicoMacro.length > 0 && (
                 <div className="text-right">
-                  <p style={{ fontSize: "0.6rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 600 }}>
+                  <p
+                    style={{
+                      fontSize: "0.6rem",
+                      color: "var(--color-text-muted)",
+                      textTransform: "uppercase",
+                      fontWeight: 600,
+                    }}
+                  >
                     Média Rede
                   </p>
-                  <p style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--color-brand-400)" }}>
+                  <p
+                    style={{
+                      fontSize: "0.875rem",
+                      fontWeight: 700,
+                      color: "var(--color-brand-400)",
+                    }}
+                  >
                     {fmt(
-                      historicoMacro.reduce((acc, h) => acc + (h.valor || 0), 0) /
-                        historicoMacro.length,
+                      historicoMacro.reduce(
+                        (acc, h) => acc + (h.valor || 0),
+                        0,
+                      ) / historicoMacro.length,
                     )}
                   </p>
                 </div>
@@ -484,7 +605,11 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                   margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
                   onClick={(state) => {
                     if (state && state.activePayload) {
-                      if (!state.activePayload || state.activePayload.length === 0) return;
+                      if (
+                        !state.activePayload ||
+                        state.activePayload.length === 0
+                      )
+                        return;
                       const d = state.activePayload[0].payload;
                       navigate(`/chamados?mes=${d.mesNum}&ano=${d.anoNum}`);
                     }
@@ -492,12 +617,30 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                   style={{ cursor: "pointer" }}
                 >
                   <defs>
-                    <linearGradient id="colorGastoMacro" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="var(--color-brand-500)" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="var(--color-brand-500)" stopOpacity={0} />
+                    <linearGradient
+                      id="colorGastoMacro"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="5%"
+                        stopColor="var(--color-brand-500)"
+                        stopOpacity={0.3}
+                      />
+                      <stop
+                        offset="95%"
+                        stopColor="var(--color-brand-500)"
+                        stopOpacity={0}
+                      />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="var(--color-border)"
+                  />
                   <XAxis
                     dataKey="mes"
                     tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
@@ -541,7 +684,14 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
           </div>
 
           <div className="card">
-            <h3 style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text-primary)", marginBottom: "16px" }}>
+            <h3
+              style={{
+                fontSize: "0.875rem",
+                fontWeight: 600,
+                color: "var(--color-text-primary)",
+                marginBottom: "16px",
+              }}
+            >
               Distribuição de Gastos por Segmento (Rede)
             </h3>
             <div className="grid gap-4 items-start grid-cols-1 lg:grid-cols-2">
@@ -558,7 +708,10 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                       innerRadius="44%"
                     >
                       {porSegmentoMacro.map((_, i) => (
-                        <Cell key={i} fill={CORES_SEGMENTO[i % CORES_SEGMENTO.length]} />
+                        <Cell
+                          key={i}
+                          fill={CORES_SEGMENTO[i % CORES_SEGMENTO.length]}
+                        />
                       ))}
                     </Pie>
                     <Tooltip content={<TooltipCustom />} />
@@ -568,7 +721,11 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
 
               <div
                 className="flex flex-col gap-2"
-                style={{ maxHeight: "clamp(220px, 36vw, 320px)", overflowY: "auto", paddingRight: "4px" }}
+                style={{
+                  maxHeight: "clamp(220px, 36vw, 320px)",
+                  overflowY: "auto",
+                  paddingRight: "4px",
+                }}
               >
                 {porSegmentoMacro.map((item, i) => (
                   <div
@@ -581,7 +738,10 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                       border: "1px solid var(--color-border)",
                     }}
                   >
-                    <div className="flex items-center gap-2" style={{ minWidth: 0 }}>
+                    <div
+                      className="flex items-center gap-2"
+                      style={{ minWidth: 0 }}
+                    >
                       <span
                         style={{
                           width: "10px",
@@ -604,7 +764,13 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                         {item.segmento}
                       </span>
                     </div>
-                    <strong style={{ fontSize: "0.8rem", color: "var(--color-text-primary)", flexShrink: 0 }}>
+                    <strong
+                      style={{
+                        fontSize: "0.8rem",
+                        color: "var(--color-text-primary)",
+                        flexShrink: 0,
+                      }}
+                    >
                       {fmt(item.total)}
                     </strong>
                   </div>
@@ -634,7 +800,13 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
               ) : (
                 <Users size={20} style={{ color: "var(--color-brand-500)" }} />
               )}
-              <h2 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+              <h2
+                style={{
+                  fontSize: "1.25rem",
+                  fontWeight: 700,
+                  color: "var(--color-text-primary)",
+                }}
+              >
                 {dashboardEtapa === "gerentes" && "Status por Gerente Regional"}
                 {dashboardEtapa === "coordenadores" &&
                   (gerenteDrill
@@ -648,16 +820,22 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
             </div>
           </div>
 
-          <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
-            {dashboardEtapa === "gerentes" && "Clique em um gerente para detalhar coordenadores"}
-            {dashboardEtapa === "coordenadores" && "Clique em um coordenador para detalhar regionais"}
+          <p
+            style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}
+          >
+            {dashboardEtapa === "gerentes" &&
+              "Clique em um gerente para detalhar coordenadores"}
+            {dashboardEtapa === "coordenadores" &&
+              "Clique em um coordenador para detalhar regionais"}
             {dashboardEtapa === "regionais" && "Visão analítica por regional"}
           </p>
         </div>
 
         <div
           className="grid gap-5"
-          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))" }}
+          style={{
+            gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+          }}
         >
           {/* CARDS DE GERENTES */}
           {dashboardEtapa === "gerentes" &&
@@ -675,30 +853,69 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                   <div className="flex items-center gap-3">
                     <div
                       className="flex items-center justify-center w-10 h-10 rounded-full"
-                      style={{ background: "var(--color-brand-100)", color: "var(--color-brand-600)" }}
+                      style={{
+                        background: "var(--color-brand-100)",
+                        color: "var(--color-brand-600)",
+                      }}
                     >
                       <UserRound size={20} />
                     </div>
                     <div>
-                      <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+                      <h3
+                        style={{
+                          fontSize: "1.125rem",
+                          fontWeight: 700,
+                          color: "var(--color-text-primary)",
+                        }}
+                      >
                         {ger.nome}
                       </h3>
-                      <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
+                      <p
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "var(--color-text-muted)",
+                        }}
+                      >
                         Gerente Regional • {ger.numRegionais} regionais
                       </p>
                     </div>
                   </div>
                 </div>
-                <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "12px", marginTop: "8px" }}>
+                <div
+                  style={{
+                    borderTop: "1px solid var(--color-border)",
+                    paddingTop: "12px",
+                    marginTop: "8px",
+                  }}
+                >
                   <div className="flex justify-between items-center">
-                    <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 600 }}>
+                    <span
+                      style={{
+                        fontSize: "0.75rem",
+                        color: "var(--color-text-muted)",
+                        textTransform: "uppercase",
+                        fontWeight: 600,
+                      }}
+                    >
                       Gastos Gerenciados
                     </span>
-                    <span style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--color-brand-500)" }}>
+                    <span
+                      style={{
+                        fontSize: "1.125rem",
+                        fontWeight: 800,
+                        color: "var(--color-brand-500)",
+                      }}
+                    >
                       {fmt(ger.gastosMes)}
                     </span>
                   </div>
-                  <p style={{ fontSize: "0.7rem", color: "var(--color-text-muted)", marginTop: "4px" }}>
+                  <p
+                    style={{
+                      fontSize: "0.7rem",
+                      color: "var(--color-text-muted)",
+                      marginTop: "4px",
+                    }}
+                  >
                     Engloba {ger.totalLojas} lojas ativas
                   </p>
                 </div>
@@ -721,26 +938,59 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                   <div className="flex items-center gap-3">
                     <div
                       className="flex items-center justify-center w-10 h-10 rounded-full"
-                      style={{ background: "var(--color-surface-600)", color: "var(--color-text-primary)" }}
+                      style={{
+                        background: "var(--color-surface-600)",
+                        color: "var(--color-text-primary)",
+                      }}
                     >
                       <Users size={20} />
                     </div>
                     <div>
-                      <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+                      <h3
+                        style={{
+                          fontSize: "1.125rem",
+                          fontWeight: 700,
+                          color: "var(--color-text-primary)",
+                        }}
+                      >
                         {coord.nome}
                       </h3>
-                      <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
+                      <p
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "var(--color-text-muted)",
+                        }}
+                      >
                         Coordenador • {coord.numRegionais} regionais
                       </p>
                     </div>
                   </div>
                 </div>
-                <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "12px", marginTop: "8px" }}>
+                <div
+                  style={{
+                    borderTop: "1px solid var(--color-border)",
+                    paddingTop: "12px",
+                    marginTop: "8px",
+                  }}
+                >
                   <div className="flex justify-between items-center">
-                    <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 600 }}>
+                    <span
+                      style={{
+                        fontSize: "0.75rem",
+                        color: "var(--color-text-muted)",
+                        textTransform: "uppercase",
+                        fontWeight: 600,
+                      }}
+                    >
                       Gastos Coordenados
                     </span>
-                    <span style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--color-text-primary)" }}>
+                    <span
+                      style={{
+                        fontSize: "1.125rem",
+                        fontWeight: 800,
+                        color: "var(--color-text-primary)",
+                      }}
+                    >
                       {fmt(coord.gastosMes)}
                     </span>
                   </div>
@@ -760,15 +1010,29 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                   <div className="flex items-center gap-3">
                     <div
                       className="flex items-center justify-center w-10 h-10 rounded-full"
-                      style={{ background: "var(--color-brand-100)", color: "var(--color-brand-600)" }}
+                      style={{
+                        background: "var(--color-brand-100)",
+                        color: "var(--color-brand-600)",
+                      }}
                     >
                       <MapPin size={20} />
                     </div>
                     <div>
-                      <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+                      <h3
+                        style={{
+                          fontSize: "1.125rem",
+                          fontWeight: 700,
+                          color: "var(--color-text-primary)",
+                        }}
+                      >
                         {reg.regiao}
                       </h3>
-                      <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
+                      <p
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "var(--color-text-muted)",
+                        }}
+                      >
                         {periodoAtual} • {reg.totalLojas || 0} lojas ativas
                       </p>
                     </div>
@@ -786,15 +1050,39 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                   }}
                 >
                   <div className="text-center">
-                    <p style={{ fontSize: "0.625rem", fontWeight: 600, color: "var(--color-text-muted)", textTransform: "uppercase" }}>
+                    <p
+                      style={{
+                        fontSize: "0.625rem",
+                        fontWeight: 600,
+                        color: "var(--color-text-muted)",
+                        textTransform: "uppercase",
+                      }}
+                    >
                       Gastos Mensais
                     </p>
-                    <p style={{ fontSize: "1rem", fontWeight: 700, color: "var(--color-success)", marginTop: "4px" }}>
+                    <p
+                      style={{
+                        fontSize: "1rem",
+                        fontWeight: 700,
+                        color: "var(--color-success)",
+                        marginTop: "4px",
+                      }}
+                    >
                       {fmt(reg.gastosMes)}
                     </p>
                   </div>
-                  <div className="text-center" style={{ borderLeft: "1px solid var(--color-border)" }}>
-                    <p style={{ fontSize: "0.625rem", fontWeight: 600, color: "var(--color-text-muted)", textTransform: "uppercase" }}>
+                  <div
+                    className="text-center"
+                    style={{ borderLeft: "1px solid var(--color-border)" }}
+                  >
+                    <p
+                      style={{
+                        fontSize: "0.625rem",
+                        fontWeight: 600,
+                        color: "var(--color-text-muted)",
+                        textTransform: "uppercase",
+                      }}
+                    >
                       Orçamento / Meta
                     </p>
                     <p
@@ -804,10 +1092,10 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                         color: reg.semMeta
                           ? "var(--color-text-muted)"
                           : reg.statusMeta === "VERDE"
-                          ? "var(--color-success)"
-                          : reg.statusMeta === "AMARELO"
-                          ? "var(--color-warning)"
-                          : "var(--color-danger)",
+                            ? "var(--color-success)"
+                            : reg.statusMeta === "AMARELO"
+                              ? "var(--color-warning)"
+                              : "var(--color-danger)",
                         marginTop: "4px",
                       }}
                     >
@@ -815,18 +1103,49 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                     </p>
                   </div>
                   <div className="text-center">
-                    <p style={{ fontSize: "0.625rem", fontWeight: 600, color: "var(--color-text-muted)", textTransform: "uppercase" }}>
+                    <p
+                      style={{
+                        fontSize: "0.625rem",
+                        fontWeight: 600,
+                        color: "var(--color-text-muted)",
+                        textTransform: "uppercase",
+                      }}
+                    >
                       Tarefas ativas
                     </p>
-                    <p style={{ fontSize: "1rem", fontWeight: 700, color: "var(--color-text-primary)", marginTop: "4px" }}>
+                    <p
+                      style={{
+                        fontSize: "1rem",
+                        fontWeight: 700,
+                        color: "var(--color-text-primary)",
+                        marginTop: "4px",
+                      }}
+                    >
                       {reg.tarefasAtivas}
                     </p>
                   </div>
-                  <div className="text-center" style={{ borderLeft: "1px solid var(--color-border)" }}>
-                    <p style={{ fontSize: "0.625rem", fontWeight: 600, color: "var(--color-text-muted)", textTransform: "uppercase" }}>
+                  <div
+                    className="text-center"
+                    style={{ borderLeft: "1px solid var(--color-border)" }}
+                  >
+                    <p
+                      style={{
+                        fontSize: "0.625rem",
+                        fontWeight: 600,
+                        color: "var(--color-text-muted)",
+                        textTransform: "uppercase",
+                      }}
+                    >
                       Lojas
                     </p>
-                    <p style={{ fontSize: "1rem", fontWeight: 700, color: "var(--color-text-primary)", marginTop: "4px" }}>
+                    <p
+                      style={{
+                        fontSize: "1rem",
+                        fontWeight: 700,
+                        color: "var(--color-text-primary)",
+                        marginTop: "4px",
+                      }}
+                    >
                       {reg.totalLojas || 0}
                     </p>
                   </div>
@@ -835,32 +1154,49 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                 {!reg.semMeta && (
                   <div style={{ marginTop: "4px", marginBottom: "12px" }}>
                     <div className="flex justify-between items-center mb-1">
-                      <span style={{ fontSize: "0.65rem", color: "var(--color-text-muted)" }}>Consumo Orçamentário</span>
+                      <span
+                        style={{
+                          fontSize: "0.65rem",
+                          color: "var(--color-text-muted)",
+                        }}
+                      >
+                        Consumo Orçamentário
+                      </span>
                       <span
                         style={{
                           fontSize: "0.7rem",
                           fontWeight: 700,
-                          color: reg.statusMeta === "VERDE"
-                            ? "var(--color-success)"
-                            : reg.statusMeta === "AMARELO"
-                            ? "var(--color-warning)"
-                            : "var(--color-danger)"
+                          color:
+                            reg.statusMeta === "VERDE"
+                              ? "var(--color-success)"
+                              : reg.statusMeta === "AMARELO"
+                                ? "var(--color-warning)"
+                                : "var(--color-danger)",
                         }}
                       >
                         {reg.percentualExecucao}%
                       </span>
                     </div>
-                    <div style={{ width: "100%", height: "4px", background: "var(--color-surface-700)", borderRadius: "2px", overflow: "hidden" }}>
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "4px",
+                        background: "var(--color-surface-700)",
+                        borderRadius: "2px",
+                        overflow: "hidden",
+                      }}
+                    >
                       <div
                         style={{
                           width: `${Math.min(reg.percentualExecucao, 100)}%`,
                           height: "100%",
                           borderRadius: "2px",
-                          background: reg.statusMeta === "VERDE"
-                            ? "var(--color-success)"
-                            : reg.statusMeta === "AMARELO"
-                            ? "var(--color-warning)"
-                            : "var(--color-danger)"
+                          background:
+                            reg.statusMeta === "VERDE"
+                              ? "var(--color-success)"
+                              : reg.statusMeta === "AMARELO"
+                                ? "var(--color-warning)"
+                                : "var(--color-danger)",
                         }}
                       />
                     </div>
@@ -902,12 +1238,33 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
         <div className="flex items-center gap-2">
           <Trophy size={20} style={{ color: "var(--color-brand-500)" }} />
           <div>
-            <h2 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+            <h2
+              style={{
+                fontSize: "1.25rem",
+                fontWeight: 700,
+                color: "var(--color-text-primary)",
+              }}
+            >
               Ranking de Coordenadores
             </h2>
-            <div className="flex items-center gap-2" style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
-              <p>Indicador proxy por disponibilidade, eficiência de custo e cobertura de checklist.</p>
-              <div style={{ position: "relative", display: "inline-flex", alignItems: "center" }}>
+            <div
+              className="flex items-center gap-2"
+              style={{
+                fontSize: "0.8125rem",
+                color: "var(--color-text-muted)",
+              }}
+            >
+              <p>
+                Indicador proxy por disponibilidade, eficiência de custo e
+                cobertura de checklist.
+              </p>
+              <div
+                style={{
+                  position: "relative",
+                  display: "inline-flex",
+                  alignItems: "center",
+                }}
+              >
                 <button
                   type="button"
                   className="btn btn-ghost btn-sm"
@@ -948,12 +1305,18 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                     fontSize: "0.75rem",
                   }}
                 >
-                  <p style={{ fontWeight: 700, color: "var(--color-brand-400)", marginBottom: "4px" }}>
+                  <p
+                    style={{
+                      fontWeight: 700,
+                      color: "var(--color-brand-400)",
+                      marginBottom: "4px",
+                    }}
+                  >
                     Como funciona o Score?
                   </p>
-                  O score sobe com mais disponibilidade, menor custo por chamado e melhor cobertura de
-                  checklist. Cai com equipamentos parados, carrinhos quebrados, tarefas ativas e registros
-                  de mau uso.
+                  O score sobe com mais disponibilidade, menor custo por chamado
+                  e melhor cobertura de checklist. Cai com equipamentos parados,
+                  carrinhos quebrados, tarefas ativas e registros de mau uso.
                 </div>
               </div>
             </div>
@@ -961,13 +1324,22 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
         </div>
 
         {ranking.length === 0 ? (
-          <div className="card" style={{ padding: "24px", color: "var(--color-text-muted)", textAlign: "center" }}>
+          <div
+            className="card"
+            style={{
+              padding: "24px",
+              color: "var(--color-text-muted)",
+              textAlign: "center",
+            }}
+          >
             Nenhum coordenador encontrado para o escopo atual.
           </div>
         ) : (
           <div
             className="grid gap-4"
-            style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+            style={{
+              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+            }}
           >
             {ranking.map((item) => (
               <div key={item.id} className="card" style={{ padding: "18px" }}>
@@ -976,41 +1348,103 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                     <div className="flex items-center gap-2">
                       <span
                         className="badge badge-brand"
-                        style={{ fontSize: "0.7rem", minWidth: "30px", justifyContent: "center" }}
+                        style={{
+                          fontSize: "0.7rem",
+                          minWidth: "30px",
+                          justifyContent: "center",
+                        }}
                       >
                         #{item.posicao}
                       </span>
-                      <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--color-text-primary)" }}>
+                      <h3
+                        style={{
+                          fontSize: "1rem",
+                          fontWeight: 700,
+                          color: "var(--color-text-primary)",
+                        }}
+                      >
                         {item.nome}
                       </h3>
                     </div>
-                    <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginTop: "6px" }}>
-                      {item.regiao || item.regioes?.join(" / ") || "Sem regional"}
+                    <p
+                      style={{
+                        fontSize: "0.75rem",
+                        color: "var(--color-text-muted)",
+                        marginTop: "6px",
+                      }}
+                    >
+                      {item.regiao ||
+                        item.regioes?.join(" / ") ||
+                        "Sem regional"}
                     </p>
                   </div>
                   <div style={{ textAlign: "right" }}>
-                    <p style={{ fontSize: "0.7rem", color: "var(--color-text-muted)", textTransform: "uppercase" }}>
+                    <p
+                      style={{
+                        fontSize: "0.7rem",
+                        color: "var(--color-text-muted)",
+                        textTransform: "uppercase",
+                      }}
+                    >
                       Score
                     </p>
-                    <p style={{ fontSize: "1.35rem", fontWeight: 700, color: "var(--color-brand-500)" }}>
+                    <p
+                      style={{
+                        fontSize: "1.35rem",
+                        fontWeight: 700,
+                        color: "var(--color-brand-500)",
+                      }}
+                    >
                       {item.score}
                     </p>
                   </div>
                 </div>
 
-                <div className="grid gap-3" style={{ gridTemplateColumns: "1fr 1fr" }}>
+                <div
+                  className="grid gap-3"
+                  style={{ gridTemplateColumns: "1fr 1fr" }}
+                >
                   {[
-                    { label: "Disponibilidade", value: item.disponibilidadeBruta.toFixed(1), color: "var(--color-success)" },
-                    { label: "Custo / chamado", value: fmt(item.custoPorChamado), color: "var(--color-text-primary)" },
-                    { label: "Ativos indisponíveis", value: item.equipamentosParados + item.carrinhosQuebrados, color: "var(--color-warning)" },
-                    { label: "Checklist", value: `${item.semanasCobertas}/${item.totalSemanasNoMes} sem.`, color: "var(--color-text-primary)" },
+                    {
+                      label: "Disponibilidade",
+                      value: item.disponibilidadeBruta.toFixed(1),
+                      color: "var(--color-success)",
+                    },
+                    {
+                      label: "Custo / chamado",
+                      value: fmt(item.custoPorChamado),
+                      color: "var(--color-text-primary)",
+                    },
+                    {
+                      label: "Ativos indisponíveis",
+                      value: item.equipamentosParados + item.carrinhosQuebrados,
+                      color: "var(--color-warning)",
+                    },
+                    {
+                      label: "Checklist",
+                      value: `${item.semanasCobertas}/${item.totalSemanasNoMes} sem.`,
+                      color: "var(--color-text-primary)",
+                    },
                   ].map(({ label, value, color }) => (
                     <div
                       key={label}
-                      style={{ padding: "10px 12px", borderRadius: "10px", background: "var(--color-surface-700)" }}
+                      style={{
+                        padding: "10px 12px",
+                        borderRadius: "10px",
+                        background: "var(--color-surface-700)",
+                      }}
                     >
-                      <p style={{ fontSize: "0.7rem", color: "var(--color-text-muted)" }}>{label}</p>
-                      <p style={{ fontSize: "1rem", fontWeight: 700, color }}>{value}</p>
+                      <p
+                        style={{
+                          fontSize: "0.7rem",
+                          color: "var(--color-text-muted)",
+                        }}
+                      >
+                        {label}
+                      </p>
+                      <p style={{ fontSize: "1rem", fontWeight: 700, color }}>
+                        {value}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -1019,10 +1453,21 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
                   className="flex items-center justify-between mt-4 pt-3"
                   style={{ borderTop: "1px solid var(--color-border)" }}
                 >
-                  <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
+                  <span
+                    style={{
+                      fontSize: "0.75rem",
+                      color: "var(--color-text-muted)",
+                    }}
+                  >
                     Chamados: {item.chamadosMes} • Mau uso: {item.mauUsoMes}
                   </span>
-                  <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--color-success)" }}>
+                  <span
+                    style={{
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      color: "var(--color-success)",
+                    }}
+                  >
                     {fmt(item.gastosMes)}
                   </span>
                 </div>
@@ -1037,7 +1482,8 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
         <div
           className="card"
           style={{
-            background: "linear-gradient(135deg, var(--color-surface-800) 0%, var(--color-surface-900) 100%)",
+            background:
+              "linear-gradient(135deg, var(--color-surface-800) 0%, var(--color-surface-900) 100%)",
             border: "1px solid var(--color-surface-600)",
             boxShadow: "0 10px 30px -10px rgba(0,0,0,0.5)",
             position: "relative",
@@ -1055,22 +1501,42 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
             }}
           />
 
-          <div className="flex items-start justify-between gap-4" style={{ position: "relative", zIndex: 1 }}>
+          <div
+            className="flex items-start justify-between gap-4"
+            style={{ position: "relative", zIndex: 1 }}
+          >
             <div className="flex items-start gap-4">
               <div
                 className="flex items-center justify-center w-10 h-10 rounded-lg shrink-0"
-                style={{ background: "var(--color-surface-600)", color: "var(--color-brand-400)" }}
+                style={{
+                  background: "var(--color-surface-600)",
+                  color: "var(--color-brand-400)",
+                }}
               >
                 <BarChart3 size={20} />
               </div>
               <div>
-                <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--color-text-primary)", marginBottom: "8px" }}>
+                <h3
+                  style={{
+                    fontSize: "1rem",
+                    fontWeight: 700,
+                    color: "var(--color-text-primary)",
+                    marginBottom: "8px",
+                  }}
+                >
                   Resumo Executivo
                 </h3>
-                <p style={{ fontSize: "0.875rem", color: "var(--color-text-secondary)", lineHeight: "1.6" }}>
-                  Este painel combina a visão de alto nível (Macro) com o detalhamento tático (Regional). Os
-                  indicadores refletem o status em tempo real de todas as unidades conectadas ao sistema de
-                  manutenção.
+                <p
+                  style={{
+                    fontSize: "0.875rem",
+                    color: "var(--color-text-secondary)",
+                    lineHeight: "1.6",
+                  }}
+                >
+                  Este painel combina a visão de alto nível (Macro) com o
+                  detalhamento tático (Regional). Os indicadores refletem o
+                  status em tempo real de todas as unidades conectadas ao
+                  sistema de manutenção.
                 </p>
               </div>
             </div>
@@ -1091,7 +1557,9 @@ export default function CorporativoDashboard({ filtro, setFiltro }) {
         loading={l6}
         onClose={() => setRegionalSelecionada(null)}
         onOpenRegional={(regiao) =>
-          navigate(`/chamados?regiao=${regiao}&mes=${filtro.mes}&ano=${filtro.ano}`)
+          navigate(
+            `/chamados?regiao=${regiao}&mes=${filtro.mes}&ano=${filtro.ano}`,
+          )
         }
         onOpenLoja={(unidade) =>
           navigate(

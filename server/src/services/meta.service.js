@@ -2,6 +2,7 @@
 const prisma = require('../utils/prisma');
 const { getUserRegions, canAccessRegion } = require('../utils/access.utils');
 const { invalidateDashboardCache } = require('../utils/dashboard.cache');
+const { somenteOperacional } = require('../utils/chamadoFinanceiro');
 
 const ROLES_GESTAO = ['ADMINISTRADOR', 'DIRETOR', 'GERENTE'];
 
@@ -192,13 +193,14 @@ const cardsStatus = async (user, query) => {
     const lojaUnidade = user.loja?.nome   || null;
 
     const [gastoAgg, meta] = await Promise.all([
+      // Exclude PCI/Laudos — separate investment budget, must not affect meta comparison
       prisma.controleChamado.aggregate({
         _sum: { valor: true },
-        where: {
+        where: somenteOperacional({
           regiao: lojaRegiao,
           unidade: lojaUnidade,
           dataAbertura: { gte: inicioMes, lt: fimMes },
-        },
+        }),
       }),
       buscarMetaVigente(lojaRegiao, lojaUnidade, anoNum, mesNum),
     ]);
@@ -268,12 +270,13 @@ const resolverRegioes = async (user, regiaoFiltro) => {
 const cardsNivelRegional = async (regioes, ano, mes, inicioMes, fimMes) => {
   const cards = await Promise.all(regioes.map(async (regiao) => {
     const [gastoAgg, meta] = await Promise.all([
+      // Exclude PCI/Laudos — separate investment budget, must not affect meta comparison
       prisma.controleChamado.aggregate({
         _sum: { valor: true },
-        where: {
+        where: somenteOperacional({
           regiao,
           dataAbertura: { gte: inicioMes, lt: fimMes },
-        },
+        }),
       }),
       buscarMetaVigente(regiao, null, ano, mes),
     ]);
@@ -306,13 +309,14 @@ const cardsDetalheLoja = async (user, regiao, regioesPermitidas, ano, mes, inici
 
   const cards = await Promise.all(lojas.map(async (loja) => {
     const [gastoAgg, metaLoja] = await Promise.all([
+      // Exclude PCI/Laudos — separate investment budget, must not affect meta comparison
       prisma.controleChamado.aggregate({
         _sum: { valor: true },
-        where: {
+        where: somenteOperacional({
           regiao: loja.regiao,
           unidade: loja.nome,
           dataAbertura: { gte: inicioMes, lt: fimMes },
-        },
+        }),
       }),
       // Busca APENAS meta específica desta loja (sem fallback regional)
       prisma.metaOrcamentaria.findFirst({

@@ -1903,10 +1903,6 @@ export default function ChamadosPage() {
 
   const chamados = data?.data || [];
 
-  const totalFiltrado = chamados.reduce(
-    (s, c) => s + parseFloat(c.valor || 0),
-    0,
-  );
   const totalLaudos = chamados.reduce((s, c) => {
     const isLaudo =
       (c.segmento || "").toUpperCase() === "LAUDOS" ||
@@ -1919,14 +1915,28 @@ export default function ChamadosPage() {
       (c.status || "").toUpperCase() === "PCI";
     return s + (isPCI ? parseFloat(c.valor || 0) : 0);
   }, 0);
-  const investimentoSemLaudosEPci = Math.max(
-    totalFiltrado - totalLaudos - totalPCI,
+
+  // Exclude PCI and Laudos from the operational maintenance data
+  const chamadosOperacionais = chamados.filter((c) => {
+    const isLaudo =
+      (c.segmento || "").toUpperCase() === "LAUDOS" ||
+      (c.status || "").toUpperCase() === "LAUDOS";
+    const isPCI =
+      (c.segmento || "").toUpperCase() === "SISTEMA_INCENDIO" ||
+      (c.status || "").toUpperCase() === "PCI";
+    return !isLaudo && !isPCI;
+  });
+
+  const totalFiltrado = chamadosOperacionais.reduce(
+    (s, c) => s + parseFloat(c.valor || 0),
     0,
   );
 
+  const investimentoSemLaudosEPci = totalFiltrado;
+
   // ———————————————————————————————————————————————— Dados para Análise Gráfica da Loja ————————————————————————————————————————
   const chamadosPorSegmento = Object.values(
-    chamados.reduce((acc, c) => {
+    chamadosOperacionais.reduce((acc, c) => {
       const seg = agruparSegmentoPareto(c.segmento || "DIVERSOS");
       if (!acc[seg]) acc[seg] = { segmento: seg, valor: 0, count: 0 };
       acc[seg].valor += parseFloat(c.valor || 0);
@@ -1936,7 +1946,7 @@ export default function ChamadosPage() {
   ).sort((a, b) => b.valor - a.valor);
 
   const chamadosPorEmpresa = Object.values(
-    chamados.reduce((acc, c) => {
+    chamadosOperacionais.reduce((acc, c) => {
       const emp = c.empresa || "Sem Empresa";
       if (!acc[emp]) acc[emp] = { empresa: emp, valor: 0 };
       acc[emp].valor += parseFloat(c.valor || 0);
@@ -2887,7 +2897,7 @@ export default function ChamadosPage() {
                   color: "var(--color-text-primary)",
                 }}
               >
-                {chamados.length}
+                {chamadosOperacionais.length}
               </span>
             </div>
             <div
@@ -2915,7 +2925,7 @@ export default function ChamadosPage() {
                   color: "var(--color-text-primary)",
                 }}
               >
-                {fmt(chamados.length > 0 ? totalFiltrado / chamados.length : 0)}
+                {fmt(chamadosOperacionais.length > 0 ? totalFiltrado / chamadosOperacionais.length : 0)}
               </span>
             </div>
             <div
@@ -2943,7 +2953,7 @@ export default function ChamadosPage() {
                   color: "var(--color-danger)",
                 }}
               >
-                {chamados.filter((c) => c.mauUso).length}
+                {chamadosOperacionais.filter((c) => c.mauUso).length}
               </span>
             </div>
             {selectedInvestment?.valorLAUDOS > 0 && (
