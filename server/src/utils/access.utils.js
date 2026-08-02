@@ -45,7 +45,7 @@ const getAccessFilter = (user) => {
     return getRegionFilterFromList(getUserRegions(user));
   }
 
-  if (user.role === 'GESTOR') {
+  if (user.role === 'GESTOR' || user.role === 'OPERACAO') {
     const unidade = user.loja?.nome;
     return unidade ? { unidade } : { unidade: '__SEM_UNIDADE__' };
   }

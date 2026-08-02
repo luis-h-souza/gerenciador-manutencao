@@ -25,11 +25,11 @@ const buildScopeFilter = (user) => {
       : { regiao: { in: regioes } };
   }
 
-  if (user.role === 'GESTOR') {
+  if (user.role === 'GESTOR' || user.role === 'OPERACAO') {
     const regiao  = user.loja?.regiao || null;
     const unidade = user.loja?.nome   || null;
     if (!regiao) return { regiao: '__SEM_REGIAO__' };
-    // Gestor vê meta da sua loja específica OU meta regional (unidade = null)
+    // Operacao/Gestor vê meta da sua loja específica OU meta regional (unidade = null)
     return {
       regiao,
       OR: [{ unidade }, { unidade: null }],

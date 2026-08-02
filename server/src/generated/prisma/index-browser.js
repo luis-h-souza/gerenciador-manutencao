@@ -439,6 +439,7 @@ exports.Role = exports.$Enums.Role = {
   GERENTE: 'GERENTE',
   COORDENADOR: 'COORDENADOR',
   GESTOR: 'GESTOR',
+  OPERACAO: 'OPERACAO',
   TECNICO: 'TECNICO'
 };
 

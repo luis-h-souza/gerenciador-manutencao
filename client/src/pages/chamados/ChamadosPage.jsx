@@ -1727,12 +1727,13 @@ export default function ChamadosPage() {
     "COORDENADOR",
     "GESTOR",
   ].includes(usuario?.role);
+  const canWrite = usuario?.role !== "OPERACAO";
   const getInitialEtapa = (role) => {
     if (!hasDrilldown) return "chamados";
     if (["ADMINISTRADOR", "DIRETOR"].includes(role)) return "gerentes";
     if (role === "GERENTE") return "coordenadores";
     if (role === "COORDENADOR") return "regionais";
-    if (role === "GESTOR") return "chamados";
+    if (["GESTOR", "OPERACAO"].includes(role)) return "chamados";
     return "regionais";
   };
   const [etapa, setEtapa] = useState(() => getInitialEtapa(usuario?.role));
@@ -1741,7 +1742,7 @@ export default function ChamadosPage() {
   const [coordenadorSelecionado, setCoordenadorSelecionado] = useState(null);
   const [regionalSelecionada, setRegionalSelecionada] = useState(null);
   const [lojaSelecionada, setLojaSelecionada] = useState(() => {
-    if (usuario?.role === "GESTOR" && usuario?.loja) {
+    if (["GESTOR", "OPERACAO"].includes(usuario?.role) && usuario?.loja) {
       return usuario.loja;
     }
     return null;
@@ -2451,10 +2452,10 @@ export default function ChamadosPage() {
       {/* ——— Tabela de Chamados da Loja ——— */}
       {etapa === "chamados" && !visualizandoAnalise && (
         <div className="flex flex-col gap-6 animate-fade-in">
-          {hasDrilldown && (
+          {(hasDrilldown || usuario?.role === "OPERACAO") && (
             <div className="flex items-center justify-between gap-3 mb-2 flex-wrap">
               <div className="flex items-center gap-3">
-                {lojaSelecionada && usuario?.role !== "GESTOR" ? (
+                {lojaSelecionada && !["GESTOR", "OPERACAO"].includes(usuario?.role) ? (
                   <button
                     className="btn btn-ghost btn-sm"
                     onClick={() => setEtapa("lojas")}
@@ -2601,14 +2602,16 @@ export default function ChamadosPage() {
 
             <div className="w-px h-8 bg-border shrink-0 hidden [@media(max-width:1023px)]:hidden sm:block" />
 
-              <button
-                className="btn btn-primary h-9.5 px-4 text-sm whitespace-nowrap shrink-0 w-full sm:w-auto"
-                style={{ boxShadow: "0 4px 12px rgba(14, 165, 233, 0.2)" }}
-                onClick={() => setModal("novo")}
-              >
-                <Plus size={15} />
-                Novo Chamado
-              </button>
+              {canWrite && (
+                <button
+                  className="btn btn-primary h-9.5 px-4 text-sm whitespace-nowrap shrink-0 w-full sm:w-auto"
+                  style={{ boxShadow: "0 4px 12px rgba(14, 165, 233, 0.2)" }}
+                  onClick={() => setModal("novo")}
+                >
+                  <Plus size={15} />
+                  Novo Chamado
+                </button>
+              )}
             </div>
           </div>
 
@@ -2780,26 +2783,32 @@ export default function ChamadosPage() {
                       </td>
                       <td>
                         <div className="flex items-center gap-1">
-                          <button
-                            className="btn btn-ghost btn-sm"
-                            onClick={() => setModal(c)}
-                            style={{ padding: "2px" }}
-                          >
-                            <Pencil size={14} />
-                          </button>
-                          <button
-                            className="btn btn-ghost btn-sm"
-                            onClick={() => {
-                              if (confirm("Remover chamado?"))
-                                remover.mutate(c.id);
-                            }}
-                            style={{
-                              padding: "2px",
-                              color: "var(--color-danger)",
-                            }}
-                          >
-                            <Trash2 size={14} />
-                          </button>
+                          {canWrite ? (
+                            <>
+                              <button
+                                className="btn btn-ghost btn-sm"
+                                onClick={() => setModal(c)}
+                                style={{ padding: "2px" }}
+                              >
+                                <Pencil size={14} />
+                              </button>
+                              <button
+                                className="btn btn-ghost btn-sm"
+                                onClick={() => {
+                                  if (confirm("Remover chamado?"))
+                                    remover.mutate(c.id);
+                                }}
+                                style={{
+                                  padding: "2px",
+                                  color: "var(--color-danger)",
+                                }}
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </>
+                          ) : (
+                            <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>—</span>
+                          )}
                         </div>
                       </td>
                     </tr>

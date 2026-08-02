@@ -32,6 +32,7 @@ const NAV = [
       "GERENTE",
       "COORDENADOR",
       "GESTOR",
+      "OPERACAO",
       "TECNICO",
     ],
   },
@@ -64,13 +65,7 @@ const NAV = [
     to: "/chamados",
     icon: DollarSign,
     label: "Controle Financeiro",
-    roles: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR"],
-  },
-  {
-    to: "/metas",
-    icon: Target,
-    label: "Metas Orçamentárias",
-    roles: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR"],
+    roles: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR", "OPERACAO"],
   },
   {
     to: "/estoque",

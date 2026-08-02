@@ -70,6 +70,7 @@ const ROLES = {
     "GERENTE",
     "COORDENADOR",
     "GESTOR",
+    "OPERACAO",
     "TECNICO",
   ],
   GESTORES: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR"],
@@ -82,6 +83,7 @@ const ROLES = {
     "GESTOR",
     "TECNICO",
   ],
+  FINANCEIRO: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR", "OPERACAO"],
   ESTOQUE: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR"],
   USUARIOS: ["ADMINISTRADOR", "DIRETOR"],
 };
@@ -127,7 +129,7 @@ function AppRoutes() {
         <Route
           path="chamados"
           element={
-            <ProtectedRoute roles={ROLES.GESTORES}>
+            <ProtectedRoute roles={ROLES.FINANCEIRO}>
               <ChamadosPage />
             </ProtectedRoute>
           }
@@ -207,11 +209,7 @@ function AppRoutes() {
 
         <Route
           path="metas"
-          element={
-            <ProtectedRoute roles={["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR"]}>
-              <MetasOrcamentariasPage />
-            </ProtectedRoute>
-          }
+          element={<Navigate to="/dashboard" replace />}
         />
 
         <Route

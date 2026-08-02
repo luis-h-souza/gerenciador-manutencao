@@ -7,6 +7,7 @@ const { createRateLimiter } = require('../middlewares/rateLimiter');
 const validate = require('../middlewares/validate');
 
 const GESTORES = [Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR, Roles.GESTOR];
+const LEITURA_FINANCEIRA = [...GESTORES, Roles.OPERACAO];
 const SEGMENTOS_CHAMADO = [
   'AR_CONDICIONADO',
   'CARRINHO_CLIENTE',
@@ -78,9 +79,9 @@ const normalizarSegmento = (valor) => {
 
 router.use(autenticar);
 
-router.get('/', ctrl.listar);
+router.get('/', autorizar(...LEITURA_FINANCEIRA), ctrl.listar);
 router.get('/resumo', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR), ctrl.resumoMensal);
-router.get('/:id', ctrl.buscarPorId);
+router.get('/:id', autorizar(...LEITURA_FINANCEIRA), ctrl.buscarPorId);
 
 router.post('/', createRateLimiter, autorizar(...GESTORES), [
   body('dataAbertura').isISO8601().withMessage('Data inválida'),

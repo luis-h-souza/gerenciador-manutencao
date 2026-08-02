@@ -7,13 +7,14 @@ import { Plus, X, Loader2, Pencil, UserX, ShieldCheck, EyeOff } from 'lucide-rea
 import toast from 'react-hot-toast';
 import { useAuth } from '../../contexts/AuthContext';
 
-const ROLES = ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR', 'GESTOR', 'TECNICO'];
+const ROLES = ['ADMINISTRADOR', 'DIRETOR', 'GERENTE', 'COORDENADOR', 'GESTOR', 'OPERACAO', 'TECNICO'];
 const ROLE_BADGE = { 
   ADMINISTRADOR: 'badge-danger', 
   DIRETOR: 'badge-danger',
   GERENTE: 'badge-warning',
   COORDENADOR: 'badge-info', 
   GESTOR: 'badge-brand', 
+  OPERACAO: 'badge-info',
   TECNICO: 'badge-neutral' 
 };
 
@@ -155,6 +156,8 @@ export default function UsuariosPage() {
           <option value="GERENTE">Gerente</option>
           <option value="COORDENADOR">Coordenador</option>
           <option value="GESTOR">Gestor</option>
+          <option value="OPERACAO">Operação</option>
+          <option value="TECNICO">Técnico</option>
         </select>
       </div>
 
