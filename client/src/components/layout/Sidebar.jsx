@@ -96,7 +96,7 @@ const NAV = [
     to: "/fornecedores",
     icon: Building2,
     label: "Fornecedores",
-    roles: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR"],
+    roles: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR", "OPERACAO"],
   },
   {
     to: "/usuarios",

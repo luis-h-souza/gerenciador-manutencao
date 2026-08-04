@@ -74,6 +74,7 @@ const ROLES = {
     "TECNICO",
   ],
   GESTORES: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR"],
+  FORNECEDORES: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR", "OPERACAO"],
   ADMIN_DIRETOR_GERENTE: ["ADMINISTRADOR", "DIRETOR", "GERENTE"],
   OPERACIONAIS: [
     "ADMINISTRADOR",
@@ -148,7 +149,7 @@ function AppRoutes() {
         <Route
           path="fornecedores"
           element={
-            <ProtectedRoute roles={ROLES.GESTORES}>
+            <ProtectedRoute roles={ROLES.FORNECEDORES}>
               <FornecedoresPage />
             </ProtectedRoute>
           }

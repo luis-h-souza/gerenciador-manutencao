@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { fornecedoresService } from "../../services";
+import { useAuth } from "../../contexts/AuthContext";
 import {
   Plus,
   X,
@@ -216,7 +217,7 @@ function InfoInlineList({ label, items, fullWidth = false }) {
   );
 }
 
-function FornecedorDetalhesModal({ fornecedor, onClose, onEdit, onRemove }) {
+function FornecedorDetalhesModal({ fornecedor, onClose, onEdit, onRemove, canManage }) {
   if (!fornecedor) return null;
 
   const cnaes = separarCnaes(fornecedor.cnae);
@@ -288,7 +289,7 @@ function FornecedorDetalhesModal({ fornecedor, onClose, onEdit, onRemove }) {
           <InfoList label="Descrição" items={descricaoItens} fullWidth />
         </div>
 
-        <div className="flex justify-end gap-2 pt-5 mt-5 border-t">
+        {canManage && <div className="flex justify-end gap-2 pt-5 mt-5 border-t">
           <button
             type="button"
             className="btn btn-secondary"
@@ -304,7 +305,7 @@ function FornecedorDetalhesModal({ fornecedor, onClose, onEdit, onRemove }) {
           >
             <Trash2 size={15} /> Excluir
           </button>
-        </div>
+        </div>}
       </div>
     </div>
   );
@@ -548,6 +549,8 @@ function Paginacao({ paginaAtual, totalPaginas, onMudar }) {
 /* ── Página principal ───────────────────────────────────────────────────── */
 export default function FornecedoresPage() {
   const qc = useQueryClient();
+  const { usuario } = useAuth();
+  const canManage = usuario?.role !== "OPERACAO";
   const [modal, setModal] = useState(null);
   const [fornecedorDetalhe, setFornecedorDetalhe] = useState(null);
   const [page, setPage] = useState(1);
@@ -656,9 +659,9 @@ export default function FornecedoresPage() {
             ))}
           </select>
         </div>
-        <button className="btn btn-primary" onClick={() => setModal("novo")}>
+        {canManage && <button className="btn btn-primary" onClick={() => setModal("novo")}>
           <Plus size={16} /> Novo Fornecedor
-        </button>
+        </button>}
       </div>
 
       {/* Contador de resultados */}
@@ -834,6 +837,7 @@ export default function FornecedoresPage() {
               setFornecedorDetalhe(null);
             }
           }}
+          canManage={canManage}
         />
       )}
     </div>
