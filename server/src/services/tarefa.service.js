@@ -39,6 +39,12 @@ async function validarAtribuicao(fromUser, toUserId) {
     throw { status: 403, message: 'Gestores só podem atribuir para si mesmos ou técnicos de sua unidade' };
   }
 
+  if (fromUser.role === 'OPERACAO') {
+    const sameStore = toUser.lojaId === fromUser.lojaId;
+    if (sameStore && ['GESTOR', 'TECNICO'].includes(toUser.role)) return true;
+    throw { status: 403, message: 'Opera\u00e7\u00e3o s\u00f3 pode atribuir para Gestores ou T\u00e9cnicos de sua unidade' };
+  }
+
   if (fromUser.role === 'TECNICO') {
     if (toUser.id === fromUser.id) return true;
     throw { status: 403, message: 'Técnicos só podem atribuir tarefas para si mesmos' };
@@ -158,11 +164,12 @@ const atualizar = async (user, id, body) => {
 
     if (['ADMINISTRADOR', 'DIRETOR'].includes(role)) podeMudarStatus = true;
     if (role === 'TECNICO' && tarefaExiste.atribuidoParaId === user.id) podeMudarStatus = true;
-    if (role === 'GESTOR') {
+    if (['GESTOR', 'OPERACAO'].includes(role)) {
       if (tarefaExiste.atribuidoParaId === user.id) podeMudarStatus = true;
       else {
         const target = await prisma.usuario.findUnique({ where: { id: tarefaExiste.atribuidoParaId } });
-        if (target?.role === 'TECNICO' && target.lojaId === user.lojaId) podeMudarStatus = true;
+        const allowedRoles = role === 'OPERACAO' ? ['GESTOR', 'TECNICO'] : ['TECNICO'];
+        if (allowedRoles.includes(target?.role) && target.lojaId === user.lojaId) podeMudarStatus = true;
       }
     }
 

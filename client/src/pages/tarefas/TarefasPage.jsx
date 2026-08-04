@@ -31,15 +31,19 @@ function TarefaModal({ tarefa, onClose }) {
   const isEdit = !!tarefa;
 
   const { data: usuarios = [] } = useQuery({
-    queryKey: ['usuarios-atribuicao', usuario?.role],
+    queryKey: ['usuarios-atribuicao', usuario?.role, usuario?.lojaId],
     queryFn: () => {
-      let targetRole = '';
-      if (usuario?.role === 'DIRETOR') targetRole = 'GERENTE';
-      if (usuario?.role === 'GERENTE') targetRole = 'COORDENADOR';
-      if (usuario?.role === 'COORDENADOR') targetRole = 'GESTOR,TECNICO';
-      if (usuario?.role === 'GESTOR') targetRole = 'TECNICO';
-      if (!targetRole) return [];
-      return usuariosService.listar({ role: targetRole, limit: 100 }).then(r => r.data.data);
+      const targetRoles = {
+        DIRETOR: ['GERENTE'],
+        GERENTE: ['COORDENADOR'],
+        COORDENADOR: ['GESTOR', 'TECNICO'],
+        GESTOR: ['TECNICO'],
+        OPERACAO: ['GESTOR', 'TECNICO'],
+      }[usuario?.role] || [];
+
+      return Promise.all(
+        targetRoles.map(role => usuariosService.listar({ role, limit: 100, ativo: true }).then(r => r.data.data))
+      ).then(resultados => resultados.flat());
     },
     enabled: !!usuario && !['TECNICO'].includes(usuario?.role),
   });

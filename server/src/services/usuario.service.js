@@ -36,7 +36,7 @@ const listar = async (user, query) => {
       });
     }
   }
-  if (user.role === 'GESTOR') {
+  if (['GESTOR', 'OPERACAO'].includes(user.role)) {
     where.lojaId = user.lojaId || '__SEM_LOJA__';
   }
 
@@ -82,7 +82,7 @@ const buscarPorId = async (user, id) => {
   ) {
     throw { status: 403, error: 'Acesso negado: usuário de outra região' };
   }
-  if (user.role === 'GESTOR' && usuario.lojaId !== user.lojaId) {
+  if (['GESTOR', 'OPERACAO'].includes(user.role) && usuario.lojaId !== user.lojaId) {
     throw { status: 403, error: 'Acesso negado: usuário de outra loja' };
   }
 

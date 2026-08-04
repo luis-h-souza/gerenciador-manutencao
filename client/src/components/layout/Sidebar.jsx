@@ -46,6 +46,7 @@ const NAV = [
       "GERENTE",
       "COORDENADOR",
       "GESTOR",
+      "OPERACAO",
       "TECNICO",
     ],
   },
