@@ -21,14 +21,15 @@ router.post('/', createRateLimiter,
     body('descricao').notEmpty().isLength({ max: 500 }).withMessage('Descrição obrigatória'),
     body('areResponsavel').notEmpty().withMessage('Área responsável obrigatória'),
     body('prioridade').optional().isIn(['BAIXA', 'MEDIA', 'ALTA', 'CRITICA']),
-    body('dataConclusao').optional().isISO8601(),
+    body('dataPrevisao').optional({ values: 'falsy' }).isISO8601(),
   ], validate, ctrl.criar);
 
 router.put('/:id',
-  autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR, Roles.GESTOR, Roles.OPERACAO),
+  autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR, Roles.GESTOR, Roles.OPERACAO, Roles.TECNICO),
   [
     body('status').optional().isIn(['PENDENTE', 'EM_ANDAMENTO', 'CONCLUIDA', 'CANCELADA']),
     body('prioridade').optional().isIn(['BAIXA', 'MEDIA', 'ALTA', 'CRITICA']),
+    body('dataPrevisao').optional({ values: 'falsy' }).isISO8601(),
   ], validate, ctrl.atualizar);
 
 router.delete('/:id',

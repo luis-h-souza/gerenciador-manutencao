@@ -1,145 +1,253 @@
 // src/pages/tarefas/TarefasPage.jsx
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
-import { tarefasService, usuariosService } from '../../services';
-import { useAuth } from '../../contexts/AuthContext';
-import { Plus, X, Loader2, Pencil, Trash2, User } from 'lucide-react';
-import toast from 'react-hot-toast';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { tarefasService, usuariosService } from "../../services";
+import { useAuth } from "../../contexts/AuthContext";
+import { Plus, X, Loader2, Pencil, Trash2, User } from "lucide-react";
+import toast from "react-hot-toast";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 const PRIORIDADE_BADGE = {
-  BAIXA:   'badge-neutral',
-  MEDIA:   'badge-info',
-  ALTA:    'badge-warning',
-  CRITICA: 'badge-danger',
+  BAIXA: "badge-neutral",
+  MEDIA: "badge-info",
+  ALTA: "badge-warning",
+  CRITICA: "badge-danger",
 };
 const STATUS_BADGE = {
-  PENDENTE:     'badge-neutral',
-  EM_ANDAMENTO: 'badge-info',
-  CONCLUIDA:    'badge-success',
-  CANCELADA:    'badge-danger',
+  PENDENTE: "badge-neutral",
+  EM_ANDAMENTO: "badge-info",
+  CONCLUIDA: "badge-success",
+  CANCELADA: "badge-danger",
 };
 const STATUS_LABEL = {
-  PENDENTE: 'Pendente', EM_ANDAMENTO: 'Em Andamento', CONCLUIDA: 'Concluída', CANCELADA: 'Cancelada',
+  PENDENTE: "Pendente",
+  EM_ANDAMENTO: "Em Andamento",
+  CONCLUIDA: "Concluída",
+  CANCELADA: "Cancelada",
 };
 
 function TarefaModal({ tarefa, onClose }) {
   const qc = useQueryClient();
   const { usuario } = useAuth();
   const isEdit = !!tarefa;
+  const isTecnico = usuario?.role === "TECNICO";
 
   const { data: usuarios = [] } = useQuery({
-    queryKey: ['usuarios-atribuicao', usuario?.role, usuario?.lojaId],
+    queryKey: ["usuarios-atribuicao", usuario?.role, usuario?.lojaId],
     queryFn: () => {
-      const targetRoles = {
-        DIRETOR: ['GERENTE'],
-        GERENTE: ['COORDENADOR'],
-        COORDENADOR: ['GESTOR', 'TECNICO'],
-        GESTOR: ['TECNICO'],
-        OPERACAO: ['GESTOR', 'TECNICO'],
-      }[usuario?.role] || [];
+      const targetRoles =
+        {
+          DIRETOR: ["GERENTE"],
+          GERENTE: ["COORDENADOR"],
+          COORDENADOR: ["GESTOR", "TECNICO"],
+          GESTOR: ["TECNICO"],
+          OPERACAO: ["GESTOR", "TECNICO"],
+        }[usuario?.role] || [];
 
       return Promise.all(
-        targetRoles.map(role => usuariosService.listar({ role, limit: 100, ativo: true }).then(r => r.data.data))
-      ).then(resultados => resultados.flat());
+        targetRoles.map((role) =>
+          usuariosService
+            .listar({ role, limit: 100, ativo: true })
+            .then((r) => r.data.data),
+        ),
+      ).then((resultados) => resultados.flat());
     },
-    enabled: !!usuario && !['TECNICO'].includes(usuario?.role),
+    enabled: !!usuario && !["TECNICO"].includes(usuario?.role),
   });
 
-  const canEditStatus = ['ADMINISTRADOR', 'DIRETOR', 'GESTOR'].includes(usuario?.role) || 
-                       (usuario?.role === 'TECNICO' && tarefa?.atribuidoParaId === usuario.id);
+  const canEditStatus =
+    ["ADMINISTRADOR", "DIRETOR", "GESTOR", "OPERACAO"].includes(
+      usuario?.role,
+    ) ||
+    (usuario?.role === "TECNICO" && tarefa?.atribuidoParaId === usuario.id);
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
-    defaultValues: isEdit ? {
-      ...tarefa,
-      dataConclusao: tarefa.dataConclusao ? format(new Date(tarefa.dataConclusao), 'yyyy-MM-dd') : '',
-    } : {},
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    defaultValues: isEdit
+      ? {
+          ...tarefa,
+          dataPrevisao: tarefa.dataPrevisao
+            ? format(new Date(tarefa.dataPrevisao), "yyyy-MM-dd")
+            : "",
+        }
+      : {},
   });
 
   const mutation = useMutation({
-    mutationFn: (data) => isEdit
-      ? tarefasService.atualizar(tarefa.id, data)
-      : tarefasService.criar(data),
+    mutationFn: (data) => {
+      const dados = isTecnico ? { status: data.status } : { ...data };
+      if (!dados.dataPrevisao) delete dados.dataPrevisao;
+
+      return isEdit
+        ? tarefasService.atualizar(tarefa.id, dados)
+        : tarefasService.criar(dados);
+    },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['tarefas'] });
-      toast.success(isEdit ? 'Tarefa atualizada!' : 'Tarefa criada!');
+      qc.invalidateQueries({ queryKey: ["tarefas"] });
+      toast.success(isEdit ? "Tarefa atualizada!" : "Tarefa criada!");
       onClose();
     },
-    onError: (err) => toast.error(err.response?.data?.message || 'Erro ao salvar'),
+    onError: (err) =>
+      toast.error(err.response?.data?.message || "Erro ao salvar"),
   });
 
   return (
-    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+    <div
+      className="modal-overlay"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
       <div className="modal-content animate-fade-in">
         <div className="flex items-center justify-between mb-5">
-          <h2 style={{ fontSize: '1rem', fontWeight: 700 }}>{isEdit ? 'Editar Tarefa' : 'Nova Tarefa'}</h2>
-          <button className="btn btn-ghost btn-sm" onClick={onClose} style={{ padding: '4px' }}><X size={18} /></button>
+          <h2 style={{ fontSize: "1rem", fontWeight: 700 }}>
+            {isEdit ? "Editar Tarefa" : "Nova Tarefa"}
+          </h2>
+          <button
+            className="btn btn-ghost btn-sm"
+            onClick={onClose}
+            style={{ padding: "4px" }}
+          >
+            <X size={18} />
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit(d => mutation.mutate(d))} className="flex flex-col gap-4">
-          <div>
-            <label className="label">Descrição *</label>
-            <textarea className="input" rows={3} style={{ resize: 'vertical' }}
-              {...register('descricao', { required: 'Obrigatório' })} />
-            {errors.descricao && <p className="field-error">{errors.descricao.message}</p>}
-          </div>
+        <form
+          onSubmit={handleSubmit((d) => mutation.mutate(d))}
+          className="flex flex-col gap-4"
+        >
+          {!isTecnico && (
+            <div>
+              <label className="label">Descrição *</label>
+              <textarea
+                className="input"
+                rows={3}
+                style={{ resize: "vertical" }}
+                {...register("descricao", { required: "Obrigatório" })}
+              />
+              {errors.descricao && (
+                <p className="field-error">{errors.descricao.message}</p>
+              )}
+            </div>
+          )}
 
-          <div className="grid gap-4" style={{ gridTemplateColumns: '1fr 1fr' }}>
-            <div>
-              <label className="label">Prioridade</label>
-              <select className="select" {...register('prioridade')}>
-                <option value="BAIXA">Baixa</option>
-                <option value="MEDIA">Média</option>
-                <option value="ALTA">Alta</option>
-                <option value="CRITICA">Crítica</option>
-              </select>
+          {!isTecnico && (
+            <div
+              className="grid gap-4"
+              style={{ gridTemplateColumns: "1fr 1fr" }}
+            >
+              <div>
+                <label className="label">Prioridade</label>
+                <select className="select" {...register("prioridade")}>
+                  <option value="BAIXA">Baixa</option>
+                  <option value="MEDIA">Média</option>
+                  <option value="ALTA">Alta</option>
+                  <option value="CRITICA">Crítica</option>
+                </select>
+              </div>
+              <div>
+                <label className="label">Local *</label>
+                <input
+                  className="input"
+                  placeholder="Ex: Refrência, Loja, Área..."
+                  {...register("areResponsavel", { required: "Obrigatório" })}
+                />
+                {errors.areResponsavel && (
+                  <p className="field-error">{errors.areResponsavel.message}</p>
+                )}
+              </div>
             </div>
-            <div>
-              <label className="label">Área Responsável *</label>
-              <input className="input" placeholder="Ex: Elétrica" {...register('areResponsavel', { required: 'Obrigatório' })} />
-              {errors.areResponsavel && <p className="field-error">{errors.areResponsavel.message}</p>}
-            </div>
-          </div>
+          )}
 
           {isEdit && (
             <div>
               <label className="label">Status</label>
-              <select 
-                className="select" 
-                {...register('status')} 
+              <select
+                className="select"
+                {...register("status")}
                 disabled={!canEditStatus}
-                style={!canEditStatus ? { opacity: 0.7, cursor: 'not-allowed', background: 'var(--color-surface-600)' } : {}}
+                style={
+                  !canEditStatus
+                    ? {
+                        opacity: 0.7,
+                        cursor: "not-allowed",
+                        background: "var(--color-surface-600)",
+                      }
+                    : {}
+                }
               >
-                {Object.entries(STATUS_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                {Object.entries(STATUS_LABEL).map(([v, l]) => (
+                  <option key={v} value={v}>
+                    {l}
+                  </option>
+                ))}
               </select>
-              {!canEditStatus && <p style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginTop: '4px' }}>Apenas o responsável ou gestor pode atualizar o status.</p>}
+              {!canEditStatus && (
+                <p
+                  style={{
+                    fontSize: "0.65rem",
+                    color: "var(--color-text-muted)",
+                    marginTop: "4px",
+                  }}
+                >
+                  Apenas o responsável ou gestor pode atualizar o status.
+                </p>
+              )}
             </div>
           )}
 
-          <div className="grid gap-4" style={{ gridTemplateColumns: '1fr 1fr' }}>
-            <div>
-              <label className="label">Data de Conclusão</label>
-              <input type="date" className="input" {...register('dataConclusao')} />
-            </div>
-            {!['TECNICO'].includes(usuario?.role) && (
+          {!isTecnico && (
+            <div
+              className="grid gap-4"
+              style={{ gridTemplateColumns: "1fr 1fr" }}
+            >
               <div>
-                <label className="label">Atribuir para</label>
-                <select className="select" {...register('atribuidoParaId')}>
-                  <option value="">Não atribuído</option>
-                  {usuario?.role === 'GESTOR' && <option value={usuario.id}>Atribuir a mim mesmo</option>}
-                  {usuarios.map(u => <option key={u.id} value={u.id}>{u.nome} ({u.role})</option>)}
-                </select>
+                <label className="label">Previsão de Conclusão</label>
+                <input
+                  type="date"
+                  className="input"
+                  {...register("dataPrevisao")}
+                />
               </div>
-            )}
-          </div>
+              {!["TECNICO"].includes(usuario?.role) && (
+                <div>
+                  <label className="label">Atribuir para</label>
+                  <select className="select" {...register("atribuidoParaId")}>
+                    <option value="">Não atribuído</option>
+                    {usuario?.role === "GESTOR" && (
+                      <option value={usuario.id}>Atribuir a mim mesmo</option>
+                    )}
+                    {usuarios.map((u) => (
+                      <option key={u.id} value={u.id}>
+                        {u.nome} ({u.role})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="flex justify-end gap-2 pt-2">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-            <button type="submit" className="btn btn-primary" disabled={isSubmitting || mutation.isPending}>
-              {(isSubmitting || mutation.isPending) ? <Loader2 size={16} className="animate-spin" /> : null}
-              {isEdit ? 'Salvar' : 'Criar Tarefa'}
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={onClose}
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={isSubmitting || mutation.isPending}
+            >
+              {isSubmitting || mutation.isPending ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : null}
+              {isEdit ? "Salvar" : "Criar Tarefa"}
             </button>
           </div>
         </form>
@@ -152,37 +260,64 @@ export default function TarefasPage() {
   const qc = useQueryClient();
   const { usuario } = useAuth();
   const [modal, setModal] = useState(null); // null | 'novo' | tarefaObj
-  const [filtros, setFiltros] = useState({ status: '', prioridade: '' });
+  const [filtros, setFiltros] = useState({ status: "", prioridade: "" });
 
   const { data, isLoading } = useQuery({
-    queryKey: ['tarefas', filtros],
-    queryFn: () => tarefasService.listar({ ...filtros, limit: 50 }).then(r => r.data),
+    queryKey: ["tarefas", filtros],
+    queryFn: () =>
+      tarefasService.listar({ ...filtros, limit: 50 }).then((r) => r.data),
   });
 
   const removerMutation = useMutation({
     mutationFn: (id) => tarefasService.remover(id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['tarefas'] }); toast.success('Tarefa removida'); },
-    onError: () => toast.error('Erro ao remover'),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["tarefas"] });
+      toast.success("Tarefa removida");
+    },
+    onError: () => toast.error("Erro ao remover"),
   });
 
-  const podeGerenciar = !['TECNICO'].includes(usuario?.role);
+  const podeGerenciar = !["TECNICO"].includes(usuario?.role);
+  const exibirAcoes = podeGerenciar || usuario?.role === "TECNICO";
 
   return (
     <div className="flex flex-col gap-4 animate-fade-in">
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2 flex-wrap">
-          <select className="select" style={{ width: 'auto' }} value={filtros.status} onChange={e => setFiltros(f => ({ ...f, status: e.target.value }))}>
+          <select
+            className="select"
+            style={{ width: "auto" }}
+            value={filtros.status}
+            onChange={(e) =>
+              setFiltros((f) => ({ ...f, status: e.target.value }))
+            }
+          >
             <option value="">Todos os status</option>
-            {Object.entries(STATUS_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+            {Object.entries(STATUS_LABEL).map(([v, l]) => (
+              <option key={v} value={v}>
+                {l}
+              </option>
+            ))}
           </select>
-          <select className="select" style={{ width: 'auto' }} value={filtros.prioridade} onChange={e => setFiltros(f => ({ ...f, prioridade: e.target.value }))}>
+          <select
+            className="select"
+            style={{ width: "auto" }}
+            value={filtros.prioridade}
+            onChange={(e) =>
+              setFiltros((f) => ({ ...f, prioridade: e.target.value }))
+            }
+          >
             <option value="">Todas as prioridades</option>
-            {['BAIXA','MEDIA','ALTA','CRITICA'].map(p => <option key={p} value={p}>{p.charAt(0)+p.slice(1).toLowerCase()}</option>)}
+            {["BAIXA", "MEDIA", "ALTA", "CRITICA"].map((p) => (
+              <option key={p} value={p}>
+                {p.charAt(0) + p.slice(1).toLowerCase()}
+              </option>
+            ))}
           </select>
         </div>
         {podeGerenciar && (
-          <button className="btn btn-primary" onClick={() => setModal('novo')}>
+          <button className="btn btn-primary" onClick={() => setModal("novo")}>
             <Plus size={16} /> Nova Tarefa
           </button>
         )}
@@ -198,44 +333,145 @@ export default function TarefasPage() {
               <th>Prioridade</th>
               <th>Status</th>
               <th>Atribuído</th>
+              <th>Previsão</th>
               <th>Conclusão</th>
-              {podeGerenciar && <th style={{ width: '80px' }}>Ações</th>}
+              {exibirAcoes && <th style={{ width: "80px" }}>Ações</th>}
             </tr>
           </thead>
           <tbody>
             {isLoading ? (
-              <tr><td colSpan={podeGerenciar ? 7 : 6}>
-                <div className="flex justify-center py-8"><Loader2 size={22} className="animate-spin" style={{ color: 'var(--color-brand-500)' }} /></div>
-              </td></tr>
+              <tr>
+                <td colSpan={exibirAcoes ? 8 : 7}>
+                  <div className="flex justify-center py-8">
+                    <Loader2
+                      size={22}
+                      className="animate-spin"
+                      style={{ color: "var(--color-brand-500)" }}
+                    />
+                  </div>
+                </td>
+              </tr>
             ) : data?.data?.length === 0 ? (
-              <tr><td colSpan={podeGerenciar ? 7 : 6} style={{ textAlign: 'center', color: 'var(--color-text-muted)', padding: '2rem' }}>Nenhuma tarefa encontrada</td></tr>
+              <tr>
+                <td
+                  colSpan={exibirAcoes ? 8 : 7}
+                  style={{
+                    textAlign: "center",
+                    color: "var(--color-text-muted)",
+                    padding: "2rem",
+                  }}
+                >
+                  Nenhuma tarefa encontrada
+                </td>
+              </tr>
             ) : (
-              data?.data?.map(t => (
+              data?.data?.map((t) => (
                 <tr key={t.id}>
-                  <td style={{ maxWidth: '300px' }}>
-                    <span style={{ fontWeight: 500, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={t.descricao}>{t.descricao}</span>
+                  <td style={{ maxWidth: "300px" }}>
+                    <span
+                      style={{
+                        fontWeight: 500,
+                        display: "block",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                      title={t.descricao}
+                    >
+                      {t.descricao}
+                    </span>
                   </td>
-                  <td style={{ color: 'var(--color-text-secondary)', whiteSpace: 'nowrap' }}>{t.areResponsavel}</td>
-                  <td><span className={`badge ${PRIORIDADE_BADGE[t.prioridade]}`}>{t.prioridade}</span></td>
-                  <td><span className={`badge ${STATUS_BADGE[t.status]}`}>{STATUS_LABEL[t.status]}</span></td>
+                  <td
+                    style={{
+                      color: "var(--color-text-secondary)",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {t.areResponsavel}
+                  </td>
+                  <td>
+                    <span className={`badge ${PRIORIDADE_BADGE[t.prioridade]}`}>
+                      {t.prioridade}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={`badge ${STATUS_BADGE[t.status]}`}>
+                      {STATUS_LABEL[t.status]}
+                    </span>
+                  </td>
                   <td>
                     {t.atribuidoPara ? (
                       <div className="flex items-center gap-1.5">
-                        <User size={13} style={{ color: 'var(--color-text-muted)' }} />
-                        <span style={{ fontSize: '0.8125rem' }}>{t.atribuidoPara.nome}</span>
+                        <User
+                          size={13}
+                          style={{ color: "var(--color-text-muted)" }}
+                        />
+                        <span style={{ fontSize: "0.8125rem" }}>
+                          {t.atribuidoPara.nome}
+                        </span>
                       </div>
-                    ) : <span style={{ color: 'var(--color-text-muted)', fontSize: '0.8125rem' }}>—</span>}
+                    ) : (
+                      <span
+                        style={{
+                          color: "var(--color-text-muted)",
+                          fontSize: "0.8125rem",
+                        }}
+                      >
+                        —
+                      </span>
+                    )}
                   </td>
-                  <td style={{ color: 'var(--color-text-secondary)', fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>
-                    {t.dataConclusao ? format(new Date(t.dataConclusao), 'dd/MM/yyyy', { locale: ptBR }) : '—'}
+                  <td
+                    style={{
+                      color: "var(--color-text-secondary)",
+                      fontSize: "0.8125rem",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {t.dataPrevisao
+                      ? format(new Date(t.dataPrevisao), "dd/MM/yyyy", {
+                          locale: ptBR,
+                        })
+                      : "—"}
                   </td>
-                  {podeGerenciar && (
+                  <td
+                    style={{
+                      color: "var(--color-text-secondary)",
+                      fontSize: "0.8125rem",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {t.dataConclusao
+                      ? format(new Date(t.dataConclusao), "dd/MM/yyyy", {
+                          locale: ptBR,
+                        })
+                      : "—"}
+                  </td>
+                  {exibirAcoes && (
                     <td>
                       <div className="flex items-center gap-1">
-                        <button className="btn btn-ghost btn-sm" onClick={() => setModal(t)} style={{ padding: '4px 6px' }}><Pencil size={14} /></button>
-                        <button className="btn btn-ghost btn-sm" onClick={() => {
-                          if (confirm('Remover tarefa?')) removerMutation.mutate(t.id);
-                        }} style={{ padding: '4px 6px', color: 'var(--color-danger)' }}><Trash2 size={14} /></button>
+                        <button
+                          className="btn btn-ghost btn-sm"
+                          onClick={() => setModal(t)}
+                          style={{ padding: "4px 6px" }}
+                        >
+                          <Pencil size={14} />
+                        </button>
+                        {podeGerenciar && (
+                          <button
+                            className="btn btn-ghost btn-sm"
+                            onClick={() => {
+                              if (confirm("Remover tarefa?"))
+                                removerMutation.mutate(t.id);
+                            }}
+                            style={{
+                              padding: "4px 6px",
+                              color: "var(--color-danger)",
+                            }}
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        )}
                       </div>
                     </td>
                   )}
@@ -248,7 +484,7 @@ export default function TarefasPage() {
 
       {modal && (
         <TarefaModal
-          tarefa={modal === 'novo' ? null : modal}
+          tarefa={modal === "novo" ? null : modal}
           onClose={() => setModal(null)}
         />
       )}

@@ -107,7 +107,7 @@ const buscarPorId = async (user, id) => {
 };
 
 const criar = async (user, body) => {
-  const { descricao, prioridade, dataConclusao, areResponsavel, atribuidoParaId } = body;
+  const { descricao, prioridade, dataPrevisao, areResponsavel, atribuidoParaId } = body;
   const context = getCreationContext(user);
   
   await validarAtribuicao(user, atribuidoParaId);
@@ -118,7 +118,7 @@ const criar = async (user, body) => {
       prioridade: prioridade || 'MEDIA',
       regiao: context.regiao,
       unidade: context.unidade,
-      dataConclusao: dataConclusao ? new Date(dataConclusao) : null,
+      ...(dataPrevisao && { dataPrevisao: new Date(dataPrevisao) }),
       areResponsavel,
       criadoPorId: user.id,
       atribuidoParaId: atribuidoParaId || null,
@@ -145,9 +145,17 @@ const criar = async (user, body) => {
 };
 
 const atualizar = async (user, id, body) => {
-  const { descricao, prioridade, status, dataConclusao, areResponsavel, atribuidoParaId } = body;
+  const { descricao, prioridade, status, dataPrevisao, areResponsavel, atribuidoParaId } = body;
+
+  if (user.role === 'TECNICO') {
+    const camposNaoPermitidos = Object.keys(body).filter((campo) => campo !== 'status');
+    if (!status || camposNaoPermitidos.length > 0) {
+      throw { status: 403, message: 'Técnicos só podem atualizar o status das próprias tarefas' };
+    }
+  }
 
   const filter = getAccessFilter(user);
+  if (user.role === 'TECNICO') filter.atribuidoParaId = user.id;
   const tarefaExiste = await prisma.tarefa.findFirst({ 
     where: { id, ...filter } 
   });
@@ -184,7 +192,9 @@ const atualizar = async (user, id, body) => {
       ...(descricao && { descricao }),
       ...(prioridade && { prioridade }),
       ...(status && { status }),
-      ...(dataConclusao !== undefined && { dataConclusao: dataConclusao ? new Date(dataConclusao) : null }),
+      ...(dataPrevisao !== undefined && { dataPrevisao: dataPrevisao ? new Date(dataPrevisao) : null }),
+      ...(status === 'CONCLUIDA' && tarefaExiste.status !== 'CONCLUIDA' && { dataConclusao: new Date() }),
+      ...(status && status !== 'CONCLUIDA' && tarefaExiste.status === 'CONCLUIDA' && { dataConclusao: null }),
       ...(areResponsavel && { areResponsavel }),
       ...(atribuidoParaId !== undefined && { atribuidoParaId }),
     },

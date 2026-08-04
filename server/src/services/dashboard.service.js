@@ -164,7 +164,7 @@ const resumo = async (user, query) => {
     let valorMeta = null;
     let semMeta = true;
 
-    if (user.role === 'GESTOR') {
+    if (['GESTOR', 'OPERACAO'].includes(user.role)) {
       const reg = user.loja?.regiao || null;
       const uni = user.loja?.nome || null;
       const meta = await buscarMetaVigente(reg, uni, anoNum, mesIdx + 1);

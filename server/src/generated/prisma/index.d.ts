@@ -8118,6 +8118,7 @@ export namespace Prisma {
     areResponsavel: string | null
     regiao: string | null
     unidade: string | null
+    dataPrevisao: Date | null
     dataConclusao: Date | null
     criadoPorId: string | null
     atribuidoParaId: string | null
@@ -8133,6 +8134,7 @@ export namespace Prisma {
     areResponsavel: string | null
     regiao: string | null
     unidade: string | null
+    dataPrevisao: Date | null
     dataConclusao: Date | null
     criadoPorId: string | null
     atribuidoParaId: string | null
@@ -8148,6 +8150,7 @@ export namespace Prisma {
     areResponsavel: number
     regiao: number
     unidade: number
+    dataPrevisao: number
     dataConclusao: number
     criadoPorId: number
     atribuidoParaId: number
@@ -8165,6 +8168,7 @@ export namespace Prisma {
     areResponsavel?: true
     regiao?: true
     unidade?: true
+    dataPrevisao?: true
     dataConclusao?: true
     criadoPorId?: true
     atribuidoParaId?: true
@@ -8180,6 +8184,7 @@ export namespace Prisma {
     areResponsavel?: true
     regiao?: true
     unidade?: true
+    dataPrevisao?: true
     dataConclusao?: true
     criadoPorId?: true
     atribuidoParaId?: true
@@ -8195,6 +8200,7 @@ export namespace Prisma {
     areResponsavel?: true
     regiao?: true
     unidade?: true
+    dataPrevisao?: true
     dataConclusao?: true
     criadoPorId?: true
     atribuidoParaId?: true
@@ -8283,6 +8289,7 @@ export namespace Prisma {
     areResponsavel: string
     regiao: string | null
     unidade: string | null
+    dataPrevisao: Date | null
     dataConclusao: Date | null
     criadoPorId: string
     atribuidoParaId: string | null
@@ -8315,6 +8322,7 @@ export namespace Prisma {
     areResponsavel?: boolean
     regiao?: boolean
     unidade?: boolean
+    dataPrevisao?: boolean
     dataConclusao?: boolean
     criadoPorId?: boolean
     atribuidoParaId?: boolean
@@ -8334,6 +8342,7 @@ export namespace Prisma {
     areResponsavel?: boolean
     regiao?: boolean
     unidade?: boolean
+    dataPrevisao?: boolean
     dataConclusao?: boolean
     criadoPorId?: boolean
     atribuidoParaId?: boolean
@@ -8351,6 +8360,7 @@ export namespace Prisma {
     areResponsavel?: boolean
     regiao?: boolean
     unidade?: boolean
+    dataPrevisao?: boolean
     dataConclusao?: boolean
     criadoPorId?: boolean
     atribuidoParaId?: boolean
@@ -8368,6 +8378,7 @@ export namespace Prisma {
     areResponsavel?: boolean
     regiao?: boolean
     unidade?: boolean
+    dataPrevisao?: boolean
     dataConclusao?: boolean
     criadoPorId?: boolean
     atribuidoParaId?: boolean
@@ -8375,7 +8386,7 @@ export namespace Prisma {
     atualizadoEm?: boolean
   }
 
-  export type TarefaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "descricao" | "prioridade" | "status" | "areResponsavel" | "regiao" | "unidade" | "dataConclusao" | "criadoPorId" | "atribuidoParaId" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["tarefa"]>
+  export type TarefaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "descricao" | "prioridade" | "status" | "areResponsavel" | "regiao" | "unidade" | "dataPrevisao" | "dataConclusao" | "criadoPorId" | "atribuidoParaId" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["tarefa"]>
   export type TarefaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     notificacoes?: boolean | Tarefa$notificacoesArgs<ExtArgs>
     atribuidoPara?: boolean | Tarefa$atribuidoParaArgs<ExtArgs>
@@ -8406,6 +8417,7 @@ export namespace Prisma {
       areResponsavel: string
       regiao: string | null
       unidade: string | null
+      dataPrevisao: Date | null
       dataConclusao: Date | null
       criadoPorId: string
       atribuidoParaId: string | null
@@ -8844,6 +8856,7 @@ export namespace Prisma {
     readonly areResponsavel: FieldRef<"Tarefa", 'String'>
     readonly regiao: FieldRef<"Tarefa", 'String'>
     readonly unidade: FieldRef<"Tarefa", 'String'>
+    readonly dataPrevisao: FieldRef<"Tarefa", 'DateTime'>
     readonly dataConclusao: FieldRef<"Tarefa", 'DateTime'>
     readonly criadoPorId: FieldRef<"Tarefa", 'String'>
     readonly atribuidoParaId: FieldRef<"Tarefa", 'String'>
@@ -29321,6 +29334,7 @@ export namespace Prisma {
     areResponsavel: 'areResponsavel',
     regiao: 'regiao',
     unidade: 'unidade',
+    dataPrevisao: 'dataPrevisao',
     dataConclusao: 'dataConclusao',
     criadoPorId: 'criadoPorId',
     atribuidoParaId: 'atribuidoParaId',
@@ -30207,6 +30221,7 @@ export namespace Prisma {
     areResponsavel?: StringFilter<"Tarefa"> | string
     regiao?: StringNullableFilter<"Tarefa"> | string | null
     unidade?: StringNullableFilter<"Tarefa"> | string | null
+    dataPrevisao?: DateTimeNullableFilter<"Tarefa"> | Date | string | null
     dataConclusao?: DateTimeNullableFilter<"Tarefa"> | Date | string | null
     criadoPorId?: StringFilter<"Tarefa"> | string
     atribuidoParaId?: StringNullableFilter<"Tarefa"> | string | null
@@ -30225,6 +30240,7 @@ export namespace Prisma {
     areResponsavel?: SortOrder
     regiao?: SortOrderInput | SortOrder
     unidade?: SortOrderInput | SortOrder
+    dataPrevisao?: SortOrderInput | SortOrder
     dataConclusao?: SortOrderInput | SortOrder
     criadoPorId?: SortOrder
     atribuidoParaId?: SortOrderInput | SortOrder
@@ -30246,6 +30262,7 @@ export namespace Prisma {
     areResponsavel?: StringFilter<"Tarefa"> | string
     regiao?: StringNullableFilter<"Tarefa"> | string | null
     unidade?: StringNullableFilter<"Tarefa"> | string | null
+    dataPrevisao?: DateTimeNullableFilter<"Tarefa"> | Date | string | null
     dataConclusao?: DateTimeNullableFilter<"Tarefa"> | Date | string | null
     criadoPorId?: StringFilter<"Tarefa"> | string
     atribuidoParaId?: StringNullableFilter<"Tarefa"> | string | null
@@ -30264,6 +30281,7 @@ export namespace Prisma {
     areResponsavel?: SortOrder
     regiao?: SortOrderInput | SortOrder
     unidade?: SortOrderInput | SortOrder
+    dataPrevisao?: SortOrderInput | SortOrder
     dataConclusao?: SortOrderInput | SortOrder
     criadoPorId?: SortOrder
     atribuidoParaId?: SortOrderInput | SortOrder
@@ -30285,6 +30303,7 @@ export namespace Prisma {
     areResponsavel?: StringWithAggregatesFilter<"Tarefa"> | string
     regiao?: StringNullableWithAggregatesFilter<"Tarefa"> | string | null
     unidade?: StringNullableWithAggregatesFilter<"Tarefa"> | string | null
+    dataPrevisao?: DateTimeNullableWithAggregatesFilter<"Tarefa"> | Date | string | null
     dataConclusao?: DateTimeNullableWithAggregatesFilter<"Tarefa"> | Date | string | null
     criadoPorId?: StringWithAggregatesFilter<"Tarefa"> | string
     atribuidoParaId?: StringNullableWithAggregatesFilter<"Tarefa"> | string | null
@@ -32109,6 +32128,7 @@ export namespace Prisma {
     areResponsavel: string
     regiao?: string | null
     unidade?: string | null
+    dataPrevisao?: Date | string | null
     dataConclusao?: Date | string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
@@ -32125,6 +32145,7 @@ export namespace Prisma {
     areResponsavel: string
     regiao?: string | null
     unidade?: string | null
+    dataPrevisao?: Date | string | null
     dataConclusao?: Date | string | null
     criadoPorId: string
     atribuidoParaId?: string | null
@@ -32141,6 +32162,7 @@ export namespace Prisma {
     areResponsavel?: StringFieldUpdateOperationsInput | string
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    dataPrevisao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dataConclusao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32157,6 +32179,7 @@ export namespace Prisma {
     areResponsavel?: StringFieldUpdateOperationsInput | string
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    dataPrevisao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dataConclusao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     criadoPorId?: StringFieldUpdateOperationsInput | string
     atribuidoParaId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32173,6 +32196,7 @@ export namespace Prisma {
     areResponsavel: string
     regiao?: string | null
     unidade?: string | null
+    dataPrevisao?: Date | string | null
     dataConclusao?: Date | string | null
     criadoPorId: string
     atribuidoParaId?: string | null
@@ -32188,6 +32212,7 @@ export namespace Prisma {
     areResponsavel?: StringFieldUpdateOperationsInput | string
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    dataPrevisao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dataConclusao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32201,6 +32226,7 @@ export namespace Prisma {
     areResponsavel?: StringFieldUpdateOperationsInput | string
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    dataPrevisao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dataConclusao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     criadoPorId?: StringFieldUpdateOperationsInput | string
     atribuidoParaId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34274,6 +34300,7 @@ export namespace Prisma {
     areResponsavel?: SortOrder
     regiao?: SortOrder
     unidade?: SortOrder
+    dataPrevisao?: SortOrder
     dataConclusao?: SortOrder
     criadoPorId?: SortOrder
     atribuidoParaId?: SortOrder
@@ -34289,6 +34316,7 @@ export namespace Prisma {
     areResponsavel?: SortOrder
     regiao?: SortOrder
     unidade?: SortOrder
+    dataPrevisao?: SortOrder
     dataConclusao?: SortOrder
     criadoPorId?: SortOrder
     atribuidoParaId?: SortOrder
@@ -34304,6 +34332,7 @@ export namespace Prisma {
     areResponsavel?: SortOrder
     regiao?: SortOrder
     unidade?: SortOrder
+    dataPrevisao?: SortOrder
     dataConclusao?: SortOrder
     criadoPorId?: SortOrder
     atribuidoParaId?: SortOrder
@@ -37624,6 +37653,7 @@ export namespace Prisma {
     areResponsavel: string
     regiao?: string | null
     unidade?: string | null
+    dataPrevisao?: Date | string | null
     dataConclusao?: Date | string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
@@ -37639,6 +37669,7 @@ export namespace Prisma {
     areResponsavel: string
     regiao?: string | null
     unidade?: string | null
+    dataPrevisao?: Date | string | null
     dataConclusao?: Date | string | null
     criadoPorId: string
     criadoEm?: Date | string
@@ -37664,6 +37695,7 @@ export namespace Prisma {
     areResponsavel: string
     regiao?: string | null
     unidade?: string | null
+    dataPrevisao?: Date | string | null
     dataConclusao?: Date | string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
@@ -37679,6 +37711,7 @@ export namespace Prisma {
     areResponsavel: string
     regiao?: string | null
     unidade?: string | null
+    dataPrevisao?: Date | string | null
     dataConclusao?: Date | string | null
     atribuidoParaId?: string | null
     criadoEm?: Date | string
@@ -38062,6 +38095,7 @@ export namespace Prisma {
     areResponsavel?: StringFilter<"Tarefa"> | string
     regiao?: StringNullableFilter<"Tarefa"> | string | null
     unidade?: StringNullableFilter<"Tarefa"> | string | null
+    dataPrevisao?: DateTimeNullableFilter<"Tarefa"> | Date | string | null
     dataConclusao?: DateTimeNullableFilter<"Tarefa"> | Date | string | null
     criadoPorId?: StringFilter<"Tarefa"> | string
     atribuidoParaId?: StringNullableFilter<"Tarefa"> | string | null
@@ -38668,6 +38702,7 @@ export namespace Prisma {
     areResponsavel: string
     regiao?: string | null
     unidade?: string | null
+    dataPrevisao?: Date | string | null
     dataConclusao?: Date | string | null
     criadoEm?: Date | string
     atualizadoEm?: Date | string
@@ -38683,6 +38718,7 @@ export namespace Prisma {
     areResponsavel: string
     regiao?: string | null
     unidade?: string | null
+    dataPrevisao?: Date | string | null
     dataConclusao?: Date | string | null
     criadoPorId: string
     atribuidoParaId?: string | null
@@ -38765,6 +38801,7 @@ export namespace Prisma {
     areResponsavel?: StringFieldUpdateOperationsInput | string
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    dataPrevisao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dataConclusao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -38780,6 +38817,7 @@ export namespace Prisma {
     areResponsavel?: StringFieldUpdateOperationsInput | string
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    dataPrevisao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dataConclusao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     criadoPorId?: StringFieldUpdateOperationsInput | string
     atribuidoParaId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40873,6 +40911,7 @@ export namespace Prisma {
     areResponsavel: string
     regiao?: string | null
     unidade?: string | null
+    dataPrevisao?: Date | string | null
     dataConclusao?: Date | string | null
     criadoPorId: string
     criadoEm?: Date | string
@@ -40887,6 +40926,7 @@ export namespace Prisma {
     areResponsavel: string
     regiao?: string | null
     unidade?: string | null
+    dataPrevisao?: Date | string | null
     dataConclusao?: Date | string | null
     atribuidoParaId?: string | null
     criadoEm?: Date | string
@@ -41178,6 +41218,7 @@ export namespace Prisma {
     areResponsavel?: StringFieldUpdateOperationsInput | string
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    dataPrevisao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dataConclusao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -41193,6 +41234,7 @@ export namespace Prisma {
     areResponsavel?: StringFieldUpdateOperationsInput | string
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    dataPrevisao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dataConclusao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     criadoPorId?: StringFieldUpdateOperationsInput | string
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -41208,6 +41250,7 @@ export namespace Prisma {
     areResponsavel?: StringFieldUpdateOperationsInput | string
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    dataPrevisao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dataConclusao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     criadoPorId?: StringFieldUpdateOperationsInput | string
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -41222,6 +41265,7 @@ export namespace Prisma {
     areResponsavel?: StringFieldUpdateOperationsInput | string
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    dataPrevisao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dataConclusao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
     atualizadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -41237,6 +41281,7 @@ export namespace Prisma {
     areResponsavel?: StringFieldUpdateOperationsInput | string
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    dataPrevisao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dataConclusao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     atribuidoParaId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -41252,6 +41297,7 @@ export namespace Prisma {
     areResponsavel?: StringFieldUpdateOperationsInput | string
     regiao?: NullableStringFieldUpdateOperationsInput | string | null
     unidade?: NullableStringFieldUpdateOperationsInput | string | null
+    dataPrevisao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dataConclusao?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     atribuidoParaId?: NullableStringFieldUpdateOperationsInput | string | null
     criadoEm?: DateTimeFieldUpdateOperationsInput | Date | string

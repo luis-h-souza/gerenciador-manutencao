@@ -173,6 +173,7 @@ exports.Prisma.TarefaScalarFieldEnum = {
   areResponsavel: 'areResponsavel',
   regiao: 'regiao',
   unidade: 'unidade',
+  dataPrevisao: 'dataPrevisao',
   dataConclusao: 'dataConclusao',
   criadoPorId: 'criadoPorId',
   atribuidoParaId: 'atribuidoParaId',
