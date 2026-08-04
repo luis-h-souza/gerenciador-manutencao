@@ -209,7 +209,11 @@ function AppRoutes() {
 
         <Route
           path="metas"
-          element={<Navigate to="/dashboard" replace />}
+          element={
+            <ProtectedRoute roles={ROLES.GESTORES}>
+              <MetasOrcamentariasPage />
+            </ProtectedRoute>
+          }
         />
 
         <Route

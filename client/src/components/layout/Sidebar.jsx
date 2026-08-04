@@ -68,6 +68,12 @@ const NAV = [
     roles: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR", "OPERACAO"],
   },
   {
+    to: "/metas",
+    icon: Target,
+    label: "Metas Orçamentárias",
+    roles: ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR"],
+  },
+  {
     to: "/estoque",
     icon: Package,
     label: "Estoque",
