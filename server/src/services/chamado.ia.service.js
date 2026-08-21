@@ -297,7 +297,8 @@ const gerarAnaliseGastosIA = async ({ regiao, unidade, ano, mes }) => {
   const prompt = construirPromptAnalise(dados);
 
   // 4. Chamada resiliente à API do Google Generative Language
-  // Suporta tanto modelos v1beta quanto v1 com fallback automático
+  // 4. Chamada resiliente à API do Google Generative Language
+  // Modelos de texto padrão ordenados por prioridade
   const modelosPadrao = [
     ...(process.env.GEMINI_MODEL ? [process.env.GEMINI_MODEL] : []),
     'gemini-2.0-flash',
@@ -308,7 +309,7 @@ const gerarAnaliseGastosIA = async ({ regiao, unidade, ano, mes }) => {
     'gemini-pro',
   ];
 
-  // 4.1 Tenta descobrir dinamicamente quais modelos suportam generateContent para essa chave
+  // 4.1 Tenta descobrir dinamicamente quais modelos suportam generateContent de TEXTO para essa chave
   let modelosDisponiveis = [];
   try {
     const resLista = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
@@ -316,19 +317,25 @@ const gerarAnaliseGastosIA = async ({ regiao, unidade, ano, mes }) => {
       const dataLista = await resLista.json();
       if (dataLista.models && Array.isArray(dataLista.models)) {
         modelosDisponiveis = dataLista.models
-          .filter((m) => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'))
+          .filter((m) => {
+            const nome = (m.name || '').toLowerCase();
+            const suportaGenerate = m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent');
+            // Ignora modelos exclusivos de áudio/TTS, imagem ou embedding
+            const isAudioOuImagem = nome.includes('-tts') || nome.includes('-audio') || nome.includes('imagen') || nome.includes('embedding') || nome.includes('aqa');
+            return suportaGenerate && !isAudioOuImagem;
+          })
           .map((m) => m.name.replace(/^models\//, ''));
-        logger.info(`Modelos descobertos para esta chave: ${modelosDisponiveis.join(', ')}`);
+        logger.info(`Modelos de texto descobertos: ${modelosDisponiveis.join(', ')}`);
       }
     }
   } catch (err) {
     logger.warn('Não foi possível listar modelos dinamicamente, usando lista padrão:', err.message);
   }
 
-  // Combina modelos descobertos + lista padrão sem duplicatas
+  // Prioriza modelos flash/pro padrão primeiro, depois os descobertos
   const listaTentativas = [
-    ...modelosDisponiveis,
     ...modelosPadrao,
+    ...modelosDisponiveis,
   ].filter((v, i, a) => a.indexOf(v) === i && Boolean(v));
 
   let ultimoErro = null;
@@ -372,22 +379,12 @@ const gerarAnaliseGastosIA = async ({ regiao, unidade, ano, mes }) => {
           }
         }
 
-        // Se a API retornou erro específico
+        // Se a API retornou erro específico, registra e segue para o próximo modelo
         if (resData.error) {
           ultimoErro = resData.error;
-          logger.warn(`Erro retornado por [${versaoApi}/${modeloNome}]: ${resData.error.message || JSON.stringify(resData.error)}`);
-
-          // Se for erro de chave inválida ou API não habilitada, interrompe para alertar o usuário diretamente
-          if (resData.error.status === 'INVALID_ARGUMENT' || resData.error.status === 'PERMISSION_DENIED') {
-            throw {
-              status: 400,
-              error: 'Chave Gemini Inválida',
-              message: resData.error.message || 'Chave de API do Gemini inválida ou sem permissão para a Generative Language API.',
-            };
-          }
+          logger.warn(`Modelo [${versaoApi}/${modeloNome}] retornou erro: ${resData.error.message || JSON.stringify(resData.error)}. Tentando próximo...`);
         }
       } catch (err) {
-        if (err.status) throw err;
         ultimoErro = err;
         logger.warn(`Falha na requisição para [${versaoApi}/${modeloNome}]: ${err.message}`);
       }
