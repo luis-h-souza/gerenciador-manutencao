@@ -139,13 +139,13 @@ const agregarDadosFinanceiros = async ({ regiao, unidade, ano, mes }) => {
     },
     meta: metaVigente
       ? {
-          valorMeta: Number(metaVigente.valorMeta),
-          gastoOperacional: Number(aggOperacional._sum.valor || 0),
-          percentualUtilizado: (
-            (Number(aggOperacional._sum.valor || 0) / Number(metaVigente.valorMeta)) * 100
-          ).toFixed(1),
-          saldo: Number(metaVigente.valorMeta) - Number(aggOperacional._sum.valor || 0),
-        }
+        valorMeta: Number(metaVigente.valorMeta),
+        gastoOperacional: Number(aggOperacional._sum.valor || 0),
+        percentualUtilizado: (
+          (Number(aggOperacional._sum.valor || 0) / Number(metaVigente.valorMeta)) * 100
+        ).toFixed(1),
+        saldo: Number(metaVigente.valorMeta) - Number(aggOperacional._sum.valor || 0),
+      }
       : null,
     segmentos: porSegmento.map((s) => ({
       segmento: s.segmento,
@@ -200,21 +200,21 @@ const construirPromptAnalise = (dados) => {
 `;
   }
 
-  const topSegmentosTexto = segmentos.slice(0, 7).map((s, idx) => 
+  const topSegmentosTexto = segmentos.slice(0, 7).map((s, idx) =>
     `${idx + 1}. **${s.segmento}**: ${fmtBRL(s.valor)} (${s.quantidade} chamados | ${s.percentual}% do total)`
   ).join('\n') || 'Nenhum segmento registrado.';
 
-  const topEmpresasTexto = topEmpresas.slice(0, 5).map((e, idx) => 
+  const topEmpresasTexto = topEmpresas.slice(0, 5).map((e, idx) =>
     `${idx + 1}. **${e.empresa}**: ${fmtBRL(e.valor)} (${e.quantidade} chamados | ${e.percentual}% do total)`
   ).join('\n') || 'Nenhuma empresa registrada.';
 
-  const statusTexto = status.map((st) => 
+  const statusTexto = status.map((st) =>
     `- **${st.status}**: ${st.quantidade} chamados (${fmtBRL(st.valor)})`
   ).join('\n') || 'Sem chamados.';
 
   let topLojasTexto = '';
   if (topLojas && topLojas.length > 0) {
-    topLojasTexto = `\n### Unidades/Lojas com Maiores Custos:\n` + topLojas.map((l, idx) => 
+    topLojasTexto = `\n### Unidades/Lojas com Maiores Custos:\n` + topLojas.map((l, idx) =>
       `${idx + 1}. **${l.unidade || 'Sem Nome'}** (${l.regiao}): ${fmtBRL(l.valor)} (${l.quantidade} chamados)`
     ).join('\n');
   }
@@ -264,6 +264,8 @@ Elabore o relatório estritamente em português do Brasil com a seguinte estrutu
    - De 3 a 5 ações corretivas/preventivas claras e prioritárias para a equipe de gestão de manutenção reduzir custos e evitar reincidências.
 
 Mantenha um tom profissional, direto ao ponto, estratégico e fundamentado exatamente nos números fornecidos.
+Considere a escala multiloja de uma grande rede nacional de supermercados: diferencie problemas isolados de padrões replicáveis entre regionais e lojas, priorize impactos de escala, continuidade operacional e experiência do cliente. Não invente dados, comparações ou metas que não estejam nos dados de entrada.
+Use Markdown válido: aplique negrito somente como **texto**, sem barras invertidas antes dos asteriscos e sem escapar os marcadores de formatação.
 `.trim();
 };
 

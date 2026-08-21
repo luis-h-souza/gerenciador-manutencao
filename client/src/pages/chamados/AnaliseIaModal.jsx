@@ -75,7 +75,10 @@ const normalizarResultadoAnalise = (resposta) => {
  * Garante visualização imediata no React 19 sem conflitos de CSS
  */
 function MarkdownVisualizador({ conteudo }) {
-  const textoParaExibir = typeof conteudo === "string" ? conteudo : extrairTextoAnalise(conteudo);
+  const textoBruto = typeof conteudo === "string" ? conteudo : extrairTextoAnalise(conteudo);
+  // Alguns modelos retornam marcadores Markdown escapados (ex.: *\\*Rios\\**).
+  // Ao restaurar somente caracteres de formatacao, **Rios** volta a ser negrito.
+  const textoParaExibir = textoBruto.replace(/\\([*_`])/g, "$1");
 
   if (!textoParaExibir) {
     return (
