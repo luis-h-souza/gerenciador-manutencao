@@ -38,11 +38,30 @@ const fmt = (v) =>
   }).format(v || 0);
 
 /**
+ * Extrai o texto da análise de qualquer formato retornado pela API
+ */
+const extrairTextoAnalise = (obj) => {
+  if (!obj) return "";
+  if (typeof obj === "string") return obj;
+  if (typeof obj?.analise === "string") return obj.analise;
+  if (typeof obj?.dados?.analise === "string") return obj.dados.analise;
+  if (typeof obj?.data?.analise === "string") return obj.data.analise;
+  if (typeof obj?.data?.dados?.analise === "string") return obj.data.dados.analise;
+  if (typeof obj?.analise?.text === "string") return obj.analise.text;
+  if (typeof obj?.texto === "string") return obj.texto;
+  if (typeof obj?.text === "string") return obj.text;
+  if (typeof obj?.message === "string") return obj.message;
+  return "";
+};
+
+/**
  * Renderizador de Markdown nativo ultra-resiliente
  * Garante visualização imediata no React 19 sem conflitos de CSS
  */
 function MarkdownVisualizador({ conteudo }) {
-  if (!conteudo || typeof conteudo !== "string") {
+  const textoParaExibir = typeof conteudo === "string" ? conteudo : extrairTextoAnalise(conteudo);
+
+  if (!textoParaExibir) {
     return (
       <p style={{ color: "var(--color-text-muted)", textAlign: "center", padding: "16px" }}>
         Nenhum texto de análise disponível.
@@ -65,7 +84,7 @@ function MarkdownVisualizador({ conteudo }) {
     });
   };
 
-  const linhas = conteudo.split("\n");
+  const linhas = textoParaExibir.split("\n");
   const elementos = [];
   let listaItens = [];
   let tipoLista = null; // 'ul' ou 'ol'
@@ -369,10 +388,7 @@ export default function AnaliseIaModal({
   };
 
   const handleCopiarTexto = () => {
-    const textoParaCopiar =
-      resultado?.analise ||
-      resultado?.dados?.analise ||
-      (typeof resultado === "string" ? resultado : "");
+    const textoParaCopiar = extrairTextoAnalise(resultado);
     if (!textoParaCopiar) return;
     navigator.clipboard.writeText(textoParaCopiar);
     setCopiado(true);
