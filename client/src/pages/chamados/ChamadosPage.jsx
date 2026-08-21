@@ -2072,7 +2072,7 @@ export default function ChamadosPage() {
               placeholder="Ano"
             />
 
-            {["ADMINISTRADOR", "DIRETOR"].includes(usuario?.role) && (
+            {["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR"].includes(usuario?.role) && (
               <button
                 type="button"
                 onClick={() => setModalIa(true)}
