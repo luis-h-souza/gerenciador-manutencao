@@ -297,18 +297,17 @@ const gerarAnaliseGastosIA = async ({ regiao, unidade, ano, mes }) => {
   const prompt = construirPromptAnalise(dados);
 
   // 4. Chamada de alta performance à API do Google Generative Language
-  // Prioriza modelos flash ultra estáveis e rápidos
+  // Prioriza modelos leves e sem fila de espera que respondem em 1-2s
   const modelosPadrao = [
     ...(process.env.GEMINI_MODEL ? [process.env.GEMINI_MODEL] : []),
-    'gemini-flash-latest',
-    'gemini-3.7-flash',
-    'gemini-3.5-flash-lite',
+    'gemma-4-26b-a4b-it',
     'gemini-2.5-flash-lite',
+    'gemini-flash-lite-latest',
+    'gemini-3.5-flash-lite',
+    'gemini-3.7-flash',
+    'gemini-flash-latest',
     'gemini-3.5-flash',
     'gemini-3.6-flash',
-    'gemma-4-26b-a4b-it',
-    'gemini-pro-latest',
-    'gemini-3.1-pro-preview',
   ];
 
   // 4.1 Tenta descobrir dinamicamente quais modelos suportam generateContent de TEXTO para essa chave
@@ -334,7 +333,7 @@ const gerarAnaliseGastosIA = async ({ regiao, unidade, ano, mes }) => {
     logger.warn('Não foi possível listar modelos dinamicamente, usando lista padrão:', err.message);
   }
 
-  // Prioriza modelos flash modernos descobertos ou padrão
+  // Prioriza modelos leves descobertos ou padrão
   const listaTentativas = [
     ...modelosPadrao,
     ...modelosDisponiveis,
@@ -351,6 +350,7 @@ const gerarAnaliseGastosIA = async ({ regiao, unidade, ano, mes }) => {
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: AbortSignal.timeout(6000), // Se demorar mais de 6s, pula imediatamente para o próximo
         body: JSON.stringify({
           contents: [
             {
