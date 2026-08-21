@@ -98,8 +98,14 @@ export default function AnaliseIaModal({
       }
 
       const res = await chamadosService.analiseIa(params);
-      const dadosRetorno = res.data?.dados || res.data?.data || res.data;
-      setResultado(dadosRetorno);
+      
+      // Normalização robusta de payload (suporta res.data.dados, res.data.data ou res.data direto)
+      let payload = res.data?.dados || res.data?.data || res.data;
+      if (payload && payload.dados && !payload.analise && payload.dados.analise) {
+        payload = payload.dados;
+      }
+      
+      setResultado(payload);
       toast.success("Análise gerada com sucesso pelo Gemini!");
     } catch (err) {
       const msg =
@@ -113,8 +119,9 @@ export default function AnaliseIaModal({
   };
 
   const handleCopiarTexto = () => {
-    if (!resultado?.analise) return;
-    navigator.clipboard.writeText(resultado.analise);
+    const textoParaCopiar = resultado?.analise || (typeof resultado === 'string' ? resultado : '');
+    if (!textoParaCopiar) return;
+    navigator.clipboard.writeText(textoParaCopiar);
     setCopiado(true);
     toast.success("Análise copiada para a área de transferência!");
     setTimeout(() => setCopiado(false), 3000);
@@ -676,109 +683,128 @@ export default function AnaliseIaModal({
                   color: "var(--color-text-primary)",
                 }}
               >
-                <ReactMarkdown
-                  components={{
-                    h1: ({ node, ...props }) => (
-                      <h1
-                        style={{
-                          fontSize: "1.25rem",
-                          fontWeight: 800,
-                          color: "var(--color-brand-400)",
-                          marginTop: "1.2rem",
-                          marginBottom: "0.6rem",
-                          borderBottom: "1px solid var(--color-border)",
-                          paddingBottom: "0.4rem",
-                        }}
-                        {...props}
-                      />
-                    ),
-                    h2: ({ node, ...props }) => (
-                      <h2
-                        style={{
-                          fontSize: "1.1rem",
-                          fontWeight: 700,
-                          color: "var(--color-brand-300, #7dd3fc)",
-                          marginTop: "1.2rem",
-                          marginBottom: "0.5rem",
-                        }}
-                        {...props}
-                      />
-                    ),
-                    h3: ({ node, ...props }) => (
-                      <h3
-                        style={{
-                          fontSize: "0.95rem",
-                          fontWeight: 700,
-                          color: "var(--color-text-primary)",
-                          marginTop: "1rem",
-                          marginBottom: "0.4rem",
-                        }}
-                        {...props}
-                      />
-                    ),
-                    p: ({ node, ...props }) => (
-                      <p
-                        style={{
-                          marginBottom: "0.8rem",
-                          color: "var(--color-text-secondary)",
-                        }}
-                        {...props}
-                      />
-                    ),
-                    ul: ({ node, ...props }) => (
-                      <ul
-                        style={{
-                          paddingLeft: "1.25rem",
-                          marginBottom: "0.8rem",
-                          listStyleType: "disc",
-                        }}
-                        {...props}
-                      />
-                    ),
-                    ol: ({ node, ...props }) => (
-                      <ol
-                        style={{
-                          paddingLeft: "1.25rem",
-                          marginBottom: "0.8rem",
-                          listStyleType: "decimal",
-                        }}
-                        {...props}
-                      />
-                    ),
-                    li: ({ node, ...props }) => (
-                      <li
-                        style={{
-                          marginBottom: "0.3rem",
-                          color: "var(--color-text-secondary)",
-                        }}
-                        {...props}
-                      />
-                    ),
-                    strong: ({ node, ...props }) => (
-                      <strong
-                        style={{
-                          fontWeight: 700,
-                          color: "var(--color-text-primary)",
-                        }}
-                        {...props}
-                      />
-                    ),
-                    blockquote: ({ node, ...props }) => (
-                      <blockquote
-                        style={{
-                          borderLeft: "3px solid var(--color-brand-500)",
-                          paddingLeft: "12px",
-                          color: "var(--color-text-muted)",
-                          fontStyle: "italic",
-                          margin: "12px 0",
-                        }}
-                        {...props}
-                      />
-                    ),
-                  }}
-                >
-                  {resultado.analise}
-                </ReactMarkdown>
+                {(() => {
+                  const textoAnalise =
+                    resultado?.analise ||
+                    (typeof resultado === "string" ? resultado : "") ||
+                    resultado?.texto ||
+                    resultado?.message ||
+                    "";
+
+                  if (!textoAnalise) {
+                    return (
+                      <p style={{ color: "var(--color-text-muted)", textAlign: "center", padding: "12px" }}>
+                        Nenhum relatório retornado. Clique em <strong>Recalcular</strong> para gerar novamente.
+                      </p>
+                    );
+                  }
+
+                  return (
+                    <ReactMarkdown
+                      components={{
+                        h1: ({ node, ...props }) => (
+                          <h1
+                            style={{
+                              fontSize: "1.25rem",
+                              fontWeight: 800,
+                              color: "var(--color-brand-400)",
+                              marginTop: "1.2rem",
+                              marginBottom: "0.6rem",
+                              borderBottom: "1px solid var(--color-border)",
+                              paddingBottom: "0.4rem",
+                            }}
+                            {...props}
+                          />
+                        ),
+                        h2: ({ node, ...props }) => (
+                          <h2
+                            style={{
+                              fontSize: "1.1rem",
+                              fontWeight: 700,
+                              color: "var(--color-brand-300, #7dd3fc)",
+                              marginTop: "1.2rem",
+                              marginBottom: "0.5rem",
+                            }}
+                            {...props}
+                          />
+                        ),
+                        h3: ({ node, ...props }) => (
+                          <h3
+                            style={{
+                              fontSize: "0.95rem",
+                              fontWeight: 700,
+                              color: "var(--color-text-primary)",
+                              marginTop: "1rem",
+                              marginBottom: "0.4rem",
+                            }}
+                            {...props}
+                          />
+                        ),
+                        p: ({ node, ...props }) => (
+                          <p
+                            style={{
+                              marginBottom: "0.8rem",
+                              color: "var(--color-text-secondary)",
+                            }}
+                            {...props}
+                          />
+                        ),
+                        ul: ({ node, ...props }) => (
+                          <ul
+                            style={{
+                              paddingLeft: "1.25rem",
+                              marginBottom: "0.8rem",
+                              listStyleType: "disc",
+                            }}
+                            {...props}
+                          />
+                        ),
+                        ol: ({ node, ...props }) => (
+                          <ol
+                            style={{
+                              paddingLeft: "1.25rem",
+                              marginBottom: "0.8rem",
+                              listStyleType: "decimal",
+                            }}
+                            {...props}
+                          />
+                        ),
+                        li: ({ node, ...props }) => (
+                          <li
+                            style={{
+                              marginBottom: "0.3rem",
+                              color: "var(--color-text-secondary)",
+                            }}
+                            {...props}
+                          />
+                        ),
+                        strong: ({ node, ...props }) => (
+                          <strong
+                            style={{
+                              fontWeight: 700,
+                              color: "var(--color-text-primary)",
+                            }}
+                            {...props}
+                          />
+                        ),
+                        blockquote: ({ node, ...props }) => (
+                          <blockquote
+                            style={{
+                              borderLeft: "3px solid var(--color-brand-500)",
+                              paddingLeft: "12px",
+                              color: "var(--color-text-muted)",
+                              fontStyle: "italic",
+                              margin: "12px 0",
+                            }}
+                            {...props}
+                          />
+                        ),
+                      }}
+                    >
+                      {textoAnalise}
+                    </ReactMarkdown>
+                  );
+                })()}
               </div>
             </div>
           )}
