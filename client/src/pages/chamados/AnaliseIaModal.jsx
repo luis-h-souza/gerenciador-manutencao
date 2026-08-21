@@ -14,7 +14,6 @@ import {
   Check,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import ReactMarkdown from "react-markdown";
 import { chamadosService, lojasService } from "../../services";
 
 const MESES = [
@@ -37,6 +36,257 @@ const fmt = (v) =>
     style: "currency",
     currency: "BRL",
   }).format(v || 0);
+
+/**
+ * Renderizador de Markdown nativo ultra-resiliente
+ * Garante visualização imediata no React 19 sem conflitos de CSS
+ */
+function MarkdownVisualizador({ conteudo }) {
+  if (!conteudo || typeof conteudo !== "string") {
+    return (
+      <p style={{ color: "var(--color-text-muted)", textAlign: "center", padding: "16px" }}>
+        Nenhum texto de análise disponível.
+      </p>
+    );
+  }
+
+  const formatarInline = (texto) => {
+    // Quebra partes em negrito **texto**
+    const partes = texto.split(/(\*\*.*?\*\*)/g);
+    return partes.map((parte, idx) => {
+      if (parte.startsWith("**") && parte.endsWith("**")) {
+        return (
+          <strong key={idx} style={{ color: "#ffffff", fontWeight: 700 }}>
+            {parte.slice(2, -2)}
+          </strong>
+        );
+      }
+      return parte;
+    });
+  };
+
+  const linhas = conteudo.split("\n");
+  const elementos = [];
+  let listaItens = [];
+  let tipoLista = null; // 'ul' ou 'ol'
+
+  const fecharLista = () => {
+    if (listaItens.length > 0) {
+      if (tipoLista === "ol") {
+        elementos.push(
+          <ol
+            key={`ol-${elementos.length}`}
+            style={{
+              paddingLeft: "1.5rem",
+              marginBottom: "1rem",
+              listStyleType: "decimal",
+              color: "var(--color-text-secondary, #cbd5e1)",
+            }}
+          >
+            {listaItens}
+          </ol>
+        );
+      } else {
+        elementos.push(
+          <ul
+            key={`ul-${elementos.length}`}
+            style={{
+              paddingLeft: "1.5rem",
+              marginBottom: "1rem",
+              listStyleType: "disc",
+              color: "var(--color-text-secondary, #cbd5e1)",
+            }}
+          >
+            {listaItens}
+          </ul>
+        );
+      }
+      listaItens = [];
+      tipoLista = null;
+    }
+  };
+
+  linhas.forEach((linha, idx) => {
+    const limpa = linha.trim();
+
+    if (!limpa) {
+      fecharLista();
+      return;
+    }
+
+    if (limpa.startsWith("---") || limpa.startsWith("***")) {
+      fecharLista();
+      elementos.push(
+        <hr
+          key={`hr-${idx}`}
+          style={{
+            borderColor: "var(--color-border)",
+            margin: "1.5rem 0",
+          }}
+        />
+      );
+      return;
+    }
+
+    if (limpa.startsWith("# ")) {
+      fecharLista();
+      elementos.push(
+        <h1
+          key={`h1-${idx}`}
+          style={{
+            fontSize: "1.35rem",
+            fontWeight: 800,
+            color: "var(--color-brand-400, #38bdf8)",
+            marginTop: "1.5rem",
+            marginBottom: "0.75rem",
+            borderBottom: "1px solid var(--color-border)",
+            paddingBottom: "0.5rem",
+          }}
+        >
+          {formatarInline(limpa.replace(/^#\s+/, ""))}
+        </h1>
+      );
+      return;
+    }
+
+    if (limpa.startsWith("## ")) {
+      fecharLista();
+      elementos.push(
+        <h2
+          key={`h2-${idx}`}
+          style={{
+            fontSize: "1.15rem",
+            fontWeight: 700,
+            color: "var(--color-brand-300, #7dd3fc)",
+            marginTop: "1.4rem",
+            marginBottom: "0.6rem",
+          }}
+        >
+          {formatarInline(limpa.replace(/^##\s+/, ""))}
+        </h2>
+      );
+      return;
+    }
+
+    if (limpa.startsWith("### ")) {
+      fecharLista();
+      elementos.push(
+        <h3
+          key={`h3-${idx}`}
+          style={{
+            fontSize: "1rem",
+            fontWeight: 700,
+            color: "var(--color-text-primary, #f8fafc)",
+            marginTop: "1.1rem",
+            marginBottom: "0.5rem",
+          }}
+        >
+          {formatarInline(limpa.replace(/^###\s+/, ""))}
+        </h3>
+      );
+      return;
+    }
+
+    if (limpa.startsWith("#### ")) {
+      fecharLista();
+      elementos.push(
+        <h4
+          key={`h4-${idx}`}
+          style={{
+            fontSize: "0.925rem",
+            fontWeight: 700,
+            color: "var(--color-brand-400, #38bdf8)",
+            marginTop: "0.9rem",
+            marginBottom: "0.4rem",
+          }}
+        >
+          {formatarInline(limpa.replace(/^####\s+/, ""))}
+        </h4>
+      );
+      return;
+    }
+
+    // Lista numerada: 1. , 2. , etc.
+    const matchNum = limpa.match(/^(\d+)\.\s+(.*)$/);
+    if (matchNum) {
+      if (tipoLista && tipoLista !== "ol") fecharLista();
+      tipoLista = "ol";
+      listaItens.push(
+        <li
+          key={`li-ol-${idx}`}
+          style={{
+            marginBottom: "0.4rem",
+            color: "var(--color-text-secondary, #cbd5e1)",
+            lineHeight: "1.75",
+          }}
+        >
+          {formatarInline(matchNum[2])}
+        </li>
+      );
+      return;
+    }
+
+    // Lista com bullets: * ou -
+    if (limpa.startsWith("* ") || limpa.startsWith("- ")) {
+      if (tipoLista && tipoLista !== "ul") fecharLista();
+      tipoLista = "ul";
+      listaItens.push(
+        <li
+          key={`li-ul-${idx}`}
+          style={{
+            marginBottom: "0.4rem",
+            color: "var(--color-text-secondary, #cbd5e1)",
+            lineHeight: "1.75",
+          }}
+        >
+          {formatarInline(limpa.replace(/^[\*\-]\s+/, ""))}
+        </li>
+      );
+      return;
+    }
+
+    // Citação: >
+    if (limpa.startsWith(">")) {
+      fecharLista();
+      elementos.push(
+        <blockquote
+          key={`quote-${idx}`}
+          style={{
+            borderLeft: "4px solid var(--color-brand-500)",
+            color: "var(--color-text-muted, #94a3b8)",
+            fontStyle: "italic",
+            margin: "12px 0",
+            background: "rgba(14, 165, 233, 0.06)",
+            padding: "10px 16px",
+            borderRadius: "0 8px 8px 0",
+          }}
+        >
+          {formatarInline(limpa.replace(/^>\s*/, ""))}
+        </blockquote>
+      );
+      return;
+    }
+
+    // Parágrafo comum
+    fecharLista();
+    elementos.push(
+      <p
+        key={`p-${idx}`}
+        style={{
+          marginBottom: "0.9rem",
+          color: "var(--color-text-secondary, #cbd5e1)",
+          lineHeight: "1.75",
+        }}
+      >
+        {formatarInline(limpa)}
+      </p>
+    );
+  });
+
+  fecharLista();
+
+  return <div style={{ wordBreak: "break-word" }}>{elementos}</div>;
+}
 
 export default function AnaliseIaModal({
   onClose,
@@ -119,7 +369,10 @@ export default function AnaliseIaModal({
   };
 
   const handleCopiarTexto = () => {
-    const textoParaCopiar = resultado?.analise || (typeof resultado === 'string' ? resultado : '');
+    const textoParaCopiar =
+      resultado?.analise ||
+      resultado?.dados?.analise ||
+      (typeof resultado === "string" ? resultado : "");
     if (!textoParaCopiar) return;
     navigator.clipboard.writeText(textoParaCopiar);
     setCopiado(true);
@@ -165,7 +418,8 @@ export default function AnaliseIaModal({
             <div
               className="flex items-center justify-center w-10 h-10 rounded-xl"
               style={{
-                background: "linear-gradient(135deg, var(--color-brand-600) 0%, var(--color-brand-500) 100%)",
+                background:
+                  "linear-gradient(135deg, var(--color-brand-600) 0%, var(--color-brand-500) 100%)",
                 color: "#fff",
                 boxShadow: "0 4px 12px rgba(14, 165, 233, 0.3)",
               }}
@@ -314,7 +568,10 @@ export default function AnaliseIaModal({
 
             {/* Período */}
             <div className="flex items-center gap-2 ml-auto">
-              <Calendar size={15} style={{ color: "var(--color-text-muted)" }} />
+              <Calendar
+                size={15}
+                style={{ color: "var(--color-text-muted)" }}
+              />
               <select
                 className="select"
                 style={{ minWidth: "120px", fontSize: "0.8125rem" }}
@@ -350,7 +607,8 @@ export default function AnaliseIaModal({
             >
               {gerando ? (
                 <>
-                  <Loader2 size={16} className="animate-spin mr-1" /> Analisando...
+                  <Loader2 size={16} className="animate-spin mr-1" />{" "}
+                  Analisando...
                 </>
               ) : (
                 <>
@@ -402,7 +660,8 @@ export default function AnaliseIaModal({
                 }}
               >
                 Cruzando métricas de segmentos, desvios de orçamento, histórico
-                de mau uso e padrões de fornecedores para formular recomendações.
+                de mau uso e padrões de fornecedores para formular
+                recomendações.
               </p>
             </div>
           )}
@@ -652,7 +911,8 @@ export default function AnaliseIaModal({
                   >
                     {copiado ? (
                       <>
-                        <Check size={14} className="mr-1 text-green-500" /> Copiado!
+                        <Check size={14} className="mr-1 text-green-500" />{" "}
+                        Copiado!
                       </>
                     ) : (
                       <>
@@ -683,154 +943,16 @@ export default function AnaliseIaModal({
                   color: "var(--color-text-primary, #e2e8f0)",
                 }}
               >
-                {(() => {
-                  const textoAnalise =
+                <MarkdownVisualizador
+                  conteudo={
                     resultado?.analise ||
                     resultado?.dados?.analise ||
                     (typeof resultado === "string" ? resultado : "") ||
                     resultado?.texto ||
                     resultado?.message ||
-                    "";
-
-                  if (!textoAnalise) {
-                    return (
-                      <p style={{ color: "var(--color-text-muted)", textAlign: "center", padding: "20px" }}>
-                        Nenhum texto de relatório foi encontrado no retorno.
-                      </p>
-                    );
+                    ""
                   }
-
-                  return (
-                    <div style={{ wordBreak: "break-word" }}>
-                      <ReactMarkdown
-                        components={{
-                          h1: ({ children }) => (
-                            <h1
-                              style={{
-                                fontSize: "1.35rem",
-                                fontWeight: 800,
-                                color: "var(--color-brand-400, #38bdf8)",
-                                marginTop: "1.5rem",
-                                marginBottom: "0.75rem",
-                                borderBottom: "1px solid var(--color-border)",
-                                paddingBottom: "0.5rem",
-                              }}
-                            >
-                              {children}
-                            </h1>
-                          ),
-                          h2: ({ children }) => (
-                            <h2
-                              style={{
-                                fontSize: "1.15rem",
-                                fontWeight: 700,
-                                color: "var(--color-brand-300, #7dd3fc)",
-                                marginTop: "1.4rem",
-                                marginBottom: "0.6rem",
-                              }}
-                            >
-                              {children}
-                            </h2>
-                          ),
-                          h3: ({ children }) => (
-                            <h3
-                              style={{
-                                fontSize: "1rem",
-                                fontWeight: 700,
-                                color: "var(--color-text-primary, #f8fafc)",
-                                marginTop: "1.1rem",
-                                marginBottom: "0.5rem",
-                              }}
-                            >
-                              {children}
-                            </h3>
-                          ),
-                          p: ({ children }) => (
-                            <p
-                              style={{
-                                marginBottom: "0.9rem",
-                                color: "var(--color-text-secondary, #cbd5e1)",
-                                lineHeight: "1.75",
-                              }}
-                            >
-                              {children}
-                            </p>
-                          ),
-                          ul: ({ children }) => (
-                            <ul
-                              style={{
-                                paddingLeft: "1.5rem",
-                                marginBottom: "0.9rem",
-                                listStyleType: "disc",
-                                color: "var(--color-text-secondary, #cbd5e1)",
-                              }}
-                            >
-                              {children}
-                            </ul>
-                          ),
-                          ol: ({ children }) => (
-                            <ol
-                              style={{
-                                paddingLeft: "1.5rem",
-                                marginBottom: "0.9rem",
-                                listStyleType: "decimal",
-                                color: "var(--color-text-secondary, #cbd5e1)",
-                              }}
-                            >
-                              {children}
-                            </ol>
-                          ),
-                          li: ({ children }) => (
-                            <li
-                              style={{
-                                marginBottom: "0.35rem",
-                                color: "var(--color-text-secondary, #cbd5e1)",
-                              }}
-                            >
-                              {children}
-                            </li>
-                          ),
-                          strong: ({ children }) => (
-                            <strong
-                              style={{
-                                fontWeight: 700,
-                                color: "#ffffff",
-                              }}
-                            >
-                              {children}
-                            </strong>
-                          ),
-                          hr: () => (
-                            <hr
-                              style={{
-                                borderColor: "var(--color-border)",
-                                margin: "1.5rem 0",
-                              }}
-                            />
-                          ),
-                          blockquote: ({ children }) => (
-                            <blockquote
-                              style={{
-                                borderLeft: "4px solid var(--color-brand-500)",
-                                paddingLeft: "14px",
-                                color: "var(--color-text-muted, #94a3b8)",
-                                fontStyle: "italic",
-                                margin: "14px 0",
-                                background: "rgba(14, 165, 233, 0.05)",
-                                padding: "10px 14px",
-                                borderRadius: "0 8px 8px 0",
-                              }}
-                            >
-                              {children}
-                            </blockquote>
-                          ),
-                        }}
-                      >
-                        {textoAnalise}
-                      </ReactMarkdown>
-                    </div>
-                  );
-                })()}
+                />
               </div>
             </div>
           )}
@@ -850,7 +972,8 @@ export default function AnaliseIaModal({
               color: "var(--color-text-muted)",
             }}
           >
-            Insights gerados via Inteligência Artificial Google Gemini para apoio à decisão.
+            Insights gerados via Inteligência Artificial Google Gemini para apoio
+            à decisão.
           </span>
           <button className="btn btn-ghost btn-sm" onClick={onClose}>
             Fechar
