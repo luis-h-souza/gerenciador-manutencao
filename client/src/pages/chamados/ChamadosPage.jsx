@@ -2076,11 +2076,8 @@ export default function ChamadosPage() {
               <button
                 type="button"
                 onClick={() => setModalIa(true)}
-                className="btn"
+                className="btn btn-primary"
                 style={{
-                  background: "linear-gradient(135deg, #6366f1 0%, #a855f7 100%)",
-                  color: "#ffffff",
-                  border: "none",
                   fontWeight: 600,
                   fontSize: "0.8125rem",
                   padding: "8px 14px",
@@ -2088,7 +2085,7 @@ export default function ChamadosPage() {
                   display: "flex",
                   alignItems: "center",
                   gap: "6px",
-                  boxShadow: "0 4px 12px rgba(99, 102, 241, 0.25)",
+                  boxShadow: "0 4px 12px rgba(14, 165, 233, 0.25)",
                   cursor: "pointer",
                 }}
               >

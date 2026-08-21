@@ -12,9 +12,6 @@ import {
   RefreshCw,
   Copy,
   Check,
-  TrendingDown,
-  AlertTriangle,
-  DollarSign,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import ReactMarkdown from "react-markdown";
@@ -143,7 +140,7 @@ export default function AnaliseIaModal({
           maxHeight: "90vh",
           borderRadius: "16px",
           overflow: "hidden",
-          background: "var(--color-surface-800, #1e293b)",
+          background: "var(--color-surface-800)",
           boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
           border: "1px solid var(--color-border)",
         }}
@@ -154,16 +151,16 @@ export default function AnaliseIaModal({
           style={{
             borderColor: "var(--color-border)",
             background:
-              "linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.05) 100%)",
+              "linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(2, 132, 199, 0.04) 100%)",
           }}
         >
           <div className="flex items-center gap-3">
             <div
               className="flex items-center justify-center w-10 h-10 rounded-xl"
               style={{
-                background: "linear-gradient(135deg, #6366f1 0%, #a855f7 100%)",
+                background: "linear-gradient(135deg, var(--color-brand-600) 0%, var(--color-brand-500) 100%)",
                 color: "#fff",
-                boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)",
+                boxShadow: "0 4px 12px rgba(14, 165, 233, 0.3)",
               }}
             >
               <Sparkles size={20} />
@@ -185,12 +182,12 @@ export default function AnaliseIaModal({
                     fontWeight: 700,
                     padding: "2px 8px",
                     borderRadius: "9999px",
-                    background: "rgba(99, 102, 241, 0.2)",
-                    color: "#818cf8",
-                    border: "1px solid rgba(99, 102, 241, 0.3)",
+                    background: "rgba(14, 165, 233, 0.15)",
+                    color: "var(--color-brand-400)",
+                    border: "1px solid rgba(14, 165, 233, 0.3)",
                   }}
                 >
-                  Gemini Flash
+                  Google Gemini
                 </span>
               </div>
               <p
@@ -224,12 +221,18 @@ export default function AnaliseIaModal({
           className="p-4 border-b flex flex-col gap-3"
           style={{
             borderColor: "var(--color-border)",
-            background: "var(--color-surface-700, #0f172a)",
+            background: "var(--color-surface-700)",
           }}
         >
           <div className="flex items-center gap-4 flex-wrap">
             {/* Tipo de Escopo */}
-            <div className="flex items-center gap-1 p-1 rounded-lg bg-slate-900/40 border border-slate-700/50">
+            <div
+              className="flex items-center gap-1 p-1 rounded-lg border"
+              style={{
+                background: "var(--color-surface-900)",
+                borderColor: "var(--color-border)",
+              }}
+            >
               <button
                 type="button"
                 onClick={() => setTipoEscopo("geral")}
@@ -333,11 +336,9 @@ export default function AnaliseIaModal({
               disabled={gerando || (tipoEscopo === "loja" && !unidade)}
               className="btn btn-primary"
               style={{
-                background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
-                border: "none",
                 fontWeight: 600,
                 padding: "8px 16px",
-                boxShadow: "0 4px 12px rgba(99, 102, 241, 0.25)",
+                boxShadow: "0 4px 12px rgba(14, 165, 233, 0.25)",
               }}
             >
               {gerando ? (
@@ -358,7 +359,7 @@ export default function AnaliseIaModal({
           className="p-6 overflow-y-auto flex-1"
           style={{
             minHeight: "360px",
-            background: "var(--color-surface-800, #1e293b)",
+            background: "var(--color-surface-800)",
           }}
         >
           {gerando && (
@@ -369,10 +370,9 @@ export default function AnaliseIaModal({
               <div
                 className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 animate-pulse"
                 style={{
-                  background:
-                    "linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%)",
-                  border: "1px solid rgba(99, 102, 241, 0.4)",
-                  color: "#818cf8",
+                  background: "rgba(14, 165, 233, 0.15)",
+                  border: "1px solid rgba(14, 165, 233, 0.3)",
+                  color: "var(--color-brand-400)",
                 }}
               >
                 <Bot size={32} />
@@ -408,7 +408,7 @@ export default function AnaliseIaModal({
               <div
                 className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
                 style={{
-                  background: "var(--color-surface-700, #334155)",
+                  background: "var(--color-surface-700)",
                   color: "var(--color-text-muted)",
                 }}
               >
@@ -603,10 +603,10 @@ export default function AnaliseIaModal({
                 className="flex items-center justify-between p-3 rounded-lg border"
                 style={{
                   borderColor: "var(--color-border)",
-                  background: "var(--color-surface-700, #0f172a)",
+                  background: "var(--color-surface-700)",
                 }}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <span
                     style={{
                       fontSize: "0.75rem",
@@ -620,6 +620,21 @@ export default function AnaliseIaModal({
                         : "Agora"}
                     </strong>
                   </span>
+                  {resultado.modeloUsado && (
+                    <span
+                      style={{
+                        fontSize: "0.6875rem",
+                        padding: "2px 8px",
+                        borderRadius: "4px",
+                        background: "rgba(14, 165, 233, 0.15)",
+                        color: "var(--color-brand-400)",
+                        fontWeight: 600,
+                        border: "1px solid rgba(14, 165, 233, 0.25)",
+                      }}
+                    >
+                      {resultado.modeloUsado}
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -655,10 +670,10 @@ export default function AnaliseIaModal({
                 className="prose prose-invert max-w-none p-5 rounded-xl border"
                 style={{
                   borderColor: "var(--color-border)",
-                  background: "var(--color-surface-900, #090d16)",
+                  background: "var(--color-surface-900)",
                   lineHeight: "1.7",
                   fontSize: "0.875rem",
-                  color: "var(--color-text-primary, #e2e8f0)",
+                  color: "var(--color-text-primary)",
                 }}
               >
                 <ReactMarkdown
@@ -668,7 +683,7 @@ export default function AnaliseIaModal({
                         style={{
                           fontSize: "1.25rem",
                           fontWeight: 800,
-                          color: "#818cf8",
+                          color: "var(--color-brand-400)",
                           marginTop: "1.2rem",
                           marginBottom: "0.6rem",
                           borderBottom: "1px solid var(--color-border)",
@@ -682,7 +697,7 @@ export default function AnaliseIaModal({
                         style={{
                           fontSize: "1.1rem",
                           fontWeight: 700,
-                          color: "#c084fc",
+                          color: "var(--color-brand-300, #7dd3fc)",
                           marginTop: "1.2rem",
                           marginBottom: "0.5rem",
                         }}
@@ -705,7 +720,7 @@ export default function AnaliseIaModal({
                       <p
                         style={{
                           marginBottom: "0.8rem",
-                          color: "var(--color-text-secondary, #cbd5e1)",
+                          color: "var(--color-text-secondary)",
                         }}
                         {...props}
                       />
@@ -734,7 +749,7 @@ export default function AnaliseIaModal({
                       <li
                         style={{
                           marginBottom: "0.3rem",
-                          color: "var(--color-text-secondary, #cbd5e1)",
+                          color: "var(--color-text-secondary)",
                         }}
                         {...props}
                       />
@@ -743,7 +758,7 @@ export default function AnaliseIaModal({
                       <strong
                         style={{
                           fontWeight: 700,
-                          color: "var(--color-text-primary, #ffffff)",
+                          color: "var(--color-text-primary)",
                         }}
                         {...props}
                       />
@@ -751,7 +766,7 @@ export default function AnaliseIaModal({
                     blockquote: ({ node, ...props }) => (
                       <blockquote
                         style={{
-                          borderLeft: "3px solid #6366f1",
+                          borderLeft: "3px solid var(--color-brand-500)",
                           paddingLeft: "12px",
                           color: "var(--color-text-muted)",
                           fontStyle: "italic",
@@ -774,7 +789,7 @@ export default function AnaliseIaModal({
           className="p-4 border-t flex items-center justify-between"
           style={{
             borderColor: "var(--color-border)",
-            background: "var(--color-surface-700, #0f172a)",
+            background: "var(--color-surface-700)",
           }}
         >
           <span

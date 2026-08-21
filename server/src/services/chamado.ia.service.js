@@ -296,31 +296,54 @@ const gerarAnaliseGastosIA = async ({ regiao, unidade, ano, mes }) => {
   // 3. Monta o prompt
   const prompt = construirPromptAnalise(dados);
 
-  // 4. Inicializa o cliente do Gemini
-  try {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    
-    // Modelos suportados: gemini-1.5-flash (rápido e econômico) ou fallback
-    const modeloNome = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
-    const model = genAI.getGenerativeModel({ model: modeloNome });
+  // 4. Inicializa o cliente do Gemini e tenta modelos com fallback automático
+  const genAI = new GoogleGenerativeAI(apiKey);
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const textoAnalise = response.text();
+  const modelosParaTentar = [
+    ...(process.env.GEMINI_MODEL ? [process.env.GEMINI_MODEL] : []),
+    'gemini-2.0-flash',
+    'gemini-1.5-flash-latest',
+    'gemini-1.5-flash',
+    'gemini-2.5-flash',
+    'gemini-1.5-flash-8b',
+    'gemini-1.5-pro-latest',
+    'gemini-pro',
+  ];
 
-    return {
-      analise: textoAnalise,
-      dados,
-      geradoEm: new Date().toISOString(),
-    };
-  } catch (err) {
-    logger.error('Erro ao chamar API do Google Gemini:', err);
-    throw {
-      status: 502,
-      error: 'Erro na API de IA',
-      message: err.message || 'Falha ao se comunicar com a API do Gemini. Verifique a chave e cota.',
-    };
+  // Remove duplicatas mantendo a ordem
+  const modelosUnicos = [...new Set(modelosParaTentar)];
+
+  let ultimoErro = null;
+
+  for (const modeloNome of modelosUnicos) {
+    try {
+      logger.info(`Tentando gerar análise financeira com modelo Gemini: ${modeloNome}`);
+      const model = genAI.getGenerativeModel({ model: modeloNome });
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const textoAnalise = response.text();
+
+      logger.info(`Análise gerada com sucesso usando o modelo: ${modeloNome}`);
+
+      return {
+        analise: textoAnalise,
+        modeloUsado: modeloNome,
+        dados,
+        geradoEm: new Date().toISOString(),
+      };
+    } catch (err) {
+      ultimoErro = err;
+      logger.warn(`Modelo ${modeloNome} falhou: ${err.message}. Tentando próximo modelo...`);
+      // Se for erro diferente de 404/not found ou se for o último, o loop continuará até tentar todos
+    }
   }
+
+  logger.error('Todos os modelos do Gemini falharam:', ultimoErro);
+  throw {
+    status: 502,
+    error: 'Erro na API de IA',
+    message: ultimoErro?.message || 'Falha ao se comunicar com a API do Gemini. Verifique a chave e cota.',
+  };
 };
 
 module.exports = {
