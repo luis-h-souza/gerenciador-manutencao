@@ -674,18 +674,19 @@ export default function AnaliseIaModal({
 
               {/* Texto Markdown Renderizado */}
               <div
-                className="prose prose-invert max-w-none p-5 rounded-xl border"
+                className="p-6 rounded-xl border"
                 style={{
                   borderColor: "var(--color-border)",
                   background: "var(--color-surface-900)",
-                  lineHeight: "1.7",
+                  lineHeight: "1.75",
                   fontSize: "0.875rem",
-                  color: "var(--color-text-primary)",
+                  color: "var(--color-text-primary, #e2e8f0)",
                 }}
               >
                 {(() => {
                   const textoAnalise =
                     resultado?.analise ||
+                    resultado?.dados?.analise ||
                     (typeof resultado === "string" ? resultado : "") ||
                     resultado?.texto ||
                     resultado?.message ||
@@ -693,116 +694,141 @@ export default function AnaliseIaModal({
 
                   if (!textoAnalise) {
                     return (
-                      <p style={{ color: "var(--color-text-muted)", textAlign: "center", padding: "12px" }}>
-                        Nenhum relatório retornado. Clique em <strong>Recalcular</strong> para gerar novamente.
+                      <p style={{ color: "var(--color-text-muted)", textAlign: "center", padding: "20px" }}>
+                        Nenhum texto de relatório foi encontrado no retorno.
                       </p>
                     );
                   }
 
                   return (
-                    <ReactMarkdown
-                      components={{
-                        h1: ({ node, ...props }) => (
-                          <h1
-                            style={{
-                              fontSize: "1.25rem",
-                              fontWeight: 800,
-                              color: "var(--color-brand-400)",
-                              marginTop: "1.2rem",
-                              marginBottom: "0.6rem",
-                              borderBottom: "1px solid var(--color-border)",
-                              paddingBottom: "0.4rem",
-                            }}
-                            {...props}
-                          />
-                        ),
-                        h2: ({ node, ...props }) => (
-                          <h2
-                            style={{
-                              fontSize: "1.1rem",
-                              fontWeight: 700,
-                              color: "var(--color-brand-300, #7dd3fc)",
-                              marginTop: "1.2rem",
-                              marginBottom: "0.5rem",
-                            }}
-                            {...props}
-                          />
-                        ),
-                        h3: ({ node, ...props }) => (
-                          <h3
-                            style={{
-                              fontSize: "0.95rem",
-                              fontWeight: 700,
-                              color: "var(--color-text-primary)",
-                              marginTop: "1rem",
-                              marginBottom: "0.4rem",
-                            }}
-                            {...props}
-                          />
-                        ),
-                        p: ({ node, ...props }) => (
-                          <p
-                            style={{
-                              marginBottom: "0.8rem",
-                              color: "var(--color-text-secondary)",
-                            }}
-                            {...props}
-                          />
-                        ),
-                        ul: ({ node, ...props }) => (
-                          <ul
-                            style={{
-                              paddingLeft: "1.25rem",
-                              marginBottom: "0.8rem",
-                              listStyleType: "disc",
-                            }}
-                            {...props}
-                          />
-                        ),
-                        ol: ({ node, ...props }) => (
-                          <ol
-                            style={{
-                              paddingLeft: "1.25rem",
-                              marginBottom: "0.8rem",
-                              listStyleType: "decimal",
-                            }}
-                            {...props}
-                          />
-                        ),
-                        li: ({ node, ...props }) => (
-                          <li
-                            style={{
-                              marginBottom: "0.3rem",
-                              color: "var(--color-text-secondary)",
-                            }}
-                            {...props}
-                          />
-                        ),
-                        strong: ({ node, ...props }) => (
-                          <strong
-                            style={{
-                              fontWeight: 700,
-                              color: "var(--color-text-primary)",
-                            }}
-                            {...props}
-                          />
-                        ),
-                        blockquote: ({ node, ...props }) => (
-                          <blockquote
-                            style={{
-                              borderLeft: "3px solid var(--color-brand-500)",
-                              paddingLeft: "12px",
-                              color: "var(--color-text-muted)",
-                              fontStyle: "italic",
-                              margin: "12px 0",
-                            }}
-                            {...props}
-                          />
-                        ),
-                      }}
-                    >
-                      {textoAnalise}
-                    </ReactMarkdown>
+                    <div style={{ wordBreak: "break-word" }}>
+                      <ReactMarkdown
+                        components={{
+                          h1: ({ children }) => (
+                            <h1
+                              style={{
+                                fontSize: "1.35rem",
+                                fontWeight: 800,
+                                color: "var(--color-brand-400, #38bdf8)",
+                                marginTop: "1.5rem",
+                                marginBottom: "0.75rem",
+                                borderBottom: "1px solid var(--color-border)",
+                                paddingBottom: "0.5rem",
+                              }}
+                            >
+                              {children}
+                            </h1>
+                          ),
+                          h2: ({ children }) => (
+                            <h2
+                              style={{
+                                fontSize: "1.15rem",
+                                fontWeight: 700,
+                                color: "var(--color-brand-300, #7dd3fc)",
+                                marginTop: "1.4rem",
+                                marginBottom: "0.6rem",
+                              }}
+                            >
+                              {children}
+                            </h2>
+                          ),
+                          h3: ({ children }) => (
+                            <h3
+                              style={{
+                                fontSize: "1rem",
+                                fontWeight: 700,
+                                color: "var(--color-text-primary, #f8fafc)",
+                                marginTop: "1.1rem",
+                                marginBottom: "0.5rem",
+                              }}
+                            >
+                              {children}
+                            </h3>
+                          ),
+                          p: ({ children }) => (
+                            <p
+                              style={{
+                                marginBottom: "0.9rem",
+                                color: "var(--color-text-secondary, #cbd5e1)",
+                                lineHeight: "1.75",
+                              }}
+                            >
+                              {children}
+                            </p>
+                          ),
+                          ul: ({ children }) => (
+                            <ul
+                              style={{
+                                paddingLeft: "1.5rem",
+                                marginBottom: "0.9rem",
+                                listStyleType: "disc",
+                                color: "var(--color-text-secondary, #cbd5e1)",
+                              }}
+                            >
+                              {children}
+                            </ul>
+                          ),
+                          ol: ({ children }) => (
+                            <ol
+                              style={{
+                                paddingLeft: "1.5rem",
+                                marginBottom: "0.9rem",
+                                listStyleType: "decimal",
+                                color: "var(--color-text-secondary, #cbd5e1)",
+                              }}
+                            >
+                              {children}
+                            </ol>
+                          ),
+                          li: ({ children }) => (
+                            <li
+                              style={{
+                                marginBottom: "0.35rem",
+                                color: "var(--color-text-secondary, #cbd5e1)",
+                              }}
+                            >
+                              {children}
+                            </li>
+                          ),
+                          strong: ({ children }) => (
+                            <strong
+                              style={{
+                                fontWeight: 700,
+                                color: "#ffffff",
+                              }}
+                            >
+                              {children}
+                            </strong>
+                          ),
+                          hr: () => (
+                            <hr
+                              style={{
+                                borderColor: "var(--color-border)",
+                                margin: "1.5rem 0",
+                              }}
+                            />
+                          ),
+                          blockquote: ({ children }) => (
+                            <blockquote
+                              style={{
+                                borderLeft: "4px solid var(--color-brand-500)",
+                                paddingLeft: "14px",
+                                color: "var(--color-text-muted, #94a3b8)",
+                                fontStyle: "italic",
+                                margin: "14px 0",
+                                background: "rgba(14, 165, 233, 0.05)",
+                                padding: "10px 14px",
+                                borderRadius: "0 8px 8px 0",
+                              }}
+                            >
+                              {children}
+                            </blockquote>
+                          ),
+                        }}
+                      >
+                        {textoAnalise}
+                      </ReactMarkdown>
+                    </div>
                   );
                 })()}
               </div>
