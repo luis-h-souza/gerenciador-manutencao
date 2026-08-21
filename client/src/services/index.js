@@ -44,6 +44,7 @@ export const chamadosService = {
   atualizar:    (id, data) => api.put(`/chamados/${id}`, data),
   remover:      (id)     => api.delete(`/chamados/${id}`),
   resumoMensal: (params) => api.get('/chamados/resumo', { params }),
+  analiseIa:    (params) => api.get('/chamados/analise-ia', { params }),
 };
 
 // ─── Fornecedores ─────────────────────────────────────────────────────────

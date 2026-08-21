@@ -1,5 +1,6 @@
-const { resSucesso, resErroClient, resErroPermissao, resNaoEncontrado, resErroValidacao } = require('../utils/retornoHttp');
+const { resSucesso, resErroClient, resErroPermissao, resNaoEncontrado, resErroValidacao, resErroServer } = require('../utils/retornoHttp');
 const chamadoService = require('../services/chamado.service');
+const chamadoIaService = require('../services/chamado.ia.service');
 
 const listar = async (req, res, next) => {
   try {
@@ -83,4 +84,17 @@ const resumoMensal = async (req, res, next) => {
   }
 };
 
-module.exports = { listar, buscarPorId, criar, atualizar, remover, resumoMensal };
+const analisarComIA = async (req, res, next) => {
+  try {
+    const { regiao, unidade, ano, mes } = req.query;
+    const resultado = await chamadoIaService.gerarAnaliseGastosIA({ regiao, unidade, ano, mes });
+    resSucesso(res, 'Análise gerada com sucesso via Gemini', 200, resultado);
+  } catch (err) {
+    if (err.status) {
+      return res.status(err.status).json({ sucesso: false, mensagem: err.message || err.error });
+    }
+    next(err);
+  }
+};
+
+module.exports = { listar, buscarPorId, criar, atualizar, remover, resumoMensal, analisarComIA };

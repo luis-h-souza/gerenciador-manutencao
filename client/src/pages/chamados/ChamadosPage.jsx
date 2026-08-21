@@ -30,8 +30,10 @@ import {
   AlertTriangle,
   CircleHelp,
   Trophy,
+  Sparkles,
 } from "lucide-react";
 import InfoTooltip from "../../components/feedback/InfoTooltip";
+import AnaliseIaModal from "./AnaliseIaModal";
 import {
   ResponsiveContainer,
   BarChart,
@@ -1708,6 +1710,7 @@ export default function ChamadosPage() {
 
   const qc = useQueryClient();
   const [modal, setModal] = useState(null);
+  const [modalIa, setModalIa] = useState(false);
   const [busca, setBusca] = useState("");
   const [filtros, setFiltros] = useState({ status: "", segmento: "" });
   const [periodo, setPeriodo] = useState(() => {
@@ -2068,6 +2071,31 @@ export default function ChamadosPage() {
               }
               placeholder="Ano"
             />
+
+            {["ADMINISTRADOR", "DIRETOR"].includes(usuario?.role) && (
+              <button
+                type="button"
+                onClick={() => setModalIa(true)}
+                className="btn"
+                style={{
+                  background: "linear-gradient(135deg, #6366f1 0%, #a855f7 100%)",
+                  color: "#ffffff",
+                  border: "none",
+                  fontWeight: 600,
+                  fontSize: "0.8125rem",
+                  padding: "8px 14px",
+                  borderRadius: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  boxShadow: "0 4px 12px rgba(99, 102, 241, 0.25)",
+                  cursor: "pointer",
+                }}
+              >
+                <Sparkles size={16} />
+                <span>Analisar com IA</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -3270,6 +3298,17 @@ export default function ChamadosPage() {
         <ChamadoModal
           chamado={modal === "novo" ? null : modal}
           onClose={() => setModal(null)}
+        />
+      )}
+
+      {/* Modal de Análise com Inteligência Artificial (Gemini) */}
+      {modalIa && (
+        <AnaliseIaModal
+          onClose={() => setModalIa(false)}
+          mesInicial={parseInt(mes)}
+          anoInicial={parseInt(ano)}
+          regiaoInicial={regionalSelecionada}
+          lojaInicial={lojaSelecionada}
         />
       )}
     </div>

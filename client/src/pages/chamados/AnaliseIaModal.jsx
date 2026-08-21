@@ -1,0 +1,795 @@
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  X,
+  Bot,
+  Sparkles,
+  Loader2,
+  Calendar,
+  Layers,
+  MapPin,
+  Store,
+  RefreshCw,
+  Copy,
+  Check,
+  TrendingDown,
+  AlertTriangle,
+  DollarSign,
+} from "lucide-react";
+import toast from "react-hot-toast";
+import ReactMarkdown from "react-markdown";
+import { chamadosService, lojasService } from "../../services";
+
+const MESES = [
+  "Janeiro",
+  "Fevereiro",
+  "Março",
+  "Abril",
+  "Maio",
+  "Junho",
+  "Julho",
+  "Agosto",
+  "Setembro",
+  "Outubro",
+  "Novembro",
+  "Dezembro",
+];
+
+const fmt = (v) =>
+  new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(v || 0);
+
+export default function AnaliseIaModal({
+  onClose,
+  mesInicial,
+  anoInicial,
+  regiaoInicial,
+  lojaInicial,
+}) {
+  const [tipoEscopo, setTipoEscopo] = useState(() => {
+    if (lojaInicial) return "loja";
+    if (regiaoInicial) return "regional";
+    return "geral";
+  });
+
+  const [mes, setMes] = useState(() => mesInicial || new Date().getMonth() + 1);
+  const [ano, setAno] = useState(() => anoInicial || new Date().getFullYear());
+  const [regiao, setRegiao] = useState(() => regiaoInicial || "");
+  const [unidade, setUnidade] = useState(() => lojaInicial?.nome || "");
+
+  const [gerando, setGerando] = useState(false);
+  const [resultado, setResultado] = useState(null);
+  const [copiado, setCopiado] = useState(false);
+
+  // Busca lista de regiões disponíveis
+  const { data: regioesData } = useQuery({
+    queryKey: ["lojas-regioes-ia"],
+    queryFn: () => lojasService.listarRegioes().then((r) => r.data?.data || []),
+  });
+
+  // Busca lista de lojas disponíveis
+  const { data: lojasData } = useQuery({
+    queryKey: ["lojas-todas-ia"],
+    queryFn: () =>
+      lojasService
+        .listar({ limit: 1000, ativo: true })
+        .then((r) => r.data?.data || r.data || []),
+  });
+
+  const lojasFiltradas = (lojasData || []).filter((l) =>
+    regiao ? l.regiao === regiao : true,
+  );
+
+  const handleGerarAnalise = async () => {
+    setGerando(true);
+    setResultado(null);
+    setCopiado(false);
+
+    try {
+      const params = {
+        mes: parseInt(mes),
+        ano: parseInt(ano),
+      };
+
+      if (tipoEscopo === "regional" && regiao) {
+        params.regiao = regiao;
+      } else if (tipoEscopo === "loja") {
+        if (regiao) params.regiao = regiao;
+        if (unidade) params.unidade = unidade;
+      }
+
+      const res = await chamadosService.analiseIa(params);
+      const dadosRetorno = res.data?.dados || res.data?.data || res.data;
+      setResultado(dadosRetorno);
+      toast.success("Análise gerada com sucesso pelo Gemini!");
+    } catch (err) {
+      const msg =
+        err.response?.data?.mensagem ||
+        err.response?.data?.message ||
+        "Erro ao gerar análise com IA.";
+      toast.error(msg);
+    } finally {
+      setGerando(false);
+    }
+  };
+
+  const handleCopiarTexto = () => {
+    if (!resultado?.analise) return;
+    navigator.clipboard.writeText(resultado.analise);
+    setCopiado(true);
+    toast.success("Análise copiada para a área de transferência!");
+    setTimeout(() => setCopiado(false), 3000);
+  };
+
+  return (
+    <div
+      className="modal-overlay"
+      style={{
+        zIndex: 9999,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "16px",
+      }}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div
+        className="modal-content animate-fade-in flex flex-col"
+        style={{
+          width: "100%",
+          maxWidth: "880px",
+          maxHeight: "90vh",
+          borderRadius: "16px",
+          overflow: "hidden",
+          background: "var(--color-surface-800, #1e293b)",
+          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
+          border: "1px solid var(--color-border)",
+        }}
+      >
+        {/* Topo do Modal */}
+        <div
+          className="flex items-center justify-between p-5 border-b"
+          style={{
+            borderColor: "var(--color-border)",
+            background:
+              "linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.05) 100%)",
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <div
+              className="flex items-center justify-center w-10 h-10 rounded-xl"
+              style={{
+                background: "linear-gradient(135deg, #6366f1 0%, #a855f7 100%)",
+                color: "#fff",
+                boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)",
+              }}
+            >
+              <Sparkles size={20} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2
+                  style={{
+                    fontSize: "1.125rem",
+                    fontWeight: 700,
+                    color: "var(--color-text-primary)",
+                  }}
+                >
+                  Análise Financeira com IA
+                </h2>
+                <span
+                  style={{
+                    fontSize: "0.6875rem",
+                    fontWeight: 700,
+                    padding: "2px 8px",
+                    borderRadius: "9999px",
+                    background: "rgba(99, 102, 241, 0.2)",
+                    color: "#818cf8",
+                    border: "1px solid rgba(99, 102, 241, 0.3)",
+                  }}
+                >
+                  Gemini Flash
+                </span>
+              </div>
+              <p
+                style={{
+                  fontSize: "0.75rem",
+                  color: "var(--color-text-muted)",
+                  marginTop: "2px",
+                }}
+              >
+                Diagnóstico de custos, anomalias, mau uso e recomendações
+                estratégicas
+              </p>
+            </div>
+          </div>
+
+          <button
+            className="btn btn-ghost btn-sm"
+            onClick={onClose}
+            style={{
+              padding: "6px",
+              borderRadius: "8px",
+              color: "var(--color-text-muted)",
+            }}
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Barra de Filtros e Configuração do Escopo */}
+        <div
+          className="p-4 border-b flex flex-col gap-3"
+          style={{
+            borderColor: "var(--color-border)",
+            background: "var(--color-surface-700, #0f172a)",
+          }}
+        >
+          <div className="flex items-center gap-4 flex-wrap">
+            {/* Tipo de Escopo */}
+            <div className="flex items-center gap-1 p-1 rounded-lg bg-slate-900/40 border border-slate-700/50">
+              <button
+                type="button"
+                onClick={() => setTipoEscopo("geral")}
+                className={`btn btn-sm ${
+                  tipoEscopo === "geral" ? "btn-primary" : "btn-ghost"
+                }`}
+                style={{ fontSize: "0.75rem", padding: "4px 10px" }}
+              >
+                <Layers size={14} className="mr-1 inline" /> Geral (Rede)
+              </button>
+              <button
+                type="button"
+                onClick={() => setTipoEscopo("regional")}
+                className={`btn btn-sm ${
+                  tipoEscopo === "regional" ? "btn-primary" : "btn-ghost"
+                }`}
+                style={{ fontSize: "0.75rem", padding: "4px 10px" }}
+              >
+                <MapPin size={14} className="mr-1 inline" /> Por Regional
+              </button>
+              <button
+                type="button"
+                onClick={() => setTipoEscopo("loja")}
+                className={`btn btn-sm ${
+                  tipoEscopo === "loja" ? "btn-primary" : "btn-ghost"
+                }`}
+                style={{ fontSize: "0.75rem", padding: "4px 10px" }}
+              >
+                <Store size={14} className="mr-1 inline" /> Por Loja
+              </button>
+            </div>
+
+            {/* Seletores de Região / Loja condicionais */}
+            {(tipoEscopo === "regional" || tipoEscopo === "loja") && (
+              <div className="flex items-center gap-2">
+                <select
+                  className="select"
+                  style={{ minWidth: "140px", fontSize: "0.8125rem" }}
+                  value={regiao}
+                  onChange={(e) => {
+                    setRegiao(e.target.value);
+                    if (tipoEscopo === "loja") setUnidade("");
+                  }}
+                >
+                  <option value="">Todas as Regionais</option>
+                  {(regioesData || []).map((r) => (
+                    <option key={r} value={r}>
+                      {r}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {tipoEscopo === "loja" && (
+              <div className="flex items-center gap-2">
+                <select
+                  className="select"
+                  style={{ minWidth: "160px", fontSize: "0.8125rem" }}
+                  value={unidade}
+                  onChange={(e) => setUnidade(e.target.value)}
+                >
+                  <option value="">Selecione uma loja...</option>
+                  {lojasFiltradas.map((l) => (
+                    <option key={l.id} value={l.nome}>
+                      {l.numero ? `${l.numero} - ${l.nome}` : l.nome}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Período */}
+            <div className="flex items-center gap-2 ml-auto">
+              <Calendar size={15} style={{ color: "var(--color-text-muted)" }} />
+              <select
+                className="select"
+                style={{ minWidth: "120px", fontSize: "0.8125rem" }}
+                value={mes}
+                onChange={(e) => setMes(parseInt(e.target.value))}
+              >
+                {MESES.map((m, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="number"
+                className="input"
+                style={{ width: "80px", fontSize: "0.8125rem" }}
+                value={ano}
+                onChange={(e) => setAno(parseInt(e.target.value))}
+                placeholder="Ano"
+              />
+            </div>
+
+            {/* Botão Gerar */}
+            <button
+              onClick={handleGerarAnalise}
+              disabled={gerando || (tipoEscopo === "loja" && !unidade)}
+              className="btn btn-primary"
+              style={{
+                background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+                border: "none",
+                fontWeight: 600,
+                padding: "8px 16px",
+                boxShadow: "0 4px 12px rgba(99, 102, 241, 0.25)",
+              }}
+            >
+              {gerando ? (
+                <>
+                  <Loader2 size={16} className="animate-spin mr-1" /> Analisando...
+                </>
+              ) : (
+                <>
+                  <Sparkles size={16} className="mr-1" /> Gerar Análise
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Corpo com o Resultado da Análise */}
+        <div
+          className="p-6 overflow-y-auto flex-1"
+          style={{
+            minHeight: "360px",
+            background: "var(--color-surface-800, #1e293b)",
+          }}
+        >
+          {gerando && (
+            <div
+              className="flex flex-col items-center justify-center p-12 text-center"
+              style={{ minHeight: "300px" }}
+            >
+              <div
+                className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 animate-pulse"
+                style={{
+                  background:
+                    "linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%)",
+                  border: "1px solid rgba(99, 102, 241, 0.4)",
+                  color: "#818cf8",
+                }}
+              >
+                <Bot size={32} />
+              </div>
+              <h3
+                style={{
+                  fontSize: "1rem",
+                  fontWeight: 700,
+                  color: "var(--color-text-primary)",
+                  marginBottom: "6px",
+                }}
+              >
+                O Gemini está analisando seus dados de manutenção...
+              </h3>
+              <p
+                style={{
+                  fontSize: "0.8125rem",
+                  color: "var(--color-text-muted)",
+                  maxWidth: "400px",
+                }}
+              >
+                Cruzando métricas de segmentos, desvios de orçamento, histórico
+                de mau uso e padrões de fornecedores para formular recomendações.
+              </p>
+            </div>
+          )}
+
+          {!gerando && !resultado && (
+            <div
+              className="flex flex-col items-center justify-center p-12 text-center"
+              style={{ minHeight: "300px" }}
+            >
+              <div
+                className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
+                style={{
+                  background: "var(--color-surface-700, #334155)",
+                  color: "var(--color-text-muted)",
+                }}
+              >
+                <Sparkles size={28} />
+              </div>
+              <h3
+                style={{
+                  fontSize: "1rem",
+                  fontWeight: 600,
+                  color: "var(--color-text-primary)",
+                  marginBottom: "4px",
+                }}
+              >
+                Pronto para gerar insights
+              </h3>
+              <p
+                style={{
+                  fontSize: "0.8125rem",
+                  color: "var(--color-text-muted)",
+                  maxWidth: "420px",
+                }}
+              >
+                Escolha o escopo (Geral, Regional ou Loja) e o período desejado e
+                clique em <strong>"Gerar Análise"</strong> para receber um
+                diagnóstico completo elaborado por Inteligência Artificial.
+              </p>
+            </div>
+          )}
+
+          {!gerando && resultado && (
+            <div className="flex flex-col gap-6 animate-fade-in">
+              {/* Mini Cards com resumo rápido dos dados */}
+              {resultado.dados && (
+                <div
+                  className="grid gap-3"
+                  style={{
+                    gridTemplateColumns:
+                      "repeat(auto-fit, minmax(180px, 1fr))",
+                  }}
+                >
+                  <div
+                    className="card"
+                    style={{
+                      padding: "12px 16px",
+                      borderLeft: "3px solid var(--color-brand-500)",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "0.6875rem",
+                        fontWeight: 600,
+                        color: "var(--color-text-muted)",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Total Gasto
+                    </span>
+                    <div
+                      style={{
+                        fontSize: "1.125rem",
+                        fontWeight: 800,
+                        color: "var(--color-text-primary)",
+                        marginTop: "2px",
+                      }}
+                    >
+                      {fmt(resultado.dados.totalGeral?.valor)}
+                    </div>
+                    <span
+                      style={{
+                        fontSize: "0.6875rem",
+                        color: "var(--color-text-muted)",
+                      }}
+                    >
+                      {resultado.dados.totalGeral?.quantidade} chamados
+                    </span>
+                  </div>
+
+                  <div
+                    className="card"
+                    style={{
+                      padding: "12px 16px",
+                      borderLeft: "3px solid var(--color-danger)",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "0.6875rem",
+                        fontWeight: 600,
+                        color: "var(--color-danger-600)",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Mau Uso
+                    </span>
+                    <div
+                      style={{
+                        fontSize: "1.125rem",
+                        fontWeight: 800,
+                        color: "var(--color-danger-700)",
+                        marginTop: "2px",
+                      }}
+                    >
+                      {fmt(resultado.dados.mauUso?.valor)}
+                    </div>
+                    <span
+                      style={{
+                        fontSize: "0.6875rem",
+                        color: "var(--color-text-muted)",
+                      }}
+                    >
+                      {resultado.dados.mauUso?.quantidade} registros (
+                      {resultado.dados.mauUso?.percentualGasto}%)
+                    </span>
+                  </div>
+
+                  {resultado.dados.meta ? (
+                    <div
+                      className="card"
+                      style={{
+                        padding: "12px 16px",
+                        borderLeft: `3px solid ${
+                          Number(resultado.dados.meta.percentualUtilizado) > 100
+                            ? "var(--color-danger)"
+                            : "var(--color-success)"
+                        }`,
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: "0.6875rem",
+                          fontWeight: 600,
+                          color: "var(--color-text-muted)",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        Uso da Meta
+                      </span>
+                      <div
+                        style={{
+                          fontSize: "1.125rem",
+                          fontWeight: 800,
+                          color: "var(--color-text-primary)",
+                          marginTop: "2px",
+                        }}
+                      >
+                        {resultado.dados.meta.percentualUtilizado}%
+                      </div>
+                      <span
+                        style={{
+                          fontSize: "0.6875rem",
+                          color: "var(--color-text-muted)",
+                        }}
+                      >
+                        Meta: {fmt(resultado.dados.meta.valorMeta)}
+                      </span>
+                    </div>
+                  ) : (
+                    <div
+                      className="card"
+                      style={{
+                        padding: "12px 16px",
+                        borderLeft: "3px solid var(--color-border)",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: "0.6875rem",
+                          fontWeight: 600,
+                          color: "var(--color-text-muted)",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        Meta Orçamentária
+                      </span>
+                      <div
+                        style={{
+                          fontSize: "0.875rem",
+                          fontWeight: 600,
+                          color: "var(--color-text-muted)",
+                          marginTop: "4px",
+                        }}
+                      >
+                        Sem meta cadastrada
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Barra de Ações do Relatório */}
+              <div
+                className="flex items-center justify-between p-3 rounded-lg border"
+                style={{
+                  borderColor: "var(--color-border)",
+                  background: "var(--color-surface-700, #0f172a)",
+                }}
+              >
+                <div className="flex items-center gap-2">
+                  <span
+                    style={{
+                      fontSize: "0.75rem",
+                      color: "var(--color-text-muted)",
+                    }}
+                  >
+                    Gerado em:{" "}
+                    <strong>
+                      {resultado.geradoEm
+                        ? new Date(resultado.geradoEm).toLocaleString("pt-BR")
+                        : "Agora"}
+                    </strong>
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleCopiarTexto}
+                    className="btn btn-ghost btn-sm"
+                    style={{ fontSize: "0.75rem" }}
+                  >
+                    {copiado ? (
+                      <>
+                        <Check size={14} className="mr-1 text-green-500" /> Copiado!
+                      </>
+                    ) : (
+                      <>
+                        <Copy size={14} className="mr-1" /> Copiar Análise
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    onClick={handleGerarAnalise}
+                    disabled={gerando}
+                    className="btn btn-ghost btn-sm"
+                    style={{ fontSize: "0.75rem" }}
+                  >
+                    <RefreshCw size={14} className="mr-1" /> Recalcular
+                  </button>
+                </div>
+              </div>
+
+              {/* Texto Markdown Renderizado */}
+              <div
+                className="prose prose-invert max-w-none p-5 rounded-xl border"
+                style={{
+                  borderColor: "var(--color-border)",
+                  background: "var(--color-surface-900, #090d16)",
+                  lineHeight: "1.7",
+                  fontSize: "0.875rem",
+                  color: "var(--color-text-primary, #e2e8f0)",
+                }}
+              >
+                <ReactMarkdown
+                  components={{
+                    h1: ({ node, ...props }) => (
+                      <h1
+                        style={{
+                          fontSize: "1.25rem",
+                          fontWeight: 800,
+                          color: "#818cf8",
+                          marginTop: "1.2rem",
+                          marginBottom: "0.6rem",
+                          borderBottom: "1px solid var(--color-border)",
+                          paddingBottom: "0.4rem",
+                        }}
+                        {...props}
+                      />
+                    ),
+                    h2: ({ node, ...props }) => (
+                      <h2
+                        style={{
+                          fontSize: "1.1rem",
+                          fontWeight: 700,
+                          color: "#c084fc",
+                          marginTop: "1.2rem",
+                          marginBottom: "0.5rem",
+                        }}
+                        {...props}
+                      />
+                    ),
+                    h3: ({ node, ...props }) => (
+                      <h3
+                        style={{
+                          fontSize: "0.95rem",
+                          fontWeight: 700,
+                          color: "var(--color-text-primary)",
+                          marginTop: "1rem",
+                          marginBottom: "0.4rem",
+                        }}
+                        {...props}
+                      />
+                    ),
+                    p: ({ node, ...props }) => (
+                      <p
+                        style={{
+                          marginBottom: "0.8rem",
+                          color: "var(--color-text-secondary, #cbd5e1)",
+                        }}
+                        {...props}
+                      />
+                    ),
+                    ul: ({ node, ...props }) => (
+                      <ul
+                        style={{
+                          paddingLeft: "1.25rem",
+                          marginBottom: "0.8rem",
+                          listStyleType: "disc",
+                        }}
+                        {...props}
+                      />
+                    ),
+                    ol: ({ node, ...props }) => (
+                      <ol
+                        style={{
+                          paddingLeft: "1.25rem",
+                          marginBottom: "0.8rem",
+                          listStyleType: "decimal",
+                        }}
+                        {...props}
+                      />
+                    ),
+                    li: ({ node, ...props }) => (
+                      <li
+                        style={{
+                          marginBottom: "0.3rem",
+                          color: "var(--color-text-secondary, #cbd5e1)",
+                        }}
+                        {...props}
+                      />
+                    ),
+                    strong: ({ node, ...props }) => (
+                      <strong
+                        style={{
+                          fontWeight: 700,
+                          color: "var(--color-text-primary, #ffffff)",
+                        }}
+                        {...props}
+                      />
+                    ),
+                    blockquote: ({ node, ...props }) => (
+                      <blockquote
+                        style={{
+                          borderLeft: "3px solid #6366f1",
+                          paddingLeft: "12px",
+                          color: "var(--color-text-muted)",
+                          fontStyle: "italic",
+                          margin: "12px 0",
+                        }}
+                        {...props}
+                      />
+                    ),
+                  }}
+                >
+                  {resultado.analise}
+                </ReactMarkdown>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Rodapé */}
+        <div
+          className="p-4 border-t flex items-center justify-between"
+          style={{
+            borderColor: "var(--color-border)",
+            background: "var(--color-surface-700, #0f172a)",
+          }}
+        >
+          <span
+            style={{
+              fontSize: "0.6875rem",
+              color: "var(--color-text-muted)",
+            }}
+          >
+            Insights gerados via Inteligência Artificial Google Gemini para apoio à decisão.
+          </span>
+          <button className="btn btn-ghost btn-sm" onClick={onClose}>
+            Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
