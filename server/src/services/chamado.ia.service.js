@@ -296,17 +296,16 @@ const gerarAnaliseGastosIA = async ({ regiao, unidade, ano, mes }) => {
   // 3. Monta o prompt
   const prompt = construirPromptAnalise(dados);
 
-  // 4. Chamada resiliente à API do Google Generative Language
-  // 4. Chamada resiliente à API do Google Generative Language
-  // Modelos de texto padrão ordenados por prioridade
+  // 4. Chamada de alta performance à API do Google Generative Language
+  // Modelos modernos suportados pela conta ordenados por velocidade e qualidade
   const modelosPadrao = [
     ...(process.env.GEMINI_MODEL ? [process.env.GEMINI_MODEL] : []),
-    'gemini-2.0-flash',
-    'gemini-1.5-flash',
-    'gemini-1.5-flash-latest',
-    'gemini-1.5-pro',
-    'gemini-1.5-flash-8b',
-    'gemini-pro',
+    'gemini-3.6-flash',
+    'gemini-3.7-flash',
+    'gemini-flash-latest',
+    'gemini-3.5-flash',
+    'gemini-3.1-pro-preview',
+    'gemma-4-26b-a4b-it',
   ];
 
   // 4.1 Tenta descobrir dinamicamente quais modelos suportam generateContent de TEXTO para essa chave
@@ -320,19 +319,19 @@ const gerarAnaliseGastosIA = async ({ regiao, unidade, ano, mes }) => {
           .filter((m) => {
             const nome = (m.name || '').toLowerCase();
             const suportaGenerate = m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent');
-            // Ignora modelos exclusivos de áudio/TTS, imagem ou embedding
-            const isAudioOuImagem = nome.includes('-tts') || nome.includes('-audio') || nome.includes('imagen') || nome.includes('embedding') || nome.includes('aqa');
-            return suportaGenerate && !isAudioOuImagem;
+            // Ignora modelos de imagem, áudio, embedding ou não conversacionais
+            const isNaoTexto = nome.includes('-tts') || nome.includes('-audio') || nome.includes('image') || nome.includes('imagen') || nome.includes('embedding') || nome.includes('aqa') || nome.includes('clip') || nome.includes('lyria') || nome.includes('robotics');
+            return suportaGenerate && !isNaoTexto;
           })
           .map((m) => m.name.replace(/^models\//, ''));
-        logger.info(`Modelos de texto descobertos: ${modelosDisponiveis.join(', ')}`);
+        logger.info(`Modelos de texto ativos descobertos: ${modelosDisponiveis.join(', ')}`);
       }
     }
   } catch (err) {
     logger.warn('Não foi possível listar modelos dinamicamente, usando lista padrão:', err.message);
   }
 
-  // Prioriza modelos flash/pro padrão primeiro, depois os descobertos
+  // Prioriza modelos flash modernos descobertos ou padrão
   const listaTentativas = [
     ...modelosPadrao,
     ...modelosDisponiveis,
