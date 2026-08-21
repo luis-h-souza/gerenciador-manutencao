@@ -297,17 +297,16 @@ const gerarAnaliseGastosIA = async ({ regiao, unidade, ano, mes }) => {
   const prompt = construirPromptAnalise(dados);
 
   // 4. Chamada de alta performance à API do Google Generative Language
-  // Prioriza modelos leves e sem fila de espera que respondem em 1-2s
+  // Prioriza modelos flash-lite de altíssima velocidade e disponibilidade
   const modelosPadrao = [
     ...(process.env.GEMINI_MODEL ? [process.env.GEMINI_MODEL] : []),
-    'gemma-4-26b-a4b-it',
-    'gemini-2.5-flash-lite',
-    'gemini-flash-lite-latest',
     'gemini-3.5-flash-lite',
-    'gemini-3.7-flash',
-    'gemini-flash-latest',
+    'gemini-3.1-flash-lite',
+    'gemini-3-flash-preview',
+    'gemma-4-26b-a4b-it',
     'gemini-3.5-flash',
     'gemini-3.6-flash',
+    'gemini-3.7-flash',
   ];
 
   // 4.1 Tenta descobrir dinamicamente quais modelos suportam generateContent de TEXTO para essa chave
@@ -350,7 +349,7 @@ const gerarAnaliseGastosIA = async ({ regiao, unidade, ano, mes }) => {
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        signal: AbortSignal.timeout(6000), // Se demorar mais de 6s, pula imediatamente para o próximo
+        signal: AbortSignal.timeout(25000), // 25s para geração completa de texto
         body: JSON.stringify({
           contents: [
             {
