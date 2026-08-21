@@ -296,53 +296,109 @@ const gerarAnaliseGastosIA = async ({ regiao, unidade, ano, mes }) => {
   // 3. Monta o prompt
   const prompt = construirPromptAnalise(dados);
 
-  // 4. Inicializa o cliente do Gemini e tenta modelos com fallback automático
-  const genAI = new GoogleGenerativeAI(apiKey);
-
-  const modelosParaTentar = [
+  // 4. Chamada resiliente à API do Google Generative Language
+  // Suporta tanto modelos v1beta quanto v1 com fallback automático
+  const modelosPadrao = [
     ...(process.env.GEMINI_MODEL ? [process.env.GEMINI_MODEL] : []),
     'gemini-2.0-flash',
-    'gemini-1.5-flash-latest',
     'gemini-1.5-flash',
-    'gemini-2.5-flash',
+    'gemini-1.5-flash-latest',
+    'gemini-1.5-pro',
     'gemini-1.5-flash-8b',
-    'gemini-1.5-pro-latest',
     'gemini-pro',
   ];
 
-  // Remove duplicatas mantendo a ordem
-  const modelosUnicos = [...new Set(modelosParaTentar)];
+  // 4.1 Tenta descobrir dinamicamente quais modelos suportam generateContent para essa chave
+  let modelosDisponiveis = [];
+  try {
+    const resLista = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+    if (resLista.ok) {
+      const dataLista = await resLista.json();
+      if (dataLista.models && Array.isArray(dataLista.models)) {
+        modelosDisponiveis = dataLista.models
+          .filter((m) => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'))
+          .map((m) => m.name.replace(/^models\//, ''));
+        logger.info(`Modelos descobertos para esta chave: ${modelosDisponiveis.join(', ')}`);
+      }
+    }
+  } catch (err) {
+    logger.warn('Não foi possível listar modelos dinamicamente, usando lista padrão:', err.message);
+  }
+
+  // Combina modelos descobertos + lista padrão sem duplicatas
+  const listaTentativas = [
+    ...modelosDisponiveis,
+    ...modelosPadrao,
+  ].filter((v, i, a) => a.indexOf(v) === i && Boolean(v));
 
   let ultimoErro = null;
 
-  for (const modeloNome of modelosUnicos) {
-    try {
-      logger.info(`Tentando gerar análise financeira com modelo Gemini: ${modeloNome}`);
-      const model = genAI.getGenerativeModel({ model: modeloNome });
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const textoAnalise = response.text();
+  for (const modeloNome of listaTentativas) {
+    // Tenta primeiro via v1beta e depois via v1
+    for (const versaoApi of ['v1beta', 'v1']) {
+      const url = `https://generativelanguage.googleapis.com/${versaoApi}/models/${modeloNome}:generateContent?key=${apiKey}`;
 
-      logger.info(`Análise gerada com sucesso usando o modelo: ${modeloNome}`);
+      try {
+        logger.info(`Chamando Gemini [${versaoApi}/${modeloNome}]...`);
 
-      return {
-        analise: textoAnalise,
-        modeloUsado: modeloNome,
-        dados,
-        geradoEm: new Date().toISOString(),
-      };
-    } catch (err) {
-      ultimoErro = err;
-      logger.warn(`Modelo ${modeloNome} falhou: ${err.message}. Tentando próximo modelo...`);
-      // Se for erro diferente de 404/not found ou se for o último, o loop continuará até tentar todos
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [{ text: prompt }],
+              },
+            ],
+            generationConfig: {
+              temperature: 0.4,
+              maxOutputTokens: 2048,
+            },
+          }),
+        });
+
+        const resData = await response.json();
+
+        if (response.ok) {
+          const textoGerado = resData.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (textoGerado) {
+            logger.info(`Sucesso com [${versaoApi}/${modeloNome}]!`);
+            return {
+              analise: textoGerado,
+              modeloUsado: `${modeloNome} (${versaoApi})`,
+              dados,
+              geradoEm: new Date().toISOString(),
+            };
+          }
+        }
+
+        // Se a API retornou erro específico
+        if (resData.error) {
+          ultimoErro = resData.error;
+          logger.warn(`Erro retornado por [${versaoApi}/${modeloNome}]: ${resData.error.message || JSON.stringify(resData.error)}`);
+
+          // Se for erro de chave inválida ou API não habilitada, interrompe para alertar o usuário diretamente
+          if (resData.error.status === 'INVALID_ARGUMENT' || resData.error.status === 'PERMISSION_DENIED') {
+            throw {
+              status: 400,
+              error: 'Chave Gemini Inválida',
+              message: resData.error.message || 'Chave de API do Gemini inválida ou sem permissão para a Generative Language API.',
+            };
+          }
+        }
+      } catch (err) {
+        if (err.status) throw err;
+        ultimoErro = err;
+        logger.warn(`Falha na requisição para [${versaoApi}/${modeloNome}]: ${err.message}`);
+      }
     }
   }
 
-  logger.error('Todos os modelos do Gemini falharam:', ultimoErro);
+  logger.error('Falha em todos os modelos do Gemini:', ultimoErro);
   throw {
     status: 502,
-    error: 'Erro na API de IA',
-    message: ultimoErro?.message || 'Falha ao se comunicar com a API do Gemini. Verifique a chave e cota.',
+    error: 'Erro na API do Gemini',
+    message: ultimoErro?.message || 'Não foi possível obter resposta dos modelos do Gemini. Verifique a chave de API no Google AI Studio.',
   };
 };
 
