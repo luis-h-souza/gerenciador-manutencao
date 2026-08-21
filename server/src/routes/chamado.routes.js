@@ -81,7 +81,7 @@ router.use(autenticar);
 
 router.get('/', autorizar(...LEITURA_FINANCEIRA), ctrl.listar);
 router.get('/resumo', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR), ctrl.resumoMensal);
-router.get('/analise-ia', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR), ctrl.analisarComIA);
+router.get('/analise-ia', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR), ctrl.analisarComIA);
 router.get('/:id', autorizar(...LEITURA_FINANCEIRA), ctrl.buscarPorId);
 
 router.post('/', createRateLimiter, autorizar(...GESTORES), [
