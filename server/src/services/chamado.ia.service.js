@@ -297,15 +297,18 @@ const gerarAnaliseGastosIA = async ({ regiao, unidade, ano, mes }) => {
   const prompt = construirPromptAnalise(dados);
 
   // 4. Chamada de alta performance à API do Google Generative Language
-  // Modelos modernos suportados pela conta ordenados por velocidade e qualidade
+  // Prioriza modelos flash ultra estáveis e rápidos
   const modelosPadrao = [
     ...(process.env.GEMINI_MODEL ? [process.env.GEMINI_MODEL] : []),
-    'gemini-3.6-flash',
-    'gemini-3.7-flash',
     'gemini-flash-latest',
+    'gemini-3.7-flash',
+    'gemini-3.5-flash-lite',
+    'gemini-2.5-flash-lite',
     'gemini-3.5-flash',
-    'gemini-3.1-pro-preview',
+    'gemini-3.6-flash',
     'gemma-4-26b-a4b-it',
+    'gemini-pro-latest',
+    'gemini-3.1-pro-preview',
   ];
 
   // 4.1 Tenta descobrir dinamicamente quais modelos suportam generateContent de TEXTO para essa chave
@@ -340,53 +343,50 @@ const gerarAnaliseGastosIA = async ({ regiao, unidade, ano, mes }) => {
   let ultimoErro = null;
 
   for (const modeloNome of listaTentativas) {
-    // Tenta primeiro via v1beta e depois via v1
-    for (const versaoApi of ['v1beta', 'v1']) {
-      const url = `https://generativelanguage.googleapis.com/${versaoApi}/models/${modeloNome}:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modeloNome}:generateContent?key=${apiKey}`;
 
-      try {
-        logger.info(`Chamando Gemini [${versaoApi}/${modeloNome}]...`);
+    try {
+      logger.info(`Chamando Gemini [v1beta/${modeloNome}]...`);
 
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [{ text: prompt }],
-              },
-            ],
-            generationConfig: {
-              temperature: 0.4,
-              maxOutputTokens: 2048,
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [{ text: prompt }],
             },
-          }),
-        });
+          ],
+          generationConfig: {
+            temperature: 0.4,
+            maxOutputTokens: 2048,
+          },
+        }),
+      });
 
-        const resData = await response.json();
+      const resData = await response.json();
 
-        if (response.ok) {
-          const textoGerado = resData.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (textoGerado) {
-            logger.info(`Sucesso com [${versaoApi}/${modeloNome}]!`);
-            return {
-              analise: textoGerado,
-              modeloUsado: `${modeloNome} (${versaoApi})`,
-              dados,
-              geradoEm: new Date().toISOString(),
-            };
-          }
+      if (response.ok) {
+        const textoGerado = resData.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (textoGerado) {
+          logger.info(`Sucesso com [v1beta/${modeloNome}]!`);
+          return {
+            analise: textoGerado,
+            modeloUsado: modeloNome,
+            dados,
+            geradoEm: new Date().toISOString(),
+          };
         }
-
-        // Se a API retornou erro específico, registra e segue para o próximo modelo
-        if (resData.error) {
-          ultimoErro = resData.error;
-          logger.warn(`Modelo [${versaoApi}/${modeloNome}] retornou erro: ${resData.error.message || JSON.stringify(resData.error)}. Tentando próximo...`);
-        }
-      } catch (err) {
-        ultimoErro = err;
-        logger.warn(`Falha na requisição para [${versaoApi}/${modeloNome}]: ${err.message}`);
       }
+
+      // Se a API retornou erro específico, registra e segue imediatamente para o próximo modelo
+      if (resData.error) {
+        ultimoErro = resData.error;
+        logger.warn(`Modelo [v1beta/${modeloNome}] indisponível: ${resData.error.message || JSON.stringify(resData.error)}. Tentando próximo imediatamente...`);
+      }
+    } catch (err) {
+      ultimoErro = err;
+      logger.warn(`Falha na requisição para [v1beta/${modeloNome}]: ${err.message}`);
     }
   }
 
