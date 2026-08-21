@@ -44,7 +44,8 @@ export const chamadosService = {
   atualizar:    (id, data) => api.put(`/chamados/${id}`, data),
   remover:      (id)     => api.delete(`/chamados/${id}`),
   resumoMensal: (params) => api.get('/chamados/resumo', { params }),
-  analiseIa:    (params) => api.get('/chamados/analise-ia', { params }),
+  // A geração no Gemini pode levar mais que o timeout padrão da API (15s).
+  analiseIa:    (params) => api.get('/chamados/analise-ia', { params, timeout: 60000 }),
 };
 
 // ─── Fornecedores ─────────────────────────────────────────────────────────

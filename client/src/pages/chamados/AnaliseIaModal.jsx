@@ -51,7 +51,23 @@ const extrairTextoAnalise = (obj) => {
   if (typeof obj?.texto === "string") return obj.texto;
   if (typeof obj?.text === "string") return obj.text;
   if (typeof obj?.message === "string") return obj.message;
+  if (typeof obj?.candidates?.[0]?.content?.parts?.[0]?.text === "string") {
+    return obj.candidates[0].content.parts[0].text;
+  }
   return "";
+};
+
+const normalizarResultadoAnalise = (resposta) => {
+  let payload = resposta?.data ?? resposta;
+
+  for (let i = 0; i < 3 && payload && typeof payload === "object"; i += 1) {
+    if (extrairTextoAnalise(payload)) break;
+    const proximo = payload.dados ?? payload.data ?? payload.resultado ?? payload.result;
+    if (!proximo || proximo === payload) break;
+    payload = proximo;
+  }
+
+  return payload;
 };
 
 /**
@@ -369,17 +385,22 @@ export default function AnaliseIaModal({
       const res = await chamadosService.analiseIa(params);
       
       // Normalização robusta de payload (suporta res.data.dados, res.data.data ou res.data direto)
-      let payload = res.data?.dados || res.data?.data || res.data;
+      let payload = normalizarResultadoAnalise(res);
       if (payload && payload.dados && !payload.analise && payload.dados.analise) {
         payload = payload.dados;
       }
       
+      if (!extrairTextoAnalise(payload)) {
+        throw new Error("A API respondeu, mas não enviou o texto da análise.");
+      }
+
       setResultado(payload);
       toast.success("Análise gerada com sucesso pelo Gemini!");
     } catch (err) {
       const msg =
         err.response?.data?.mensagem ||
         err.response?.data?.message ||
+        err.message ||
         "Erro ao gerar análise com IA.";
       toast.error(msg);
     } finally {
@@ -959,16 +980,7 @@ export default function AnaliseIaModal({
                   color: "var(--color-text-primary, #e2e8f0)",
                 }}
               >
-                <MarkdownVisualizador
-                  conteudo={
-                    resultado?.analise ||
-                    resultado?.dados?.analise ||
-                    (typeof resultado === "string" ? resultado : "") ||
-                    resultado?.texto ||
-                    resultado?.message ||
-                    ""
-                  }
-                />
+                <MarkdownVisualizador conteudo={resultado} />
               </div>
             </div>
           )}
