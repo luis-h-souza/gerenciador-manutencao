@@ -124,10 +124,56 @@ const listar = async (user, query) => {
     ];
   }
   
+  /**
+   * ── Lógica de período com carry-over ──────────────────────────────────────
+   * • Chamados FINALIZADO ou AGUARDANDO_OM_ENTREGA são contabilizados pelo mês
+   *   em que foram resolvidos (dataResolucao), ou pela dataAbertura se ainda
+   *   não houver dataResolucao.
+   * • Chamados AGUARDANDO_APROVACAO são considerados no mês atual enquanto não
+   *   forem resolvidos (carry-over automático).
+   * ──────────────────────────────────────────────────────────────────────────
+   */
   if (mes && ano) {
     const dataInicio = new Date(parseInt(ano), parseInt(mes) - 1, 1);
-    const dataFim = new Date(parseInt(ano), parseInt(mes), 1);
-    where.dataAbertura = { gte: dataInicio, lt: dataFim };
+    const dataFim    = new Date(parseInt(ano), parseInt(mes), 1);
+
+    // Status resolvidos: usa dataResolucao (ou dataAbertura como fallback)
+    const resolvidos = ['FINALIZADO', 'AGUARDANDO_OM_ENTREGA', 'ALUGUEL_OUTROS', 'PCI', 'LAUDOS'];
+
+    const filtroResolvidos = {
+      status: { in: resolvidos },
+      OR: [
+        // Tem dataResolucao no período
+        { dataResolucao: { gte: dataInicio, lt: dataFim } },
+        // Não tem dataResolucao mas foi aberto no período
+        { dataResolucao: null, dataAbertura: { gte: dataInicio, lt: dataFim } },
+      ],
+    };
+
+    // Ag. Aprovação: carry-over — aparece no mês consultado se ainda não foi
+    // resolvido até o fim desse mês (aberto antes ou durante)
+    const filtroAguardando = {
+      status: 'AGUARDANDO_APROVACAO',
+      dataAbertura: { lt: dataFim }, // aberto antes do fim do mês
+      OR: [
+        { dataResolucao: null },                   // não resolvido
+        { dataResolucao: { gte: dataFim } },       // resolvido depois do período
+      ],
+    };
+
+    // Se um filtro de status específico foi aplicado, respeitamos ele
+    if (status) {
+      if (status === 'AGUARDANDO_APROVACAO') {
+        where.AND = [...(where.AND || []), filtroAguardando];
+        delete where.status;
+      } else {
+        where.AND = [...(where.AND || []), filtroResolvidos];
+        delete where.status;
+        where.status = status;
+      }
+    } else {
+      where.AND = [...(where.AND || []), { OR: [filtroResolvidos, filtroAguardando] }];
+    }
   }
 
   const [chamados, total] = await Promise.all([
@@ -181,6 +227,11 @@ const atualizar = async (user, id, body) => {
 
   const data = montarDadosChamado(body);
 
+  // ── Regra de negócio: ao mudar para FINALIZADO, preenche dataResolucao automaticamente
+  if (data.status === 'FINALIZADO' && !data.dataResolucao && !existe.dataResolucao) {
+    data.dataResolucao = new Date();
+  }
+
   const updated = await prisma.controleChamado.update({ where: { id }, data });
 
   // Auditoria: Registro de Atualização de Chamado
@@ -219,26 +270,42 @@ const resumoMensal = async (user, query) => {
   const anoNum = ano ? parseInt(ano) : new Date().getFullYear();
   
   const dataInicio = new Date(anoNum, mesNum - 1, 1);
-  const dataFim = new Date(anoNum, mesNum, 1);
+  const dataFim    = new Date(anoNum, mesNum, 1);
 
   const filter = getAccessFilter(user);
-  const where = { ...filter, dataAbertura: { gte: dataInicio, lt: dataFim } };
+
+  /**
+   * Para o resumo, só somamos chamados FINALIZADO ou AGUARDANDO_OM_ENTREGA
+   * que foram resolvidos neste mês (pela dataResolucao), garantindo que
+   * chamados Ag. Aprovação não inflem o total do mês.
+   */
+  const whereContabilizados = {
+    ...filter,
+    status: { in: ['FINALIZADO', 'AGUARDANDO_OM_ENTREGA'] },
+    OR: [
+      { dataResolucao: { gte: dataInicio, lt: dataFim } },
+      { dataResolucao: null, dataAbertura: { gte: dataInicio, lt: dataFim } },
+    ],
+  };
+
+  // Para contagem de status, mantemos o filtro por dataAbertura original
+  const whereGeral = { ...filter, dataAbertura: { gte: dataInicio, lt: dataFim } };
 
   const [chamados, totaisPorSegmento, totaisPorStatus] = await Promise.all([
     prisma.controleChamado.aggregate({
-      where: where,
+      where: whereContabilizados,
       _sum: { valor: true },
       _count: true,
     }),
     prisma.controleChamado.groupBy({
       by: ['segmento'],
-      where: where,
+      where: whereContabilizados,
       _sum: { valor: true },
       _count: true,
     }),
     prisma.controleChamado.groupBy({
       by: ['status'],
-      where: where,
+      where: whereGeral,
       _count: true,
     }),
   ]);

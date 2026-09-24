@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useSearchParams } from "react-router-dom";
@@ -31,6 +31,8 @@ import {
   CircleHelp,
   Trophy,
   Sparkles,
+  Download,
+  FileText,
 } from "lucide-react";
 import InfoTooltip from "../../components/feedback/InfoTooltip";
 import AnaliseIaModal from "./AnaliseIaModal";
@@ -234,12 +236,219 @@ const TooltipCustom = ({ active, payload, label }) => {
   );
 };
 
+// ─── Componente de Exportação ──────────────────────────────────────────────
+function ExportarChamados({ chamados = [], mes, ano }) {
+  const [aberto, setAberto] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setAberto(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const STATUS_LABEL_EXP = {
+    AGUARDANDO_APROVACAO: "Ag. Aprovação",
+    AGUARDANDO_OM_ENTREGA: "Ag. OM/Entrega",
+    FINALIZADO: "Finalizado",
+    ALUGUEL_OUTROS: "Aluguel/Outros",
+    PCI: "Sistema de Incêndio",
+    LAUDOS: "Laudos",
+  };
+
+  const formatData = (val) => {
+    if (!val) return "";
+    try {
+      return format(new Date(val), "dd/MM/yyyy");
+    } catch {
+      return val;
+    }
+  };
+
+  const formatValor = (val) => {
+    if (val === null || val === undefined || val === "") return "";
+    return parseFloat(val).toFixed(2).replace(".", ",");
+  };
+
+  const cabecalho = [
+    "Abertura",
+    "Solicitação",
+    "Chamado",
+    "Segmento",
+    "Empresa",
+    "Descrição",
+    "Orçamento",
+    "OM",
+    "Mau Uso",
+    "Aprovação",
+    "Finalização",
+    "Valor (R$)",
+    "Status",
+    "Região",
+    "Unidade",
+  ];
+
+  const linhas = chamados.map((c) => [
+    formatData(c.dataAbertura),
+    c.solicitacao || "",
+    c.numeroChamado || "",
+    c.segmento
+      ? c.segmento
+          .split("_")
+          .map((w) => w.charAt(0) + w.slice(1).toLowerCase())
+          .join(" ")
+      : "",
+    c.empresa || "",
+    c.descricao || "",
+    c.numeroOrcamento || "",
+    c.numeroOM || "",
+    c.mauUso ? "Sim" : "Não",
+    formatData(c.dataAprovacao),
+    formatData(c.dataResolucao),
+    formatValor(c.valor),
+    STATUS_LABEL_EXP[c.status] || c.status || "",
+    c.regiao || "",
+    c.unidade || "",
+  ]);
+
+  const nomeArquivo = `chamados_${mes ? String(mes).padStart(2, "0") : ""}${ano ? `_${ano}` : ""}`;
+
+  const exportarCSV = () => {
+    const bom = "\uFEFF"; // BOM para UTF-8 — abre corretamente no Excel
+    const conteudo =
+      bom +
+      [cabecalho, ...linhas]
+        .map((row) =>
+          row
+            .map((cel) => {
+              const s = String(cel ?? "").replace(/"/g, '""');
+              return /[,;\n"]/.test(s) ? `"${s}"` : s;
+            })
+            .join(";"),
+        )
+        .join("\r\n");
+
+    const blob = new Blob([conteudo], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${nomeArquivo}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    setAberto(false);
+    toast.success("CSV exportado com sucesso!");
+  };
+
+  const exportarExcel = () => {
+    // Gera XLSX simples via XML SpreadsheetML (sem dependências extras)
+    const escape = (s) =>
+      String(s ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+
+    const toRow = (cells, isHeader = false) =>
+      `<Row>${cells
+        .map(
+          (c) =>
+            `<Cell${isHeader ? ' ss:StyleID="Header"' : ""}><Data ss:Type="String">${escape(c)}</Data></Cell>`,
+        )
+        .join("")}</Row>`;
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+  <Styles>
+    <Style ss:ID="Header">
+      <Font ss:Bold="1"/>
+      <Interior ss:Color="#1e3a5f" ss:Pattern="Solid"/>
+      <Font ss:Color="#FFFFFF" ss:Bold="1"/>
+    </Style>
+  </Styles>
+  <Worksheet ss:Name="Chamados">
+    <Table>
+      ${toRow(cabecalho, true)}
+      ${linhas.map((r) => toRow(r)).join("\n      ")}
+    </Table>
+  </Worksheet>
+</Workbook>`;
+
+    const blob = new Blob([xml], {
+      type: "application/vnd.ms-excel;charset=utf-8;",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${nomeArquivo}.xls`;
+    a.click();
+    URL.revokeObjectURL(url);
+    setAberto(false);
+    toast.success("Excel exportado com sucesso!");
+  };
+
+  return (
+    <div ref={ref} style={{ position: "relative" }}>
+      <button
+        type="button"
+        className="btn btn-secondary h-9.5 px-3 text-sm whitespace-nowrap shrink-0 flex items-center gap-2"
+        style={{ border: "1px solid var(--color-border)" }}
+        onClick={() => setAberto((v) => !v)}
+        title="Exportar planilha"
+      >
+        <Download size={15} />
+        <span className="hidden sm:inline">Exportar</span>
+      </button>
+
+      {aberto && (
+        <div
+          style={{
+            position: "absolute",
+            right: 0,
+            top: "calc(100% + 6px)",
+            background: "var(--color-surface-700)",
+            border: "1px solid var(--color-border)",
+            borderRadius: "10px",
+            boxShadow: "0 12px 32px rgba(0,0,0,0.4)",
+            minWidth: "180px",
+            zIndex: 50,
+            overflow: "hidden",
+          }}
+        >
+          <button
+            className="flex items-center gap-3 w-full px-4 py-3 text-sm hover:bg-surface-600 transition-colors"
+            style={{ color: "var(--color-text-primary)" }}
+            onClick={exportarCSV}
+          >
+            <FileText size={15} style={{ color: "var(--color-brand-400)" }} />
+            Exportar CSV
+          </button>
+          <div style={{ height: "1px", background: "var(--color-border)" }} />
+          <button
+            className="flex items-center gap-3 w-full px-4 py-3 text-sm hover:bg-surface-600 transition-colors"
+            style={{ color: "var(--color-text-primary)" }}
+            onClick={exportarExcel}
+          >
+            <Download size={15} style={{ color: "#22c55e" }} />
+            Exportar Excel (.xls)
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ChamadoModal({ chamado, onClose }) {
   const qc = useQueryClient();
   const isEdit = !!chamado;
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: isEdit
@@ -251,6 +460,9 @@ function ChamadoModal({ chamado, onClose }) {
           dataAprovacao: chamado.dataAprovacao
             ? format(new Date(chamado.dataAprovacao), "yyyy-MM-dd")
             : "",
+          dataResolucao: chamado.dataResolucao
+            ? format(new Date(chamado.dataResolucao), "yyyy-MM-dd")
+            : "",
           valor: chamado.valor || "",
           solicitacao: chamado.solicitacao || "",
           numeroOM: chamado.numeroOM || "",
@@ -258,12 +470,31 @@ function ChamadoModal({ chamado, onClose }) {
       : {
           dataAbertura: format(new Date(), "yyyy-MM-dd"),
           dataAprovacao: "",
+          dataResolucao: "",
           status: "AGUARDANDO_APROVACAO",
           mauUso: false,
           solicitacao: "",
           numeroOM: "",
         },
   });
+
+  // ── Auto-preenche dataResolucao ao mudar para FINALIZADO ──
+  const statusAtual = watch("status");
+  const dataResolucaoAtual = watch("dataResolucao");
+  const prevStatusRef = useRef(isEdit ? chamado?.status : "AGUARDANDO_APROVACAO");
+
+  useEffect(() => {
+    if (
+      statusAtual === "FINALIZADO" &&
+      prevStatusRef.current !== "FINALIZADO" &&
+      !dataResolucaoAtual
+    ) {
+      setValue("dataResolucao", format(new Date(), "yyyy-MM-dd"), {
+        shouldDirty: true,
+      });
+    }
+    prevStatusRef.current = statusAtual;
+  }, [statusAtual, dataResolucaoAtual, setValue]);
 
   const mutation = useMutation({
     mutationFn: (data) =>
@@ -432,6 +663,28 @@ function ChamadoModal({ chamado, onClose }) {
                   </option>
                 ))}
               </select>
+            </div>
+            <div>
+              <label className="label">
+                Data de Finalização
+                {statusAtual === "FINALIZADO" && (
+                  <span
+                    style={{
+                      marginLeft: "6px",
+                      fontSize: "0.7rem",
+                      color: "var(--color-success)",
+                      fontWeight: 600,
+                    }}
+                  >
+                    ✓ preenchida automaticamente
+                  </span>
+                )}
+              </label>
+              <input
+                type="date"
+                className="input"
+                {...register("dataResolucao")}
+              />
             </div>
           </div>
 
@@ -1931,10 +2184,12 @@ export default function ChamadosPage() {
     return !isLaudo && !isPCI;
   });
 
-  const totalFiltrado = chamadosOperacionais.reduce(
-    (s, c) => s + parseFloat(c.valor || 0),
-    0,
-  );
+  // Apenas FINALIZADO e AGUARDANDO_OM_ENTREGA entram no OPEX contabilizado
+  const OPEX_STATUSES = ["FINALIZADO", "AGUARDANDO_OM_ENTREGA"];
+
+  const totalFiltrado = chamadosOperacionais
+    .filter((c) => OPEX_STATUSES.includes(c.status))
+    .reduce((s, c) => s + parseFloat(c.valor || 0), 0);
 
   const investimentoSemLaudosEPci = totalFiltrado;
 
@@ -2594,15 +2849,21 @@ export default function ChamadosPage() {
               </div>
             </div>
 
-            {/* ── Resumo + Botão ── */}
+            {/* ── Resumo + Botões ── */}
             <div className="flex flex-wrap items-center gap-3 shrink-0">
               <div className="flex items-center gap-3 shrink-0 flex-1">
                 <div className="flex flex-col mx-1.5 shrink-0">
                   <span className="text-[0.875rem] text-muted uppercase font-bold tracking-wide whitespace-nowrap">
                     Investimento (OPEX)
                   </span>
-                  <span className="text-base font-extrabold text-brand-400 leading-none whitespace-nowrap">
+                  <span
+                    className="text-base font-extrabold text-brand-400 leading-none whitespace-nowrap"
+                    title="Soma apenas chamados Finalizados e Ag. OM/Entrega"
+                  >
                     {fmt(investimentoSemLaudosEPci)}
+                  </span>
+                  <span style={{ fontSize: "0.65rem", color: "var(--color-text-muted)", marginTop: "2px" }}>
+                    Finalizado + Ag. OM
                   </span>
                 </div>
                 <div className="flex flex-col gap-1 shrink-0">
@@ -2626,6 +2887,9 @@ export default function ChamadosPage() {
               </div>
 
             <div className="w-px h-8 bg-border shrink-0 hidden [@media(max-width:1023px)]:hidden sm:block" />
+
+              {/* ── Botão Exportar ── */}
+              <ExportarChamados chamados={chamados} mes={mes} ano={ano} />
 
               {canWrite && (
                 <button
