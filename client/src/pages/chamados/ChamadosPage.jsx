@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import * as XLSX from "xlsx";
@@ -1956,6 +1956,7 @@ function Paginacao({ paginaAtual, totalPaginas, onMudar }) {
 
 export default function ChamadosPage() {
   const { usuario } = useAuth();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const mesParam = searchParams.get("mes");
   const anoParam = searchParams.get("ano");
@@ -2332,7 +2333,14 @@ export default function ChamadosPage() {
             {["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR"].includes(usuario?.role) && (
               <button
                 type="button"
-                onClick={() => setModalIa(true)}
+                onClick={() => {
+                  const params = new URLSearchParams();
+                  if (mes) params.set("mes", String(parseInt(mes)));
+                  if (ano) params.set("ano", String(parseInt(ano)));
+                  if (regionalSelecionada) params.set("regiao", regionalSelecionada);
+                  if (lojaSelecionada?.nome) params.set("unidade", lojaSelecionada.nome);
+                  navigate(`/chamados/relatorio-ia?${params.toString()}`);
+                }}
                 className="btn btn-primary"
                 style={{
                   fontWeight: 600,

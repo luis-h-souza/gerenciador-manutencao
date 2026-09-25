@@ -11,6 +11,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import TarefasPage from "./pages/tarefas/TarefasPage";
 import ChamadosPage from "./pages/chamados/ChamadosPage";
+import RelatorioIaPage from "./pages/chamados/RelatorioIaPage";
 import EstoquePage from "./pages/estoque/EstoquePage";
 import FornecedoresPage from "./pages/fornecedores/FornecedoresPage";
 import AtivosPage from "./pages/ativos/AtivosPage";
@@ -133,6 +134,24 @@ function AppRoutes() {
           element={
             <ProtectedRoute roles={ROLES.FINANCEIRO}>
               <ChamadosPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="chamados/relatorio-ia"
+          element={
+            <ProtectedRoute roles={["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR"]}>
+              <RelatorioIaPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="relatorio-ia"
+          element={
+            <ProtectedRoute roles={["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR"]}>
+              <RelatorioIaPage />
             </ProtectedRoute>
           }
         />

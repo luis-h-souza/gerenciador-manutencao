@@ -18,6 +18,7 @@ import {
   Activity,
   HelpCircle,
   Target,
+  Sparkles,
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 
