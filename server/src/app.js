@@ -35,6 +35,22 @@ const path = require('path');
 
 const app = express();
 
+// ─── Normalização de URL (Vercel Serverless / Proxies) ────────────────────────
+app.use((req, res, next) => {
+  if (req.url.startsWith('/src/server.js') || req.url === '/src/server.js') {
+    const rawPath =
+      req.headers['x-matched-path'] ||
+      req.headers['x-vercel-matched-path'] ||
+      req.headers['x-rewrite-url'] ||
+      req.headers['x-original-url'];
+    if (rawPath && !rawPath.startsWith('/src/server.js')) {
+      req.url = rawPath;
+      req.originalUrl = rawPath;
+    }
+  }
+  next();
+});
+
 // Servir documentação estática (Redoc)
 app.use('/docs', express.static(path.join(__dirname, '../public')));
 
