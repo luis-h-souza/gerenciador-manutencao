@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useSearchParams } from "react-router-dom";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
+import * as XLSX from "xlsx";
 import {
   Plus,
   X,
@@ -342,52 +343,53 @@ function ExportarChamados({ chamados = [], mes, ano }) {
   };
 
   const exportarExcel = () => {
-    // Gera XLSX simples via XML SpreadsheetML (sem dependências extras)
-    const escape = (s) =>
-      String(s ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
+    try {
+      const linhasExcel = chamados.map((c) => [
+        formatData(c.dataAbertura),
+        c.solicitacao || "",
+        c.numeroChamado || "",
+        c.segmento
+          ? c.segmento
+              .split("_")
+              .map((w) => w.charAt(0) + w.slice(1).toLowerCase())
+              .join(" ")
+          : "",
+        c.empresa || "",
+        c.descricao || "",
+        c.numeroOrcamento || "",
+        c.numeroOM || "",
+        c.mauUso ? "Sim" : "Não",
+        formatData(c.dataAprovacao),
+        formatData(c.dataResolucao),
+        c.valor !== null && c.valor !== undefined && c.valor !== "" ? Number(c.valor) : "",
+        STATUS_LABEL_EXP[c.status] || c.status || "",
+        c.regiao || "",
+        c.unidade || "",
+      ]);
 
-    const toRow = (cells, isHeader = false) =>
-      `<Row>${cells
-        .map(
-          (c) =>
-            `<Cell${isHeader ? ' ss:StyleID="Header"' : ""}><Data ss:Type="String">${escape(c)}</Data></Cell>`,
-        )
-        .join("")}</Row>`;
+      const ws = XLSX.utils.aoa_to_sheet([cabecalho, ...linhasExcel]);
 
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<?mso-application progid="Excel.Sheet"?>
-<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
-  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
-  <Styles>
-    <Style ss:ID="Header">
-      <Font ss:Bold="1"/>
-      <Interior ss:Color="#1e3a5f" ss:Pattern="Solid"/>
-      <Font ss:Color="#FFFFFF" ss:Bold="1"/>
-    </Style>
-  </Styles>
-  <Worksheet ss:Name="Chamados">
-    <Table>
-      ${toRow(cabecalho, true)}
-      ${linhas.map((r) => toRow(r)).join("\n      ")}
-    </Table>
-  </Worksheet>
-</Workbook>`;
+      // Auto-ajustar largura das colunas
+      const colWidths = cabecalho.map((col, i) => {
+        let maxLen = col.length;
+        linhasExcel.forEach((row) => {
+          const val = row[i] !== null && row[i] !== undefined ? String(row[i]) : "";
+          if (val.length > maxLen) maxLen = val.length;
+        });
+        return { wch: Math.min(Math.max(maxLen + 3, 10), 50) };
+      });
+      ws["!cols"] = colWidths;
 
-    const blob = new Blob([xml], {
-      type: "application/vnd.ms-excel;charset=utf-8;",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${nomeArquivo}.xls`;
-    a.click();
-    URL.revokeObjectURL(url);
-    setAberto(false);
-    toast.success("Excel exportado com sucesso!");
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Chamados");
+
+      XLSX.writeFile(wb, `${nomeArquivo}.xlsx`);
+      setAberto(false);
+      toast.success("Planilha Excel (.xlsx) exportada com sucesso!");
+    } catch (err) {
+      console.error("Erro ao exportar Excel:", err);
+      toast.error("Erro ao gerar arquivo Excel");
+    }
   };
 
   return (
@@ -433,7 +435,7 @@ function ExportarChamados({ chamados = [], mes, ano }) {
             onClick={exportarExcel}
           >
             <Download size={15} style={{ color: "#22c55e" }} />
-            Exportar Excel (.xls)
+            Exportar Excel (.xlsx)
           </button>
         </div>
       )}
