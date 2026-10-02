@@ -2,7 +2,7 @@
 const prisma = require('../utils/prisma');
 const { getUserRegions, canAccessRegion } = require('../utils/access.utils');
 const { invalidateDashboardCache } = require('../utils/dashboard.cache');
-const { somenteOperacional } = require('../utils/chamadoFinanceiro');
+const { somenteOperacional, somenteOpexContabilizado } = require('../utils/chamadoFinanceiro');
 
 const ROLES_GESTAO = ['ADMINISTRADOR', 'DIRETOR', 'GERENTE'];
 
@@ -196,11 +196,10 @@ const cardsStatus = async (user, query) => {
       // Exclude PCI/Laudos — separate investment budget, must not affect meta comparison
       prisma.controleChamado.aggregate({
         _sum: { valor: true },
-        where: somenteOperacional({
+        where: somenteOpexContabilizado({
           regiao: lojaRegiao,
           unidade: lojaUnidade,
-          dataAbertura: { gte: inicioMes, lt: fimMes },
-        }),
+        }, inicioMes, fimMes),
       }),
       buscarMetaVigente(lojaRegiao, lojaUnidade, anoNum, mesNum),
     ]);
@@ -273,10 +272,9 @@ const cardsNivelRegional = async (regioes, ano, mes, inicioMes, fimMes) => {
       // Exclude PCI/Laudos — separate investment budget, must not affect meta comparison
       prisma.controleChamado.aggregate({
         _sum: { valor: true },
-        where: somenteOperacional({
+        where: somenteOpexContabilizado({
           regiao,
-          dataAbertura: { gte: inicioMes, lt: fimMes },
-        }),
+        }, inicioMes, fimMes),
       }),
       buscarMetaVigente(regiao, null, ano, mes),
     ]);
@@ -312,11 +310,10 @@ const cardsDetalheLoja = async (user, regiao, regioesPermitidas, ano, mes, inici
       // Exclude PCI/Laudos — separate investment budget, must not affect meta comparison
       prisma.controleChamado.aggregate({
         _sum: { valor: true },
-        where: somenteOperacional({
+        where: somenteOpexContabilizado({
           regiao: loja.regiao,
           unidade: loja.nome,
-          dataAbertura: { gte: inicioMes, lt: fimMes },
-        }),
+        }, inicioMes, fimMes),
       }),
       // Busca APENAS meta específica desta loja (sem fallback regional)
       prisma.metaOrcamentaria.findFirst({

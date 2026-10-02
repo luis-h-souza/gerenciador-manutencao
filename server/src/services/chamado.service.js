@@ -1,6 +1,7 @@
 const prisma = require('../utils/prisma');
 const { getAccessFilter, getCreationContext } = require('../utils/access.utils');
 const logService = require('./log.service');
+const { invalidateDashboardCache } = require('../utils/dashboard.cache');
 
 const CAMPOS_CHAMADO = [
   'dataAbertura',
@@ -125,54 +126,89 @@ const listar = async (user, query) => {
   }
   
   /**
-   * ── Lógica de período com carry-over ──────────────────────────────────────
-   * • Chamados FINALIZADO ou AGUARDANDO_OM_ENTREGA são contabilizados pelo mês
-   *   em que foram resolvidos (dataResolucao), ou pela dataAbertura se ainda
-   *   não houver dataResolucao.
-   * • Chamados AGUARDANDO_APROVACAO são considerados no mês atual enquanto não
-   *   forem resolvidos (carry-over automático).
+   * ── Lógica de período financeiro com carry-over ───────────────────────────
+   * • Chamados FINALIZADO: competência pela dataResolucao (ou dataAprovacao como fallback).
+   * • Chamados AGUARDANDO_OM_ENTREGA: competência pela dataAprovacao (mês da aprovação/empenho).
+   *   Se não tiver dataAprovacao nem dataResolucao, acompanha o mês consultado (carry-over),
+   *   nunca retrocedendo para a data de abertura do passado.
+   * • Chamados AGUARDANDO_APROVACAO: carry-over automático (permanecem no mês atual
+   *   enquanto não forem aprovados/resolvidos).
+   * • Demais status (ALUGUEL_OUTROS, PCI, LAUDOS): dataResolucao ou dataAbertura.
    * ──────────────────────────────────────────────────────────────────────────
    */
   if (mes && ano) {
     const dataInicio = new Date(parseInt(ano), parseInt(mes) - 1, 1);
     const dataFim    = new Date(parseInt(ano), parseInt(mes), 1);
 
-    // Status resolvidos: usa dataResolucao (ou dataAbertura como fallback)
-    const resolvidos = ['FINALIZADO', 'AGUARDANDO_OM_ENTREGA', 'ALUGUEL_OUTROS', 'PCI', 'LAUDOS'];
-
-    const filtroResolvidos = {
-      status: { in: resolvidos },
+    // 1. Finalizados: competência pela dataResolucao (ou dataAprovacao como fallback)
+    const filtroFinalizados = {
+      status: 'FINALIZADO',
       OR: [
-        // Tem dataResolucao no período
         { dataResolucao: { gte: dataInicio, lt: dataFim } },
-        // Não tem dataResolucao mas foi aberto no período
+        { dataResolucao: null, dataAprovacao: { gte: dataInicio, lt: dataFim } },
+        { dataResolucao: null, dataAprovacao: null, dataAbertura: { gte: dataInicio, lt: dataFim } },
+      ],
+    };
+
+    // 2. Aguardando OM / Entrega: competência pela dataAprovacao (ou dataResolucao)
+    const filtroAguardandoOM = {
+      status: 'AGUARDANDO_OM_ENTREGA',
+      OR: [
+        { dataAprovacao: { gte: dataInicio, lt: dataFim } },
+        { dataResolucao: { gte: dataInicio, lt: dataFim } },
+        // Fallback carry-over: aberto até o fim do mês e sem datas definidas em outro período
+        {
+          dataAprovacao: null,
+          dataResolucao: null,
+          dataAbertura: { lt: dataFim },
+        },
+      ],
+    };
+
+    // 3. Demais categorias (ALUGUEL_OUTROS, PCI, LAUDOS)
+    const filtroOutrosResolvidos = {
+      status: { in: ['ALUGUEL_OUTROS', 'PCI', 'LAUDOS'] },
+      OR: [
+        { dataResolucao: { gte: dataInicio, lt: dataFim } },
         { dataResolucao: null, dataAbertura: { gte: dataInicio, lt: dataFim } },
       ],
     };
 
-    // Ag. Aprovação: carry-over — aparece no mês consultado se ainda não foi
-    // resolvido até o fim desse mês (aberto antes ou durante)
-    const filtroAguardando = {
+    // 4. Aguardando Aprovação: carry-over — aberto até o fim do mês e ainda não aprovado/resolvido
+    const filtroAguardandoAprovacao = {
       status: 'AGUARDANDO_APROVACAO',
-      dataAbertura: { lt: dataFim }, // aberto antes do fim do mês
+      dataAbertura: { lt: dataFim },
       OR: [
-        { dataResolucao: null },                   // não resolvido
-        { dataResolucao: { gte: dataFim } },       // resolvido depois do período
+        { dataAprovacao: null, dataResolucao: null },
+        { dataAprovacao: { gte: dataFim } },
+        { dataResolucao: { gte: dataFim } },
       ],
     };
 
-    // Se um filtro de status específico foi aplicado, respeitamos ele
     if (status) {
       if (status === 'AGUARDANDO_APROVACAO') {
-        where.AND = [...(where.AND || []), filtroAguardando];
-        delete where.status;
+        where.AND = [...(where.AND || []), filtroAguardandoAprovacao];
+      } else if (status === 'AGUARDANDO_OM_ENTREGA') {
+        where.AND = [...(where.AND || []), filtroAguardandoOM];
+      } else if (status === 'FINALIZADO') {
+        where.AND = [...(where.AND || []), filtroFinalizados];
       } else {
-        where.AND = [...(where.AND || []), filtroResolvidos];
-        delete where.status;
-        where.status = status;
+        where.AND = [...(where.AND || []), filtroOutrosResolvidos];
       }
+      delete where.status;
+      where.status = status;
     } else {
-      where.AND = [...(where.AND || []), { OR: [filtroResolvidos, filtroAguardando] }];
+      where.AND = [
+        ...(where.AND || []),
+        {
+          OR: [
+            filtroFinalizados,
+            filtroAguardandoOM,
+            filtroAguardandoAprovacao,
+            filtroOutrosResolvidos,
+          ],
+        },
+      ];
     }
   }
 
@@ -198,9 +234,20 @@ const buscarPorId = async (user, id) => {
 
 const criar = async (user, body) => {
   const context = getCreationContext(user);
+  const data = montarDadosChamado(body);
+
+  // ── Auto-preenche datas de competência financeira se não informadas
+  if (data.status === 'AGUARDANDO_OM_ENTREGA' && !data.dataAprovacao) {
+    data.dataAprovacao = new Date();
+  }
+  if (data.status === 'FINALIZADO') {
+    if (!data.dataResolucao) data.dataResolucao = new Date();
+    if (!data.dataAprovacao) data.dataAprovacao = data.dataResolucao || new Date();
+  }
+
   const novoChamado = await prisma.controleChamado.create({
     data: {
-      ...montarDadosChamado(body),
+      ...data,
       regiao: context.regiao,
       unidade: context.unidade,
     },
@@ -213,6 +260,9 @@ const criar = async (user, body) => {
     modulo: 'CHAMADO',
     detalhes: { chamadoId: novoChamado.id, numero: novoChamado.numeroChamado, valor: novoChamado.valor }
   });
+
+  // Invalida cache do dashboard para atualização imediata
+  await invalidateDashboardCache().catch(() => {});
 
   return novoChamado;
 };
@@ -227,9 +277,19 @@ const atualizar = async (user, id, body) => {
 
   const data = montarDadosChamado(body);
 
-  // ── Regra de negócio: ao mudar para FINALIZADO, preenche dataResolucao automaticamente
-  if (data.status === 'FINALIZADO' && !data.dataResolucao && !existe.dataResolucao) {
-    data.dataResolucao = new Date();
+  // ── Regra de negócio: ao mudar para AGUARDANDO_OM_ENTREGA, preenche dataAprovacao automaticamente se vazia
+  if (data.status === 'AGUARDANDO_OM_ENTREGA' && !data.dataAprovacao && !existe.dataAprovacao) {
+    data.dataAprovacao = new Date();
+  }
+
+  // ── Regra de negócio: ao mudar para FINALIZADO, preenche dataResolucao e dataAprovacao se vazias
+  if (data.status === 'FINALIZADO') {
+    if (!data.dataResolucao && !existe.dataResolucao) {
+      data.dataResolucao = new Date();
+    }
+    if (!data.dataAprovacao && !existe.dataAprovacao) {
+      data.dataAprovacao = data.dataResolucao || new Date();
+    }
   }
 
   const updated = await prisma.controleChamado.update({ where: { id }, data });
@@ -241,6 +301,9 @@ const atualizar = async (user, id, body) => {
     modulo: 'CHAMADO',
     detalhes: { chamadoId: id, camposAlterados: Object.keys(data) }
   });
+
+  // Invalida cache do dashboard para atualização imediata
+  await invalidateDashboardCache().catch(() => {});
 
   return updated;
 };
@@ -262,6 +325,9 @@ const remover = async (user, id) => {
     modulo: 'CHAMADO',
     detalhes: { chamadoId: id, numero: existe.numeroChamado }
   });
+
+  // Invalida cache do dashboard para atualização imediata
+  await invalidateDashboardCache().catch(() => {});
 };
 
 const resumoMensal = async (user, query) => {
@@ -276,15 +342,18 @@ const resumoMensal = async (user, query) => {
 
   /**
    * Para o resumo, só somamos chamados FINALIZADO ou AGUARDANDO_OM_ENTREGA
-   * que foram resolvidos neste mês (pela dataResolucao), garantindo que
-   * chamados Ag. Aprovação não inflem o total do mês.
+   * que competem financeiramente a este mês:
+   * 1. Tem dataResolucao no mês
+   * 2. Tem dataAprovacao no mês (sem dataResolucao)
+   * 3. Sem datas definidas, aberto no mês
    */
   const whereContabilizados = {
     ...filter,
     status: { in: ['FINALIZADO', 'AGUARDANDO_OM_ENTREGA'] },
     OR: [
       { dataResolucao: { gte: dataInicio, lt: dataFim } },
-      { dataResolucao: null, dataAbertura: { gte: dataInicio, lt: dataFim } },
+      { dataResolucao: null, dataAprovacao: { gte: dataInicio, lt: dataFim } },
+      { dataResolucao: null, dataAprovacao: null, dataAbertura: { gte: dataInicio, lt: dataFim } },
     ],
   };
 

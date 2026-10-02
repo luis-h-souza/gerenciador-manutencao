@@ -77,7 +77,7 @@ const normalizarResultadoAnalise = (resposta) => {
 };
 
 /**
- * Renderizador de Markdown nativo para visualização limpa e espaçosa
+ * Renderizador de Markdown nativo para visualização limpa, responsiva e legível em mobile
  */
 function MarkdownVisualizador({ conteudo }) {
   const textoBruto = typeof conteudo === "string" ? conteudo : extrairTextoAnalise(conteudo);
@@ -85,7 +85,7 @@ function MarkdownVisualizador({ conteudo }) {
 
   if (!textoParaExibir) {
     return (
-      <p style={{ color: "var(--color-text-muted)", textAlign: "center", padding: "32px" }}>
+      <p style={{ color: "var(--color-text-muted)", textAlign: "center", padding: "24px 16px" }}>
         Nenhum texto de análise disponível.
       </p>
     );
@@ -116,10 +116,8 @@ function MarkdownVisualizador({ conteudo }) {
         elementos.push(
           <ol
             key={`ol-${elementos.length}`}
+            className="pl-5 sm:pl-7 mb-4 list-decimal"
             style={{
-              paddingLeft: "1.75rem",
-              marginBottom: "1.25rem",
-              listStyleType: "decimal",
               color: "var(--color-text-secondary, #cbd5e1)",
             }}
           >
@@ -130,10 +128,8 @@ function MarkdownVisualizador({ conteudo }) {
         elementos.push(
           <ul
             key={`ul-${elementos.length}`}
+            className="pl-5 sm:pl-7 mb-4 list-disc"
             style={{
-              paddingLeft: "1.75rem",
-              marginBottom: "1.25rem",
-              listStyleType: "disc",
               color: "var(--color-text-secondary, #cbd5e1)",
             }}
           >
@@ -161,7 +157,7 @@ function MarkdownVisualizador({ conteudo }) {
           key={`hr-${idx}`}
           style={{
             borderColor: "var(--color-border)",
-            margin: "2rem 0",
+            margin: "1.5rem 0",
           }}
         />
       );
@@ -173,14 +169,10 @@ function MarkdownVisualizador({ conteudo }) {
       elementos.push(
         <h1
           key={`h1-${idx}`}
+          className="text-lg sm:text-xl md:text-2xl font-extrabold pb-2 mb-3 mt-5 border-b"
           style={{
-            fontSize: "1.6rem",
-            fontWeight: 800,
             color: "var(--color-brand-400, #38bdf8)",
-            marginTop: "2rem",
-            marginBottom: "1rem",
-            borderBottom: "1px solid var(--color-border)",
-            paddingBottom: "0.75rem",
+            borderColor: "var(--color-border)",
           }}
         >
           {formatarInline(limpa.replace(/^#\s+/, ""))}
@@ -194,12 +186,9 @@ function MarkdownVisualizador({ conteudo }) {
       elementos.push(
         <h2
           key={`h2-${idx}`}
+          className="text-base sm:text-lg md:text-xl font-bold mb-2.5 mt-4"
           style={{
-            fontSize: "1.3rem",
-            fontWeight: 700,
             color: "var(--color-brand-300, #7dd3fc)",
-            marginTop: "1.75rem",
-            marginBottom: "0.75rem",
           }}
         >
           {formatarInline(limpa.replace(/^##\s+/, ""))}
@@ -213,12 +202,9 @@ function MarkdownVisualizador({ conteudo }) {
       elementos.push(
         <h3
           key={`h3-${idx}`}
+          className="text-sm sm:text-base md:text-lg font-bold mb-2 mt-3.5"
           style={{
-            fontSize: "1.1rem",
-            fontWeight: 700,
             color: "var(--color-text-primary, #f8fafc)",
-            marginTop: "1.5rem",
-            marginBottom: "0.5rem",
           }}
         >
           {formatarInline(limpa.replace(/^###\s+/, ""))}
@@ -232,12 +218,9 @@ function MarkdownVisualizador({ conteudo }) {
       elementos.push(
         <h4
           key={`h4-${idx}`}
+          className="text-xs sm:text-sm md:text-base font-bold mb-1.5 mt-2.5"
           style={{
-            fontSize: "1rem",
-            fontWeight: 700,
             color: "var(--color-brand-400, #38bdf8)",
-            marginTop: "1.2rem",
-            marginBottom: "0.4rem",
           }}
         >
           {formatarInline(limpa.replace(/^####\s+/, ""))}
@@ -253,10 +236,9 @@ function MarkdownVisualizador({ conteudo }) {
       listaItens.push(
         <li
           key={`li-ol-${idx}`}
+          className="mb-1.5 leading-relaxed text-xs sm:text-sm md:text-base"
           style={{
-            marginBottom: "0.5rem",
             color: "var(--color-text-secondary, #cbd5e1)",
-            lineHeight: "1.8",
           }}
         >
           {formatarInline(matchNum[2])}
@@ -271,10 +253,9 @@ function MarkdownVisualizador({ conteudo }) {
       listaItens.push(
         <li
           key={`li-ul-${idx}`}
+          className="mb-1.5 leading-relaxed text-xs sm:text-sm md:text-base"
           style={{
-            marginBottom: "0.5rem",
             color: "var(--color-text-secondary, #cbd5e1)",
-            lineHeight: "1.8",
           }}
         >
           {formatarInline(limpa.replace(/^[\*\-]\s+/, ""))}
@@ -288,15 +269,11 @@ function MarkdownVisualizador({ conteudo }) {
       elementos.push(
         <blockquote
           key={`quote-${idx}`}
+          className="my-3.5 p-3 sm:p-4 rounded-r-lg italic text-xs sm:text-sm leading-relaxed"
           style={{
             borderLeft: "4px solid var(--color-brand-500)",
             color: "var(--color-text-muted, #94a3b8)",
-            fontStyle: "italic",
-            margin: "16px 0",
             background: "rgba(14, 165, 233, 0.06)",
-            padding: "12px 20px",
-            borderRadius: "0 10px 10px 0",
-            lineHeight: "1.75",
           }}
         >
           {formatarInline(limpa.replace(/^>\s*/, ""))}
@@ -309,11 +286,9 @@ function MarkdownVisualizador({ conteudo }) {
     elementos.push(
       <p
         key={`p-${idx}`}
+        className="mb-3 leading-relaxed text-xs sm:text-sm md:text-base"
         style={{
-          marginBottom: "1rem",
           color: "var(--color-text-secondary, #cbd5e1)",
-          lineHeight: "1.8",
-          fontSize: "0.95rem",
         }}
       >
         {formatarInline(limpa)}
@@ -323,7 +298,7 @@ function MarkdownVisualizador({ conteudo }) {
 
   fecharLista();
 
-  return <div style={{ wordBreak: "break-word" }}>{elementos}</div>;
+  return <div className="break-words w-full overflow-hidden">{elementos}</div>;
 }
 
 export default function RelatorioIaPage() {
@@ -449,38 +424,31 @@ export default function RelatorioIaPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6 animate-fade-in pb-12 max-w-7xl mx-auto w-full">
+    <div className="flex flex-col gap-4 sm:gap-6 animate-fade-in pb-12 max-w-7xl mx-auto w-full px-0 sm:px-2">
       {/* Topo / Navegação de Volta */}
-      <div className="flex items-center justify-between flex-wrap gap-4 print:hidden">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 print:hidden">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
           <button
             type="button"
             onClick={() => navigate("/chamados")}
-            className="btn btn-secondary flex items-center gap-2 h-10 px-3.5"
+            className="btn btn-secondary flex items-center justify-center gap-2 h-9 sm:h-10 px-3 sm:px-3.5 w-full sm:w-auto shrink-0"
             style={{ border: "1px solid var(--color-border)" }}
           >
-            <ArrowLeft size={18} />
-            <span className="font-semibold text-sm">Voltar para Chamados</span>
+            <ArrowLeft size={16} />
+            <span className="font-semibold text-xs sm:text-sm">Voltar para Chamados</span>
           </button>
 
           <div>
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2 flex-wrap">
               <h1
-                style={{
-                  fontSize: "1.5rem",
-                  fontWeight: 800,
-                  color: "var(--color-text-primary)",
-                  letterSpacing: "-0.02em",
-                }}
+                className="text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight"
+                style={{ color: "var(--color-text-primary)" }}
               >
                 Relatório Financeiro com IA
               </h1>
               <span
+                className="text-xs font-bold px-2 py-0.5 rounded-full"
                 style={{
-                  fontSize: "0.75rem",
-                  fontWeight: 700,
-                  padding: "3px 10px",
-                  borderRadius: "9999px",
                   background: "rgba(14, 165, 233, 0.15)",
                   color: "var(--color-brand-400)",
                   border: "1px solid rgba(14, 165, 233, 0.3)",
@@ -490,33 +458,30 @@ export default function RelatorioIaPage() {
               </span>
             </div>
             <p
-              style={{
-                fontSize: "0.875rem",
-                color: "var(--color-text-muted)",
-                marginTop: "2px",
-              }}
+              className="text-xs sm:text-sm mt-0.5 leading-relaxed"
+              style={{ color: "var(--color-text-muted)" }}
             >
-              Auditoria avançada de custos, detecção de anomalias, impacto de mau uso e plano de ação executivo.
+              Auditoria de custos, anomalias, impacto de mau uso e plano de ação executivo.
             </p>
           </div>
         </div>
 
         {resultado && (
-          <div className="flex items-center gap-2.5">
+          <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full md:w-auto">
             <button
               type="button"
               onClick={handleCopiarTexto}
-              className="btn btn-secondary flex items-center gap-2 text-sm h-10 px-3.5"
+              className="btn btn-secondary flex items-center justify-center gap-1.5 text-xs sm:text-sm h-9 sm:h-10 px-3"
               style={{ border: "1px solid var(--color-border)" }}
             >
               {copiado ? (
                 <>
-                  <Check size={16} className="text-green-500" />
+                  <Check size={15} className="text-green-500" />
                   <span>Copiado!</span>
                 </>
               ) : (
                 <>
-                  <Copy size={16} />
+                  <Copy size={15} />
                   <span>Copiar Texto</span>
                 </>
               )}
@@ -525,10 +490,10 @@ export default function RelatorioIaPage() {
             <button
               type="button"
               onClick={handleImprimir}
-              className="btn btn-secondary flex items-center gap-2 text-sm h-10 px-3.5"
+              className="btn btn-secondary flex items-center justify-center gap-1.5 text-xs sm:text-sm h-9 sm:h-10 px-3"
               style={{ border: "1px solid var(--color-border)" }}
             >
-              <Printer size={16} />
+              <Printer size={15} />
               <span>Imprimir / PDF</span>
             </button>
           </div>
@@ -537,20 +502,20 @@ export default function RelatorioIaPage() {
 
       {/* Card de Configuração e Filtros */}
       <div
-        className="card p-5 flex flex-col gap-4 print:hidden"
+        className="card p-3.5 sm:p-5 flex flex-col gap-3.5 print:hidden"
         style={{
           border: "1px solid var(--color-border)",
           boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
         }}
       >
-        <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
           {/* Seletor de Escopo */}
-          <div className="flex items-center gap-2">
-            <span style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-text-secondary)" }}>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2">
+            <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--color-text-secondary)" }}>
               Escopo:
             </span>
             <div
-              className="flex items-center gap-1 p-1 rounded-xl border"
+              className="grid grid-cols-3 sm:flex items-center gap-1 p-1 rounded-xl border w-full sm:w-auto"
               style={{
                 background: "var(--color-surface-800)",
                 borderColor: "var(--color-border)",
@@ -559,37 +524,40 @@ export default function RelatorioIaPage() {
               <button
                 type="button"
                 onClick={() => setTipoEscopo("geral")}
-                className={`btn btn-sm ${tipoEscopo === "geral" ? "btn-primary" : "btn-ghost"}`}
-                style={{ fontSize: "0.8125rem", padding: "6px 12px", borderRadius: "8px" }}
+                className={`btn btn-sm ${tipoEscopo === "geral" ? "btn-primary" : "btn-ghost"} justify-center text-center`}
+                style={{ fontSize: "0.75rem", padding: "5px 8px", borderRadius: "8px" }}
               >
-                <Layers size={15} className="mr-1.5 inline" /> Geral (Rede)
+                <Layers size={13} className="mr-1 inline" />
+                <span>Geral</span>
               </button>
               <button
                 type="button"
                 onClick={() => setTipoEscopo("regional")}
-                className={`btn btn-sm ${tipoEscopo === "regional" ? "btn-primary" : "btn-ghost"}`}
-                style={{ fontSize: "0.8125rem", padding: "6px 12px", borderRadius: "8px" }}
+                className={`btn btn-sm ${tipoEscopo === "regional" ? "btn-primary" : "btn-ghost"} justify-center text-center`}
+                style={{ fontSize: "0.75rem", padding: "5px 8px", borderRadius: "8px" }}
               >
-                <MapPin size={15} className="mr-1.5 inline" /> Por Regional
+                <MapPin size={13} className="mr-1 inline" />
+                <span>Regional</span>
               </button>
               <button
                 type="button"
                 onClick={() => setTipoEscopo("loja")}
-                className={`btn btn-sm ${tipoEscopo === "loja" ? "btn-primary" : "btn-ghost"}`}
-                style={{ fontSize: "0.8125rem", padding: "6px 12px", borderRadius: "8px" }}
+                className={`btn btn-sm ${tipoEscopo === "loja" ? "btn-primary" : "btn-ghost"} justify-center text-center`}
+                style={{ fontSize: "0.75rem", padding: "5px 8px", borderRadius: "8px" }}
               >
-                <Store size={15} className="mr-1.5 inline" /> Por Loja
+                <Store size={13} className="mr-1 inline" />
+                <span>Por Loja</span>
               </button>
             </div>
           </div>
 
-          {/* Seletores Condicionais de Região / Loja */}
-          <div className="flex items-center gap-3 flex-wrap">
+          {/* Seletores Condicionais de Região / Loja + Período + Botão */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:items-center gap-2.5 w-full lg:w-auto">
             {(tipoEscopo === "regional" || tipoEscopo === "loja") && (
-              <div className="flex items-center gap-2">
+              <div className="w-full lg:w-auto">
                 <select
-                  className="select"
-                  style={{ minWidth: "160px", height: "38px" }}
+                  className="select w-full text-xs sm:text-sm"
+                  style={{ minWidth: "140px", height: "38px" }}
                   value={regiao}
                   onChange={(e) => {
                     setRegiao(e.target.value);
@@ -607,10 +575,10 @@ export default function RelatorioIaPage() {
             )}
 
             {tipoEscopo === "loja" && (
-              <div className="flex items-center gap-2">
+              <div className="w-full lg:w-auto">
                 <select
-                  className="select"
-                  style={{ minWidth: "200px", height: "38px" }}
+                  className="select w-full text-xs sm:text-sm"
+                  style={{ minWidth: "160px", height: "38px" }}
                   value={unidade}
                   onChange={(e) => setUnidade(e.target.value)}
                 >
@@ -625,12 +593,12 @@ export default function RelatorioIaPage() {
             )}
 
             {/* Mês e Ano */}
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2">
-                <Calendar size={16} style={{ color: "var(--color-text-muted)" }} />
+            <div className="flex items-center gap-2 w-full lg:w-auto">
+              <div className="flex items-center gap-1.5 flex-1 lg:flex-none">
+                <Calendar size={15} className="text-gray-400 shrink-0" />
                 <select
-                  className="select"
-                  style={{ minWidth: "130px", height: "38px" }}
+                  className="select w-full text-xs sm:text-sm"
+                  style={{ minWidth: "115px", height: "38px" }}
                   value={mes}
                   onChange={(e) => setMes(parseInt(e.target.value))}
                 >
@@ -643,8 +611,8 @@ export default function RelatorioIaPage() {
               </div>
               <input
                 type="number"
-                className="input"
-                style={{ width: "90px", height: "38px" }}
+                className="input w-20 sm:w-24 shrink-0 text-xs sm:text-sm"
+                style={{ height: "38px" }}
                 value={ano}
                 onChange={(e) => setAno(parseInt(e.target.value))}
                 placeholder="Ano"
@@ -656,7 +624,7 @@ export default function RelatorioIaPage() {
               type="button"
               onClick={() => executarAnalise()}
               disabled={gerando || (tipoEscopo === "loja" && !unidade)}
-              className="btn btn-primary flex items-center gap-2 h-10 px-5"
+              className="btn btn-primary flex items-center justify-center gap-2 h-9 sm:h-10 px-4 sm:px-5 w-full sm:col-span-2 lg:col-span-1 lg:w-auto shrink-0"
               style={{
                 fontWeight: 700,
                 boxShadow: "0 4px 14px rgba(14, 165, 233, 0.35)",
@@ -664,13 +632,13 @@ export default function RelatorioIaPage() {
             >
               {gerando ? (
                 <>
-                  <Loader2 size={18} className="animate-spin" />
-                  <span>Analisando...</span>
+                  <Loader2 size={16} className="animate-spin" />
+                  <span className="text-xs sm:text-sm">Analisando...</span>
                 </>
               ) : (
                 <>
-                  <Sparkles size={18} />
-                  <span>Gerar Relatório</span>
+                  <Sparkles size={16} />
+                  <span className="text-xs sm:text-sm">Gerar Relatório</span>
                 </>
               )}
             </button>
@@ -681,39 +649,30 @@ export default function RelatorioIaPage() {
       {/* Estado: Carregando Análise */}
       {gerando && (
         <div
-          className="card p-16 flex flex-col items-center justify-center text-center"
-          style={{ minHeight: "450px" }}
+          className="card p-8 sm:p-12 md:p-16 flex flex-col items-center justify-center text-center"
+          style={{ minHeight: "320px" }}
         >
           <div
-            className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6 animate-pulse"
+            className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 animate-pulse"
             style={{
               background: "rgba(14, 165, 233, 0.15)",
               border: "1px solid rgba(14, 165, 233, 0.3)",
               color: "var(--color-brand-400)",
             }}
           >
-            <Bot size={40} />
+            <Bot size={32} />
           </div>
           <h2
-            style={{
-              fontSize: "1.25rem",
-              fontWeight: 800,
-              color: "var(--color-text-primary)",
-              marginBottom: "8px",
-            }}
+            className="text-base sm:text-lg md:text-xl font-extrabold mb-2"
+            style={{ color: "var(--color-text-primary)" }}
           >
             O Gemini está processando seus dados de manutenção...
           </h2>
           <p
-            style={{
-              fontSize: "0.925rem",
-              color: "var(--color-text-muted)",
-              maxWidth: "520px",
-              lineHeight: "1.6",
-            }}
+            className="text-xs sm:text-sm leading-relaxed max-w-lg"
+            style={{ color: "var(--color-text-muted)" }}
           >
-            A inteligência artificial está auditando custos por segmento, avaliando impacto de mau uso,
-            cruzando padrões com fornecedores e gerando diagnósticos acionáveis para o seu planejamento.
+            Auditando custos por segmento, avaliando impacto de mau uso e cruzando padrões com fornecedores.
           </p>
         </div>
       )}
@@ -721,66 +680,53 @@ export default function RelatorioIaPage() {
       {/* Estado: Vazio / Pronto para gerar */}
       {!gerando && !resultado && (
         <div
-          className="card p-16 flex flex-col items-center justify-center text-center"
-          style={{ minHeight: "420px" }}
+          className="card p-8 sm:p-12 md:p-16 flex flex-col items-center justify-center text-center"
+          style={{ minHeight: "320px" }}
         >
           <div
-            className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6"
+            className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center mb-4 sm:mb-6"
             style={{
               background: "var(--color-surface-700)",
               color: "var(--color-brand-400)",
               border: "1px solid var(--color-border)",
             }}
           >
-            <Sparkles size={36} />
+            <Sparkles size={30} />
           </div>
           <h2
-            style={{
-              fontSize: "1.25rem",
-              fontWeight: 700,
-              color: "var(--color-text-primary)",
-              marginBottom: "6px",
-            }}
+            className="text-base sm:text-lg md:text-xl font-bold mb-1.5"
+            style={{ color: "var(--color-text-primary)" }}
           >
             Pronto para auditar e gerar insights
           </h2>
           <p
-            style={{
-              fontSize: "0.925rem",
-              color: "var(--color-text-muted)",
-              maxWidth: "480px",
-              lineHeight: "1.6",
-            }}
+            className="text-xs sm:text-sm leading-relaxed max-w-md"
+            style={{ color: "var(--color-text-muted)" }}
           >
-            Selecione o escopo desejado (Geral, Regional ou Loja), escolha o período e clique em{" "}
-            <strong>"Gerar Relatório"</strong> para obter uma visão analítica completa em tela cheia.
+            Selecione o escopo desejado (Geral, Regional ou Loja), escolha o período e toque em{" "}
+            <strong>"Gerar Relatório"</strong>.
           </p>
         </div>
       )}
 
       {/* Estado: Resultado Disponível */}
       {!gerando && resultado && (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4 sm:gap-6">
           {/* Métricas Rápidas em Cards de Destaque */}
           {resultado.dados && (
-            <div
-              className="grid gap-4"
-              style={{
-                gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-              }}
-            >
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {/* Card Total Gasto */}
               <div
-                className="card p-5"
+                className="card p-4 sm:p-5"
                 style={{
                   borderLeft: "4px solid var(--color-brand-500)",
                   background: "var(--color-surface-800)",
                 }}
               >
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between mb-1.5">
                   <span
                     style={{
-                      fontSize: "0.75rem",
+                      fontSize: "0.6875rem",
                       fontWeight: 700,
                       color: "var(--color-text-muted)",
                       textTransform: "uppercase",
@@ -788,22 +734,19 @@ export default function RelatorioIaPage() {
                   >
                     Total Gasto no Período
                   </span>
-                  <DollarSign size={18} style={{ color: "var(--color-brand-400)" }} />
+                  <DollarSign size={16} style={{ color: "var(--color-brand-400)" }} />
                 </div>
                 <div
-                  style={{
-                    fontSize: "1.75rem",
-                    fontWeight: 800,
-                    color: "var(--color-text-primary)",
-                  }}
+                  className="text-xl sm:text-2xl font-extrabold"
+                  style={{ color: "var(--color-text-primary)" }}
                 >
                   {fmt(resultado.dados.totalGeral?.valor)}
                 </div>
                 <span
                   style={{
-                    fontSize: "0.8125rem",
+                    fontSize: "0.75rem",
                     color: "var(--color-text-muted)",
-                    marginTop: "4px",
+                    marginTop: "3px",
                     display: "block",
                   }}
                 >
@@ -813,16 +756,16 @@ export default function RelatorioIaPage() {
 
               {/* Card Mau Uso */}
               <div
-                className="card p-5"
+                className="card p-4 sm:p-5"
                 style={{
                   borderLeft: "4px solid var(--color-danger)",
                   background: "var(--color-surface-800)",
                 }}
               >
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between mb-1.5">
                   <span
                     style={{
-                      fontSize: "0.75rem",
+                      fontSize: "0.6875rem",
                       fontWeight: 700,
                       color: "var(--color-danger-600)",
                       textTransform: "uppercase",
@@ -830,22 +773,19 @@ export default function RelatorioIaPage() {
                   >
                     Gasto com Mau Uso
                   </span>
-                  <AlertTriangle size={18} style={{ color: "var(--color-danger)" }} />
+                  <AlertTriangle size={16} style={{ color: "var(--color-danger)" }} />
                 </div>
                 <div
-                  style={{
-                    fontSize: "1.75rem",
-                    fontWeight: 800,
-                    color: "var(--color-danger-700)",
-                  }}
+                  className="text-xl sm:text-2xl font-extrabold"
+                  style={{ color: "var(--color-danger-700)" }}
                 >
                   {fmt(resultado.dados.mauUso?.valor)}
                 </div>
                 <span
                   style={{
-                    fontSize: "0.8125rem",
+                    fontSize: "0.75rem",
                     color: "var(--color-text-muted)",
-                    marginTop: "4px",
+                    marginTop: "3px",
                     display: "block",
                   }}
                 >
@@ -860,7 +800,7 @@ export default function RelatorioIaPage() {
               {/* Card Meta */}
               {resultado.dados.meta ? (
                 <div
-                  className="card p-5"
+                  className="card p-4 sm:p-5 sm:col-span-2 lg:col-span-1"
                   style={{
                     borderLeft: `4px solid ${
                       Number(resultado.dados.meta.percentualUtilizado) > 100
@@ -870,10 +810,10 @@ export default function RelatorioIaPage() {
                     background: "var(--color-surface-800)",
                   }}
                 >
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center justify-between mb-1.5">
                     <span
                       style={{
-                        fontSize: "0.75rem",
+                        fontSize: "0.6875rem",
                         fontWeight: 700,
                         color: "var(--color-text-muted)",
                         textTransform: "uppercase",
@@ -881,12 +821,11 @@ export default function RelatorioIaPage() {
                     >
                       Utilização da Meta
                     </span>
-                    <Target size={18} style={{ color: "var(--color-brand-400)" }} />
+                    <Target size={16} style={{ color: "var(--color-brand-400)" }} />
                   </div>
                   <div
+                    className="text-xl sm:text-2xl font-extrabold"
                     style={{
-                      fontSize: "1.75rem",
-                      fontWeight: 800,
                       color:
                         Number(resultado.dados.meta.percentualUtilizado) > 100
                           ? "var(--color-danger)"
@@ -897,9 +836,9 @@ export default function RelatorioIaPage() {
                   </div>
                   <span
                     style={{
-                      fontSize: "0.8125rem",
+                      fontSize: "0.75rem",
                       color: "var(--color-text-muted)",
-                      marginTop: "4px",
+                      marginTop: "3px",
                       display: "block",
                     }}
                   >
@@ -908,16 +847,16 @@ export default function RelatorioIaPage() {
                 </div>
               ) : (
                 <div
-                  className="card p-5"
+                  className="card p-4 sm:p-5 sm:col-span-2 lg:col-span-1"
                   style={{
                     borderLeft: "4px solid var(--color-border)",
                     background: "var(--color-surface-800)",
                   }}
                 >
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center justify-between mb-1.5">
                     <span
                       style={{
-                        fontSize: "0.75rem",
+                        fontSize: "0.6875rem",
                         fontWeight: 700,
                         color: "var(--color-text-muted)",
                         textTransform: "uppercase",
@@ -925,23 +864,22 @@ export default function RelatorioIaPage() {
                     >
                       Meta Orçamentária
                     </span>
-                    <Target size={18} style={{ color: "var(--color-text-muted)" }} />
+                    <Target size={16} style={{ color: "var(--color-text-muted)" }} />
                   </div>
                   <div
+                    className="text-base sm:text-lg font-bold"
                     style={{
-                      fontSize: "1.25rem",
-                      fontWeight: 700,
                       color: "var(--color-text-muted)",
-                      marginTop: "6px",
+                      marginTop: "4px",
                     }}
                   >
                     Sem meta cadastrada
                   </div>
                   <span
                     style={{
-                      fontSize: "0.8125rem",
+                      fontSize: "0.75rem",
                       color: "var(--color-text-muted)",
-                      marginTop: "6px",
+                      marginTop: "3px",
                       display: "block",
                     }}
                   >
@@ -954,15 +892,15 @@ export default function RelatorioIaPage() {
 
           {/* Barra de Metadados do Relatório */}
           <div
-            className="card px-5 py-3.5 flex items-center justify-between flex-wrap gap-4 border"
+            className="card p-3 sm:px-5 sm:py-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 border"
             style={{
               borderColor: "var(--color-border)",
               background: "var(--color-surface-800)",
             }}
           >
-            <div className="flex items-center gap-3 flex-wrap">
-              <span style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
-                Relatório gerado em:{" "}
+            <div className="flex items-center gap-2 flex-wrap">
+              <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
+                Gerado em:{" "}
                 <strong style={{ color: "var(--color-text-primary)" }}>
                   {resultado.geradoEm ? new Date(resultado.geradoEm).toLocaleString("pt-BR") : "Agora"}
                 </strong>
@@ -971,16 +909,16 @@ export default function RelatorioIaPage() {
               {resultado.modeloUsado && (
                 <span
                   style={{
-                    fontSize: "0.75rem",
-                    padding: "3px 10px",
-                    borderRadius: "6px",
+                    fontSize: "0.6875rem",
+                    padding: "2px 8px",
+                    borderRadius: "4px",
                     background: "rgba(14, 165, 233, 0.15)",
                     color: "var(--color-brand-400)",
                     fontWeight: 700,
                     border: "1px solid rgba(14, 165, 233, 0.25)",
                   }}
                 >
-                  Modelo: {resultado.modeloUsado}
+                  {resultado.modeloUsado}
                 </span>
               )}
             </div>
@@ -989,7 +927,7 @@ export default function RelatorioIaPage() {
               type="button"
               onClick={() => executarAnalise()}
               disabled={gerando}
-              className="btn btn-secondary flex items-center gap-2 text-xs h-8 px-3"
+              className="btn btn-secondary flex items-center justify-center gap-1.5 text-xs h-8 px-3 w-full sm:w-auto"
               style={{ border: "1px solid var(--color-border)" }}
             >
               <RefreshCw size={13} />
@@ -999,7 +937,7 @@ export default function RelatorioIaPage() {
 
           {/* Conteúdo Principal do Relatório em Tela Cheia */}
           <div
-            className="card p-8 sm:p-10 border"
+            className="card p-4 sm:p-6 md:p-8 border w-full overflow-hidden"
             style={{
               borderColor: "var(--color-border)",
               background: "var(--color-surface-800)",
@@ -1007,7 +945,9 @@ export default function RelatorioIaPage() {
               borderRadius: "16px",
             }}
           >
-            <MarkdownVisualizador conteudo={resultado} />
+            <div className="w-full overflow-x-auto">
+              <MarkdownVisualizador conteudo={resultado} />
+            </div>
           </div>
         </div>
       )}

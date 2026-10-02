@@ -480,23 +480,43 @@ function ChamadoModal({ chamado, onClose }) {
         },
   });
 
-  // ── Auto-preenche dataResolucao ao mudar para FINALIZADO ──
+  // ── Auto-preenche datas financeiras conforme o status ──
   const statusAtual = watch("status");
   const dataResolucaoAtual = watch("dataResolucao");
+  const dataAprovacaoAtual = watch("dataAprovacao");
   const prevStatusRef = useRef(isEdit ? chamado?.status : "AGUARDANDO_APROVACAO");
 
   useEffect(() => {
+    // Ao mudar para AGUARDANDO_OM_ENTREGA: aprovação financeira concluída
     if (
-      statusAtual === "FINALIZADO" &&
-      prevStatusRef.current !== "FINALIZADO" &&
-      !dataResolucaoAtual
+      statusAtual === "AGUARDANDO_OM_ENTREGA" &&
+      prevStatusRef.current !== "AGUARDANDO_OM_ENTREGA" &&
+      !dataAprovacaoAtual
     ) {
-      setValue("dataResolucao", format(new Date(), "yyyy-MM-dd"), {
+      setValue("dataAprovacao", format(new Date(), "yyyy-MM-dd"), {
         shouldDirty: true,
       });
     }
+
+    // Ao mudar para FINALIZADO: processo burocrático completo (OM + Aprovação)
+    if (
+      statusAtual === "FINALIZADO" &&
+      prevStatusRef.current !== "FINALIZADO"
+    ) {
+      if (!dataResolucaoAtual) {
+        setValue("dataResolucao", format(new Date(), "yyyy-MM-dd"), {
+          shouldDirty: true,
+        });
+      }
+      if (!dataAprovacaoAtual) {
+        setValue("dataAprovacao", format(new Date(), "yyyy-MM-dd"), {
+          shouldDirty: true,
+        });
+      }
+    }
+
     prevStatusRef.current = statusAtual;
-  }, [statusAtual, dataResolucaoAtual, setValue]);
+  }, [statusAtual, dataResolucaoAtual, dataAprovacaoAtual, setValue]);
 
   const mutation = useMutation({
     mutationFn: (data) =>
@@ -633,7 +653,21 @@ function ChamadoModal({ chamado, onClose }) {
               />
             </div>
             <div>
-              <label className="label">Data de Aprovação</label>
+              <label className="label">
+                Data de Aprovação
+                {["AGUARDANDO_OM_ENTREGA", "FINALIZADO"].includes(statusAtual) && (
+                  <span
+                    style={{
+                      marginLeft: "6px",
+                      fontSize: "0.7rem",
+                      color: "var(--color-info, #0284c7)",
+                      fontWeight: 600,
+                    }}
+                  >
+                    ✓ preenchida automaticamente
+                  </span>
+                )}
+              </label>
               <input
                 type="date"
                 className="input"

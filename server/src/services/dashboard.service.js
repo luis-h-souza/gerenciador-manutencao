@@ -6,6 +6,8 @@ const { buildKey, withCache, TTL } = require('../utils/dashboard.cache');
 const { buscarMetaVigente } = require('./meta.service');
 const {
   somenteOperacional,
+  somenteOpexContabilizado,
+  condicaoCompetenciaMes,
   somenteInvestimento,
   somentePCI,
   somenteLaudos,
@@ -94,10 +96,11 @@ const resumo = async (user, query) => {
       if (unidade) where.unidade = unidade;
     }
 
-    const whereMes = { ...where, dataAbertura: { gte: inicioMes, lt: fimMes } };
-    const whereMesPassado = { ...where, dataAbertura: { gte: inicioMesPassado, lte: fimMesPassado } };
-    const whereMesOperacional = somenteOperacional(whereMes);
-    const whereMesPassadoOperacional = somenteOperacional(whereMesPassado);
+    const whereMesOpex = somenteOpexContabilizado(where, inicioMes, fimMes);
+    const whereMesPassadoOpex = somenteOpexContabilizado(where, inicioMesPassado, fimMesPassado);
+    const whereMesInvestimento = somenteInvestimento({ ...where, ...condicaoCompetenciaMes(inicioMes, fimMes) });
+    const whereMesPCI = somentePCI({ ...where, ...condicaoCompetenciaMes(inicioMes, fimMes) });
+    const whereMesLaudos = somenteLaudos({ ...where, ...condicaoCompetenciaMes(inicioMes, fimMes) });
 
     const [
       totalTarefas, tarefasPendentes, tarefasEmAndamento, tarefasConcluidas,
@@ -110,29 +113,29 @@ const resumo = async (user, query) => {
       prisma.tarefa.count({ where: { ...where, status: 'PENDENTE' } }),
       prisma.tarefa.count({ where: { ...where, status: 'EM_ANDAMENTO' } }),
       prisma.tarefa.count({ where: { ...where, status: 'CONCLUIDA' } }),
-      prisma.controleChamado.count({ where: whereMesOperacional }),
+      prisma.controleChamado.count({ where: whereMesOpex }),
       prisma.controleChamado.aggregate({
-        where: whereMesOperacional,
+        where: whereMesOpex,
         _sum: { valor: true },
       }),
       prisma.controleChamado.aggregate({
-        where: whereMesPassadoOperacional,
+        where: whereMesPassadoOpex,
         _sum: { valor: true },
       }),
-      prisma.controleChamado.count({ where: somenteOperacional({ ...whereMes, mauUso: true }) }),
+      prisma.controleChamado.count({ where: somenteOpexContabilizado({ ...where, mauUso: true }, inicioMes, fimMes) }),
       prisma.fornecedor.count({ where: { ativo: true } }),
       prisma.controleChamado.aggregate({
-        where: somenteInvestimento(whereMes),
+        where: whereMesInvestimento,
         _sum: { valor: true },
         _count: true,
       }),
       prisma.controleChamado.aggregate({
-        where: somentePCI(whereMes),
+        where: whereMesPCI,
         _sum: { valor: true },
         _count: true,
       }),
       prisma.controleChamado.aggregate({
-        where: somenteLaudos(whereMes),
+        where: whereMesLaudos,
         _sum: { valor: true },
         _count: true,
       }),
@@ -270,10 +273,7 @@ const gastosPorSegmento = async (user, query) => {
     const dataFim = new Date(anoNum, mesNum, 1);
 
     const filter = getAccessFilter(user);
-    const where = {
-      ...filter,
-      dataAbertura: { gte: dataInicio, lt: dataFim }
-    };
+    const where = { ...filter };
 
     if (['ADMINISTRADOR', 'DIRETOR', 'GERENTE'].includes(user.role)) {
       if (regiao) {
@@ -285,8 +285,8 @@ const gastosPorSegmento = async (user, query) => {
       if (unidade) where.unidade = unidade;
     }
 
-    // Exclude PCI/Laudos investment tower from segment chart — they come from a separate investment budget
-    const whereOperacional = somenteOperacional(where);
+    // Apenas chamados OPEX contabilizados com competência no mês
+    const whereOperacional = somenteOpexContabilizado(where, dataInicio, dataFim);
 
     const dados = await prisma.controleChamado.groupBy({
       by: ['segmento'],
@@ -333,24 +333,22 @@ const historicoMensal = async (user, query) => {
       const d = new Date();
       d.setMonth(d.getMonth() - i);
       const inicio = new Date(d.getFullYear(), d.getMonth(), 1);
-      const fim = new Date(d.getFullYear(), d.getMonth() + 1, 0);
-
-      const whereBase = { ...baseWhere, dataAbertura: { gte: inicio, lte: fim } };
+      const fim = new Date(d.getFullYear(), d.getMonth() + 1, 1);
 
       // Only operational (OPEX) costs — excludes PCI and Laudos investment towers
       const [aggOpex, aggPCI, aggLAUDOS] = await Promise.all([
         prisma.controleChamado.aggregate({
-          where: somenteOperacional(whereBase),
+          where: somenteOpexContabilizado(baseWhere, inicio, fim),
           _sum: { valor: true },
           _count: true,
         }),
         prisma.controleChamado.aggregate({
-          where: somentePCI(whereBase),
+          where: somentePCI({ ...baseWhere, ...condicaoCompetenciaMes(inicio, fim) }),
           _sum: { valor: true },
           _count: true,
         }),
         prisma.controleChamado.aggregate({
-          where: somenteLaudos(whereBase),
+          where: somenteLaudos({ ...baseWhere, ...condicaoCompetenciaMes(inicio, fim) }),
           _sum: { valor: true },
           _count: true,
         }),
@@ -471,8 +469,7 @@ const detalheRegional = async (user, paramRegiao, query) => {
     const inicioMes = new Date(anoNum, mesNum - 1, 1);
     const fimMes = new Date(anoNum, mesNum, 1);
 
-    const whereRegionalBase = { regiao: paramRegiao, dataAbertura: { gte: inicioMes, lt: fimMes } };
-    const whereRegionalOpex = somenteOperacional(whereRegionalBase);
+    const whereRegionalOpex = somenteOpexContabilizado({ regiao: paramRegiao }, inicioMes, fimMes);
 
     const [
       gastosPorSegmento,
@@ -498,7 +495,7 @@ const detalheRegional = async (user, paramRegiao, query) => {
         take: 10
       }),
       prisma.controleChamado.aggregate({
-        where: somenteOperacional({ regiao: paramRegiao, mauUso: true, dataAbertura: { gte: inicioMes, lt: fimMes } }),
+        where: somenteOpexContabilizado({ regiao: paramRegiao, mauUso: true }, inicioMes, fimMes),
         _count: true,
         _sum: { valor: true }
       }),
@@ -522,21 +519,20 @@ const detalheRegional = async (user, paramRegiao, query) => {
 
     const lojas = await Promise.all(
       lojasRegional.map(async (loja) => {
-        const whereLojaBase = { regiao: paramRegiao, unidade: loja.nome, dataAbertura: { gte: inicioMes, lt: fimMes } };
+        const whereLojaOpex = somenteOpexContabilizado({ regiao: paramRegiao, unidade: loja.nome }, inicioMes, fimMes);
         const [financeiro, mauUso, gestoresAtivos, meta] = await Promise.all([
           // Exclude PCI/Laudos from each store's operational cost
           prisma.controleChamado.aggregate({
-            where: somenteOperacional(whereLojaBase),
+            where: whereLojaOpex,
             _sum: { valor: true },
             _count: true,
           }),
           prisma.controleChamado.count({
-            where: somenteOperacional({
+            where: somenteOpexContabilizado({
               regiao: paramRegiao,
               unidade: loja.nome,
               mauUso: true,
-              dataAbertura: { gte: inicioMes, lt: fimMes },
-            }),
+            }, inicioMes, fimMes),
           }),
           prisma.usuario.count({
             where: {
@@ -636,7 +632,7 @@ const rankingCoordenadores = async (user, query) => {
         ? { regiao: regionFilter }
         : { regiao: '__SEM_REGIAO__' };
 
-      const whereBase = { ...whereRegiao, dataAbertura: { gte: inicioMes, lte: fimMes } };
+      const whereBaseOpex = somenteOpexContabilizado(whereRegiao, inicioMes, fimMes);
       const [
         gastosMes,
         chamadosMes,
@@ -646,14 +642,14 @@ const rankingCoordenadores = async (user, query) => {
         checklistsCarrinho,
       ] = await Promise.all([
         prisma.controleChamado.aggregate({
-          where: somenteOperacional(whereBase),
+          where: whereBaseOpex,
           _sum: { valor: true },
         }),
         prisma.controleChamado.count({
-          where: somenteOperacional(whereBase),
+          where: whereBaseOpex,
         }),
         prisma.controleChamado.count({
-          where: somenteOperacional({ ...whereRegiao, mauUso: true, dataAbertura: { gte: inicioMes, lte: fimMes } }),
+          where: somenteOpexContabilizado({ ...whereRegiao, mauUso: true }, inicioMes, fimMes),
         }),
         prisma.tarefa.count({
           where: { ...whereRegiao, status: { in: ['PENDENTE', 'EM_ANDAMENTO'] } },
@@ -760,8 +756,8 @@ const executivo = async (user, query) => {
     const fimMesPassado = new Date(anoNum, mesNum - 1, 1);
 
   const filter = getAccessFilter(user);
-  const whereMesAtual = somenteOperacional({ ...filter, dataAbertura: { gte: inicioMes, lt: fimMes } });
-  const whereMesPassado = somenteOperacional({ ...filter, dataAbertura: { gte: inicioMesPassado, lt: fimMesPassado } });
+  const whereMesAtual = somenteOpexContabilizado(filter, inicioMes, fimMes);
+  const whereMesPassado = somenteOpexContabilizado(filter, inicioMesPassado, fimMesPassado);
 
   const [gastosAtual, gastosPassado, chamadosAtualCount] = await Promise.all([
     prisma.controleChamado.aggregate({ where: whereMesAtual, _sum: { valor: true } }),
