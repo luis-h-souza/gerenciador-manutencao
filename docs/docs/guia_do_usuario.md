@@ -62,6 +62,17 @@ Isso evita que o usuario precise refazer filtros manualmente.
 
 ## 3. Controle Financeiro
 
+### Como o sistema define o mes financeiro
+
+- A data de aprovacao (`dataAprovacao`) determina a qual mes o chamado pertence financeiramente.
+- A data de finalizacao (`dataResolucao`) e um controle operacional para o gestor acompanhar a execucao do servico. Ela nao muda o mes financeiro.
+- O total de OPEX inclui chamados `FINALIZADO` e `AGUARDANDO_OM_ENTREGA` com aprovacao registrada no mes selecionado.
+- Chamados sem data de aprovacao nao sao atribuidos a um mes financeiro.
+- Chamados `AGUARDANDO_APROVACAO` podem continuar aparecendo como pendencia operacional, mas nao entram na soma de OPEX.
+- O total do cabecalho considera todos os chamados do periodo, nao apenas as linhas carregadas na pagina atual, e acompanha os filtros de regional e loja.
+
+Ao registrar a aprovacao, confira a data informada: ela determina o mes usado nos totais e relatorios financeiros. A data de finalizacao continua disponivel para registrar quando o servico foi executado.
+
 O modulo de Controle Financeiro organiza os chamados e os indicadores de custo do periodo.
 
 ### O que o usuario pode fazer

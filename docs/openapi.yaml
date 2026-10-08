@@ -85,7 +85,8 @@ components:
 
     StatusChamado:
       type: string
-      enum: [ABERTO, FECHADO, CANCELADO]
+      description: Chamado de manutencao no fluxo financeiro. A competencia e determinada por dataAprovacao; dataResolucao e somente operacional.
+      enum: [AGUARDANDO_APROVACAO, AGUARDANDO_OM_ENTREGA, FINALIZADO, ALUGUEL_OUTROS, PCI, LAUDOS]
 
     Segmento:
       type: string
@@ -164,39 +165,59 @@ components:
 
     Chamado:
       type: object
+      description: Chamado do controle financeiro. dataAprovacao define o mes financeiro; dataResolucao e somente operacional.
       properties:
         id:
           type: string
           format: uuid
-        numero:
-          type: string
         dataAbertura:
           type: string
-          format: date
-        dataFechamento:
+          format: date-time
+        numeroChamado:
           type: string
-          format: date
+        segmento:
+          type: string
+          description: SegmentoChamado do sistema.
+        empresa:
+          type: string
+        descricao:
+          type: string
+        regiao:
+          type: string
+          nullable: true
+        unidade:
+          type: string
+          nullable: true
+        numeroOrcamento:
+          type: string
+          nullable: true
+        solicitacao:
+          type: string
+          nullable: true
+        dataAprovacao:
+          type: string
+          format: date-time
+          nullable: true
+          description: Data usada para definir a competencia financeira.
+        numeroOM:
+          type: string
           nullable: true
         valor:
           type: number
-          format: decimal
+          nullable: true
         status:
           $ref: '#/components/schemas/StatusChamado'
-        segmento:
-          $ref: '#/components/schemas/Segmento'
-        fornecedorId:
-          type: string
-          format: uuid
-        lojaId:
-          type: string
-          format: uuid
-        regiao:
-          type: string
         mauUso:
           type: boolean
-        observacoes:
+        ativoId:
           type: string
+          format: uuid
           nullable: true
+        dataResolucao:
+          type: string
+          format: date-time
+          nullable: true
+          description: Controle operacional da execucao do servico; nao muda o mes financeiro.
         criadoEm:
           type: string
           format: date-time
@@ -822,12 +843,15 @@ paths:
   /chamados:
     get:
       tags: [Chamados]
-      summary: Listar chamados
+      summary: Listar chamados financeiros
+      description: O filtro mensal usa dataAprovacao para chamados com aprovacao. Chamados aguardando aprovacao podem aparecer como pendencia operacional, mas nao entram no OPEX.
       parameters:
         - name: mes
           in: query
           schema:
             type: integer
+            minimum: 1
+            maximum: 12
         - name: ano
           in: query
           schema:
@@ -836,27 +860,39 @@ paths:
           in: query
           schema:
             type: string
+        - name: unidade
+          in: query
+          schema:
+            type: string
         - name: segmento
           in: query
           schema:
-            $ref: '#/components/schemas/Segmento'
+            type: string
         - name: status
           in: query
           schema:
             $ref: '#/components/schemas/StatusChamado'
-        - name: skip
+        - name: empresa
+          in: query
+          schema:
+            type: string
+        - name: busca
+          in: query
+          schema:
+            type: string
+        - name: page
           in: query
           schema:
             type: integer
-            default: 0
-        - name: take
+            default: 1
+        - name: limit
           in: query
           schema:
             type: integer
             default: 20
       responses:
         '200':
-          description: Lista de chamados
+          description: Lista paginada no escopo do usuario autenticado
           content:
             application/json:
               schema:
@@ -865,41 +901,65 @@ paths:
                   - type: object
                     properties:
                       dados:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Chamado'
-                      pagination:
-                        $ref: '#/components/schemas/Pagination'
+                        type: object
+                        properties:
+                          data:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Chamado'
+                          meta:
+                            type: object
+                            properties:
+                              total:
+                                type: integer
+                              page:
+                                type: integer
+                              limit:
+                                type: integer
+                              pages:
+                                type: integer
     post:
       tags: [Chamados]
-      summary: Criar chamado
+      summary: Criar chamado financeiro
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [numero, dataAbertura, valor, segmento, fornecedorId, lojaId]
+              required: [dataAbertura, numeroChamado, segmento, empresa, descricao]
               properties:
-                numero:
-                  type: string
                 dataAbertura:
                   type: string
                   format: date
+                numeroChamado:
+                  type: string
+                segmento:
+                  type: string
+                empresa:
+                  type: string
+                descricao:
+                  type: string
+                status:
+                  $ref: '#/components/schemas/StatusChamado'
+                dataAprovacao:
+                  type: string
+                  format: date
+                  nullable: true
+                dataResolucao:
+                  type: string
+                  format: date
+                  nullable: true
+                numeroOM:
+                  type: string
+                numeroOrcamento:
+                  type: string
+                solicitacao:
+                  type: string
                 valor:
                   type: number
-                segmento:
-                  $ref: '#/components/schemas/Segmento'
-                fornecedorId:
-                  type: string
-                  format: uuid
-                lojaId:
-                  type: string
-                  format: uuid
                 mauUso:
                   type: boolean
-                observacoes:
-                  type: string
       responses:
         '201':
           description: Chamado criado
@@ -932,9 +992,14 @@ paths:
               properties:
                 status:
                   $ref: '#/components/schemas/StatusChamado'
-                dataFechamento:
+                dataAprovacao:
                   type: string
                   format: date
+                  nullable: true
+                dataResolucao:
+                  type: string
+                  format: date
+                  nullable: true
                 valor:
                   type: number
                 observacoes:
@@ -977,7 +1042,8 @@ paths:
   /chamados/resumo:
     get:
       tags: [Chamados]
-      summary: Resumo de chamados por mês
+      summary: Resumo financeiro mensal de chamados OPEX
+      description: Soma somente chamados FINALIZADO ou AGUARDANDO_OM_ENTREGA com dataAprovacao no periodo. dataResolucao nao participa do calculo. Chamados sem dataAprovacao nao entram em um mes financeiro.
       parameters:
         - name: mes
           in: query
@@ -989,6 +1055,16 @@ paths:
           required: true
           schema:
             type: integer
+        - name: regiao
+          in: query
+          schema:
+            type: string
+          description: Opcional. Restringe o resumo a uma ou mais regioes, respeitando o escopo do usuario autenticado.
+        - name: unidade
+          in: query
+          schema:
+            type: string
+          description: Opcional. Restringe o resumo a uma unidade, respeitando o escopo do usuario autenticado.
       responses:
         '200':
           description: Resumo consolidado
@@ -1002,27 +1078,45 @@ paths:
                       dados:
                         type: object
                         properties:
-                          mes:
-                            type: integer
-                          ano:
-                            type: integer
-                          totalChamados:
-                            type: integer
-                          valorTotal:
-                            type: number
-                          mediaPorChamado:
-                            type: number
-                          segmentos:
+                          periodo:
                             type: object
-                            additionalProperties:
+                            properties:
+                              mes:
+                                type: integer
+                              ano:
+                                type: integer
+                          total:
+                            type: object
+                            description: Soma OPEX e quantidade de chamados contabilizados.
+                            properties:
+                              valor:
+                                type: number
+                              quantidade:
+                                type: integer
+                          porSegmento:
+                            type: array
+                            items:
                               type: object
                               properties:
-                                quantidade:
+                                segmento:
+                                  type: string
+                                _sum:
+                                  type: object
+                                  properties:
+                                    valor:
+                                      type: number
+                                _count:
                                   type: integer
-                                valor:
-                                  type: number
-                                percentual:
-                                  type: number
+                          porStatus:
+                            type: array
+                            description: Contagem operacional por status para chamados abertos no mes.
+                            items:
+                              type: object
+                              properties:
+                                status:
+                                  $ref: '#/components/schemas/StatusChamado'
+                                _count:
+                                  type: integer
 
   /estoque/pecas:
     get:

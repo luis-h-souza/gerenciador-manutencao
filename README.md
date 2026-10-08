@@ -273,6 +273,12 @@ O sistema já está operando com os módulos abaixo:
 
 ### Controle Financeiro (Chamados)
 
+#### Regra de competencia e OPEX
+
+- A data de aprovacao (`dataAprovacao`) define o mes financeiro do chamado. A data de finalizacao (`dataResolucao`) serve apenas como controle operacional e nao altera essa competencia.
+- O total de OPEX considera chamados `FINALIZADO` e `AGUARDANDO_OM_ENTREGA` com aprovacao registrada no mes selecionado. Chamados sem `dataAprovacao` nao entram em um mes financeiro.
+- O total do cabecalho soma todos os chamados do periodo e respeita os filtros de regional e loja, independentemente da paginacao da tabela.
+
 - Navegação por camadas: regionais -> lojas -> chamados
 - Abertura direta por URL para regional, loja ou visão de BI regional
 - KPIs financeiros do período
@@ -323,6 +329,9 @@ O sistema já está operando com os módulos abaixo:
 ### Documentação complementar
 
 - Guia do usuário: [docs/guia_do_usuario.md](docs/guia_do_usuario.md)
+- Guia técnico: [docs/guia_tecnico.md](docs/guia_tecnico.md)
+- Referência da API: [docs/api_openapi_sgm.md](docs/api_openapi_sgm.md)
+- Especificação OpenAPI: [docs/openapi.yaml](docs/openapi.yaml)
 
 ---
 

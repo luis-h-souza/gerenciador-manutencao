@@ -189,21 +189,30 @@ X-RateLimit-RetryAfter: 900
 ```json
 {
   "id": "uuid",
-  "numero": "string (unique)",
   "dataAbertura": "ISO 8601 date",
-  "dataFechamento": "ISO 8601 date | null",
-  "valor": "decimal",
-  "status": "ABERTO | FECHADO | CANCELADO",
-  "segmento": "ELETRICO | MECANICO | HIDRAULICO | OUTRO",
-  "fornecedorId": "uuid",
-  "lojaId": "uuid",
-  "regiao": "string",
+  "numeroChamado": "string",
+  "segmento": "enum SegmentoChamado",
+  "empresa": "string",
+  "descricao": "string",
+  "regiao": "string | null",
+  "unidade": "string | null",
+  "numeroOrcamento": "string | null",
+  "solicitacao": "string | null",
+  "dataAprovacao": "ISO 8601 datetime | null",
+  "numeroOM": "string | null",
+  "valor": "decimal | null",
+  "status": "AGUARDANDO_APROVACAO | AGUARDANDO_OM_ENTREGA | FINALIZADO | ALUGUEL_OUTROS | PCI | LAUDOS",
   "mauUso": "boolean",
-  "observacoes": "string | null",
+  "ativoId": "uuid | null",
+  "dataResolucao": "ISO 8601 datetime | null",
   "criadoEm": "ISO 8601 datetime",
   "atualizadoEm": "ISO 8601 datetime"
 }
 ```
+
+#### Regra de competencia financeira
+
+`dataAprovacao` e a unica data que define o mes financeiro do chamado. `dataResolucao` serve para controle operacional da execucao do servico e nao altera a competencia. O OPEX mensal soma somente chamados `FINALIZADO` e `AGUARDANDO_OM_ENTREGA` com aprovacao registrada dentro do periodo. Registros sem `dataAprovacao` nao entram em totais de nenhum mes; `dataAbertura` nao e usada como fallback.
 
 ### Notificacao
 
@@ -748,235 +757,61 @@ Remove uma tarefa (soft delete).
 
 ## 💰 Endpoints - Controle Financeiro (Chamados)
 
+### Modelo atual: ControleChamado
+
+O registro usa `dataAbertura`, `numeroChamado`, `segmento`, `empresa`, `descricao`, `regiao`, `unidade`, `numeroOrcamento`, `solicitacao`, `dataAprovacao`, `numeroOM`, `valor`, `status`, `mauUso`, `ativoId` e `dataResolucao`, alem de `id`, `criadoEm` e `atualizadoEm`.
+
+Os status validos sao `AGUARDANDO_APROVACAO`, `AGUARDANDO_OM_ENTREGA`, `FINALIZADO`, `ALUGUEL_OUTROS`, `PCI` e `LAUDOS`.
+
+### Regra de competencia financeira
+
+`dataAprovacao` define o mes financeiro. `dataResolucao` e apenas controle operacional da execucao do servico e nao interfere na competencia. O total OPEX considera somente chamados `FINALIZADO` e `AGUARDANDO_OM_ENTREGA` com `dataAprovacao` no periodo selecionado. Sem data de aprovacao, o chamado nao entra no total mensal; `dataAbertura` nao e usada como fallback.
+
 ### 1. Listar Chamados
 
-**GET** `/chamados`
+**GET** `/chamados` lista chamados conforme o escopo de acesso do usuario autenticado.
 
-Lista chamados com filtros de período e região.
+| Parametro | Tipo | Descricao |
+|---|---|---|
+| `mes` | integer | Mes financeiro (1-12); combinado com `ano`. |
+| `ano` | integer | Ano do periodo financeiro. |
+| `regiao` | string | Uma ou mais regioes, separadas por virgula. |
+| `unidade` | string | Nome da unidade/loja. |
+| `status` | string | Status valido de chamado. |
+| `segmento` | string | Segmento do chamado. |
+| `empresa` | string | Filtro parcial por empresa. |
+| `busca` | string | Busca por empresa ou numero do chamado. |
+| `page` | integer | Pagina, padrao 1. |
+| `limit` | integer | Itens por pagina, padrao 20. |
 
-#### Query Parameters
-
-| Param | Tipo | Obrigatório | Descrição |
-|-------|------|-------------|-----------|
-| `mes` | integer | Não | Mês (1-12) |
-| `ano` | integer | Não | Ano (ex: 2026) |
-| `regiao` | string | Não | Filtrar por região |
-| `segmento` | string | Não | Filtrar por segmento: `ELETRICO`, `MECANICO`, `HIDRAULICO`, `OUTRO` |
-| `status` | string | Não | Filtrar por status: `ABERTO`, `FECHADO`, `CANCELADO` |
-| `skip` | integer | Não | Paginação: offset (padrão: 0) |
-| `take` | integer | Não | Paginação: limit (padrão: 20) |
-
-#### Response (200 OK)
-
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "660e8400-e29b-41d4-a716-446655440000",
-      "numero": "CHM-2026-0001",
-      "dataAbertura": "2026-04-15",
-      "dataFechamento": "2026-04-20",
-      "valor": 1500.00,
-      "status": "FECHADO",
-      "segmento": "ELETRICO",
-      "fornecedor": {
-        "id": "770e8400-e29b-41d4-a716-446655440000",
-        "nome": "Elétrica Silva LTDA"
-      },
-      "loja": {
-        "id": "8c5b1a40-3f2d-4e9c-8d5a-1b2c3d4e5f6a",
-        "nome": "Loja SP7"
-      },
-      "regiao": "SP1",
-      "mauUso": false,
-      "observacoes": "Troca de motor elétrico",
-      "criadoEm": "2026-04-15T08:00:00Z",
-      "atualizadoEm": "2026-04-20T17:00:00Z"
-    }
-  ],
-  "pagination": {
-    "total": 125,
-    "skip": 0,
-    "take": 20,
-    "hasMore": true
-  }
-}
-```
-
-#### cURL
-
-```bash
-curl -X GET "http://localhost:3001/api/v1/chamados?mes=4&ano=2026&regiao=SP1&skip=0&take=20" \
-  -H "Authorization: Bearer <accessToken>"
-```
-
----
+A listagem mensal de chamados aprovados usa `dataAprovacao`. Chamados ainda aguardando aprovacao podem permanecer visiveis como pendencia operacional; eles nao sao contabilizados no OPEX.
 
 ### 2. Criar Chamado
 
-**POST** `/chamados`
+**POST** `/chamados` cria um chamado. Os campos principais sao `dataAbertura`, `numeroChamado`, `segmento`, `empresa`, `descricao`, `status` e `valor`; regiao e unidade sao definidas pelo contexto de acesso do usuario.
 
-Cria um novo chamado de manutenção/reparo.
-
-#### Request
-
-```json
-{
-  "numero": "CHM-2026-0045",
-  "dataAbertura": "2026-04-26",
-  "valor": 2500.00,
-  "segmento": "MECANICO",
-  "fornecedorId": "770e8400-e29b-41d4-a716-446655440000",
-  "lojaId": "8c5b1a40-3f2d-4e9c-8d5a-1b2c3d4e5f6a",
-  "mauUso": false,
-  "observacoes": "Manutenção preventiva de equipamentos"
-}
-```
-
-#### Response (201 Created)
-
-```json
-{
-  "success": true,
-  "data": {
-    "id": "660e8400-e29b-41d4-a716-446655440000",
-    "numero": "CHM-2026-0045",
-    "dataAbertura": "2026-04-26",
-    "dataFechamento": null,
-    "valor": 2500.00,
-    "status": "ABERTO",
-    "segmento": "MECANICO",
-    "fornecedor": {
-      "id": "770e8400-e29b-41d4-a716-446655440000",
-      "nome": "Mecânica Industrial"
-    },
-    "loja": {
-      "id": "8c5b1a40-3f2d-4e9c-8d5a-1b2c3d4e5f6a",
-      "nome": "Loja SP7"
-    },
-    "regiao": "SP1",
-    "mauUso": false,
-    "observacoes": "Manutenção preventiva de equipamentos",
-    "criadoEm": "2026-04-26T14:22:15Z",
-    "atualizadoEm": "2026-04-26T14:22:15Z"
-  }
-}
-```
-
----
+Quando criado como `AGUARDANDO_OM_ENTREGA` ou `FINALIZADO` sem `dataAprovacao`, o backend registra a data atual como aprovacao. Para `FINALIZADO`, `dataResolucao` tambem pode ser registrada separadamente como data operacional.
 
 ### 3. Atualizar Chamado
 
-**PUT** `/chamados/{id}`
-
-Atualiza um chamado.
-
-#### Request
-
-```json
-{
-  "status": "FECHADO",
-  "dataFechamento": "2026-04-26",
-  "observacoes": "Serviço concluído com sucesso"
-}
-```
-
-#### Response (200 OK)
-
-```json
-{
-  "success": true,
-  "data": {
-    "id": "660e8400-e29b-41d4-a716-446655440000",
-    "numero": "CHM-2026-0045",
-    "status": "FECHADO",
-    "dataFechamento": "2026-04-26",
-    "atualizadoEm": "2026-04-26T14:22:15Z"
-  }
-}
-```
-
----
+**PUT** `/chamados/{id}` atualiza os campos do chamado. `dataAprovacao` pode ser corrigida para refletir a aprovacao real; essa alteracao muda o mes financeiro. `dataResolucao` pode ser alterada para corrigir o controle da execucao, sem mover o valor de mes.
 
 ### 4. Deletar Chamado
 
-**DELETE** `/chamados/{id}`
+**DELETE** `/chamados/{id}` remove o chamado, respeitando o perfil autorizado.
 
-Remove um chamado.
+### 5. Resumo mensal de OPEX
 
-#### Response (200 OK)
+**GET** `/chamados/resumo` retorna o total mensal e agrupamentos financeiros. O resumo usa os mesmos criterios de OPEX definidos acima e nao depende da paginacao da listagem.
 
-```json
-{
-  "success": true,
-  "message": "Chamado deletado com sucesso"
-}
-```
+| Parametro | Tipo | Descricao |
+|---|---|---|
+| `mes` | integer | Mes de referencia (1-12). |
+| `ano` | integer | Ano de referencia. |
+| `regiao` | string | Filtro regional opcional, limitado ao escopo do usuario. |
+| `unidade` | string | Filtro por loja opcional, limitado ao escopo do usuario. |
 
----
-
-### 5. Resumo de Chamados por Mês
-
-**GET** `/chamados/resumo`
-
-Retorna resumo consolidado de chamados por mês.
-
-#### Query Parameters
-
-| Param | Tipo | Obrigatório | Descrição |
-|-------|------|-------------|-----------|
-| `mes` | integer | Sim | Mês (1-12) |
-| `ano` | integer | Sim | Ano (ex: 2026) |
-
-#### Response (200 OK)
-
-```json
-{
-  "success": true,
-  "data": {
-    "mes": 4,
-    "ano": 2026,
-    "totalChamados": 45,
-    "valorTotal": 125000.00,
-    "mediaPorChamado": 2777.78,
-    "chamadosMauUso": 3,
-    "segmentos": {
-      "ELETRICO": {
-        "quantidade": 18,
-        "valor": 45000.00,
-        "percentual": 36.0
-      },
-      "MECANICO": {
-        "quantidade": 15,
-        "valor": 50000.00,
-        "percentual": 40.0
-      },
-      "HIDRAULICO": {
-        "quantidade": 10,
-        "valor": 25000.00,
-        "percentual": 20.0
-      },
-      "OUTRO": {
-        "quantidade": 2,
-        "valor": 5000.00,
-        "percentual": 4.0
-      }
-    },
-    "topFornecedores": [
-      {
-        "id": "770e8400-e29b-41d4-a716-446655440000",
-        "nome": "Mecânica Industrial",
-        "quantidade": 15,
-        "valor": 50000.00,
-        "percentual": 40.0
-      }
-    ]
-  }
-}
-```
-
----
+A resposta contem `dados.periodo` (`mes`, `ano`), `dados.total` (`valor`, `quantidade`), `dados.porSegmento` e `dados.porStatus`. `total` inclui apenas chamados operacionais nos status `FINALIZADO` ou `AGUARDANDO_OM_ENTREGA`, aprovados no periodo; PCI e Laudos sao excluidos do OPEX.
 
 ## 📦 Endpoints - Estoque
 
@@ -3040,11 +2875,11 @@ console.log('Tarefa atualizada:', updatedTarefa.data);
 ```bash
 # Listar chamados de abril/2026, região SP1
 curl -X GET "http://localhost:3001/api/v1/chamados?mes=4&ano=2026&regiao=SP1&segmento=MECANICO" \
-  -H "Authorization: Bearer $ACCESS_TOKEN" | jq '.data'
+  -H "Authorization: Bearer $ACCESS_TOKEN" | jq '.dados.data'
 
 # Com paginação
-curl -X GET "http://localhost:3001/api/v1/chamados?skip=0&take=50" \
-  -H "Authorization: Bearer $ACCESS_TOKEN" | jq '.pagination'
+curl -X GET "http://localhost:3001/api/v1/chamados?page=1&limit=50" \
+  -H "Authorization: Bearer $ACCESS_TOKEN" | jq '.dados.meta'
 ```
 
 ### 4. Preencher Checklist Semanal

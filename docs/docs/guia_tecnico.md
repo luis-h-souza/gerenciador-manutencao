@@ -53,6 +53,15 @@ As rotas são versionadas (`/api/v1/...`) e protegidas por middlewares de autent
 
 ## 4. Lógica de Negócio e Dados
 
+### Competencia financeira dos chamados e total OPEX
+
+- `dataAprovacao` e a unica data usada para definir o mes financeiro. O sistema nao usa `dataAbertura` como fallback para contabilizar OPEX.
+- `dataResolucao` registra a execucao do servico para controle do gestor. Ela nao participa dos filtros de competencia, agregados ou totais financeiros.
+- O OPEX contabilizado soma somente os status `FINALIZADO` e `AGUARDANDO_OM_ENTREGA`, com `dataAprovacao` dentro do periodo. Chamados sem aprovacao registrada ficam fora dos totais mensais.
+- O utilitario `server/src/utils/chamadoFinanceiro.js` centraliza essa regra para indicadores, historicos e agregacoes que usam OPEX.
+- O endpoint `GET /api/v1/chamados/resumo` alimenta o total completo do cabecalho. Ele aceita `mes`, `ano`, `regiao` e `unidade`; o backend combina os filtros solicitados com o escopo de acesso do usuario.
+- Ao registrar um chamado como `AGUARDANDO_OM_ENTREGA` ou `FINALIZADO` sem data de aprovacao informada, o backend registra a data atual como aprovacao. A data de finalizacao nao e copiada para `dataAprovacao`.
+
 ### Checklists Consolidados
 A agregação de checklists é feita de forma semanal, mas visualizada mensalmente.
 *   **Normalização**: O sistema agrupa checklists por `semana` e `ano`. 
