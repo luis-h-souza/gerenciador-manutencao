@@ -80,7 +80,7 @@ const normalizarSegmento = (valor) => {
 router.use(autenticar);
 
 router.get('/', autorizar(...LEITURA_FINANCEIRA), ctrl.listar);
-router.get('/resumo', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR), ctrl.resumoMensal);
+router.get('/resumo', autorizar(...LEITURA_FINANCEIRA), ctrl.resumoMensal);
 router.get('/analise-ia', autorizar(Roles.ADMINISTRADOR, Roles.DIRETOR, Roles.GERENTE, Roles.COORDENADOR), ctrl.analisarComIA);
 router.get('/:id', autorizar(...LEITURA_FINANCEIRA), ctrl.buscarPorId);
 

@@ -2165,6 +2165,27 @@ export default function ChamadosPage() {
     enabled: etapa === "chamados",
   });
 
+  // Resumo financeiro OPEX do período — usado para o total no cabeçalho (correto, não paginado)
+  const { data: resumoData } = useQuery({
+    queryKey: [
+      "chamados-resumo",
+      ano,
+      mes,
+      regionalSelecionada,
+      lojaSelecionada?.nome,
+    ],
+    queryFn: () =>
+      chamadosService
+        .resumoMensal({
+          ano,
+          mes,
+          regiao: regionalSelecionada || undefined,
+          unidade: lojaSelecionada?.nome || undefined,
+        })
+        .then((r) => r.data),
+    enabled: etapa === "chamados" && ["ADMINISTRADOR", "DIRETOR", "GERENTE", "COORDENADOR", "GESTOR", "OPERACAO"].includes(usuario?.role),
+  });
+
   const remover = useMutation({
     mutationFn: (id) => chamadosService.remover(id),
     onSuccess: () => {
@@ -2221,14 +2242,15 @@ export default function ChamadosPage() {
     return !isLaudo && !isPCI;
   });
 
-  // Apenas FINALIZADO e AGUARDANDO_OM_ENTREGA entram no OPEX contabilizado
+  // Total OPEX do período completo (vindo do servidor via /chamados/resumo)
+  // Garante que é a soma de TODOS os chamados do mês, não só da página atual
   const OPEX_STATUSES = ["FINALIZADO", "AGUARDANDO_OM_ENTREGA"];
+  const investimentoSemLaudosEPci = parseFloat(resumoData?.total?.valor || 0);
 
+  // Para gráficos de análise, usa os chamados locais (carregados completos quando visualizandoAnalise)
   const totalFiltrado = chamadosOperacionais
     .filter((c) => OPEX_STATUSES.includes(c.status))
     .reduce((s, c) => s + parseFloat(c.valor || 0), 0);
-
-  const investimentoSemLaudosEPci = totalFiltrado;
 
   // ———————————————————————————————————————————————— Dados para Análise Gráfica da Loja ————————————————————————————————————————
   const chamadosPorSegmento = Object.values(
