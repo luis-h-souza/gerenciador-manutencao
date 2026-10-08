@@ -318,6 +318,25 @@ Um ativo com 95%+ de disponibilidade está em excelente estado.
 **Onde encontrar:** Página **Ativos da Loja** → selecione um ativo → aba "Confiabilidade".`,
   },
   {
+    id: 'competencia-financeira-chamados',
+    category: 'orcamento',
+    title: 'Como o sistema define o mês financeiro de um chamado?',
+    description: 'Saiba como a aprovação e a finalização afetam o mês e o total de OPEX.',
+    content: `A **data de aprovação** define a qual mês o chamado pertence financeiramente. A **data de finalização** serve para o gestor registrar se e quando o serviço foi executado; ela não altera o mês financeiro.
+
+**Quais chamados entram no OPEX:**
+- Chamados com status **FINALIZADO** ou **AGUARDANDO_OM_ENTREGA** e data de aprovação dentro do mês selecionado.
+- Chamados sem data de aprovação não são atribuídos a um mês financeiro. A data de abertura não é usada como substituta.
+- Chamados **AGUARDANDO_APROVACAO**, PCI e Laudos não entram nessa soma de OPEX.
+
+**Ao cadastrar ou atualizar:**
+- Ao colocar um chamado em **AGUARDANDO_OM_ENTREGA** ou **FINALIZADO** sem informar a aprovação, o sistema registra a data atual como data de aprovação.
+- Se a data de aprovação estiver incorreta, ajuste esse campo: isso pode mover o valor para outro mês.
+- Alterar a data de finalização não move o valor de mês.
+
+O total OPEX no cabeçalho considera todos os chamados do período e respeita os filtros de regional e loja, mesmo quando a tabela está paginada.`,
+  },
+  {
     id: 'limite-budget',
     category: 'orcamento',
     title: 'Como funciona o Limite de Budget?',
@@ -341,7 +360,8 @@ Ao entrar no detalhamento de uma regional no painel de Metas Orçamentárias:
 - **Sem Meta (Neutro):** Lojas que não possuem metas individuais cadastradas **não herdam a meta da regional** (evitando que pareçam "estouradas" com o valor total da regional). Os cards dessas lojas são coloridos com um tom **cinza neutro**, sinalizando que não há meta configurada para aquela unidade.
 
 **Tipos de gasto computados:**
-- Chamados com status **FINALIZADO**.
+- Chamados nos status **FINALIZADO** ou **AGUARDANDO_OM_ENTREGA**, aprovados no mês selecionado.
+- O mês é determinado pela data de aprovação; a data de finalização não altera a competência.
 - Valor informado no campo "Valor" de cada chamado.
 
 **Chamados sem valor:** Caso o chamado não tenha valor registrado, ele não impacta o cálculo orçamentário. Preencha sempre o campo "Valor" ao finalizar um chamado.`,
