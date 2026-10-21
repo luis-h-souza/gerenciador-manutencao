@@ -11,6 +11,7 @@ import {
   Loader2,
   Pencil,
   Trash2,
+  Eye,
   Search,
   MapPin,
   ChevronLeft,
@@ -439,6 +440,146 @@ function ExportarChamados({ chamados = [], mes, ano }) {
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+function CampoDetalheChamado({ label, value, destaque = false }) {
+  return (
+    <div style={{ minWidth: 0 }}>
+      <div
+        style={{
+          color: "var(--color-text-muted)",
+          fontSize: "0.7rem",
+          fontWeight: 700,
+          letterSpacing: "0.04em",
+          textTransform: "uppercase",
+          marginBottom: "4px",
+        }}
+      >
+        {label}
+      </div>
+      <div
+        style={{
+          color: destaque ? "var(--color-brand-400)" : "var(--color-text-primary)",
+          fontSize: "0.875rem",
+          fontWeight: destaque ? 700 : 500,
+          overflowWrap: "anywhere",
+          whiteSpace: "pre-wrap",
+        }}
+      >
+        {value ?? "—"}
+      </div>
+    </div>
+  );
+}
+
+function ChamadoDetalhesModal({ chamado, onClose }) {
+  const data = (valor, comHora = false) => {
+    if (!valor) return "—";
+    const parsed = new Date(valor);
+    return Number.isNaN(parsed.getTime())
+      ? "—"
+      : format(parsed, comHora ? "dd/MM/yyyy 'às' HH:mm" : "dd/MM/yyyy");
+  };
+  const segmento = chamado.segmento
+    ?.split("_")
+    .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+    .join(" ");
+
+  return (
+    <div
+      className="modal-overlay"
+      onClick={(event) => event.target === event.currentTarget && onClose()}
+    >
+      <div
+        className="modal-content animate-fade-in"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="detalhes-chamado-titulo"
+        style={{ maxWidth: "760px", maxHeight: "90vh", overflowY: "auto" }}
+      >
+        <div className="flex items-start justify-between gap-4 mb-5">
+          <div className="flex items-start gap-3">
+            <div
+              className="flex items-center justify-center rounded-lg"
+              style={{ width: 38, height: 38, background: "var(--color-surface-700)", color: "var(--color-brand-400)" }}
+            >
+              <FileText size={19} />
+            </div>
+            <div>
+              <h2 id="detalhes-chamado-titulo" style={{ fontSize: "1.05rem", fontWeight: 700 }}>
+                Detalhes do chamado
+              </h2>
+              <p style={{ color: "var(--color-text-muted)", fontSize: "0.8rem", marginTop: 3 }}>
+                {chamado.numeroChamado || "Chamado sem número"}
+              </p>
+            </div>
+          </div>
+          <button className="btn btn-ghost btn-sm" onClick={onClose} aria-label="Fechar detalhes">
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-5">
+          <section>
+            <h3 style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--color-text-secondary)", marginBottom: 12 }}>
+              Informações do chamado
+            </h3>
+            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+              <CampoDetalheChamado label="Número do chamado" value={chamado.numeroChamado} destaque />
+              <CampoDetalheChamado label="Status" value={STATUS_LABEL[chamado.status] || chamado.status} />
+              <CampoDetalheChamado label="Segmento" value={segmento} />
+              <CampoDetalheChamado label="Empresa" value={chamado.empresa} />
+              <CampoDetalheChamado label="Solicitação" value={chamado.solicitacao} />
+              <CampoDetalheChamado label="Região" value={chamado.regiao} />
+              <CampoDetalheChamado label="Unidade" value={chamado.unidade} />
+              <CampoDetalheChamado label="Mau uso" value={chamado.mauUso ? "Sim" : "Não"} />
+              <CampoDetalheChamado label="Valor" value={chamado.valor == null ? "—" : fmt(chamado.valor)} destaque />
+            </div>
+            <div
+              style={{
+                marginTop: 16,
+                padding: 14,
+                borderRadius: 10,
+                background: "var(--color-surface-800)",
+                border: "1px solid var(--color-border)",
+              }}
+            >
+              <CampoDetalheChamado label="Descrição" value={chamado.descricao} />
+            </div>
+          </section>
+
+          <section>
+            <h3 style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--color-text-secondary)", marginBottom: 12 }}>
+              Datas e documentos
+            </h3>
+            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+              <CampoDetalheChamado label="Data de abertura" value={data(chamado.dataAbertura)} />
+              <CampoDetalheChamado label="Data de aprovação" value={data(chamado.dataAprovacao)} />
+              <CampoDetalheChamado label="Data de finalização" value={data(chamado.dataResolucao)} />
+              <CampoDetalheChamado label="Nº do orçamento" value={chamado.numeroOrcamento} />
+              <CampoDetalheChamado label="Nº da OM" value={chamado.numeroOM} />
+              <CampoDetalheChamado label="ID do ativo" value={chamado.ativoId} />
+            </div>
+          </section>
+
+          <section>
+            <h3 style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--color-text-secondary)", marginBottom: 12 }}>
+              Registro no sistema
+            </h3>
+            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+              <CampoDetalheChamado label="ID do registro" value={chamado.id} />
+              <CampoDetalheChamado label="Criado em" value={data(chamado.criadoEm, true)} />
+              <CampoDetalheChamado label="Atualizado em" value={data(chamado.atualizadoEm, true)} />
+            </div>
+          </section>
+        </div>
+
+        <div className="flex justify-end pt-5 mt-5" style={{ borderTop: "1px solid var(--color-border)" }}>
+          <button className="btn btn-secondary" onClick={onClose}>Fechar</button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -2000,6 +2141,7 @@ export default function ChamadosPage() {
 
   const qc = useQueryClient();
   const [modal, setModal] = useState(null);
+  const [chamadoVisualizacao, setChamadoVisualizacao] = useState(null);
   const [modalIa, setModalIa] = useState(false);
   const [busca, setBusca] = useState("");
   const [filtros, setFiltros] = useState({ status: "", segmento: "" });
@@ -2986,7 +3128,7 @@ export default function ChamadosPage() {
                   <th>OM</th>
                   <th>Valor</th>
                   <th>Status</th>
-                  <th style={{ width: "60px" }}>Ações</th>
+                  <th style={{ width: "100px" }}>Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -3138,16 +3280,30 @@ export default function ChamadosPage() {
                       </td>
                       <td>
                         <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            className="btn btn-ghost btn-sm"
+                            onClick={() => setChamadoVisualizacao(c)}
+                            style={{ padding: "2px" }}
+                            title="Visualizar chamado"
+                            aria-label={`Visualizar chamado ${c.numeroChamado}`}
+                          >
+                            <Eye size={14} />
+                          </button>
                           {canWrite ? (
                             <>
                               <button
+                                type="button"
                                 className="btn btn-ghost btn-sm"
                                 onClick={() => setModal(c)}
                                 style={{ padding: "2px" }}
+                                title="Editar chamado"
+                                aria-label={`Editar chamado ${c.numeroChamado}`}
                               >
                                 <Pencil size={14} />
                               </button>
                               <button
+                                type="button"
                                 className="btn btn-ghost btn-sm"
                                 onClick={() => {
                                   if (confirm("Remover chamado?"))
@@ -3157,13 +3313,13 @@ export default function ChamadosPage() {
                                   padding: "2px",
                                   color: "var(--color-danger)",
                                 }}
+                                title="Excluir chamado"
+                                aria-label={`Excluir chamado ${c.numeroChamado}`}
                               >
                                 <Trash2 size={14} />
                               </button>
                             </>
-                          ) : (
-                            <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>—</span>
-                          )}
+                          ) : null}
                         </div>
                       </td>
                     </tr>
@@ -3625,6 +3781,13 @@ export default function ChamadosPage() {
         <ChamadoModal
           chamado={modal === "novo" ? null : modal}
           onClose={() => setModal(null)}
+        />
+      )}
+
+      {chamadoVisualizacao && (
+        <ChamadoDetalhesModal
+          chamado={chamadoVisualizacao}
+          onClose={() => setChamadoVisualizacao(null)}
         />
       )}
 
