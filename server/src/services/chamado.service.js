@@ -135,7 +135,8 @@ const listar = async (user, query) => {
    * • Chamados AGUARDANDO_OM_ENTREGA: competência pela dataAprovacao.
    *   Sem dataAprovacao: não pertencem a um mês financeiro.
    * • Chamados AGUARDANDO_APROVACAO: carry-over automático.
-   * • Demais status (ALUGUEL_OUTROS, PCI, LAUDOS): dataAprovacao.
+   * • ALUGUEL_OUTROS: competência pela dataAprovacao.
+   * • PCI e LAUDOS: exibição pela dataAbertura, pois não dependem de aprovação para aparecer.
    * ──────────────────────────────────────────────────────────────────────────
    */
   if (mes && ano) {
@@ -154,13 +155,20 @@ const listar = async (user, query) => {
       dataAprovacao: { gte: dataInicio, lt: dataFim },
     };
 
-    // 3. Demais categorias (ALUGUEL_OUTROS, PCI, LAUDOS)
+    // 3. Aluguel/Outros: competência pela data de aprovação.
     const filtroOutrosResolvidos = {
-      status: { in: ['ALUGUEL_OUTROS', 'PCI', 'LAUDOS'] },
+      status: 'ALUGUEL_OUTROS',
       dataAprovacao: { gte: dataInicio, lt: dataFim },
     };
 
-    // 4. Aguardando Aprovação: carry-over — aberto até o fim do mês e ainda não aprovado
+    // 4. PCI e Laudos não consomem OPEX e devem aparecer no mês em que foram abertos,
+    // mesmo quando ainda não há dataAprovacao.
+    const filtroInvestimentos = {
+      status: { in: ['PCI', 'LAUDOS'] },
+      dataAbertura: { gte: dataInicio, lt: dataFim },
+    };
+
+    // 5. Aguardando Aprovação: carry-over — aberto até o fim do mês e ainda não aprovado
     const filtroAguardandoAprovacao = {
       status: 'AGUARDANDO_APROVACAO',
       dataAbertura: { lt: dataFim },
@@ -177,6 +185,8 @@ const listar = async (user, query) => {
         where.AND = [...(where.AND || []), filtroAguardandoOM];
       } else if (status === 'FINALIZADO') {
         where.AND = [...(where.AND || []), filtroFinalizados];
+      } else if (['PCI', 'LAUDOS'].includes(status)) {
+        where.AND = [...(where.AND || []), filtroInvestimentos];
       } else {
         where.AND = [...(where.AND || []), filtroOutrosResolvidos];
       }
@@ -191,6 +201,7 @@ const listar = async (user, query) => {
             filtroAguardandoOM,
             filtroAguardandoAprovacao,
             filtroOutrosResolvidos,
+            filtroInvestimentos,
           ],
         },
       ];
