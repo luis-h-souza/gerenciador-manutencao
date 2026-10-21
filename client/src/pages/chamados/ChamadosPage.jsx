@@ -528,7 +528,23 @@ function ChamadoDetalhesModal({ chamado, onClose }) {
             </h3>
             <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
               <CampoDetalheChamado label="Número do chamado" value={chamado.numeroChamado} destaque />
-              <CampoDetalheChamado label="Status" value={STATUS_LABEL[chamado.status] || chamado.status} />
+              <div>
+                <div
+                  style={{
+                    color: "var(--color-text-muted)",
+                    fontSize: "0.7rem",
+                    fontWeight: 700,
+                    letterSpacing: "0.04em",
+                    textTransform: "uppercase",
+                    marginBottom: "4px",
+                  }}
+                >
+                  Status
+                </div>
+                <span className={`badge ${STATUS_BADGE[chamado.status] || "badge-neutral"}`}>
+                  {STATUS_LABEL[chamado.status] || chamado.status || "—"}
+                </span>
+              </div>
               <CampoDetalheChamado label="Segmento" value={segmento} />
               <CampoDetalheChamado label="Empresa" value={chamado.empresa} />
               <CampoDetalheChamado label="Solicitação" value={chamado.solicitacao} />
@@ -560,7 +576,6 @@ function ChamadoDetalhesModal({ chamado, onClose }) {
               <CampoDetalheChamado label="Data de finalização" value={data(chamado.dataResolucao)} />
               <CampoDetalheChamado label="Nº do orçamento" value={chamado.numeroOrcamento} />
               <CampoDetalheChamado label="Nº da OM" value={chamado.numeroOM} />
-              <CampoDetalheChamado label="ID do ativo" value={chamado.ativoId} />
             </div>
           </section>
 
@@ -569,7 +584,6 @@ function ChamadoDetalhesModal({ chamado, onClose }) {
               Registro no sistema
             </h3>
             <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
-              <CampoDetalheChamado label="ID do registro" value={chamado.id} />
               <CampoDetalheChamado label="Criado em" value={data(chamado.criadoEm, true)} />
               <CampoDetalheChamado label="Atualizado em" value={data(chamado.atualizadoEm, true)} />
             </div>
