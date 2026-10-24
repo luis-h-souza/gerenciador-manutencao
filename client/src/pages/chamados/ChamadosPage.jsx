@@ -178,10 +178,11 @@ const TooltipCustom = ({ active, payload, label }) => {
       style={{
         background: "var(--color-surface-700)",
         border: "1px solid var(--color-border)",
-        borderRadius: "8px",
-        padding: "10px 14px",
-        fontSize: "0.8125rem",
-        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.3)",
+        borderRadius: "10px",
+        padding: "12px 14px",
+        fontSize: "0.75rem",
+        lineHeight: 1.5,
+        boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
       }}
     >
       <p
