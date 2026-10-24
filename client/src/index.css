@@ -311,6 +311,39 @@ body {
 }
 .nav-item.active .nav-icon { color: var(--color-brand-400); }
 
+/* Desktop sidebar keeps an icon rail when collapsed. */
+.sidebar-compact > div:first-child {
+  justify-content: center;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+.sidebar-compact .sidebar-brand-copy,
+.sidebar-compact .sidebar-profile > div:nth-child(2),
+.sidebar-compact .sidebar-profile > svg {
+  display: none;
+}
+.sidebar-compact nav {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+.sidebar-compact nav .nav-item {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+.sidebar-compact nav .nav-item > span {
+  display: none;
+}
+.sidebar-compact > div:last-child {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+.sidebar-compact .sidebar-profile {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
 /* Modal overlay */
 .modal-overlay {
   position: fixed;

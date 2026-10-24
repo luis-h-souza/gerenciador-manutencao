@@ -136,6 +136,7 @@ export default function Sidebar({ open, onClose }) {
   const itensVisiveis = NAV.filter((item) =>
     item.roles.includes(usuario?.role),
   );
+  const compact = !open && !isSmallScreen;
 
   const handleNavClick = () => {
     if (isSmallScreen) {
@@ -145,10 +146,10 @@ export default function Sidebar({ open, onClose }) {
 
   return (
     <aside
-      className="flex flex-col shrink-0 transition-all duration-200 z-30"
+      className={`flex flex-col shrink-0 transition-all duration-200 z-30 ${compact ? "sidebar-compact" : ""}`}
       style={{
-        width: open ? "240px" : "0px",
-        minWidth: open ? "240px" : "0px",
+        width: open ? "240px" : compact ? "64px" : "0px",
+        minWidth: open ? "240px" : compact ? "64px" : "0px",
         background: "var(--color-surface-800)",
         borderRight: "1px solid var(--color-border)",
         overflow: "hidden",
@@ -169,7 +170,7 @@ export default function Sidebar({ open, onClose }) {
           >
             <Wrench size={16} color="#fff" />
           </div>
-          <div style={{ minWidth: 0, maxWidth: "140px" }}>
+          <div className="sidebar-brand-copy" style={{ minWidth: 0, maxWidth: "140px" }}>
             <div
               style={{
                 fontSize: "0.8125rem",
@@ -213,6 +214,8 @@ export default function Sidebar({ open, onClose }) {
             onClick={handleNavClick}
             className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
             style={{ whiteSpace: "nowrap" }}
+            title={compact ? label : undefined}
+            aria-label={compact ? label : undefined}
           >
             <Icon size={17} className="nav-icon shrink-0" />
             <span>{label}</span>
@@ -229,7 +232,7 @@ export default function Sidebar({ open, onClose }) {
           to="/configuracoes"
           onClick={handleNavClick}
           className={({ isActive }) =>
-            `w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg group transition-colors nav-item ${isActive ? "active" : ""}`
+            `sidebar-profile w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg group transition-colors nav-item ${isActive ? "active" : ""}`
           }
           style={{
             background: "var(--color-surface-700)",
